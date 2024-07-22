@@ -3,6 +3,7 @@
 import KeyStore from "@/keys";
 import axios from "axios";
 var CryptoJS = require("crypto-js");
+var Cookies = require("js-cookie");
 
 
 let _key = KeyStore.secret_key;
@@ -12,8 +13,8 @@ const postAsync = async (url: string, requestBody: any) => {
   const encryptedBody = _wrap(requestBody);
   let appHeaders = {
     "Content-Type": "application/json; charset=utf-8",
-    token: localStorage.getItem("authToken") ?? "",
-    companyid: localStorage.getItem("companyId") ?? 1,
+    token: Cookies.get("authToken") ?? "",
+    companyid: Cookies.get("companyId") ?? 1,
   };
 
   //  console.log("----------- This is my Headers Value look. ----------------",appHeaders)
@@ -38,8 +39,8 @@ const getAsync = async (url: string) => {
   let appHeaders = {
     "Content-Type": "application/json; charset=utf-8",
     "Access-Control-Allow-Origin": "*",
-    token: localStorage.getItem("authToken") ?? "",
-    companyid: localStorage.getItem("companyId") ?? 1,
+    token: Cookies.get("authToken") ?? "",
+    companyid: Cookies.get("companyId") ?? 1,
   };
   console.log("----------- This is my Headers Value look. ----------------",appHeaders)
   // console.log("----------- This is my url Value look. ----------------",url)
