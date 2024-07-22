@@ -1,0 +1,30 @@
+const inspiredPalette = {
+  orange: '#FE5A3E',
+  Pumpkin: "#FF7417",
+  blue: '#2646A6',
+  dark: '#222222',
+  green: '#4CAF50',
+  red: '#FF5252',
+  purple: '#673AB7',
+  yellow: '#FFC107',
+  lightRed: '#FFEBEE',
+  lightGreen: '#E8F5E9',
+  textGrey: '#555555',
+  darkOrange: '#E53935',
+  lightOrange: '#FFAB91',
+  darkBlue: '#1E3A8A',
+  lightBlue: '#BBDEFB',
+  darker: '#000000',
+  lighter: '#333333',
+  darkGreen: '#388E3C',
+  darkRed: '#D32F2F',
+  darkPurple: '#512DA8',
+  lightPurple: '#D1C4E9',
+  darkYellow: '#FFA000',
+  lightYellow: '#FFF8E1',
+  lightTextGrey: '#AAAAAA',
+  darkTextGrey: '#333333',
+};
+
+
+export { inspiredPalette };
