@@ -9,7 +9,7 @@ export default function AuthLayout({
     {/* <html lang="en">
       <body> */}
         <h1>Auth Layout</h1>
-        <div>
+        <div style={{background: 'red'}}>
           {children}
         </div>
         {/* </body>

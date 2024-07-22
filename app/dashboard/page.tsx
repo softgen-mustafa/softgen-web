@@ -1,6 +1,8 @@
 const Page = () => {
   return (
-    <div><p>dash</p></div>
+    <div>
+      <h1 className="text-2xl font-light underline">Dashboard Title</h1>
+      </div>
   )
 }
 export default Page;

@@ -10,10 +10,12 @@ export default function DashboardLayout({
   const [open, setOpen] = useState(false);
   return (
     <div>
-        <h1>Dashboard</h1>
+      <div className="">
         <Button onClick={() => {
           setOpen(!open);
         }}>Toggle Drawer</Button>
+        <h1>Dashboard</h1>
+      </div>
         <Drawer open={open} onClose={() => {setOpen(false);}}>
           <Box sx={{width: 250}}></Box>
         </Drawer>
