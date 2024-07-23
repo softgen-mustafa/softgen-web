@@ -2,6 +2,7 @@ import { CustomerDetailsCard } from "./cards/customer_card";
 import { Grid } from "@mui/material";
 import { OutstandingCard } from "./cards/outstanding_card";
 import { SalesReportCard } from "./cards/sales_report_card";
+import { InventoryCard } from "./cards/inventory_card";
 const DashboardPage = () => {
   return (
     <div className="p-6">
@@ -16,8 +17,9 @@ const DashboardPage = () => {
         <Grid item xs={12} md={4}>
           <SalesReportCard />
         </Grid>
-        
-        
+        <Grid item xs={12} md={4}>
+          <InventoryCard />
+        </Grid>
       </Grid>
     </div>
   );
