@@ -8,9 +8,11 @@ import {
   CircularProgress,
   IconButton,
   Grid,
+  Box,
 } from "@mui/material";
 import { ChevronRight } from "@mui/icons-material";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
+import { useRouter } from "next/navigation";
 
 interface OutstandingData {
   payableTitle: string;
@@ -21,6 +23,8 @@ interface OutstandingData {
 }
 
 const OutstandingCard = () => {
+  const router = useRouter();
+
   const [data, setData] = useState<OutstandingData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -70,6 +74,11 @@ const OutstandingCard = () => {
     </div>
   );
 
+  const handleCardClick = () => {
+    router.push("/dashboard/outstanding");
+
+  };
+
   return (
     <Card className="bg-white shadow-md" sx={{ borderRadius: 6 }}>
       {isLoading ? (
@@ -77,6 +86,7 @@ const OutstandingCard = () => {
           <CircularProgress />
         </CardContent>
       ) : (
+        <Box onClick={handleCardClick} sx={{ cursor: "pointer" }}>
         <CardContent className="p-6">
           <Typography variant="h6" className="text-gray-800 mb-4">
             Outstanding Overview
@@ -101,6 +111,7 @@ const OutstandingCard = () => {
             </IconButton>
           </div>
         </CardContent>
+        </Box>
       )}
     </Card>
   );
