@@ -31,3 +31,28 @@ body {
     text-wrap: balance;
   }
 }
+
+/* styles/globals.css */
+body {
+  margin: 0;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+}
+
+.MuiBox-root {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #e0e0e0;
+}
+
+.MuiBox-root::-webkit-scrollbar {
+  height: 8px;
+}
+
+.MuiBox-root::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 10px;
+}
+
+.MuiBox-root::-webkit-scrollbar-track {
+  background: #e0e0e0;
+  border-radius: 10px;
+}
