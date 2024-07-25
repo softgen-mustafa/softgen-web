@@ -16,17 +16,16 @@ const DropDown = ({
   valueFieldKey,
   selectionValues,
   helperText,
-  onSelection
+  onSelection,
 }: {
   label: string;
   displayFieldKey: string;
   valueFieldKey: string | null;
   selectionValues: any[];
-  helperText: string | null; 
-  onSelection: (selected: any) => void
+  helperText: string | null;
+  onSelection: (selected: any) => void;
 }) => {
   const [value, setValue] = useState({});
-  
 
   const [dropDownValues, setDropDownValues] = useState<JSX.Element[]>([]);
 
@@ -48,9 +47,11 @@ const DropDown = ({
   }, [selectionValues]);
 
   return (
-    <FormControl className="m-4">
+    // <FormControl className="w-full md:w-[30vw] mt-4 md:mt-0">
+    <FormControl className="w-full mt-4 md:mt-0">
       <InputLabel>{label}</InputLabel>
       <Select
+        className="w-full"
         value={value}
         label={label}
         onChange={(event) => {

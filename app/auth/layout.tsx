@@ -5,7 +5,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div>
+    <div className="w-[96vw]" >
     {/* <html lang="en">
       <body> */}
         <h1>Auth Layout</h1>
