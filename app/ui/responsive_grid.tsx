@@ -22,7 +22,7 @@ const CardView: React.FC<CardViewProps> = ({
   className,
 }) => {
   return (
-          <Card className={`h-full shadow-lg p-2 rounded-2xl ${className}`}>
+          <Card className={`h-full shadow-xl p-2 rounded-2xl ${className}`}>
             <CardContent>
               {
                 children

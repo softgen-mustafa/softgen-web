@@ -1,7 +1,15 @@
 "use client";
 import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
-import { Card, CardContent, Grid } from "@mui/material";
+import { ChevronLeftRounded } from "@mui/icons-material";
+import {
+  Card,
+  CardContent,
+  Container,
+  Grid,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import { PieChart } from "@mui/x-charts";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
@@ -96,6 +104,78 @@ const Page = () => {
     {
       type: "item",
       view: (
+        <CardView className="">
+          <div className="flex flex-row items-center">
+            <IconButton
+              onClick={() => {
+                router.back();
+              }}
+            >
+              <ChevronLeftRounded />
+            </IconButton>
+            <Typography>Go Back</Typography>
+          </div>
+          <br />
+          <Typography className="text-xl">Party Search</Typography>
+          <Typography className="text-2xl">
+            {viewType === "upcoming"
+              ? `View based on filter:  ${filterType}`
+              : viewType == "aging"
+              ? `Aging-wise outstanding values`
+              : `All parties outstanding values`}
+          </Typography>
+          <br />
+          <br />
+          <Container className="overflow-x-auto flex">
+            <PieChart
+              width={300}
+              height={300}
+              margin={{top: 100, left: 100, bottom: 100, right: 100,}}
+              sx={{
+                flex: 1,
+                borderWidth: 2,
+                borderRadius: 4,
+                marginBottom: 2,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              slotProps={{
+                legend: {
+                  hidden: true,
+                  position: {
+                    horizontal: "right",
+                    vertical: "bottom",
+                  },
+                },
+              }}
+              series={[
+                {
+                  data: rows.map((entry: any) => {
+                    return {
+                      label: entry.partyName,
+                      value: entry.amount,
+                    };
+                  }),
+                  innerRadius: 30,
+                  outerRadius: 100,
+                  paddingAngle: 5,
+                  cornerRadius: 5,
+                  startAngle: 0,
+                  endAngle: 360,
+                  // cx: 150,
+                  // cy: 150,
+                },
+              ]}
+            />
+          </Container>
+        </CardView>
+      ),
+      className: "",
+      children: [],
+    },
+    {
+      type: "item",
+      view: (
         <CardView>
           <DataGrid
             columns={columns}
@@ -129,61 +209,16 @@ const Page = () => {
       className: "",
       children: [],
     },
-    {
-      type: "item",
-      view: (
-        <CardView>
-          <PieChart
-            width={400}
-            height={300}
-            sx={{
-              flex: 1,
-            }}
-            slotProps={{
-              legend: {
-                hidden: true,
-                position: {
-                  horizontal: "right",
-                  vertical: "bottom",
-                },
-              },
-            }}
-            series={[
-              {
-                data: rows.map((entry: any) => {
-                  return {
-                    label: entry.partyName,
-                    value: entry.amount,
-                  };
-                }),
-                innerRadius: 30,
-                outerRadius: 100,
-                paddingAngle: 5,
-                cornerRadius: 5,
-                startAngle: 0,
-                endAngle: 360,
-                // cx: 150,
-                // cy: 150,
-              },
-            ]}
-          />
-        </CardView>
-      ),
-      className: "",
-      children: [],
-    },
   ];
 
   return (
     <div
       className="w-full"
       style={{
-        paddingTop: 60,
       }}
     >
       <Grid
         container
-        className="bg-gray-200"
         sx={{
           flexGrow: 1,
           height: "100vh",

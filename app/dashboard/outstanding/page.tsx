@@ -11,6 +11,7 @@ import {
   IconButton,
   Grid,
   Icon,
+  Button,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -119,11 +120,13 @@ const Page = () => {
         {
           type: "item",
           view: (
-            <CardView>
+            <CardView className="">
               <div className="flex flex-row items-center">
-                <IconButton onClick={() => {
-                  router.back();
-                }}>
+                <IconButton
+                  onClick={() => {
+                    router.back();
+                  }}
+                >
                   <ChevronLeftRounded />
                 </IconButton>
                 <Typography>Go Back</Typography>
@@ -150,7 +153,6 @@ const Page = () => {
           type: "item",
           view: (
             <CardView className="">
-              <br/>
               <div>
                 <PendingActions
                   fontSize="large"
@@ -160,11 +162,33 @@ const Page = () => {
                   }}
                 />
               </div>
-              <br/>
-              <Typography className="text-xl flex">
-                Total Pending
+              <br />
+              <Typography className="text-xl flex">Total Pending</Typography>
+              <Typography className="text-2xl md:text-3xl mt-2 flex">
+                {totalAmount}
               </Typography>
-              <Typography className="text-2xl md:text-3xl mt-2 flex">{totalAmount}</Typography>
+              <br />
+              <div className="flex flex-row justify-end">
+                <Button
+                  variant="contained"
+                  className="mt-2"
+                  style={{
+                    background: inspiredPalette.dark,
+                  }}
+                  onClick={() => {
+                    localStorage.setItem("party_filter_value", "");
+                    localStorage.setItem("party_view_type", "all");
+                    localStorage.setItem(
+                      "party_bill_type",
+                      selectedType.current.code
+                    );
+                    localStorage.setItem("party_filter_type", "");
+                    router.push("/dashboard/outstanding/party-search");
+                  }}
+                >
+                  <Typography className="text-lg">View</Typography>
+                </Button>
+              </div>
             </CardView>
           ),
           className: "",
@@ -173,48 +197,44 @@ const Page = () => {
         {
           type: "item",
           view: (
-            <CardView>
-              <Container>
-                <Box
-                  sx={{ display: "flex", overflowX: "auto", }}
-                >
-                  {filters.map((card, index) => (
-                    <Card
-                      key={index}
-                      className="shadow-xl mr-4 rounded-xl"
-                      sx={{
-                        minWidth: 100,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: 60,
-                        background: card.isSelected
-                          ? inspiredPalette.darkPurple
-                          : inspiredPalette.lightTextGrey,
-                        color: card.isSelected ? "white" : inspiredPalette.dark, 
-                      }}
-                      onClick={(event) => {
-                        let values: any[] = filters;
-                        values = values.map((entry: any) => {
-                          let isSelected = card.value === entry.value;
-                          entry.isSelected = isSelected;
-                          return entry;
-                        });
-                        updateFilters(values);
-                        selectedFilter.current = card;
-                        loadUpcoming();
-                      }}
-                    >
-                      <CardContent>
-                        <Typography
-                          component="div"
-                          className="flex justify-center items-center"
-                        >
-                          {card.label}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </Box>
+            <CardView className="flex flex-col justify-center">
+              <Container className="flex overflow-x-auto">
+                {filters.map((card, index) => (
+                  <Card
+                    key={index}
+                    className="shadow-xl mr-4 rounded-xl"
+                    sx={{
+                      minWidth: 100,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: 60,
+                      background: card.isSelected
+                        ? inspiredPalette.darkPurple
+                        : inspiredPalette.lightTextGrey,
+                      color: card.isSelected ? "white" : inspiredPalette.dark,
+                    }}
+                    onClick={(event) => {
+                      let values: any[] = filters;
+                      values = values.map((entry: any) => {
+                        let isSelected = card.value === entry.value;
+                        entry.isSelected = isSelected;
+                        return entry;
+                      });
+                      updateFilters(values);
+                      selectedFilter.current = card;
+                      loadUpcoming();
+                    }}
+                  >
+                    <CardContent>
+                      <Typography
+                        component="div"
+                        className="flex justify-center items-center"
+                      >
+                        {card.label}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                ))}
               </Container>
             </CardView>
           ),
@@ -274,10 +294,10 @@ const Page = () => {
   ];
 
   return (
-    <Container sx={{overflowX: 'hidden'}}>
+    <Container sx={{ overflowX: "hidden" }}>
       <Grid
         container
-        className="bg-gray-200"
+        className=""
         sx={{
           flexGrow: 1,
           height: "100vh",
@@ -285,7 +305,6 @@ const Page = () => {
       >
         {RenderGrid(gridConfig)}
       </Grid>
-
     </Container>
     // <div
     //   className="overflow-x-hidden"

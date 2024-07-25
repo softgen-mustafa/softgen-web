@@ -150,7 +150,7 @@ export default function DashboardLayout({
     <div className="w-full h-[100vh] flex flex-col md:flex-row bg-grey-200">
       <SideNav />
       <Box component={"div"} className="ml-1 w-full overflow-x-hidden" >
-        <div className="w-full h-full overflow-x-hidden">{children}</div>
+        <div className="w-full h-full overflow-x-hidden bg-gray-100">{children}</div>
       </Box>
     </div>
   );

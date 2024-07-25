@@ -30,7 +30,7 @@ interface AgingCardProps {
 const AgingCard: React.FC<AgingCardProps> = ({ data, onPress }) => {
   return (
     <Card
-    className="shadow-md bg-gray-50 mt-1 mb-1"
+      className="shadow-md bg-gray-50 mt-1 mb-1"
       sx={{
         minWidth: 200,
         marginRight: 2,
@@ -95,30 +95,16 @@ const AgingView = ({ billType }: { billType: string }) => {
 
   return (
     <div className="flex flex-col">
-      <div
-        style={{ overflowX: "scroll", maxHeight: "250px" }}
-        className="flex flex-row"
-      >
-        {data.map((entry, index) => {
-          return (
-            <AgingCard
-              key={index}
-              data={entry}
-              onPress={() => {
-                localStorage.setItem("party_filter_value", entry.code);
-                localStorage.setItem("party_view_type", "aging");
-                localStorage.setItem("party_bill_type", billType);
-                router.push("/dashboard/outstanding/party-search");
-              }}
-            />
-          );
-        })}
-      </div>
       <PieChart
         height={300}
+        width={300}
+        margin={{ top: 100, left: 100, bottom: 100, right: 100 }}
         sx={{
-          justifyContent: 'center',
-          alignItems: 'center'
+          borderWidth: 2,
+          borderRadius: 4,
+          marginBottom: 2,
+          justifyContent: "center",
+          alignItems: "center",
         }}
         slotProps={{
           legend: {
@@ -144,6 +130,25 @@ const AgingView = ({ billType }: { billType: string }) => {
           },
         ]}
       />
+      <div
+        style={{ overflowX: "scroll", maxHeight: "250px" }}
+        className="flex flex-row"
+      >
+        {data.map((entry, index) => {
+          return (
+            <AgingCard
+              key={index}
+              data={entry}
+              onPress={() => {
+                localStorage.setItem("party_filter_value", entry.code);
+                localStorage.setItem("party_view_type", "aging");
+                localStorage.setItem("party_bill_type", billType);
+                router.push("/dashboard/outstanding/party-search");
+              }}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 };
