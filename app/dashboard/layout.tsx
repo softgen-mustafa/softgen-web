@@ -149,7 +149,7 @@ export default function DashboardLayout({
     <div className="w-[96vw] h-[100vh] p-2 flex flex-col md:flex-row bg-gray-100">
       <SideNav />
       <Box component={"div"} className="ml-5" >
-        <div className="w-full">{children}</div>
+        <div className="w-full h-full">{children}</div>
       </Box>
     </div>
   );
