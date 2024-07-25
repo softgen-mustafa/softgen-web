@@ -2,6 +2,7 @@
 import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
 import { DataTable } from "@/app/ui/data_grid";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
+import { SearchInput } from "@/app/ui/text_inputs";
 import { ChevronLeftRounded } from "@mui/icons-material";
 import {
   Card,
@@ -30,10 +31,7 @@ const Page = () => {
     onApi(1, 10);
   }, []);
 
-  const onApi = async (
-    page: number,
-    pageSize: number,
-  ) => {
+  const onApi = async (page: number, pageSize: number) => {
     let collectionUrl = `${getBmrmBaseUrl()}/bill/get/upcoming-bills?groupType=${billType}&durationType=${filterType}&durationKey=${filterValue}`;
     let agingUrl = `${getBmrmBaseUrl()}/bill/get/aging-bills?agingCode=${filterValue}&groupType=${billType}`;
     let totalOutstandingUrl = `${getBmrmBaseUrl()}/bill/get/all-party-bills?groupType=${billType}`;
@@ -48,7 +46,7 @@ const Page = () => {
     let requestBody = {
       page_number: page,
       page_size: pageSize,
-      search_text: "",
+      search_text: searchText.current,
       sort_by: "name",
       sort_order: "asc",
     };
@@ -93,6 +91,8 @@ const Page = () => {
     },
   ];
 
+  let searchText = useRef("");
+
   const gridConfig: GridConfig[] = [
     {
       type: "item",
@@ -118,12 +118,18 @@ const Page = () => {
               : `All parties outstanding values`}
           </Typography>
           <br />
+          <SearchInput
+            placeHolder="Search..."
+            onTextChange={(value) => {
+              searchText.current = value;
+            }}
+          />
           <br />
           <Container className="overflow-x-auto flex">
             <PieChart
               width={300}
               height={300}
-              margin={{top: 100, left: 100, bottom: 100, right: 100,}}
+              margin={{ top: 100, left: 100, bottom: 100, right: 100 }}
               sx={{
                 flex: 1,
                 borderWidth: 2,
@@ -170,19 +176,19 @@ const Page = () => {
       type: "item",
       view: (
         <CardView>
-          <DataTable 
-          columns={columns}
-          onApi={async (page, pageSize) => {
-            return await onApi(page, pageSize);
-          }}
-          onRowClick={(params) => {
+          <DataTable
+            columns={columns}
+            onApi={async (page, pageSize) => {
+              return await onApi(page, pageSize);
+            }}
+            onRowClick={(params) => {
               localStorage.setItem("party_filter_value", filterValue || "");
               localStorage.setItem("party_view_type", viewType || "");
               localStorage.setItem("party_bill_type", billType || "");
               localStorage.setItem("party_filter_type", filterType || "");
               localStorage.setItem("bill_party_name", params.row.partyName);
               router.push("/dashboard/outstanding/bill-detail");
-          }}
+            }}
           />
         </CardView>
       ),
@@ -192,11 +198,7 @@ const Page = () => {
   ];
 
   return (
-    <div
-      className="w-full"
-      style={{
-      }}
-    >
+    <div className="w-full" style={{}}>
       <Grid
         container
         sx={{

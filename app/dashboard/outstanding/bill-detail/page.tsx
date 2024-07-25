@@ -2,6 +2,7 @@
 import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
 import { DataTable } from "@/app/ui/data_grid";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
+import { SearchInput } from "@/app/ui/text_inputs";
 import { ChevronLeftRounded } from "@mui/icons-material";
 import {
   Grid,
@@ -13,8 +14,9 @@ import {
 } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { SearchParamsContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const Page = ({}) => {
   const partyName: string = localStorage.getItem("bill_party_name") || "";
@@ -74,6 +76,8 @@ const Page = ({}) => {
       maxWidth: 400,
     },
   ];
+
+  let searchText = useRef("");
 
   const gridConfig: GridConfig[] = [
     {
@@ -181,7 +185,7 @@ const Page = ({}) => {
         filter: {
           page_number: page,
           page_size: pageSize,
-          search_text: "",
+          search_text: searchText.current,
           sort_by: "billNumber",
           sort_order: "asc",
         },
@@ -190,7 +194,7 @@ const Page = ({}) => {
       requestBody = {
         page_number: page,
         page_size: pageSize,
-        search_text: "",
+        search_text: searchText.current,
         sort_by: "billNumber",
         sort_order: "",
       };
@@ -217,12 +221,7 @@ const Page = ({}) => {
   };
 
   return (
-    <div
-      className="w-full"
-      style={{
-        paddingTop: 60,
-      }}
-    >
+    <div className="w-full" style={{}}>
       <Grid
         container
         className="bg-gray-200"
