@@ -30,11 +30,14 @@ interface AgingCardProps {
 const AgingCard: React.FC<AgingCardProps> = ({ data, onPress }) => {
   return (
     <Card
-      sx={{ minWidth: 200,  marginBottom: 2,
+    className="shadow-md bg-gray-50 mt-1 mb-1"
+      sx={{
+        minWidth: 200,
+        marginRight: 2,
         borderLeftWidth: 8,
         borderLeftColor: inspiredPalette.Pumpkin,
         height: 80,
-       }}
+      }}
       onClick={() => {
         onPress();
       }}
@@ -111,34 +114,36 @@ const AgingView = ({ billType }: { billType: string }) => {
           );
         })}
       </div>
-        <PieChart
-          height={300}
-          sx={{
-          }}
-          slotProps={{
-            legend: {
-              hidden: true,
-            },
-          }}
-          series={[
-            {
-              data: data.map((entry: AgingData) => {
-                return {
-                  label: entry.title,
-                  value: entry.amount,
-                };
-              }),
-              innerRadius: 30,
-              outerRadius: 100,
-              paddingAngle: 5,
-              cornerRadius: 5,
-              startAngle: 0,
-              endAngle: 360,
-              // cx: 150,
-              // cy: 150,
-            },
-          ]}
-        />
+      <PieChart
+        height={300}
+        sx={{
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+        slotProps={{
+          legend: {
+            hidden: true,
+          },
+        }}
+        series={[
+          {
+            data: data.map((entry: AgingData) => {
+              return {
+                label: entry.title,
+                value: entry.amount,
+              };
+            }),
+            innerRadius: 20,
+            outerRadius: 100,
+            paddingAngle: 2,
+            cornerRadius: 8,
+            startAngle: 0,
+            endAngle: 360,
+            // cx: 150,
+            // cy: 150,
+          },
+        ]}
+      />
     </div>
   );
 };

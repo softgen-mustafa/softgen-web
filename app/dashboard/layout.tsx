@@ -19,8 +19,9 @@ import {
 import React, { useState } from "react";
 import { inspiredPalette } from "../ui/theme";
 import { useRouter } from "next/navigation";
+import { GridConfig } from "../ui/responsive_grid";
 
-const drawerWidth = 300;
+const drawerWidth = 240;
 
 const drawerNavigations = [
   {
@@ -39,7 +40,7 @@ const DrawerContent = () => {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col w-full h-full " style={{}}>
+    <div className="flex flex-col w-full h-full overflow-x-hidden" style={{}}>
       <div className="flex flex-row justify-center md:justify-start items-center pt-1 pl-3 z-50" style={{
         background: inspiredPalette.dark,
         borderTopRightRadius: 20,
@@ -146,10 +147,10 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="w-[96vw] h-[100vh] p-2 flex flex-col md:flex-row bg-gray-100">
+    <div className="w-full h-[100vh] flex flex-col md:flex-row bg-grey-200">
       <SideNav />
-      <Box component={"div"} className="ml-5" >
-        <div className="w-full h-full">{children}</div>
+      <Box component={"div"} className="ml-1 w-full overflow-x-hidden" >
+        <div className="w-full h-full overflow-x-hidden">{children}</div>
       </Box>
     </div>
   );

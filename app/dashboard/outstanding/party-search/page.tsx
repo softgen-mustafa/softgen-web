@@ -1,5 +1,6 @@
 "use client";
 import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
+import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { Card, CardContent, Grid } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -19,13 +20,19 @@ const Page = () => {
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
-  })
+  });
 
   useEffect(() => {
     onApi(paginationModel);
   }, []);
 
-  const onApi = async ({ page, pageSize}: {page: number, pageSize: number}) => {
+  const onApi = async ({
+    page,
+    pageSize,
+  }: {
+    page: number;
+    pageSize: number;
+  }) => {
     let collectionUrl = `${getBmrmBaseUrl()}/bill/get/upcoming-bills?groupType=${billType}&durationType=${filterType}&durationKey=${filterValue}`;
     let agingUrl = `${getBmrmBaseUrl()}/bill/get/aging-bills?agingCode=${filterValue}&groupType=${billType}`;
     let totalOutstandingUrl = `${getBmrmBaseUrl()}/bill/get/all-party-bills?groupType=${billType}`;
@@ -57,7 +64,6 @@ const Page = () => {
     setRows(entries);
     return entries;
   };
-
   const columns: GridColDef<any[number]>[] = [
     {
       field: "partyName",
@@ -86,6 +92,88 @@ const Page = () => {
     },
   ];
 
+  const gridConfig: GridConfig[] = [
+    {
+      type: "item",
+      view: (
+        <CardView>
+          <DataGrid
+            columns={columns}
+            rows={rows}
+            rowCount={rows.length * 100}
+            paginationMode="server"
+            pagination
+            paginationModel={paginationModel}
+            initialState={{
+              pagination: {
+                paginationModel: paginationModel,
+              },
+            }}
+            pageSizeOptions={[5, 10, 25, 50, 75, 100]}
+            onRowClick={(params) => {
+              localStorage.setItem("party_filter_value", filterValue || "");
+              localStorage.setItem("party_view_type", viewType || "");
+              localStorage.setItem("party_bill_type", billType || "");
+              localStorage.setItem("party_filter_type", filterType || "");
+              localStorage.setItem("bill_party_name", params.row.partyName);
+              router.push("/dashboard/outstanding/bill-detail");
+            }}
+            disableRowSelectionOnClick
+            onPaginationModelChange={(value) => {
+              setPaginationModel(value);
+              onApi(value);
+            }}
+          />
+        </CardView>
+      ),
+      className: "",
+      children: [],
+    },
+    {
+      type: "item",
+      view: (
+        <CardView>
+          <PieChart
+            width={400}
+            height={300}
+            sx={{
+              flex: 1,
+            }}
+            slotProps={{
+              legend: {
+                hidden: true,
+                position: {
+                  horizontal: "right",
+                  vertical: "bottom",
+                },
+              },
+            }}
+            series={[
+              {
+                data: rows.map((entry: any) => {
+                  return {
+                    label: entry.partyName,
+                    value: entry.amount,
+                  };
+                }),
+                innerRadius: 30,
+                outerRadius: 100,
+                paddingAngle: 5,
+                cornerRadius: 5,
+                startAngle: 0,
+                endAngle: 360,
+                // cx: 150,
+                // cy: 150,
+              },
+            ]}
+          />
+        </CardView>
+      ),
+      className: "",
+      children: [],
+    },
+  ];
+
   return (
     <div
       className="w-full"
@@ -95,83 +183,13 @@ const Page = () => {
     >
       <Grid
         container
-        className="h-full w-full justify-start flex"
-        columnGap={4}
+        className="bg-gray-200"
+        sx={{
+          flexGrow: 1,
+          height: "100vh",
+        }}
       >
-        <Grid item xs={12} sm={12} md={6} className="w-full h-full">
-          <Card className="flex">
-            <CardContent>
-              <DataGrid
-                columns={columns}
-                rows={rows}
-                rowCount={rows.length * 100}
-                paginationMode="server"
-                pagination
-                paginationModel={paginationModel}
-                initialState={{
-                  pagination: {
-                    paginationModel: paginationModel
-                  },
-                }}
-                pageSizeOptions={[5, 10, 25, 50, 75, 100]}
-                onRowClick={(params) => {
-                  localStorage.setItem("party_filter_value", filterValue || "");
-                  localStorage.setItem("party_view_type", viewType || "");
-                  localStorage.setItem("party_bill_type", billType || "");
-                  localStorage.setItem("party_filter_type", filterType || "");
-                  localStorage.setItem("bill_party_name", params.row.partyName);
-                  router.push("/dashboard/outstanding/bill-detail");
-                }}
-                disableRowSelectionOnClick
-                onPaginationModelChange={(value) => {
-                  setPaginationModel(value)
-                  onApi(value);
-                }}
-              />
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={6} md={4} className="w-full h-full">
-          <Card className="flex flex-col mt-4">
-            <CardContent className="w-full justify-center">
-              <PieChart
-              width={400}
-                height={300}
-                sx={{
-                  flex: 1,
-                }}
-                slotProps={{
-                  legend: {
-                    hidden: true,
-                    position: {
-                      horizontal: "right",
-                      vertical: "bottom",
-                    },
-                  },
-                }}
-                series={[
-                  {
-                    data: rows.map((entry: any) => {
-                      return {
-                        label: entry.partyName,
-                        value: entry.amount,
-                      };
-                    }),
-                    innerRadius: 30,
-                    outerRadius: 100,
-                    paddingAngle: 5,
-                    cornerRadius: 5,
-                    startAngle: 0,
-                    endAngle: 360,
-                    // cx: 150,
-                    // cy: 150,
-                  },
-                ]}
-              />
-            </CardContent>
-          </Card>
-        </Grid>
+        {RenderGrid(gridConfig)}
       </Grid>
     </div>
   );

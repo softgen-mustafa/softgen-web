@@ -10,14 +10,22 @@ import {
   Box,
   IconButton,
   Grid,
+  Icon,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { DropDown } from "@/app/ui/drop_down";
 import { inspiredPalette } from "@/app/ui/theme";
-import { ChevronRight } from "@mui/icons-material";
+import {
+  ChevronLeft,
+  ChevronLeftRounded,
+  ChevronRight,
+  PendingActions,
+} from "@mui/icons-material";
 import { AgingView } from "./aging_card";
 import { ResponsiveDiv, ResponsiveGrid } from "@/app/ui/custom_div";
+import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
+import { numericToString } from "@/app/services/Local/helper";
 
 const Page = () => {
   const router = useRouter();
@@ -39,11 +47,27 @@ const Page = () => {
   let selectedType = useRef(types[incomingBillType === "Payable" ? 1 : 0]);
   let selectedFilter = useRef(filters[0]);
 
+  const [totalAmount, setAmount] = useState("0");
+
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
+    loadAmount();
     loadUpcoming();
   }, []);
+
+  const loadAmount = async () => {
+    try {
+      let url = `${getBmrmBaseUrl()}/bill/get/outstanding-amount?groupType=${
+        selectedType.current.code
+      }`;
+      let response = await getAsync(url);
+      let amount = `${"₹"} ${numericToString(response)}`;
+      setAmount(amount);
+    } catch {
+      alert("Coult not load amount");
+    }
+  };
 
   const loadUpcoming = async () => {
     try {
@@ -72,7 +96,7 @@ const Page = () => {
       headerName: "Duration Name",
       editable: false,
       sortable: true,
-      minWidth: 50,
+      minWidth: 300,
       maxWidth: 400,
     },
     {
@@ -86,12 +110,25 @@ const Page = () => {
     },
   ];
 
-  return (
-    <div className="w-[96vw]">
-      <Grid container className="w-full justify-start flex" columnGap={4}>
-        <Grid item xs={12} sm={6} md={4} >
-          <Card className="shadow-lg p-2 rounded-xl">
-            <CardContent>
+  const gridConfig: GridConfig[] = [
+    {
+      type: "container",
+      view: null,
+      className: "",
+      children: [
+        {
+          type: "item",
+          view: (
+            <CardView>
+              <div className="flex flex-row items-center">
+                <IconButton onClick={() => {
+                  router.back();
+                }}>
+                  <ChevronLeftRounded />
+                </IconButton>
+                <Typography>Go Back</Typography>
+              </div>
+              <br />
               <DropDown
                 label="Select Type"
                 displayFieldKey={"label"}
@@ -100,93 +137,163 @@ const Page = () => {
                 helperText={"Select Outstanding Type"}
                 onSelection={(selection) => {
                   selectedType.current = selection;
+                  loadAmount();
                   loadUpcoming();
                 }}
               />
-            </CardContent>
-          </Card>
-          <Card className="shadow-xl mt-8 p-2 rounded-xl">
-            <AgingView billType={selectedType.current.code} />
-          </Card>
-          <Card className="shadow-xl mt-8 p-2 rounded-xl">
-            <Container>
-              <Box
-                sx={{ display: "flex", overflowX: "auto", padding: "16px 0" }}
-              >
-                {filters.map((card, index) => (
-                  <Card
-                    key={index}
-                    sx={{
-                      minWidth: 100,
-                      margin: "0 8px",
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      height: 60,
-                      background: card.isSelected
-                        ? inspiredPalette.Pumpkin
-                        : "white",
-                      color: card.isSelected ? "white" : "black",
-                    }}
-                    onClick={(event) => {
-                      let values: any[] = filters;
-                      values = values.map((entry: any) => {
-                        let isSelected = card.value === entry.value;
-                        entry.isSelected = isSelected;
-                        return entry;
-                      });
-                      updateFilters(values);
-                      selectedFilter.current = card;
-                      loadUpcoming();
-                    }}
-                  >
-                    <CardContent>
-                      <Typography component="div" className="flex justify-center items-center">
-                        {card.label}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                ))}
-              </Box>
-            </Container>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <Card className="shadow-xl p-2 rounded-xl mt-4 md:mt-0" sx={{}}>
-            <CardContent>
-              <DataGrid
-                columns={columns}
-                rows={rows}
-                initialState={{
-                  pagination: {
-                    paginationModel: {
-                      pageSize: 10,
-                    },
-                  },
-                }}
-                onRowClick={(params) => {
-                  localStorage.setItem("party_filter_value", params.row.id);
-                  localStorage.setItem("party_view_type", "upcoming");
-                  localStorage.setItem(
-                    "party_bill_type",
-                    selectedType.current.code
-                  );
-                  localStorage.setItem(
-                    "party_filter_type",
-                    selectedFilter.current.value
-                  );
-                  router.push("/dashboard/outstanding/party-search");
-                }}
-                pageSizeOptions={[5, 10, 25, 50, 75, 100]}
-                disableRowSelectionOnClick
-                onPaginationModelChange={(value) => {
-                  alert(`page model:  ${JSON.stringify(value)}`);
-                }}
-              />
-            </CardContent>
-          </Card>
-        </Grid>
+            </CardView>
+          ),
+          className: "",
+          children: [],
+        },
+        {
+          type: "item",
+          view: (
+            <CardView className="">
+              <br/>
+              <div>
+                <PendingActions
+                  fontSize="large"
+                  style={{
+                    flex: 1,
+                    fontSize: 80,
+                  }}
+                />
+              </div>
+              <br/>
+              <Typography className="text-xl flex">
+                Total Pending
+              </Typography>
+              <Typography className="text-2xl md:text-3xl mt-2 flex">{totalAmount}</Typography>
+            </CardView>
+          ),
+          className: "",
+          children: [],
+        },
+        {
+          type: "item",
+          view: (
+            <CardView>
+              <Container>
+                <Box
+                  sx={{ display: "flex", overflowX: "auto", }}
+                >
+                  {filters.map((card, index) => (
+                    <Card
+                      key={index}
+                      className="shadow-xl mr-4 rounded-xl"
+                      sx={{
+                        minWidth: 100,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: 60,
+                        background: card.isSelected
+                          ? inspiredPalette.darkPurple
+                          : inspiredPalette.lightTextGrey,
+                        color: card.isSelected ? "white" : inspiredPalette.dark, 
+                      }}
+                      onClick={(event) => {
+                        let values: any[] = filters;
+                        values = values.map((entry: any) => {
+                          let isSelected = card.value === entry.value;
+                          entry.isSelected = isSelected;
+                          return entry;
+                        });
+                        updateFilters(values);
+                        selectedFilter.current = card;
+                        loadUpcoming();
+                      }}
+                    >
+                      <CardContent>
+                        <Typography
+                          component="div"
+                          className="flex justify-center items-center"
+                        >
+                          {card.label}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </Box>
+              </Container>
+            </CardView>
+          ),
+          className: "",
+          children: [],
+        },
+      ],
+    },
+    {
+      type: "item",
+      view: (
+        <CardView>
+          <AgingView billType={selectedType.current.code} />
+        </CardView>
+      ),
+      className: "",
+      children: [],
+    },
+    {
+      type: "item",
+      view: (
+        <CardView>
+          <DataGrid
+            columns={columns}
+            rows={rows}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 10,
+                },
+              },
+            }}
+            onRowClick={(params) => {
+              localStorage.setItem("party_filter_value", params.row.id);
+              localStorage.setItem("party_view_type", "upcoming");
+              localStorage.setItem(
+                "party_bill_type",
+                selectedType.current.code
+              );
+              localStorage.setItem(
+                "party_filter_type",
+                selectedFilter.current.value
+              );
+              router.push("/dashboard/outstanding/party-search");
+            }}
+            pageSizeOptions={[5, 10, 25, 50, 75, 100]}
+            disableRowSelectionOnClick
+            onPaginationModelChange={(value) => {
+              alert(`page model:  ${JSON.stringify(value)}`);
+            }}
+          />
+        </CardView>
+      ),
+      className: "",
+      children: [],
+    },
+  ];
+
+  return (
+    <Container sx={{overflowX: 'hidden'}}>
+      <Grid
+        container
+        className="bg-gray-200"
+        sx={{
+          flexGrow: 1,
+          height: "100vh",
+        }}
+      >
+        {RenderGrid(gridConfig)}
       </Grid>
-    </div>
+
+    </Container>
+    // <div
+    //   className="overflow-x-hidden"
+    //   style={{
+    //     width: "100%",
+    //   }}
+    // >
+    // </div>
   );
 };
 

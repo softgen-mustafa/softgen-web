@@ -1,5 +1,6 @@
 "use client";
 import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
+import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { Grid, Card, CardContent } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
@@ -62,6 +63,37 @@ const Page = ({}) => {
       sortable: true,
       minWidth: 50,
       maxWidth: 400,
+    },
+  ];
+
+  const gridConfig: GridConfig[] = [
+    {
+      type: "item",
+      view: (
+        <CardView>
+          <DataGrid
+            columns={columns}
+            rows={rows}
+            rowCount={rows.length * 1000}
+            pagination
+            paginationMode="server"
+            paginationModel={pagingationModel}
+            initialState={{
+              pagination: {
+                paginationModel: pagingationModel,
+              },
+            }}
+            pageSizeOptions={[5, 10, 25, 50, 75, 100]}
+            disableRowSelectionOnClick
+            onPaginationModelChange={(value) => {
+              setPaginationModel(value);
+              onApi(value);
+            }}
+          />
+        </CardView>
+      ),
+      className: "",
+      children: [],
     },
   ];
 
@@ -137,34 +169,13 @@ const Page = ({}) => {
     >
       <Grid
         container
-        className="h-full w-full justify-start flex"
-        columnGap={4}
+        className="bg-gray-200"
+        sx={{
+          flexGrow: 1,
+          height: "100vh",
+        }}
       >
-        <Grid item xs={12} sm={12} md={6} className="w-full h-full">
-          <Card className="flex">
-            <CardContent>
-              <DataGrid
-                columns={columns}
-                rows={rows}
-                rowCount={rows.length * 1000}
-                pagination
-                paginationMode="server"
-                paginationModel={pagingationModel}
-                initialState={{
-                  pagination: {
-                    paginationModel: pagingationModel,
-                  },
-                }}
-                pageSizeOptions={[5, 10, 25, 50, 75, 100]}
-                disableRowSelectionOnClick
-                onPaginationModelChange={(value) => {
-                  setPaginationModel(value);
-                  onApi(value);
-                }}
-              />
-            </CardContent>
-          </Card>
-        </Grid>
+        {RenderGrid(gridConfig)}
       </Grid>
     </div>
   );
