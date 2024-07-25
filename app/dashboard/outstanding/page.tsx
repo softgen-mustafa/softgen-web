@@ -88,8 +88,8 @@ const Page = () => {
 
   return (
     <div className="w-[96vw]">
-      <Grid container className="w-full justify-start" columnGap={4}>
-        <Grid item xs={12} sm={6} md={3}>
+      <Grid container className="w-full justify-start flex" columnGap={4}>
+        <Grid item xs={12} sm={6} md={4} >
           <Card className="shadow-lg p-2 rounded-xl">
             <CardContent>
               <DropDown
@@ -105,7 +105,9 @@ const Page = () => {
               />
             </CardContent>
           </Card>
-
+          <Card className="shadow-xl mt-8 p-2 rounded-xl">
+            <AgingView billType={selectedType.current.code} />
+          </Card>
           <Card className="shadow-xl mt-8 p-2 rounded-xl">
             <Container>
               <Box
@@ -119,6 +121,7 @@ const Page = () => {
                       margin: "0 8px",
                       justifyContent: 'center',
                       alignItems: 'center',
+                      height: 60,
                       background: card.isSelected
                         ? inspiredPalette.Pumpkin
                         : "white",
@@ -147,8 +150,8 @@ const Page = () => {
             </Container>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card className="shadow-xl p-2 rounded-xl mt-4 md:mt-0">
+        <Grid item xs={12} sm={6} md={4}>
+          <Card className="shadow-xl p-2 rounded-xl mt-4 md:mt-0" sx={{}}>
             <CardContent>
               <DataGrid
                 columns={columns}
@@ -182,87 +185,7 @@ const Page = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid xs={12} sm={12} md={12}></Grid>
       </Grid>
-      {/* <ResponsiveDiv>
-        <div className="text-2xl text-black-400">Outstanding</div>
-        <DropDown
-          label="Select Type"
-          displayFieldKey={"label"}
-          valueFieldKey={null}
-          selectionValues={types}
-          helperText={"Select Outstanding Type"}
-          onSelection={(selection) => {
-            selectedType.current = selection;
-            loadUpcoming();
-          }}
-        />
-      </ResponsiveDiv>
-
-      <AgingView billType={selectedType.current.code} />
-      <ResponsiveDiv>
-        <Container>
-          <Box sx={{ display: "flex", overflowX: "auto", padding: "16px 0" }}>
-            {filters.map((card, index) => (
-              <Card
-                key={index}
-                sx={{
-                  minWidth: 200,
-                  margin: "0 8px",
-                  background: card.isSelected
-                    ? inspiredPalette.Pumpkin
-                    : "white",
-                  color: card.isSelected ? "white" : "black",
-                }}
-                onClick={(event) => {
-                  let values: any[] = filters;
-                  values = values.map((entry: any) => {
-                    let isSelected = card.value === entry.value;
-                    entry.isSelected = isSelected;
-                    return entry;
-                  });
-                  updateFilters(values);
-                  selectedFilter.current = card;
-                  loadUpcoming();
-                }}
-              >
-                <CardContent>
-                  <Typography variant="h5" component="div">
-                    {card.label}
-                  </Typography>
-                </CardContent>
-              </Card>
-            ))}
-          </Box>
-        </Container>
-
-        <DataGrid
-          columns={columns}
-          rows={rows}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 10,
-              },
-            },
-          }}
-          onRowClick={(params) => {
-            localStorage.setItem("party_filter_value", params.row.id);
-            localStorage.setItem("party_view_type", "upcoming");
-            localStorage.setItem("party_bill_type", selectedType.current.code);
-            localStorage.setItem(
-              "party_filter_type",
-              selectedFilter.current.value
-            );
-            router.push("/dashboard/outstanding/party-search");
-          }}
-          pageSizeOptions={[5, 10, 25, 50, 75, 100]}
-          disableRowSelectionOnClick
-          onPaginationModelChange={(value) => {
-            alert(`page model:  ${JSON.stringify(value)}`);
-          }}
-        />
-      </ResponsiveDiv> */}
     </div>
   );
 };

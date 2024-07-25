@@ -1,38 +1,26 @@
 "use client";
 import {
-  ChevronLeft,
-  ChevronRight,
   Home,
-  Info,
   Logout,
   MenuRounded,
   PendingActions,
-  Settings,
-  WidgetsRounded,
 } from "@mui/icons-material";
 import {
   Box,
-  Button,
   ButtonBase,
   Drawer,
-  Grid,
-  Hidden,
   IconButton,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Menu,
-  Paper,
-  styled,
   Typography,
-  useTheme,
 } from "@mui/material";
 import React, { useState } from "react";
 import { inspiredPalette } from "../ui/theme";
 import { useRouter } from "next/navigation";
 
-const drawerWidth = 240;
+const drawerWidth = 300;
 
 const drawerNavigations = [
   {
@@ -160,7 +148,7 @@ export default function DashboardLayout({
   return (
     <div className="w-[96vw] h-[100vh] p-2 flex flex-col md:flex-row bg-gray-100">
       <SideNav />
-      <Box component={"div"} >
+      <Box component={"div"} className="ml-5" >
         <div className="w-full">{children}</div>
       </Box>
     </div>

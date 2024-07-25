@@ -30,19 +30,20 @@ interface AgingCardProps {
 const AgingCard: React.FC<AgingCardProps> = ({ data, onPress }) => {
   return (
     <Card
-      sx={{ minWidth: 200, marginBottom: 2,
-        borderLeftWidth: 10,
+      sx={{ minWidth: 200,  marginBottom: 2,
+        borderLeftWidth: 8,
         borderLeftColor: inspiredPalette.Pumpkin,
+        height: 80,
        }}
       onClick={() => {
         onPress();
       }}
     >
       <CardContent>
-        <Typography component="div" className="text-xl">
+        <Typography component="div" className="text-lg">
           {data.title}
         </Typography>
-        <Typography component="div" className="text-l">
+        <Typography component="div" className="text-sm">
           {numericToString(data.amount)}
         </Typography>
       </CardContent>
@@ -90,10 +91,10 @@ const AgingView = ({ billType }: { billType: string }) => {
   };
 
   return (
-    <ResponsiveDiv>
-      <Grid
-        sx={{ overflowY: "scroll", maxHeight: "250px" }}
-        spacing={2}
+    <div className="flex flex-col">
+      <div
+        style={{ overflowX: "scroll", maxHeight: "250px" }}
+        className="flex flex-row"
       >
         {data.map((entry, index) => {
           return (
@@ -109,7 +110,7 @@ const AgingView = ({ billType }: { billType: string }) => {
             />
           );
         })}
-      </Grid>
+      </div>
         <PieChart
           height={300}
           sx={{
@@ -138,7 +139,7 @@ const AgingView = ({ billType }: { billType: string }) => {
             },
           ]}
         />
-    </ResponsiveDiv>
+    </div>
   );
 };
 
