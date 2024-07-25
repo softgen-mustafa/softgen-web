@@ -87,7 +87,7 @@ const CustomerPartySearch = () => {
         pageSizeOptions={[5, 10, 25, 50, 75, 100]}
         onRowClick={(params) => {
           localStorage.setItem("party_filter_value", params.row.id);  
-          router.push("/dashboard/outstanding/bill-detail");
+          router.push("/dashboard/customer/details");
         }}
         disableRowSelectionOnClick
         onPaginationModelChange={(value) => {

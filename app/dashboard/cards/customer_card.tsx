@@ -38,7 +38,7 @@ const CustomerDetailsCard = () => {
   };
 
   const handleCardClick = () => {
-    router.push("/dashboard/customerDetails");
+    router.push("/dashboard/customer");
 
   };
 

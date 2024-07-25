@@ -3,7 +3,7 @@ import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 
-const Page = () => {
+const Page = ({}) => {
 
   const partyName: string = localStorage.getItem("bill_party_name") || "";
   const filterValue = localStorage.getItem("party_filter_value");
