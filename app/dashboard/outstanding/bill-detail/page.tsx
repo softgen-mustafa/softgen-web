@@ -1,8 +1,16 @@
 "use client";
 import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
+import { DataTable } from "@/app/ui/data_grid";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { ChevronLeftRounded } from "@mui/icons-material";
-import { Grid, Card, CardContent, IconButton, Typography, Container } from "@mui/material";
+import {
+  Grid,
+  Card,
+  CardContent,
+  IconButton,
+  Typography,
+  Container,
+} from "@mui/material";
 import { PieChart } from "@mui/x-charts";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
@@ -18,14 +26,10 @@ const Page = ({}) => {
   const router = useRouter();
 
   useEffect(() => {
-    onApi(pagingationModel);
+    onApi(1, 10);
   }, []);
 
   const [rows, setRows] = useState([]);
-  const [pagingationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
-  });
 
   const columns: GridColDef<any[number]>[] = [
     {
@@ -88,15 +92,13 @@ const Page = ({}) => {
           </div>
           <br />
           <Typography className="text-lg">Party Name,</Typography>
-          <Typography className="text-2xl">
-            {partyName}
-          </Typography>
+          <Typography className="text-2xl">{partyName}</Typography>
           <br />
           <Container className="overflow-x-auto flex">
             <PieChart
               width={300}
               height={300}
-              margin={{top: 100, left: 100, bottom: 100, right: 100,}}
+              margin={{ top: 100, left: 100, bottom: 100, right: 100 }}
               sx={{
                 flex: 1,
                 borderWidth: 2,
@@ -143,24 +145,12 @@ const Page = ({}) => {
       type: "item",
       view: (
         <CardView>
-          <DataGrid
+          <DataTable
             columns={columns}
-            rows={rows}
-            rowCount={rows.length * 1000}
-            pagination
-            paginationMode="server"
-            paginationModel={pagingationModel}
-            initialState={{
-              pagination: {
-                paginationModel: pagingationModel,
-              },
+            onApi={async (page, pageSize) => {
+              return onApi(page, pageSize);
             }}
-            pageSizeOptions={[5, 10, 25, 50, 75, 100]}
-            disableRowSelectionOnClick
-            onPaginationModelChange={(value) => {
-              setPaginationModel(value);
-              onApi(value);
-            }}
+            onRowClick={(params) => {}}
           />
         </CardView>
       ),
@@ -169,13 +159,7 @@ const Page = ({}) => {
     },
   ];
 
-  const onApi = async ({
-    page,
-    pageSize,
-  }: {
-    page: number;
-    pageSize: number;
-  }) => {
+  const onApi = async (page: number, pageSize: number) => {
     let party = partyName.replace("&", "%26");
     let collectionUrl = `${getBmrmBaseUrl()}/bill/get/upcoming-bill-detail`;
     let agingUrl = `${getBmrmBaseUrl()}/bill/get/aging-bill-detail?agingCode=${filterValue}&groupType=${billType}&partyName=${party}`;
@@ -195,7 +179,7 @@ const Page = ({}) => {
         durationKey: filterValue,
         partyName: partyName,
         filter: {
-          page_number: page + 1,
+          page_number: page,
           page_size: pageSize,
           search_text: "",
           sort_by: "billNumber",
@@ -204,7 +188,7 @@ const Page = ({}) => {
       };
     } else {
       requestBody = {
-        page_number: page + 1,
+        page_number: page,
         page_size: pageSize,
         search_text: "",
         sort_by: "billNumber",

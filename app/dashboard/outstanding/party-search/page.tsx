@@ -1,5 +1,6 @@
 "use client";
 import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
+import { DataTable } from "@/app/ui/data_grid";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { ChevronLeftRounded } from "@mui/icons-material";
 import {
@@ -25,22 +26,14 @@ const Page = () => {
 
   const [rows, setRows] = useState([]);
 
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
-  });
-
   useEffect(() => {
-    onApi(paginationModel);
+    onApi(1, 10);
   }, []);
 
-  const onApi = async ({
-    page,
-    pageSize,
-  }: {
-    page: number;
-    pageSize: number;
-  }) => {
+  const onApi = async (
+    page: number,
+    pageSize: number,
+  ) => {
     let collectionUrl = `${getBmrmBaseUrl()}/bill/get/upcoming-bills?groupType=${billType}&durationType=${filterType}&durationKey=${filterValue}`;
     let agingUrl = `${getBmrmBaseUrl()}/bill/get/aging-bills?agingCode=${filterValue}&groupType=${billType}`;
     let totalOutstandingUrl = `${getBmrmBaseUrl()}/bill/get/all-party-bills?groupType=${billType}`;
@@ -53,7 +46,7 @@ const Page = () => {
     }
 
     let requestBody = {
-      page_number: page + 1,
+      page_number: page,
       page_size: pageSize,
       search_text: "",
       sort_by: "name",
@@ -177,32 +170,19 @@ const Page = () => {
       type: "item",
       view: (
         <CardView>
-          <DataGrid
-            columns={columns}
-            rows={rows}
-            rowCount={rows.length * 100}
-            paginationMode="server"
-            pagination
-            paginationModel={paginationModel}
-            initialState={{
-              pagination: {
-                paginationModel: paginationModel,
-              },
-            }}
-            pageSizeOptions={[5, 10, 25, 50, 75, 100]}
-            onRowClick={(params) => {
+          <DataTable 
+          columns={columns}
+          onApi={async (page, pageSize) => {
+            return await onApi(page, pageSize);
+          }}
+          onRowClick={(params) => {
               localStorage.setItem("party_filter_value", filterValue || "");
               localStorage.setItem("party_view_type", viewType || "");
               localStorage.setItem("party_bill_type", billType || "");
               localStorage.setItem("party_filter_type", filterType || "");
               localStorage.setItem("bill_party_name", params.row.partyName);
               router.push("/dashboard/outstanding/bill-detail");
-            }}
-            disableRowSelectionOnClick
-            onPaginationModelChange={(value) => {
-              setPaginationModel(value);
-              onApi(value);
-            }}
+          }}
           />
         </CardView>
       ),
