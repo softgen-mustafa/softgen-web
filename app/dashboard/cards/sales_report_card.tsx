@@ -47,29 +47,55 @@ const SalesReportCard = () => {
     selectedMonth.current = pastMonths[0].month;
   }, []);
 
+
   const salesReportDashboardApi = async () => {
     try {
       setIsLoading(true);
+      
+      setTargets({
+        currency: "₹",
+        targetAmount: 0,
+        achievedAmount: 0,
+        pc_accomplished: 0,
+      });
+      
       const url = `${getBmrmBaseUrl()}/executive-target/performance/month/${
         selectedMonth.current
       }`;
       const response = await getAsync(url);
-
-      setTargets({
-        currency: response.currency ?? "₹",
-        targetAmount: response.target ?? 0,
-        achievedAmount: response.sales ?? 0,
-        pc_accomplished: isNaN(response.pc_accomplished)
-          ? 0
-          : response.pc_accomplished,
-      });
+  
+      if (response && Object.keys(response).length > 0) {
+        setTargets({
+          currency: response.currency ?? "₹",
+          targetAmount: response.target ?? 0,
+          achievedAmount: response.sales ?? 0,
+          pc_accomplished: isNaN(response.pc_accomplished)
+            ? 0
+            : response.pc_accomplished,
+        });
+      } else {
+       
+        setTargets({
+          currency: "₹",
+          targetAmount: 0,
+          achievedAmount: 0,
+          pc_accomplished: 0,
+        });
+      }
     } catch (error) {
       console.error("Could not load Targets", error);
+      setTargets({
+        currency: "₹",
+        targetAmount: 0,
+        achievedAmount: 0,
+        pc_accomplished: 0,
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
+ 
   return (
     <Card className="bg-white shadow-md rounded-2xl">
       <CardContent className="p-4">
