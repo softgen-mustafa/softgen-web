@@ -7,6 +7,7 @@ import { SearchInput } from "./text_inputs";
 
 interface TableViewProps {
   columns: GridColDef<any>[];
+  refresh?: boolean;
   onApi: (page: number, pageSize: number) => Promise<any[]>;
   onRowClick: (params: any) => void;
   onSearch?: (key: string) => void;
@@ -14,6 +15,7 @@ interface TableViewProps {
 
 const DataTable: React.FC<TableViewProps> = ({
   columns,
+  refresh,
   onApi,
   onRowClick,
   onSearch,
@@ -30,7 +32,7 @@ const DataTable: React.FC<TableViewProps> = ({
         setRows(entries);
       }
     );
-  }, [columns]);
+  }, [columns, refresh]);
 
   return (
     <Container>
