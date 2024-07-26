@@ -4,6 +4,7 @@ import {
   Logout,
   MenuRounded,
   PendingActions,
+  Receipt,
 } from "@mui/icons-material";
 import {
   Box,
@@ -33,6 +34,11 @@ const drawerNavigations = [
     title: "Outstanding",
     destination: "/dashboard/outstanding",
     icon: <PendingActions />,
+  },
+  {
+    title: "Transactions",
+    destination: "/dashboard/vouchers",
+    icon: <Receipt />,
   },
 ];
 
