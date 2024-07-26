@@ -1,6 +1,9 @@
 "use client";
 import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataTable } from "@/app/ui/data_grid";
+import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
+import { Grid, Typography } from "@mui/material";
+import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -9,32 +12,8 @@ const CustomerPartySearch = () => {
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    onApi();
+    onApi(1, 10);
   }, []);
-
-  const onApi = async () => {
-    let url = `${getBmrmBaseUrl()}/ledger/get/customers`;
-
-    let requestBody = {
-      page_number: 1,
-      page_size: 10000,
-      search_text: "",
-      sort_by: "name",
-      sort_order: "asc",
-    };
-    let response = await postAsync(url, requestBody);
-    let entries = response.map((entry: any, index: number) => {
-      return {
-        id: entry.id, 
-        partyName: entry.name,
-        mobileNo: entry.mobile_no,
-        landlineNumber: entry.landline_no,
-        emailId: entry.email,
-      };
-    });
-    setRows(entries);
-    return entries;
-  };
 
   const columns: GridColDef<any[number]>[] = [
     {
@@ -71,31 +50,67 @@ const CustomerPartySearch = () => {
     },
   ];
 
+  const onApi = async (page: number, pageSize: number) => {
+    let url = `${getBmrmBaseUrl()}/ledger/get/customers`;
+
+    let requestBody = {
+      page_number: page,
+      page_size: pageSize,
+      search_text: "",
+      sort_by: "name",
+      sort_order: "asc",
+    };
+    let response = await postAsync(url, requestBody);
+    let entries = response.map((entry: any, index: number) => {
+      return {
+        id: entry.id,
+        partyName: entry.name,
+        mobileNo: entry.mobile_no,
+        landlineNumber: entry.landline_no,
+        emailId: entry.email,
+      };
+    });
+    setRows(entries);
+    return entries;
+  };
+
+  const gridConfig: GridConfig[] = [
+    {
+      type: "item",
+      view: (
+        <CardView>
+          <Typography variant="h4">Customer Search</Typography>
+          <DataTable
+            columns={columns}
+            onApi={async (page, pageSize) => {
+              return onApi(page, pageSize);
+            }}
+            onRowClick={(params) => {
+              localStorage.setItem("party_filter_value", params.row.id);
+              router.push("/dashboard/customer/details");
+            }}
+          />
+        </CardView>
+      ),
+      className: "",
+      children: [],
+    },
+  ];
+
   return (
-    <div>
-      <h3>Customer Search</h3>
-      <DataGrid
-        columns={columns}
-        rows={rows}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 10,
-            },
-          },
+    <div className="w-full">
+      <Grid
+        container
+        className="bg-gray-200"
+        sx={{
+          flexGrow: 1,
+          height: "100vh",
         }}
-        pageSizeOptions={[5, 10, 25, 50, 75, 100]}
-        onRowClick={(params) => {
-          localStorage.setItem("party_filter_value", params.row.id);  
-          router.push("/dashboard/customer/details");
-        }}
-        disableRowSelectionOnClick
-        onPaginationModelChange={(value) => {
-          alert(`page model:  ${JSON.stringify(value)}`);
-        }}
-      />
+      >
+        {RenderGrid(gridConfig)}
+      </Grid>
     </div>
   );
-}
+};
 
-export default CustomerPartySearch ;
+export default CustomerPartySearch;

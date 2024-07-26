@@ -49,6 +49,18 @@ const DashboardPage = () => {
       className: "",
       children: [],
     },
+    {
+      type: "item",
+      view: (
+        <CardView>
+          <CustomerDetailsCard></CustomerDetailsCard>
+        </CardView>
+      ),
+      className: "",
+      children: [],
+    },
+    
+
   ];
   return (
     <div className="">
