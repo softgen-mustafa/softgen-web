@@ -4,30 +4,27 @@ import { DataTable } from "@/app/ui/data_grid";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { SearchInput } from "@/app/ui/text_inputs";
 import { ChevronLeftRounded } from "@mui/icons-material";
-import {
-  Card,
-  CardContent,
-  Container,
-  Grid,
-  IconButton,
-  Typography,
-} from "@mui/material";
+import { Container, Grid, IconButton, Typography } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 const Page = () => {
   const router = useRouter();
 
-  const filterValue = localStorage.getItem("party_filter_value");
-  const viewType = localStorage.getItem("party_view_type");
-  const billType = localStorage.getItem("party_bill_type");
-  const filterType = localStorage.getItem("party_filter_type") || null;
+  let filterValue: string = "";
+  let viewType: string = "";
+  let billType: string = "";
+  let filterType: string = "";
 
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
+    filterValue = localStorage.getItem("party_filter_value") || "";
+    viewType = localStorage.getItem("party_view_type") || "";
+    billType = localStorage.getItem("party_bill_type") || "";
+    filterType = localStorage.getItem("party_filter_type") || "";
     onApi(1, 10);
   }, []);
 

@@ -10,9 +10,10 @@ const CustomerDetailsScreen = ({}) => {
   const [isDataLoading, setLoadingStatus] = useState(false);
   const [outstandingAmount, setOutstandingAmount] = useState("-");
 
-  const filterValue = localStorage.getItem("party_filter_value");
+  let filterValue: string = "";
 
   useEffect(() => {
+  filterValue = localStorage.getItem("party_filter_value") || "";
     onLoad();
   }, []);
 
