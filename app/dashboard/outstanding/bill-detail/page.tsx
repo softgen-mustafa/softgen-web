@@ -2,32 +2,36 @@
 import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
 import { DataTable } from "@/app/ui/data_grid";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
-import { SearchInput } from "@/app/ui/text_inputs";
 import { ChevronLeftRounded } from "@mui/icons-material";
 import {
   Grid,
-  Card,
-  CardContent,
   IconButton,
   Typography,
   Container,
 } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { SearchParamsContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
+import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 const Page = ({}) => {
-  const partyName: string = localStorage.getItem("bill_party_name") || "";
-  const filterValue = localStorage.getItem("party_filter_value");
-  const viewType = localStorage.getItem("party_view_type");
-  const billType = localStorage.getItem("party_bill_type");
-  const filterType = localStorage.getItem("party_filter_type") || null;
+    let partyName: string = "";
+    let filterValue: string = "";
+    let viewType: string = "";
+    let billType: string = "";
+    let filterType: string = "";
+
 
   const router = useRouter();
 
   useEffect(() => {
+    partyName= localStorage.getItem("bill_party_name") || "";
+    filterValue = localStorage.getItem("party_filter_value") || "";
+    viewType = localStorage.getItem("party_view_type") || "" ;
+    billType = localStorage.getItem("party_bill_type") || "" ;
+    filterType = localStorage.getItem("party_filter_type") || "";
+
+
     onApi(1, 10);
   }, []);
 
