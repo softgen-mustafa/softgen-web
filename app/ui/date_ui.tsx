@@ -18,6 +18,7 @@ const DateRangePicker = ({
         <Typography className="text-lg">Select Start Date</Typography>
         <DatePicker
           value={fromDate}
+          views={["year", "month", "day"]}
           onChange={(value) => {
             setFromDate(value);
             onDateChange(
@@ -30,6 +31,7 @@ const DateRangePicker = ({
         <Typography className="text-lg">Select End Date</Typography>
         <DatePicker
           value={toDate}
+          views={["year", "month", "day"]}
           onChange={(value) => {
             setToDate(value);
             onDateChange(
