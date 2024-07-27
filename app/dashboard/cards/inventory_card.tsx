@@ -10,10 +10,9 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { Inventory2TwoTone as Icon } from "@mui/icons-material";
-
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { convertToDecimal } from "@/app/services/Local/helper";
-
+import { useRouter } from "next/navigation";
 interface InventoryDetails {
   fastMoving?: { name: string; value: number; amount: number };
   slowMoving?: { name: string; value: number; amount: number };
@@ -36,7 +35,7 @@ interface OverviewResponse {
 const InventoryCard = ({}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [details, setDetails] = useState<InventoryDetails>({ totalAmount: 0 });
-
+  const router = useRouter();
   useEffect(() => {
     inventoryDashboardApi();
   }, []);
@@ -79,10 +78,12 @@ const InventoryCard = ({}) => {
     }
   };
   const navigateToInventoryOverview = (movementCycle: string) => {
-    // Implement navigation logic here
+    router.push("/dashboard/Inventory");
     console.log(`Navigating to ${movementCycle} inventory overview`);
   };
 
+
+ 
   return (
     <Card className="bg-white rounded-2xl shadow-md">
       <CardContent>
