@@ -13,52 +13,59 @@ import { useEffect, useRef, useState } from "react";
 const Page = () => {
   const router = useRouter();
 
-  let filterValue: string = "";
-  let viewType: string = "";
-  let billType: string = "";
-  let filterType: string = "";
+  let filterValue = useRef("");
+  let viewType = useRef("");
+  let billType = useRef("");
+  let filterType = useRef("");
 
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    filterValue = localStorage.getItem("party_filter_value") || "";
-    viewType = localStorage.getItem("party_view_type") || "";
-    billType = localStorage.getItem("party_bill_type") || "";
-    filterType = localStorage.getItem("party_filter_type") || "";
+    filterValue.current = localStorage.getItem("party_filter_value") || "";
+    viewType.current = localStorage.getItem("party_view_type") || "";
+    billType.current = localStorage.getItem("party_bill_type") || "";
+    filterType.current = localStorage.getItem("party_filter_type") || "";
     onApi(1, 10);
   }, []);
 
-  const onApi = async (page: number, pageSize: number) => {
-    let collectionUrl = `${getBmrmBaseUrl()}/bill/get/upcoming-bills?groupType=${billType}&durationType=${filterType}&durationKey=${filterValue}`;
-    let agingUrl = `${getBmrmBaseUrl()}/bill/get/aging-bills?agingCode=${filterValue}&groupType=${billType}`;
-    let totalOutstandingUrl = `${getBmrmBaseUrl()}/bill/get/all-party-bills?groupType=${billType}`;
+  const onApi = async (
+    page: number,
+    pageSize: number,
+    searchValue?: string,
+  ) => {
+    let collectionUrl = `${getBmrmBaseUrl()}/bill/get/upcoming-bills?groupType=${billType.current}&durationType=${filterType.current}&durationKey=${filterValue.current}`;
+    let agingUrl = `${getBmrmBaseUrl()}/bill/get/aging-bills?agingCode=${filterValue.current}&groupType=${billType.current}`;
+    let totalOutstandingUrl = `${getBmrmBaseUrl()}/bill/get/all-party-bills?groupType=${billType.current}`;
 
     let url = totalOutstandingUrl;
-    if (viewType === "upcoming") {
+    if (viewType.current === "upcoming") {
       url = collectionUrl;
-    } else if (viewType === "aging") {
+    } else if (viewType.current === "aging") {
       url = agingUrl;
     }
 
     let requestBody = {
       page_number: page,
       page_size: pageSize,
-      search_text: searchText.current,
+      search_text: searchValue ?? "",
       sort_by: "name",
       sort_order: "asc",
     };
-    let response = await postAsync(url, requestBody);
-    let entries = response.map((entry: any, index: number) => {
-      return {
-        id: index + 1,
-        partyName: entry.name,
-        amount: entry.totalAmount,
-        billCount: entry.billCount,
-        currency: entry.currency ?? "₹",
-      };
-    });
-    setRows(entries);
-    return entries;
+    try {
+      let response = await postAsync(url, requestBody);
+      let entries = response.map((entry: any, index: number) => {
+        return {
+          id: index + 1,
+          partyName: entry.name,
+          amount: entry.totalAmount,
+          billCount: entry.billCount,
+          currency: entry.currency ?? "₹",
+        };
+      });
+      setRows(entries);
+
+      return entries;
+    } catch {}
   };
   const columns: GridColDef<any[number]>[] = [
     {
@@ -88,8 +95,6 @@ const Page = () => {
     },
   ];
 
-  let searchText = useRef("");
-
   const gridConfig: GridConfig[] = [
     {
       type: "item",
@@ -108,19 +113,12 @@ const Page = () => {
           <br />
           <Typography className="text-xl">Party Search</Typography>
           <Typography className="text-2xl">
-            {viewType === "upcoming"
+            {viewType.current === "upcoming"
               ? `View based on filter:  ${filterType}`
-              : viewType == "aging"
-              ? `Aging-wise outstanding values`
-              : `All parties outstanding values`}
+              : viewType.current == "aging"
+                ? `Aging-wise outstanding values`
+                : `All parties outstanding values`}
           </Typography>
-          <br />
-          <SearchInput
-            placeHolder="Search..."
-            onTextChange={(value) => {
-              searchText.current = value;
-            }}
-          />
           <br />
           <Container className="overflow-x-auto flex">
             <PieChart
@@ -175,14 +173,21 @@ const Page = () => {
         <CardView>
           <DataTable
             columns={columns}
-            onApi={async (page, pageSize) => {
-              return await onApi(page, pageSize);
+            useSearch={true}
+            onApi={async (page, pageSize, searchText) => {
+              return await onApi(page, pageSize, searchText);
             }}
             onRowClick={(params) => {
-              localStorage.setItem("party_filter_value", filterValue || "");
-              localStorage.setItem("party_view_type", viewType || "");
-              localStorage.setItem("party_bill_type", billType || "");
-              localStorage.setItem("party_filter_type", filterType || "");
+              localStorage.setItem(
+                "party_filter_value",
+                filterValue.current || "",
+              );
+              localStorage.setItem("party_view_type", viewType.current || "");
+              localStorage.setItem("party_bill_type", billType.current || "");
+              localStorage.setItem(
+                "party_filter_type",
+                filterType.current || "",
+              );
               localStorage.setItem("bill_party_name", params.row.partyName);
               router.push("/dashboard/outstanding/bill-detail");
             }}

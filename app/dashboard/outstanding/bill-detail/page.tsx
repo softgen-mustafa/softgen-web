@@ -3,34 +3,27 @@ import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
 import { DataTable } from "@/app/ui/data_grid";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { ChevronLeftRounded } from "@mui/icons-material";
-import {
-  Grid,
-  IconButton,
-  Typography,
-  Container,
-} from "@mui/material";
+import { Grid, IconButton, Typography, Container } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
 import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 const Page = ({}) => {
-    let partyName: string = "";
-    let filterValue: string = "";
-    let viewType: string = "";
-    let billType: string = "";
-    let filterType: string = "";
-
+  let partyName = useRef("");
+  let filterValue = useRef("");
+  let viewType = useRef("");
+  let billType = useRef("");
+  let filterType = useRef("");
 
   const router = useRouter();
 
   useEffect(() => {
-    partyName= localStorage.getItem("bill_party_name") || "";
-    filterValue = localStorage.getItem("party_filter_value") || "";
-    viewType = localStorage.getItem("party_view_type") || "" ;
-    billType = localStorage.getItem("party_bill_type") || "" ;
-    filterType = localStorage.getItem("party_filter_type") || "";
-
+    partyName.current = localStorage.getItem("bill_party_name") || "";
+    filterValue.current = localStorage.getItem("party_filter_value") || "";
+    viewType.current = localStorage.getItem("party_view_type") || "";
+    billType.current = localStorage.getItem("party_bill_type") || "";
+    filterType.current = localStorage.getItem("party_filter_type") || "";
 
     onApi(1, 10);
   }, []);
@@ -81,8 +74,6 @@ const Page = ({}) => {
     },
   ];
 
-  let searchText = useRef("");
-
   const gridConfig: GridConfig[] = [
     {
       type: "item",
@@ -100,7 +91,7 @@ const Page = ({}) => {
           </div>
           <br />
           <Typography className="text-lg">Party Name,</Typography>
-          <Typography className="text-2xl">{partyName}</Typography>
+          <Typography className="text-2xl">{partyName.current}</Typography>
           <br />
           <Container className="overflow-x-auto flex">
             <PieChart
@@ -155,8 +146,9 @@ const Page = ({}) => {
         <CardView>
           <DataTable
             columns={columns}
-            onApi={async (page, pageSize) => {
-              return onApi(page, pageSize);
+            useSearch={true}
+            onApi={async (page, pageSize, searchText) => {
+              return onApi(page, pageSize, searchText);
             }}
             onRowClick={(params) => {}}
           />
@@ -167,29 +159,33 @@ const Page = ({}) => {
     },
   ];
 
-  const onApi = async (page: number, pageSize: number) => {
-    let party = partyName.replace("&", "%26");
+  const onApi = async (
+    page: number,
+    pageSize: number,
+    searchValue?: string,
+  ) => {
+    let party = partyName.current.replace("&", "%26");
     let collectionUrl = `${getBmrmBaseUrl()}/bill/get/upcoming-bill-detail`;
-    let agingUrl = `${getBmrmBaseUrl()}/bill/get/aging-bill-detail?agingCode=${filterValue}&groupType=${billType}&partyName=${party}`;
-    let totalOutstandingUrl = `${getBmrmBaseUrl()}/bill/get/party-bill-detail?groupType=${billType}&partyName=${party}`;
+    let agingUrl = `${getBmrmBaseUrl()}/bill/get/aging-bill-detail?agingCode=${filterValue.current}&groupType=${billType.current}&partyName=${party}`;
+    let totalOutstandingUrl = `${getBmrmBaseUrl()}/bill/get/party-bill-detail?groupType=${billType.current}&partyName=${party}`;
 
     let url = totalOutstandingUrl;
-    if (viewType === "upcoming") {
+    if (viewType.current === "upcoming") {
       url = collectionUrl;
-    } else if (viewType === "aging") {
+    } else if (viewType.current === "aging") {
       url = agingUrl;
     }
-    let requestBody;
-    if (viewType === "upcoming") {
+    let requestBody = {};
+    if (viewType.current === "upcoming") {
       requestBody = {
-        groupType: billType,
-        durationType: filterType,
-        durationKey: filterValue,
-        partyName: partyName,
+        groupType: billType.current,
+        durationType: filterType.current,
+        durationKey: filterValue.current,
+        partyName: partyName.current,
         filter: {
           page_number: page,
           page_size: pageSize,
-          search_text: searchText.current,
+          search_text: searchValue ?? "",
           sort_by: "billNumber",
           sort_order: "asc",
         },
@@ -198,7 +194,7 @@ const Page = ({}) => {
       requestBody = {
         page_number: page,
         page_size: pageSize,
-        search_text: searchText.current,
+        search_text: searchValue ?? "",
         sort_by: "billNumber",
         sort_order: "",
       };

@@ -8,9 +8,13 @@ import { SearchInput } from "./text_inputs";
 interface TableViewProps {
   columns: GridColDef<any>[];
   refresh?: boolean;
-  onApi: (page: number, pageSize: number) => Promise<any[]>;
+  onApi: (
+    page: number,
+    pageSize: number,
+    searchText?: string,
+  ) => Promise<any[]>;
   onRowClick: (params: any) => void;
-  onSearch?: (key: string) => void;
+  useSearch?: boolean;
 }
 
 const DataTable: React.FC<TableViewProps> = ({
@@ -18,7 +22,7 @@ const DataTable: React.FC<TableViewProps> = ({
   refresh,
   onApi,
   onRowClick,
-  onSearch,
+  useSearch,
 }) => {
   const [rows, setRows] = useState<any[]>([]);
   const [paginationModel, setPaginationModel] = useState({
@@ -30,18 +34,17 @@ const DataTable: React.FC<TableViewProps> = ({
     onApi(paginationModel.page + 1, paginationModel.pageSize).then(
       (entries) => {
         setRows(entries);
-      }
+      },
     );
   }, [columns, refresh]);
 
   return (
     <Container>
-      {onSearch != null && (
+      {useSearch && (
         <SearchInput
           placeHolder="Search..."
           onTextChange={(value) => {
-            onSearch(value);
-            onApi(paginationModel.page + 1, paginationModel.pageSize);
+            onApi(paginationModel.page + 1, paginationModel.pageSize, value);
           }}
         />
       )}
