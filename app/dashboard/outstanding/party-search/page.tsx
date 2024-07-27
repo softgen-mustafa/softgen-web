@@ -1,4 +1,5 @@
 "use client";
+import { numericToString } from "@/app/services/Local/helper";
 import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
 import { DataTable } from "@/app/ui/data_grid";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
@@ -18,6 +19,7 @@ const Page = () => {
   let billType = useRef("");
   let filterType = useRef("");
 
+  const [refresh, triggerRefresh] = useState(false);
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
@@ -25,7 +27,7 @@ const Page = () => {
     viewType.current = localStorage.getItem("party_view_type") || "";
     billType.current = localStorage.getItem("party_bill_type") || "";
     filterType.current = localStorage.getItem("party_filter_type") || "";
-    onApi(1, 10);
+    triggerRefresh(!refresh);
   }, []);
 
   const onApi = async (
@@ -83,7 +85,8 @@ const Page = () => {
       sortable: true,
       minWidth: 100,
       maxWidth: 400,
-      valueGetter: (value, row) => `${row.currency || ""} ${row.amount || "0"}`,
+      valueGetter: (value, row) =>
+        `${row.currency || ""} ${row.amount != null ? numericToString(row.amount) : "0"}`,
     },
     {
       field: "billCount",
@@ -173,6 +176,7 @@ const Page = () => {
         <CardView>
           <DataTable
             columns={columns}
+            refresh={refresh}
             useSearch={true}
             onApi={async (page, pageSize, searchText) => {
               return await onApi(page, pageSize, searchText);

@@ -1,6 +1,6 @@
 "use client";
 
-import { Container } from "@mui/material";
+import { CircularProgress, Container } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import { SearchInput } from "./text_inputs";
@@ -29,24 +29,38 @@ const DataTable: React.FC<TableViewProps> = ({
     page: 0,
     pageSize: 10,
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     onApi(paginationModel.page + 1, paginationModel.pageSize).then(
       (entries) => {
         setRows(entries);
+        setLoading(false);
       },
     );
-  }, [columns, refresh]);
+  }, [refresh]);
 
   return (
     <Container>
+      {loading && <CircularProgress />}
       {useSearch && (
-        <SearchInput
-          placeHolder="Search..."
-          onTextChange={(value) => {
-            onApi(paginationModel.page + 1, paginationModel.pageSize, value);
-          }}
-        />
+        <div className="w-full flex flex-row justify-end mb-4">
+          <SearchInput
+            placeHolder="Search..."
+            onTextChange={(value) => {
+              setLoading(true);
+              onApi(
+                paginationModel.page + 1,
+                paginationModel.pageSize,
+                value,
+              ).then((entries) => {
+                setRows(entries);
+                setLoading(false);
+              });
+            }}
+          />
+        </div>
       )}
       <DataGrid
         columns={columns}
@@ -60,15 +74,17 @@ const DataTable: React.FC<TableViewProps> = ({
             paginationModel: paginationModel,
           },
         }}
-        pageSizeOptions={[5, 10, 25, 50, 75, 100]}
+        pageSizeOptions={[10, 25, 50, 75, 100]}
         disableRowSelectionOnClick
         onRowClick={(params) => {
           onRowClick(params);
         }}
         onPaginationModelChange={(value) => {
           setPaginationModel(value);
+          setLoading(true);
           onApi(value.page + 1, value.pageSize).then((entries) => {
             setRows(entries);
+            setLoading(false);
           });
         }}
       />

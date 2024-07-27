@@ -11,11 +11,14 @@ const SearchInput = ({
   onTextChange: (value: string) => void;
 }) => {
   return (
-    <div className="flex flex-row w-full">
+    <div className="flex flex-row w-full ">
       <TextField
         label={placeHolder}
         variant="outlined"
         type={"text"}
+        sx={{
+          flex: 1,
+        }}
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
