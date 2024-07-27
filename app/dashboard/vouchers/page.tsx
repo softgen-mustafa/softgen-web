@@ -51,12 +51,14 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
     try {
       let url = `${getBmrmBaseUrl()}/meta-voucher/item-group/overview?voucherType=${voucherType}`;
       let response = await postAsync(url, {});
-      setData(response.map((entry: any) => {
-        return {
-          id: entry.itemGroup,
-          ...entry
-        }
-      }));
+      setData(
+        response.map((entry: any) => {
+          return {
+            id: entry.itemGroup,
+            ...entry,
+          };
+        }),
+      );
     } catch {
       alert("Could not load data");
     }
@@ -81,7 +83,6 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
     </div>
   );
 };
-
 
 const BillsCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
@@ -129,12 +130,14 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
     try {
       let url = `${getBmrmBaseUrl()}/meta-voucher/bill/overview?voucherType=${voucherType}`;
       let response = await postAsync(url, {});
-      setData(response.map((entry: any) => {
-        return {
-          id: entry.voucherNumber,
-          ...entry
-        }
-      }));
+      setData(
+        response.map((entry: any) => {
+          return {
+            id: entry.voucherNumber,
+            ...entry,
+          };
+        }),
+      );
     } catch {
       alert("Could not load data");
     }
@@ -159,7 +162,6 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
     </div>
   );
 };
-
 
 const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
@@ -191,14 +193,16 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
     try {
       let url = `${getBmrmBaseUrl()}/meta-voucher/monthly/overview?voucherType=${voucherType}`;
       let response = await postAsync(url, {});
-      console.log(`response: ${JSON.stringify(response)}`)
-      setData(response.map((entry: any) => {
-        return {
-          id: entry.monthStr,
-          monthStr: entry.monthStr,
-          preGstAmount: entry.preGstAmount,
-        }
-      }));
+      console.log(`response: ${JSON.stringify(response)}`);
+      setData(
+        response.map((entry: any) => {
+          return {
+            id: entry.monthStr,
+            monthStr: entry.monthStr,
+            preGstAmount: entry.preGstAmount,
+          };
+        }),
+      );
     } catch {
       alert("Could not load data");
     }
@@ -262,14 +266,16 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
     try {
       let url = `${getBmrmBaseUrl()}/meta-voucher/monthly/customer/overview?voucherType=${voucherType}`;
       let response = await postAsync(url, {});
-      setData(response.map((entry: any) => {
-        return {
-          id: entry.partyName,
-          partyName: entry.partyName,
-          monthStr: entry.monthStr,
-          preGstAmount: entry.preGstAmount
-        }
-      }));
+      setData(
+        response.map((entry: any) => {
+          return {
+            id: entry.partyName,
+            partyName: entry.partyName,
+            monthStr: entry.monthStr,
+            preGstAmount: entry.preGstAmount,
+          };
+        }),
+      );
     } catch {
       alert("Could not load data");
     }
@@ -315,7 +321,7 @@ const Page = () => {
             id: entry.name,
             name: entry.name,
           };
-        })
+        }),
       );
     } catch {
       alert("Could not load voucher types");
@@ -349,7 +355,7 @@ const Page = () => {
               setVoucherType(selection.name);
             }}
           />
-          <MonthlySalesCard voucherType={selectedVoucherType}/>
+          <MonthlySalesCard voucherType={selectedVoucherType} />
         </CardView>
       ),
       children: [],
@@ -359,7 +365,7 @@ const Page = () => {
       className: "",
       view: (
         <CardView>
-          <MonthlyCustomerSalesCard voucherType={selectedVoucherType}/>
+          <MonthlyCustomerSalesCard voucherType={selectedVoucherType} />
         </CardView>
       ),
       children: [],
@@ -369,7 +375,7 @@ const Page = () => {
       className: "",
       view: (
         <CardView>
-          <ItemGroupCard voucherType={selectedVoucherType}/>
+          <ItemGroupCard voucherType={selectedVoucherType} />
         </CardView>
       ),
       children: [],
@@ -379,7 +385,7 @@ const Page = () => {
       className: "",
       view: (
         <CardView>
-          <BillsCard voucherType={selectedVoucherType}/>
+          <BillsCard voucherType={selectedVoucherType} />
         </CardView>
       ),
       children: [],

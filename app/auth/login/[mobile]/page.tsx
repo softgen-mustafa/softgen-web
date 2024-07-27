@@ -7,7 +7,7 @@ import { Button, Grid } from "@mui/material";
 import { btoa } from "buffer";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-let Cookies = require("js-cookie");
+import Cookies from "js-cookie";
 
 const Page = ({ params }: { params: any }) => {
   const router = useRouter();
@@ -62,9 +62,9 @@ const Page = ({ params }: { params: any }) => {
           <br />
           <div className="flex flex-row justify-end">
             <Button
-            style={{
-              background: inspiredPalette.dark
-            }}
+              style={{
+                background: inspiredPalette.dark,
+              }}
               variant="contained"
               onClick={() => {
                 onSubmit();
@@ -119,7 +119,7 @@ const Page = ({ params }: { params: any }) => {
         return false;
       }
       let tokenInfo = response["token"];
-      Cookies.set("authToken", tokenInfo["value"]);
+      Cookies.set("authToken", tokenInfo["value"], { expires: 14 });
       return true;
     } catch {}
   };
@@ -139,7 +139,8 @@ const Page = ({ params }: { params: any }) => {
     router.push("/dashboard");
   };
 
-  return <div>
+  return (
+    <div>
       <Grid
         container
         sx={{
@@ -149,7 +150,8 @@ const Page = ({ params }: { params: any }) => {
       >
         {RenderGrid(gridConfig)}
       </Grid>
-  </div>;
+    </div>
+  );
 };
 
 export default Page;

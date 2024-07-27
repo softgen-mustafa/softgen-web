@@ -16,6 +16,8 @@
     "@mui/material": "^5.16.4",
     "@mui/x-charts": "^7.11.0",
     "@mui/x-data-grid": "^7.11.0",
+    "@mui/x-date-pickers": "^7.11.1",
+    "@types/js-cookie": "^3.0.6",
     "axios": "^1.7.2",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.12",

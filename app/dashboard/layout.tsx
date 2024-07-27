@@ -5,6 +5,7 @@ import {
   MenuRounded,
   PendingActions,
   Receipt,
+  Settings,
 } from "@mui/icons-material";
 import {
   Box,
@@ -40,6 +41,11 @@ const drawerNavigations = [
     destination: "/dashboard/vouchers",
     icon: <Receipt />,
   },
+  {
+    title: "Settings",
+    destination: "/dashboard/settings",
+    icon: <Settings />,
+  },
 ];
 
 const DrawerContent = () => {
@@ -47,16 +53,17 @@ const DrawerContent = () => {
 
   return (
     <div className="flex flex-col w-full h-full overflow-x-hidden" style={{}}>
-      <div className="flex flex-row justify-center md:justify-start items-center pt-1 pl-3 z-50" style={{
-        background: inspiredPalette.dark,
-        borderTopRightRadius: 20,
-        borderBottomRightRadius: 20,
-      }}>
-        <Typography style={{color: 'white'}}>Log-out</Typography>
-        <IconButton size="medium" style={{color:'white'
-          
-        }}>
-          <Logout fontSize="inherit"/>
+      <div
+        className="flex flex-row justify-center md:justify-start items-center pt-1 pl-3 z-50"
+        style={{
+          background: inspiredPalette.dark,
+          borderTopRightRadius: 20,
+          borderBottomRightRadius: 20,
+        }}
+      >
+        <Typography style={{ color: "white" }}>Log-out</Typography>
+        <IconButton size="medium" style={{ color: "white" }}>
+          <Logout fontSize="inherit" />
         </IconButton>
       </div>
       <List>
@@ -155,8 +162,10 @@ export default function DashboardLayout({
   return (
     <div className="w-full h-[100vh] flex flex-col md:flex-row bg-grey-200">
       <SideNav />
-      <Box component={"div"} className="ml-1 w-full overflow-x-hidden" >
-        <div className="w-full h-full overflow-x-hidden bg-gray-100">{children}</div>
+      <Box component={"div"} className="ml-1 w-full overflow-x-hidden">
+        <div className="w-full h-full overflow-x-hidden bg-gray-100">
+          {children}
+        </div>
       </Box>
     </div>
   );

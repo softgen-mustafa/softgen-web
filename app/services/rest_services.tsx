@@ -3,8 +3,7 @@
 import KeyStore from "@/keys";
 import axios from "axios";
 var CryptoJS = require("crypto-js");
-var Cookies = require("js-cookie");
-
+import Cookies from "js-cookie";
 
 let _key = KeyStore.secret_key;
 let _iv = KeyStore.iv;
@@ -16,7 +15,7 @@ const postAsync = async (url: string, requestBody: any) => {
     // token: Cookies.get("authToken") ?? "",
     // companyid: Cookies.get("companyId") ?? 1,
     token: Cookies.get("authToken") ?? "",
-    companyid: "df89b80e-9048-49f1-9c5e-0c88fe9886f0"
+    companyid: "df89b80e-9048-49f1-9c5e-0c88fe9886f0",
   };
 
   //  console.log("----------- This is my Headers Value look. ----------------",appHeaders)
@@ -44,15 +43,18 @@ const getAsync = async (url: string) => {
     // token: Cookies.get("authToken") ?? "",
     // companyid: Cookies.get("companyId") ?? 1,
     token: Cookies.get("authToken") ?? "",
-    companyid: "df89b80e-9048-49f1-9c5e-0c88fe9886f0"
+    companyid: "df89b80e-9048-49f1-9c5e-0c88fe9886f0",
   };
-  console.log("----------- This is my Headers Value look. ----------------",appHeaders)
+  console.log(
+    "----------- This is my Headers Value look. ----------------",
+    appHeaders,
+  );
   // console.log("----------- This is my url Value look. ----------------",url)
 
   return axios
     .get(url, { headers: appHeaders, withCredentials: false })
     .then((response) => {
-    // console.log(`[Company:${appHeaders.CompanyId}]::[URL: ${url}]::[encrypted-data: ${JSON.stringify(response.data)}]`);
+      // console.log(`[Company:${appHeaders.CompanyId}]::[URL: ${url}]::[encrypted-data: ${JSON.stringify(response.data)}]`);
       // console.log(`GET ${url}`);
       // console.log("received from server ", response.status);
       return response.data;
@@ -101,7 +103,7 @@ const _unwrap = (encryptedData: any) => {
     parsedKey,
     {
       iv: parsedIv,
-    }
+    },
   );
   if (!decryptedData) {
     return null;
@@ -113,17 +115,17 @@ const _unwrap = (encryptedData: any) => {
 };
 const getBmrmBaseUrl = () => {
   return `${getBaseUrl()}/bmrm/api`;
-}
+};
 
 const getUmsBaseUrl = () => {
   return `${getBaseUrl()}/ums/api`;
-}
+};
 
 const getBaseUrl = () => {
-  //Local 
-    // return "http://192.168.1.2:5000";
- //GoDadddddddy 
+  //Local
+  // return "http://192.168.1.2:5000";
+  //GoDadddddddy
   return "http://118.139.167.125:45400";
-}
+};
 
 export { postAsync, getAsync, getBmrmBaseUrl, getUmsBaseUrl };
