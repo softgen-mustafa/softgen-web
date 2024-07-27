@@ -6,6 +6,7 @@ import {
   PendingActions,
   Receipt,
   Settings,
+  Inventory
 } from "@mui/icons-material";
 import {
   Box,
@@ -40,6 +41,11 @@ const drawerNavigations = [
     title: "Transactions",
     destination: "/dashboard/vouchers",
     icon: <Receipt />,
+  },
+  {
+    title: "Inventory",
+    destination: "/dashboard/Inventory",
+    icon: <Inventory />,
   },
   {
     title: "Settings",
