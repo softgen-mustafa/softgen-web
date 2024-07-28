@@ -78,18 +78,21 @@ const Page = ({}) => {
     {
       type: "item",
       view: (
-        <CardView className="">
-          <div className="flex flex-row items-center">
+        <CardView
+          className="h-fit max-h-fit"
+          title="Bill Detail"
+          actions={[
             <IconButton
+              key={1}
               onClick={() => {
                 router.back();
               }}
             >
               <ChevronLeftRounded />
-            </IconButton>
-            <Typography>Go Back</Typography>
-          </div>
-          <br />
+              <Typography>Go Back</Typography>
+            </IconButton>,
+          ]}
+        >
           <Typography className="text-lg">Party Name,</Typography>
           <Typography className="text-2xl">{partyName.current}</Typography>
           <br />
@@ -125,7 +128,7 @@ const Page = ({}) => {
                   }),
                   innerRadius: 30,
                   outerRadius: 100,
-                  paddingAngle: 5,
+                  paddingAngle: 1,
                   cornerRadius: 5,
                   startAngle: 0,
                   endAngle: 360,
@@ -143,7 +146,7 @@ const Page = ({}) => {
     {
       type: "item",
       view: (
-        <CardView>
+        <CardView title="Bills">
           <DataTable
             columns={columns}
             useSearch={true}
@@ -199,25 +202,25 @@ const Page = ({}) => {
         sort_order: "",
       };
     }
-    let response = await postAsync(url, requestBody);
+    try {
+      let response = await postAsync(url, requestBody);
+      let entries = response.map((entry: any, index: number) => {
+        return {
+          id: index + 1, //entry.bill_id,
+          billNumber: entry.billNumber,
+          amount: entry.totalAmount,
+          dueDate: entry.dueDate,
+          breachDays: entry.breachDays,
+          billDate: entry.billDate,
+          currency: entry.currency ?? "₹",
+        };
+      });
 
-    let entries = response.map((entry: any, index: number) => {
-      return {
-        id: index + 1, //entry.bill_id,
-        billNumber: entry.billNumber,
-        amount: entry.totalAmount,
-        dueDate: entry.dueDate,
-        breachDays: entry.breachDays,
-        billDate: entry.billDate,
-        currency: entry.currency ?? "₹",
-      };
-    });
+      setRows(entries);
 
+      return entries;
+    } catch {}
     //  console.log(`requestBody Party bill Detail : ${JSON.stringify(entries,  0 , index =2 )}`)
-
-    setRows(entries);
-
-    return entries;
   };
 
   return (

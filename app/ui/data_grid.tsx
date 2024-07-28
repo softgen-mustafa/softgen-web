@@ -1,6 +1,6 @@
 "use client";
 
-import { CircularProgress, Container } from "@mui/material";
+import { Box, CircularProgress, Container } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import { SearchInput } from "./text_inputs";
@@ -42,7 +42,7 @@ const DataTable: React.FC<TableViewProps> = ({
   }, [refresh]);
 
   return (
-    <Container>
+    <Box className="h-fit">
       {loading && <CircularProgress />}
       {useSearch && (
         <div className="w-full flex flex-row justify-end mb-4">
@@ -65,7 +65,8 @@ const DataTable: React.FC<TableViewProps> = ({
       <DataGrid
         columns={columns}
         rows={rows}
-        rowCount={10000}
+        className="h-fit max-h-fit"
+        rowCount={100}
         pagination
         paginationMode="server"
         paginationModel={paginationModel}
@@ -75,7 +76,6 @@ const DataTable: React.FC<TableViewProps> = ({
           },
         }}
         pageSizeOptions={[10, 25, 50, 75, 100]}
-        disableRowSelectionOnClick
         onRowClick={(params) => {
           onRowClick(params);
         }}
@@ -88,7 +88,7 @@ const DataTable: React.FC<TableViewProps> = ({
           });
         }}
       />
-    </Container>
+    </Box>
   );
 };
 

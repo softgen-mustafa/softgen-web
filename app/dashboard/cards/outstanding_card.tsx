@@ -76,44 +76,43 @@ const OutstandingCard = () => {
 
   const handleCardClick = () => {
     router.push("/dashboard/outstanding");
-
   };
 
   return (
-    <Card className="bg-white shadow-md" sx={{ borderRadius: 6 }}>
+    <div>
       {isLoading ? (
         <CardContent className="flex justify-center items-center h-40">
           <CircularProgress />
         </CardContent>
       ) : (
         <Box onClick={handleCardClick} sx={{ cursor: "pointer" }}>
-        <CardContent className="p-6">
-          <Typography variant="h6" className="text-gray-800 mb-4">
-            Outstanding Overview
-          </Typography>
-          <Grid container spacing={2} className="mb-1">
-            <Grid item xs={6}>
-              <AmountDisplay
-                title={data?.payableTitle || "Payable"}
-                amount={data?.payableAmount || 0}
-              />
+          <CardContent className="p-0">
+            <Typography variant="h6" className="text-gray-800 mb-4">
+              Outstanding Overview
+            </Typography>
+            <Grid container spacing={2} className="mb-1">
+              <Grid item xs={6}>
+                <AmountDisplay
+                  title={data?.payableTitle || "Payable"}
+                  amount={data?.payableAmount || 0}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <AmountDisplay
+                  title={data?.receivableTitle || "Receivable"}
+                  amount={data?.receivableAmount || 0}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={6}>
-              <AmountDisplay
-                title={data?.receivableTitle || "Receivable"}
-                amount={data?.receivableAmount || 0}
-              />
-            </Grid>
-          </Grid>
-          <div className="flex justify-end">
-            <IconButton size="small">
-              <ChevronRight />
-            </IconButton>
-          </div>
-        </CardContent>
+            <div className="flex justify-end">
+              <IconButton size="small">
+                <ChevronRight />
+              </IconButton>
+            </div>
+          </CardContent>
         </Box>
       )}
-    </Card>
+    </div>
   );
 };
 

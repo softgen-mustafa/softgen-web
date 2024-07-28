@@ -12,9 +12,7 @@ const Page = () => {
       type: "item",
       children: [],
       view: (
-        <CardView>
-          <Typography className="text-xl">Set Date-Range</Typography>
-          <br />
+        <CardView className="h-fit" title="Date Range Setting">
           <DateRangePicker
             onDateChange={(fromDate, toDate) => {
               Cookies.set("fromDate", fromDate ?? "", { expires: 365 });
@@ -28,7 +26,7 @@ const Page = () => {
       type: "item",
       children: [],
       view: (
-        <CardView>
+        <CardView className="h-fit" title="Aging Settings">
           <AgingSettings />
         </CardView>
       ),

@@ -75,16 +75,12 @@ const Page = () => {
       headerName: "Name",
       editable: false,
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
     },
     {
       field: "amount",
       headerName: "Value",
       editable: false,
       sortable: true,
-      minWidth: 100,
-      maxWidth: 400,
       valueGetter: (value, row) =>
         `${row.currency || ""} ${row.amount != null ? numericToString(row.amount) : "0"}`,
     },
@@ -93,8 +89,6 @@ const Page = () => {
       headerName: "Total Bills",
       editable: false,
       sortable: true,
-      minWidth: 50,
-      maxWidth: 400,
     },
   ];
 
@@ -102,19 +96,21 @@ const Page = () => {
     {
       type: "item",
       view: (
-        <CardView className="">
-          <div className="flex flex-row items-center">
+        <CardView
+          className="max-h-fit h-fit"
+          title="Party Search"
+          actions={[
             <IconButton
+              key={1}
               onClick={() => {
                 router.back();
               }}
             >
               <ChevronLeftRounded />
-            </IconButton>
-            <Typography>Go Back</Typography>
-          </div>
-          <br />
-          <Typography className="text-xl">Party Search</Typography>
+              <Typography>Go Back</Typography>
+            </IconButton>,
+          ]}
+        >
           <Typography className="text-2xl">
             {viewType.current === "upcoming"
               ? `View based on filter:  ${filterType}`
@@ -155,7 +151,7 @@ const Page = () => {
                   }),
                   innerRadius: 30,
                   outerRadius: 100,
-                  paddingAngle: 5,
+                  paddingAngle: 1,
                   cornerRadius: 5,
                   startAngle: 0,
                   endAngle: 360,
@@ -173,7 +169,7 @@ const Page = () => {
     {
       type: "item",
       view: (
-        <CardView>
+        <CardView title="Parties">
           <DataTable
             columns={columns}
             refresh={refresh}

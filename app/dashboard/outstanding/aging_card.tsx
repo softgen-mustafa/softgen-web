@@ -29,28 +29,26 @@ interface AgingCardProps {
 
 const AgingCard: React.FC<AgingCardProps> = ({ data, onPress }) => {
   return (
-    <Card
-      className="shadow-md bg-gray-50 mt-1 mb-1"
+    <Box
+      className="shadow-sm bg-gray-50 mt-1 mb-1 p-2 justify-center items-center"
       sx={{
-        minWidth: 200,
+        minWidth: 180,
         marginRight: 2,
-        borderLeftWidth: 8,
-        borderLeftColor: inspiredPalette.Pumpkin,
-        height: 80,
+        borderWidth: 2,
+        height: 70,
+        borderRadius: 2,
       }}
       onClick={() => {
         onPress();
       }}
     >
-      <CardContent>
-        <Typography component="div" className="text-lg">
-          {data.title}
-        </Typography>
-        <Typography component="div" className="text-sm">
-          {numericToString(data.amount)}
-        </Typography>
-      </CardContent>
-    </Card>
+      <Typography component="div" className="text-xl text-red-500">
+        {numericToString(data.amount)}
+      </Typography>
+      <Typography component="div" className="text-md">
+        {data.title}
+      </Typography>
+    </Box>
   );
 };
 
@@ -94,10 +92,10 @@ const AgingView = ({ billType }: { billType: string }) => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col ">
       <PieChart
         height={300}
-        width={300}
+        width={320}
         margin={{ top: 100, left: 100, bottom: 100, right: 100 }}
         sx={{
           borderWidth: 2,
@@ -105,6 +103,7 @@ const AgingView = ({ billType }: { billType: string }) => {
           marginBottom: 2,
           justifyContent: "center",
           alignItems: "center",
+          alignSelf: "center",
         }}
         slotProps={{
           legend: {

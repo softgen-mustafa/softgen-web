@@ -21,6 +21,7 @@ import {
   ChevronLeft,
   ChevronLeftRounded,
   ChevronRight,
+  ChevronRightRounded,
   PendingActions,
 } from "@mui/icons-material";
 import { AgingView } from "./aging_card";
@@ -120,18 +121,36 @@ const Page = () => {
         {
           type: "item",
           view: (
-            <CardView className="">
-              <div className="flex flex-row items-center">
+            <CardView
+              title="Overview"
+              actions={[
                 <IconButton
+                  key={1}
                   onClick={() => {
                     router.back();
                   }}
                 >
                   <ChevronLeftRounded />
-                </IconButton>
-                <Typography>Go Back</Typography>
-              </div>
-              <br />
+                  <Typography>Go Back</Typography>
+                </IconButton>,
+                <IconButton
+                  key={2}
+                  onClick={() => {
+                    localStorage.setItem("party_filter_value", "");
+                    localStorage.setItem("party_view_type", "all");
+                    localStorage.setItem(
+                      "party_bill_type",
+                      selectedType.current.code,
+                    );
+                    localStorage.setItem("party_filter_type", "");
+                    router.push("/dashboard/outstanding/party-search");
+                  }}
+                >
+                  <Typography>View All</Typography>
+                  <ChevronRightRounded />
+                </IconButton>,
+              ]}
+            >
               <DropDown
                 label="Select Type"
                 displayFieldKey={"label"}
@@ -144,98 +163,12 @@ const Page = () => {
                   loadUpcoming();
                 }}
               />
-            </CardView>
-          ),
-          className: "",
-          children: [],
-        },
-        {
-          type: "item",
-          view: (
-            <CardView className="">
-              <div>
-                <PendingActions
-                  fontSize="large"
-                  style={{
-                    flex: 1,
-                    fontSize: 80,
-                  }}
-                />
-              </div>
+              <br />
               <br />
               <Typography className="text-xl flex">Total Pending</Typography>
               <Typography className="text-2xl md:text-3xl mt-2 flex">
                 {totalAmount}
               </Typography>
-              <br />
-              <div className="flex flex-row justify-end">
-                <Button
-                  variant="contained"
-                  className="mt-2"
-                  style={{
-                    background: inspiredPalette.dark,
-                  }}
-                  onClick={() => {
-                    localStorage.setItem("party_filter_value", "");
-                    localStorage.setItem("party_view_type", "all");
-                    localStorage.setItem(
-                      "party_bill_type",
-                      selectedType.current.code
-                    );
-                    localStorage.setItem("party_filter_type", "");
-                    router.push("/dashboard/outstanding/party-search");
-                  }}
-                >
-                  <Typography className="text-lg">View</Typography>
-                </Button>
-              </div>
-            </CardView>
-          ),
-          className: "",
-          children: [],
-        },
-        {
-          type: "item",
-          view: (
-            <CardView className="flex flex-col justify-center">
-              <Container className="flex overflow-x-auto">
-                {filters.map((card, index) => (
-                  <Card
-                    key={index}
-                    className="shadow-xl mr-4 rounded-xl"
-                    sx={{
-                      minWidth: 100,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: 60,
-                      background: card.isSelected
-                        ? inspiredPalette.darkPurple
-                        : inspiredPalette.lightTextGrey,
-                      color: card.isSelected ? "white" : inspiredPalette.dark,
-                    }}
-                    onClick={(event) => {
-                      let values: any[] = filters;
-                      values = values.map((entry: any) => {
-                        let isSelected = card.value === entry.value;
-                        entry.isSelected = isSelected;
-                        return entry;
-                      });
-                      updateFilters(values);
-                      selectedFilter.current = card;
-                      loadUpcoming();
-                    }}
-                  >
-                    <CardContent>
-                      <Typography
-                        component="div"
-                        className="flex justify-center items-center"
-                      >
-                        {card.label}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                ))}
-              </Container>
             </CardView>
           ),
           className: "",
@@ -246,7 +179,7 @@ const Page = () => {
     {
       type: "item",
       view: (
-        <CardView>
+        <CardView title="Aging-Wise O/S">
           <AgingView billType={selectedType.current.code} />
         </CardView>
       ),
@@ -256,7 +189,44 @@ const Page = () => {
     {
       type: "item",
       view: (
-        <CardView>
+        <CardView title="Upcoming Collections">
+          <Container className="flex overflow-x-auto">
+            {filters.map((card, index) => (
+              <Box
+                key={index}
+                className="shadow-xl mr-4 rounded-3xl"
+                sx={{
+                  minWidth: 100,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: 40,
+                  background: card.isSelected
+                    ? inspiredPalette.darkPurple
+                    : inspiredPalette.lightTextGrey,
+                  color: card.isSelected ? "white" : inspiredPalette.dark,
+                }}
+                onClick={(event) => {
+                  let values: any[] = filters;
+                  values = values.map((entry: any) => {
+                    let isSelected = card.value === entry.value;
+                    entry.isSelected = isSelected;
+                    return entry;
+                  });
+                  updateFilters(values);
+                  selectedFilter.current = card;
+                  loadUpcoming();
+                }}
+              >
+                <Typography
+                  component="div"
+                  className="flex h-full w-full flex-row justify-center items-center"
+                >
+                  {card.label}
+                </Typography>
+              </Box>
+            ))}
+          </Container>
+          <br />
           <DataGrid
             columns={columns}
             rows={rows}
@@ -272,11 +242,11 @@ const Page = () => {
               localStorage.setItem("party_view_type", "upcoming");
               localStorage.setItem(
                 "party_bill_type",
-                selectedType.current.code
+                selectedType.current.code,
               );
               localStorage.setItem(
                 "party_filter_type",
-                selectedFilter.current.value
+                selectedFilter.current.value,
               );
               router.push("/dashboard/outstanding/party-search");
             }}

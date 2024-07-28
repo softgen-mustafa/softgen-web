@@ -71,7 +71,7 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
         initialState={{
           pagination: {
             paginationModel: {
-              pageSize: 10,
+              pageSize: 5,
             },
           },
         }}
@@ -150,7 +150,7 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
         initialState={{
           pagination: {
             paginationModel: {
-              pageSize: 10,
+              pageSize: 5,
             },
           },
         }}
@@ -215,7 +215,7 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
         initialState={{
           pagination: {
             paginationModel: {
-              pageSize: 10,
+              pageSize: 5,
             },
           },
         }}
@@ -288,7 +288,7 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
         initialState={{
           pagination: {
             paginationModel: {
-              pageSize: 10,
+              pageSize: 5,
             },
           },
         }}
@@ -333,18 +333,21 @@ const Page = () => {
       type: "item",
       className: "",
       view: (
-        <CardView>
-          <div className="flex flex-row items-center">
+        <CardView
+          title={"Overview"}
+          className="h-fit"
+          actions={[
             <IconButton
+              key={1}
               onClick={() => {
                 router.back();
               }}
             >
               <ChevronLeftRounded />
-            </IconButton>
-            <Typography>Go Back</Typography>
-          </div>
-          <br />
+              <Typography>Go Back</Typography>
+            </IconButton>,
+          ]}
+        >
           <DropDown
             label="Select Type"
             displayFieldKey={"name"}
@@ -355,6 +358,9 @@ const Page = () => {
               setVoucherType(selection.name);
             }}
           />
+          <br />
+          <Typography>Monthly Review</Typography>
+          <br />
           <MonthlySalesCard voucherType={selectedVoucherType} />
         </CardView>
       ),
@@ -364,7 +370,7 @@ const Page = () => {
       type: "item",
       className: "",
       view: (
-        <CardView>
+        <CardView title="Monthly Party Sales">
           <MonthlyCustomerSalesCard voucherType={selectedVoucherType} />
         </CardView>
       ),
@@ -374,7 +380,7 @@ const Page = () => {
       type: "item",
       className: "",
       view: (
-        <CardView>
+        <CardView title="Item Group Sales">
           <ItemGroupCard voucherType={selectedVoucherType} />
         </CardView>
       ),
@@ -384,7 +390,7 @@ const Page = () => {
       type: "item",
       className: "",
       view: (
-        <CardView>
+        <CardView title="Bill Wise Review">
           <BillsCard voucherType={selectedVoucherType} />
         </CardView>
       ),

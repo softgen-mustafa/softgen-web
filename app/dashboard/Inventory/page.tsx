@@ -112,15 +112,15 @@ const InventoryOverviewScreen = () => {
                 selectedListType.current.code === "godown"
                   ? "godownId"
                   : selectedListType.current.code === "category"
-                  ? "categoryId"
-                  : "groupId"
+                    ? "categoryId"
+                    : "groupId"
               ] || index,
             name: entry[
               selectedListType.current.code === "godown"
                 ? "godownName"
                 : selectedListType.current.code === "category"
-                ? "categoryName"
-                : "name"
+                  ? "categoryName"
+                  : "name"
             ],
             itemCount: entry.totalItems,
             amount: entry.closingValue,
@@ -197,24 +197,25 @@ const InventoryOverviewScreen = () => {
     {
       type: "item",
       view: (
-        <CardView className="">
-          <div className="flex flex-row items-center">
+        <CardView
+          className="h-fit"
+          title="Inventory"
+          actions={[
             <IconButton
+              key={1}
               onClick={() => {
                 router.back();
               }}
             >
               <ChevronLeftRounded />
-            </IconButton>
-            <Typography>Go Back</Typography>
-          </div>
-
-          <br />
+              <Typography>Go Back</Typography>
+            </IconButton>,
+          ]}
+        >
           <Typography className="text-xl flex">Total Amount</Typography>
           <Typography className="text-2xl md:text-3xl mt-2 flex">
-          {details?.currency} {numericToString(details?.totalAmount)}
+            {details?.currency} {numericToString(details?.totalAmount)}
           </Typography>
-          <br />
           <br />
           <Typography className="text-xl flex">Total Items,</Typography>
           <Typography className="text-2xl md:text-3xl mt-2 flex">
@@ -233,7 +234,7 @@ const InventoryOverviewScreen = () => {
         {
           type: "item",
           view: (
-            <CardView className="">
+            <CardView title="Filters">
               <br />
               <DropDown
                 label="Select Master"
@@ -290,22 +291,23 @@ const InventoryOverviewScreen = () => {
     {
       type: "item",
       view: (
-        <CardView>
+        <CardView title={selectedListType.current.label}>
           <DataTable
             columns={columns}
             onApi={async (page, pageSize) => {
               return await fetchInventoryItems(page, pageSize);
             }}
             onRowClick={(params) => {
-              if (selectedListType.current.code ==="item") {
+              if (selectedListType.current.code === "item") {
                 localStorage.setItem("item", JSON.stringify(params.row));
                 router.push("/dashboard/Inventory/InventoryItemDetails");
-              }
-              else{
+              } else {
                 localStorage.setItem("record", JSON.stringify(params.row));
-                localStorage.setItem("viewType", selectedListType.current.code || "");
+                localStorage.setItem(
+                  "viewType",
+                  selectedListType.current.code || "",
+                );
                 router.push("/dashboard/Inventory/InventoryDetails");
-
               }
             }}
           />
