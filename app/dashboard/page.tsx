@@ -78,16 +78,6 @@ const DashboardPage = () => {
       type: "item",
       view: (
         <CardView>
-          <SalesReportCard />
-        </CardView>
-      ),
-      className: "",
-      children: [],
-    },
-    {
-      type: "item",
-      view: (
-        <CardView>
           <InventoryCard />
         </CardView>
       ),

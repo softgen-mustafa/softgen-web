@@ -7,6 +7,7 @@ import {
   Typography,
   CircularProgress,
   Button,
+  Box,
 } from "@mui/material";
 import dayjs from "dayjs";
 import { postAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
@@ -57,31 +58,25 @@ const OutstandingTask = () => {
   };
 
   const renderTask = (entry: Task, index: number) => (
-    <Card key={index} className="mb-4 overflow-hidden">
+    <Box key={index} className="mb-4 overflow-hidden">
       <div className="flex">
-        <div className="w-2 bg-green-200 border-r-2 border-green-500"></div>
-        <CardContent className="flex-1 p-4">
-          <Typography variant="h6" className="font-medium truncate">
-            {entry.partyName}
+        <Typography variant="h6" className="font-medium truncate">
+          {entry.partyName}
+        </Typography>
+        <div className="flex items-center mt-2">
+          <Typography variant="subtitle1" className="font-bold text-orange-500">
+            {`${entry.currency} ${numericToString(entry.amount)}`}
           </Typography>
-          <div className="flex items-center mt-2">
-            <Typography
-              variant="subtitle1"
-              className="font-bold text-orange-500"
-            >
-              {`${entry.currency} ${numericToString(entry.amount)}`}
-            </Typography>
-            <Typography variant="caption" className="ml-2">
-              Pending
-            </Typography>
-          </div>
-        </CardContent>
+          <Typography variant="caption" className="ml-2">
+            Pending
+          </Typography>
+        </div>
       </div>
-    </Card>
+    </Box>
   );
 
   return (
-    <Card className="p-4 min-h-[60px] bg-white rounded-2xl">
+    <Box>
       {isLoading ? (
         <CircularProgress />
       ) : (
@@ -108,7 +103,7 @@ const OutstandingTask = () => {
           {tasks.map(renderTask)}
         </div>
       )}
-    </Card>
+    </Box>
   );
 };
 
