@@ -57,7 +57,7 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
             id: entry.itemGroup,
             ...entry,
           };
-        }),
+        })
       );
     } catch {
       alert("Could not load data");
@@ -84,9 +84,12 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
   );
 };
 
+
+
 const BillsCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
 
+  const router = useRouter();
   useEffect(() => {
     loadData();
   }, [voucherType]);
@@ -136,7 +139,7 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
             id: entry.voucherNumber,
             ...entry,
           };
-        }),
+        })
       );
     } catch {
       alert("Could not load data");
@@ -154,7 +157,10 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
             },
           },
         }}
-        onRowClick={(params) => {}}
+        onRowClick={(params) => {
+          localStorage.setItem("voucherNumber", (params.row));
+          router.push("/dashboard/vouchers/voucherDetails");
+        }}
         pageSizeOptions={[5, 10, 25, 50, 75, 100]}
         disableRowSelectionOnClick
         onPaginationModelChange={(value) => {}}
@@ -201,7 +207,7 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
             monthStr: entry.monthStr,
             preGstAmount: entry.preGstAmount,
           };
-        }),
+        })
       );
     } catch {
       alert("Could not load data");
@@ -274,7 +280,7 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
             monthStr: entry.monthStr,
             preGstAmount: entry.preGstAmount,
           };
-        }),
+        })
       );
     } catch {
       alert("Could not load data");
@@ -385,7 +391,7 @@ const Page = () => {
             id: entry.name,
             name: entry.name,
           };
-        }),
+        })
       );
     } catch {
       alert("Could not load voucher types");
