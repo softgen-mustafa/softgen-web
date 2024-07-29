@@ -34,10 +34,12 @@ const CardView: React.FC<CardViewProps> = ({
 }) => {
   return (
     <Card className={`h-full shadow-xl p-2 rounded-2xl ${className}`}>
-      {title != null && title.length > 0 && <CardHeader title={title} />}
-      <CardContent className={`h-2/4 flex flex-col`}>{children}</CardContent>
+      {title != null && title.length > 0 && (
+        <CardHeader title={title} className="" />
+      )}
+      <CardContent className={`flex flex-col `}>{children}</CardContent>
       {actions != null && actions.length > 0 && (
-        <CardActions className="h-2/4 flex flex-row justify-between items-center">
+        <CardActions className="flex flex-row justify-between items-center">
           {actions.map((entry: any, index: number) => {
             return entry;
           })}

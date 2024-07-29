@@ -12,10 +12,8 @@ const postAsync = async (url: string, requestBody: any) => {
   const encryptedBody = _wrap(requestBody);
   let appHeaders = {
     "Content-Type": "application/json; charset=utf-8",
-    // token: Cookies.get("authToken") ?? "",
-    // companyid: Cookies.get("companyId") ?? 1,
     token: Cookies.get("authToken") ?? "",
-    companyid: "df89b80e-9048-49f1-9c5e-0c88fe9886f0",
+    companyid: Cookies.get("companyId") ?? 1,
   };
 
   //  console.log("----------- This is my Headers Value look. ----------------",appHeaders)
@@ -40,10 +38,8 @@ const getAsync = async (url: string) => {
   let appHeaders = {
     "Content-Type": "application/json; charset=utf-8",
     "Access-Control-Allow-Origin": "*",
-    // token: Cookies.get("authToken") ?? "",
-    // companyid: Cookies.get("companyId") ?? 1,
     token: Cookies.get("authToken") ?? "",
-    companyid: "df89b80e-9048-49f1-9c5e-0c88fe9886f0",
+    companyid: Cookies.get("companyId") ?? 1,
   };
   console.log(
     "----------- This is my Headers Value look. ----------------",

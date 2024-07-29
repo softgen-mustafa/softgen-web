@@ -307,6 +307,70 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
   );
 };
 
+const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    loadData();
+  }, [voucherType]);
+
+  const columns: GridColDef[] = [
+    {
+      field: "partyName",
+      headerName: "Party",
+      editable: false,
+      sortable: true,
+      minWidth: 300,
+      maxWidth: 400,
+    },
+    {
+      field: "preGstAmount",
+      headerName: "Value",
+      editable: false,
+      sortable: true,
+      minWidth: 300,
+      maxWidth: 400,
+    },
+  ];
+
+  const loadData = async () => {
+    try {
+      let url = `${getBmrmBaseUrl()}/meta-voucher/customer/overview?voucherType=${voucherType}`;
+      let response = await postAsync(url, {});
+      setData(
+        response.map((entry: any) => {
+          return {
+            id: entry.partyName,
+            partyName: entry.partyName,
+            preGstAmount: entry.preGstAmount,
+          };
+        }),
+      );
+    } catch {
+      alert("Could not load data");
+    }
+  };
+  return (
+    <div className="flex flex-col">
+      <DataGrid
+        columns={columns}
+        rows={data}
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 5,
+            },
+          },
+        }}
+        onRowClick={(params) => {}}
+        pageSizeOptions={[5, 10, 25, 50, 75, 100]}
+        disableRowSelectionOnClick
+        onPaginationModelChange={(value) => {}}
+      />
+    </div>
+  );
+};
+
 const Page = () => {
   const router = useRouter();
 
@@ -368,6 +432,16 @@ const Page = () => {
           <Typography>Monthly Review</Typography>
           <br />
           <MonthlySalesCard voucherType={selectedVoucherType} />
+        </CardView>
+      ),
+      children: [],
+    },
+    {
+      type: "item",
+      className: "",
+      view: (
+        <CardView title="Party Wise Sales">
+          <CustomerSalesCard voucherType={selectedVoucherType} />
         </CardView>
       ),
       children: [],
