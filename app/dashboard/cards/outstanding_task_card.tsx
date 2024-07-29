@@ -13,6 +13,7 @@ import dayjs from "dayjs";
 import { postAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { numericToString } from "@/app/services/Local/helper";
 import { useRouter } from "next/navigation";
+import { inspiredPalette } from "@/app/ui/theme";
 
 interface Task {
   partyName: string;
@@ -59,7 +60,13 @@ const OutstandingTask = () => {
 
   const renderTask = (entry: Task, index: number) => (
     <Box key={index} className="mb-4 overflow-hidden">
-      <div className="flex">
+      <div
+        className="flex flex-col pb-3"
+        style={{
+          borderBottomWidth: 1,
+          borderBottomColor: inspiredPalette.dark,
+        }}
+      >
         <Typography variant="h6" className="font-medium truncate">
           {entry.partyName}
         </Typography>
@@ -76,31 +83,25 @@ const OutstandingTask = () => {
   );
 
   return (
-    <Box>
+    <Box
+      onClick={() => {
+        localStorage.setItem("party_filter_value", durationKey);
+        localStorage.setItem("party_view_type", "upcoming");
+        localStorage.setItem("party_bill_type", "receivable");
+        localStorage.setItem("party_filter_type", "daily");
+        router.push("/dashboard/outstanding/party-search");
+      }}
+    >
       {isLoading ? (
         <CircularProgress />
       ) : (
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <Typography variant="h6" className="font-semibold">
-              {" Outstanding Today's Task"}
-            </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              className="w-24"
-              onClick={() => {
-                localStorage.setItem("party_filter_value", durationKey);
-                localStorage.setItem("party_view_type", "upcoming");
-                localStorage.setItem("party_bill_type", "receivable");
-                localStorage.setItem("party_filter_type", "daily");
-                router.push("/dashboard/outstanding/party-search");
-              }}
-            >
-              View More
-            </Button>
-          </div>
+        <div className="flex flex-col justify-between mb-4">
+          <Typography variant="h6" className="font-semibold">
+            {" Outstanding Today's Task"}
+          </Typography>
+          <br />
           {tasks.map(renderTask)}
+          <br />
         </div>
       )}
     </Box>
