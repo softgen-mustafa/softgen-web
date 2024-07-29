@@ -12,7 +12,7 @@ const Page = () => {
       type: "item",
       children: [],
       view: (
-        <CardView className="h-fit" title="Date Range Setting">
+        <CardView className="max-h-fit h-fit" title="Date Range Setting">
           <DateRangePicker
             onDateChange={(fromDate, toDate) => {
               Cookies.set("fromDate", fromDate ?? "", { expires: 365 });
