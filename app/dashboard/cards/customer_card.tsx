@@ -50,20 +50,23 @@ const CustomerDetailsCard = () => {
       ) : (
         <Box
           onClick={handleCardClick}
+          className="flex flex-row justify-between"
           sx={{
             cursor: "pointer",
             borderWidth: 2,
-            borderRadius: 4,
+            borderRadius: 1,
             padding: 2,
-            marginTop: 5,
+            marginTop: 3,
           }}
         >
-          <Typography variant="h6" className="text-gray-800 mb-2">
-            Total Customers
-          </Typography>
-          <Typography variant="h5" className="font-bold ">
-            {data?.totalCount.toLocaleString() || "0"}
-          </Typography>
+          <div className="flex flex-col">
+            <Typography className="text-lg text-gray-800 mb-1">
+              Total Customers
+            </Typography>
+            <Typography className="text-2xl font-semibold ">
+              {data?.totalCount.toLocaleString() || "0"}
+            </Typography>
+          </div>
           <div className="flex justify-end">
             <IconButton size="small">
               <ChevronRight />

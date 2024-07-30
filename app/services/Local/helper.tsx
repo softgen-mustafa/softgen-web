@@ -4,10 +4,14 @@ const numericToString = (value: number | null | undefined | string): string => {
   if (value === null || value === undefined || value === "") {
     return "0";
   }
-  return value === 0 ? "0" : parseFloat(value.toString()).toLocaleString();
+  return value === 0
+    ? "0"
+    : parseFloat(value.toString()).toLocaleString("en-IN");
 };
 
-const convertToDecimal = (value: number | null | undefined | string): string => {
+const convertToDecimal = (
+  value: number | null | undefined | string,
+): string => {
   if (value === null || value === undefined || value === "") {
     return "0";
   }
@@ -38,8 +42,18 @@ const getPreviousMonths = (count: number): string[] => {
   const months: string[] = [];
   const now = new Date();
   const monthNames: string[] = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
   ];
 
   for (let i = 0; i < count; i++) {
@@ -60,9 +74,4 @@ const convertToDate = (dateString: string): string => {
   return `${day}-${month}-${year}`;
 };
 
-export {
-  numericToString,
-  convertToDecimal,
-  getPreviousMonths,
-  convertToDate,
-};
+export { numericToString, convertToDecimal, getPreviousMonths, convertToDate };

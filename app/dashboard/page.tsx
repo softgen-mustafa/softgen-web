@@ -1,6 +1,6 @@
 "use client";
 import { CustomerDetailsCard } from "./cards/customer_card";
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { OutstandingCard } from "./cards/outstanding_card";
 import { SalesReportCard } from "./cards/sales_report_card";
 import { InventoryCard } from "./cards/inventory_card";
@@ -10,6 +10,7 @@ import { DropDown } from "../ui/drop_down";
 import { getAsync, getBmrmBaseUrl } from "../services/rest_services";
 import { useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
+import { inspiredPalette } from "../ui/theme";
 
 const CompanyCard = () => {
   const [data, setData] = useState([]);
@@ -57,7 +58,7 @@ const DashboardPage = () => {
     {
       type: "item",
       view: (
-        <CardView>
+        <CardView title="Overview">
           <CompanyCard />
           <CustomerDetailsCard></CustomerDetailsCard>
         </CardView>
@@ -68,7 +69,7 @@ const DashboardPage = () => {
     {
       type: "item",
       view: (
-        <CardView>
+        <CardView title="Outstanding Overview">
           <OutstandingCard />
         </CardView>
       ),
@@ -78,7 +79,7 @@ const DashboardPage = () => {
     {
       type: "item",
       view: (
-        <CardView>
+        <CardView title="Inventory">
           <InventoryCard />
         </CardView>
       ),
@@ -88,7 +89,7 @@ const DashboardPage = () => {
     {
       type: "item",
       view: (
-        <CardView>
+        <CardView title="Today's O/S">
           <OutstandingTask />
         </CardView>
       ),
@@ -98,9 +99,14 @@ const DashboardPage = () => {
   ];
   return (
     <div className="">
+      <Typography
+        className="mt-14 ml-2 text-3xl mb-2 font-medium"
+        style={{ color: inspiredPalette.dark }}
+      >
+        Dashboard
+      </Typography>
       <Grid
         container
-        className="bg-gray-200"
         sx={{
           flexGrow: 1,
           height: "100vh",

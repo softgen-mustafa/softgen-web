@@ -33,7 +33,7 @@ const CardView: React.FC<CardViewProps> = ({
   actions,
 }) => {
   return (
-    <Card className={`h-full shadow-xl p-2 rounded-2xl ${className}`}>
+    <Card className={`h-full shadow-2xl p-3 rounded-md ${className}`}>
       {title != null && title.length > 0 && (
         <CardHeader title={title} className="" />
       )}
@@ -60,7 +60,7 @@ const RenderGrid = (gridItems: GridConfig[]) => {
       style += item.className;
     }
     if (item.type == "item") {
-      style += "h-auto p-1";
+      style += "h-auto p-2";
     }
 
     let lastItemScale =
