@@ -3,34 +3,26 @@
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { useEffect, useRef, useState } from "react";
 import {
-  Card,
-  CardContent,
   Container,
   Typography,
-  Box,
   IconButton,
   Grid,
-  Icon,
-  Button,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { GridColDef } from "@mui/x-data-grid";
 import { DropDown } from "@/app/ui/drop_down";
-import { inspiredPalette } from "@/app/ui/theme";
 import {
-  ChevronLeft,
   ChevronLeftRounded,
-  ChevronRight,
-  PendingActions,
 } from "@mui/icons-material";
 import { postAsync } from "@/app/services/rest_services";
-import { ResponsiveDiv, ResponsiveGrid } from "@/app/ui/custom_div";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { numericToString } from "@/app/services/Local/helper";
 import { DataTable } from "@/app/ui/data_grid";
 
 const InventoryOverviewScreen = () => {
   const router = useRouter();
+
+  const [refresh, setRefresh] = useState(false);
 
   const [movementTypes, setmovementTypes] = useState([
     { id: 1, label: "All", code: "all" },
@@ -242,7 +234,7 @@ const InventoryOverviewScreen = () => {
                 onSelection={(selection) => {
                   selectedListType.current = selection;
                   fetchDetails();
-                  fetchInventoryItems(1, 10);
+                  setRefresh(!refresh);
                 }}
               />
               <br />
@@ -258,7 +250,7 @@ const InventoryOverviewScreen = () => {
                     onSelection={(selection) => {
                       selectedMovementType.current = selection;
                       fetchDetails();
-                      fetchInventoryItems(1, 10);
+                      setRefresh(!refresh);
                     }}
                   />
                   <br />
@@ -272,7 +264,7 @@ const InventoryOverviewScreen = () => {
                     onSelection={(selection) => {
                       selectedRateByType.current = selection;
                       fetchDetails();
-                      fetchInventoryItems(1, 10);
+                      setRefresh(!refresh);
                     }}
                   />
                   <br />
@@ -290,6 +282,7 @@ const InventoryOverviewScreen = () => {
       view: (
         <CardView title={selectedListType.current.label}>
           <DataTable
+            refresh={refresh}
             columns={columns}
             onApi={async (page, pageSize) => {
               return await fetchInventoryItems(page, pageSize);
