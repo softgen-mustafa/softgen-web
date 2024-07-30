@@ -26,24 +26,23 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
       headerName: "Stock Group",
       editable: false,
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
     },
     {
       field: "amount",
+      type: "number",
       headerName: "Value",
       editable: false,
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
     },
     {
       field: "quantity",
+      type: "number",
       headerName: "Qty",
       editable: false,
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
     },
   ];
 
@@ -57,7 +56,7 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
             id: entry.itemGroup,
             ...entry,
           };
-        })
+        }),
       );
     } catch {
       alert("Could not load data");
@@ -84,8 +83,6 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
   );
 };
 
-
-
 const BillsCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
 
@@ -100,32 +97,30 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
       headerName: "Bill",
       editable: false,
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
     },
     {
       field: "partyName",
       headerName: "Party",
       editable: false,
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
     },
     {
       field: "preGstAmount",
       headerName: "Value",
       editable: false,
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
+      type: "number",
     },
     {
       field: "postGstAmount",
       headerName: "Post Tax Value",
       editable: false,
+      type: "number",
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
     },
   ];
 
@@ -139,7 +134,7 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
             id: entry.voucherNumber,
             ...entry,
           };
-        })
+        }),
       );
     } catch {
       alert("Could not load data");
@@ -158,7 +153,7 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
           },
         }}
         onRowClick={(params) => {
-          localStorage.setItem("voucherNumber", (params.row));
+          localStorage.setItem("voucherNumber", params.row);
           router.push("/dashboard/vouchers/voucherDetails");
         }}
         pageSizeOptions={[5, 10, 25, 50, 75, 100]}
@@ -182,16 +177,15 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
       headerName: "Month",
       editable: false,
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
     },
     {
       field: "preGstAmount",
       headerName: "Value",
       editable: false,
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      type: "number",
+      flex: 1,
     },
   ];
 
@@ -207,7 +201,7 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
             monthStr: entry.monthStr,
             preGstAmount: entry.preGstAmount,
           };
-        })
+        }),
       );
     } catch {
       alert("Could not load data");
@@ -247,24 +241,22 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
       headerName: "Party",
       editable: false,
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
     },
     {
       field: "monthStr",
       headerName: "Month",
       editable: false,
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
     },
     {
       field: "preGstAmount",
       headerName: "Value",
       editable: false,
+      type: "number",
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
     },
   ];
 
@@ -280,7 +272,7 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
             monthStr: entry.monthStr,
             preGstAmount: entry.preGstAmount,
           };
-        })
+        }),
       );
     } catch {
       alert("Could not load data");
@@ -320,16 +312,15 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
       headerName: "Party",
       editable: false,
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
     },
     {
       field: "preGstAmount",
       headerName: "Value",
       editable: false,
+      type: "number",
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
     },
   ];
 
@@ -391,7 +382,7 @@ const Page = () => {
             id: entry.name,
             name: entry.name,
           };
-        })
+        }),
       );
     } catch {
       alert("Could not load voucher types");
