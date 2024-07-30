@@ -32,6 +32,8 @@ import { DataTable } from "@/app/ui/data_grid";
 const InventoryOverviewScreen = () => {
   const router = useRouter();
 
+  const [refresh, setRefresh] = useState(false);
+
   const [movementTypes, setmovementTypes] = useState([
     { id: 1, label: "All", code: "all" },
     { id: 2, label: "Fast Moving Stock", code: "fast" },
@@ -242,7 +244,7 @@ const InventoryOverviewScreen = () => {
                 onSelection={(selection) => {
                   selectedListType.current = selection;
                   fetchDetails();
-                  fetchInventoryItems(1, 10);
+                  setRefresh(!refresh);
                 }}
               />
               <br />
@@ -258,7 +260,7 @@ const InventoryOverviewScreen = () => {
                     onSelection={(selection) => {
                       selectedMovementType.current = selection;
                       fetchDetails();
-                      fetchInventoryItems(1, 10);
+                      setRefresh(!refresh);
                     }}
                   />
                   <br />
@@ -272,7 +274,7 @@ const InventoryOverviewScreen = () => {
                     onSelection={(selection) => {
                       selectedRateByType.current = selection;
                       fetchDetails();
-                      fetchInventoryItems(1, 10);
+                      setRefresh(!refresh);
                     }}
                   />
                   <br />
@@ -290,6 +292,7 @@ const InventoryOverviewScreen = () => {
       view: (
         <CardView title={selectedListType.current.label}>
           <DataTable
+            refresh={refresh}
             columns={columns}
             onApi={async (page, pageSize) => {
               return await fetchInventoryItems(page, pageSize);
