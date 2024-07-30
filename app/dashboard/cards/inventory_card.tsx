@@ -90,9 +90,6 @@ const InventoryCard = ({}) => {
           <CircularProgress />
         ) : (
           <>
-            <Typography variant="h6" className="font-semibold mb-3">
-              {"Inventory"}
-            </Typography>
             <Grid container spacing={2}>
               {[
                 {

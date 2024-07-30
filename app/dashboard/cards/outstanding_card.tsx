@@ -89,9 +89,6 @@ const OutstandingCard = () => {
       ) : (
         <Box onClick={handleCardClick} sx={{ cursor: "pointer" }}>
           <div className="p-0">
-            <Typography variant="h6" className="text-gray-800 mb-4">
-              Outstanding Overview
-            </Typography>
             <Grid container spacing={2} className="mb-1">
               <Grid item xs={12}>
                 <AmountDisplay
@@ -115,7 +112,7 @@ const OutstandingCard = () => {
                 sx={{
                   flex: 1,
                   borderWidth: 2,
-                  borderRadius: 4,
+                  borderRadius: 2,
                   marginBottom: 2,
                   justifyContent: "center",
                   alignItems: "center",
@@ -141,10 +138,10 @@ const OutstandingCard = () => {
                         value: data?.receivableAmount || 0,
                       },
                     ],
-                    innerRadius: 30,
+                    innerRadius: 50,
                     outerRadius: 100,
                     paddingAngle: 1,
-                    cornerRadius: 5,
+                    cornerRadius: 1,
                     startAngle: 0,
                     endAngle: 360,
                     // cx: 150,

@@ -96,10 +96,6 @@ const OutstandingTask = () => {
         <CircularProgress />
       ) : (
         <div className="flex flex-col justify-between mb-4">
-          <Typography variant="h6" className="font-semibold">
-            {" Outstanding Today's Task"}
-          </Typography>
-          <br />
           {tasks.map(renderTask)}
           <br />
         </div>

@@ -19,7 +19,7 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { inspiredPalette } from "../ui/theme";
 import { useRouter } from "next/navigation";
 import { GridConfig } from "../ui/responsive_grid";
@@ -32,31 +32,38 @@ const drawerNavigations = [
     title: "Home",
     destination: "/dashboard",
     icon: <Home />,
+    selected: true,
   },
   {
     title: "Outstanding",
     destination: "/dashboard/outstanding",
     icon: <PendingActions />,
+    selected: false,
   },
   {
     title: "Transactions",
     destination: "/dashboard/vouchers",
     icon: <Receipt />,
+    selected: false,
   },
   {
     title: "Inventory",
     destination: "/dashboard/Inventory",
     icon: <Inventory />,
+    selected: false,
   },
   {
     title: "Settings",
     destination: "/dashboard/settings",
     icon: <Settings />,
+    selected: false,
   },
 ];
 
 const DrawerContent = () => {
   const router = useRouter();
+
+  const [paths, setPaths] = useState(drawerNavigations);
 
   return (
     <div className="flex flex-col w-full h-full overflow-x-hidden" style={{}}>
@@ -64,8 +71,6 @@ const DrawerContent = () => {
         className="flex flex-row justify-center md:justify-start items-center pt-1 pl-3 z-50"
         style={{
           background: inspiredPalette.dark,
-          borderTopRightRadius: 20,
-          borderBottomRightRadius: 20,
         }}
       >
         <Typography style={{ color: "white" }}>Log-out</Typography>
@@ -73,16 +78,33 @@ const DrawerContent = () => {
           <Logout fontSize="inherit" />
         </IconButton>
       </div>
-      <List>
-        {drawerNavigations.map((path, index) => (
+      <List className="justify-center">
+        {paths.map((path, index) => (
           <ButtonBase
             key={index}
-            style={{ marginTop: 5 }}
+            className="w-11/12 m-2 flex flex-row justify-center"
+            style={{
+              marginTop: 5,
+            }}
             onClick={() => {
+              let values = paths.map((entry: any) => {
+                let selected = path.title == entry.title;
+                return {
+                  ...entry,
+                  selected: selected,
+                };
+              });
+              setPaths(values);
               router.push(path.destination);
             }}
           >
-            <ListItem>
+            <ListItem
+              style={{
+                borderWidth: path.selected ? 1 : 0,
+                borderRadius: 8,
+                borderColor: path.selected ? "white" : inspiredPalette.dark,
+              }}
+            >
               <ListItemIcon style={{ color: "white" }}>
                 {path.icon}
               </ListItemIcon>
@@ -106,8 +128,6 @@ const SideNav: React.FC = () => {
     <div
       style={{
         background: inspiredPalette.dark,
-        borderTopRightRadius: 20,
-        borderBottomRightRadius: 20,
       }}
     >
       <div
@@ -167,13 +187,11 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="w-full h-[100vh] flex flex-col md:flex-row bg-grey-200">
+    <div className="w-full h-[100vh] flex flex-col md:flex-row bg-gray-100">
       <SideNav />
       <Suspense fallback={<Loading />}>
         <Box component={"div"} className="ml-1 w-full overflow-x-hidden">
-          <div className="w-full h-full overflow-x-hidden bg-gray-100">
-            {children}
-          </div>
+          <div className="w-full h-full overflow-x-hidden ">{children}</div>
         </Box>
       </Suspense>
     </div>
