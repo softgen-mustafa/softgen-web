@@ -15,16 +15,6 @@ const Page = () => {
     {
       type: "item",
       view: (
-        <div className="flex flex-col justify-center items-center">
-          Image here
-        </div>
-      ),
-      className: "",
-      children: [],
-    },
-    {
-      type: "item",
-      view: (
         <CardView className="flex flex-col justify-center items-center">
           <p>Login To BizOpp</p>
           <br />
@@ -46,7 +36,7 @@ const Page = () => {
               onClick={() => {
                 localStorage.setItem(
                   "mobileNumber",
-                  JSON.stringify(mobileNumber.current)
+                  JSON.stringify(mobileNumber.current),
                 );
 
                 let url = `${getUmsBaseUrl()}/auth/check-registration?MobileNumber=${
