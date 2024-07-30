@@ -150,7 +150,10 @@ const Page = ({}) => {
             onApi={async (page, pageSize, searchText) => {
               return onApi(page, pageSize, searchText);
             }}
-            onRowClick={(params) => {}}
+            onRowClick={(params) => {
+              localStorage.setItem("billNumber", params.row.billNumber);
+              router.push("/dashboard/outstanding/vouchers/voucherDetails");
+            }}
           />
         </CardView>
       ),
@@ -162,12 +165,16 @@ const Page = ({}) => {
   const onApi = async (
     page: number,
     pageSize: number,
-    searchValue?: string,
+    searchValue?: string
   ) => {
     let party = partyName.current.replace("&", "%26");
     let collectionUrl = `${getBmrmBaseUrl()}/bill/get/upcoming-bill-detail`;
-    let agingUrl = `${getBmrmBaseUrl()}/bill/get/aging-bill-detail?agingCode=${filterValue.current}&groupType=${billType.current}&partyName=${party}`;
-    let totalOutstandingUrl = `${getBmrmBaseUrl()}/bill/get/party-bill-detail?groupType=${billType.current}&partyName=${party}`;
+    let agingUrl = `${getBmrmBaseUrl()}/bill/get/aging-bill-detail?agingCode=${
+      filterValue.current
+    }&groupType=${billType.current}&partyName=${party}`;
+    let totalOutstandingUrl = `${getBmrmBaseUrl()}/bill/get/party-bill-detail?groupType=${
+      billType.current
+    }&partyName=${party}`;
 
     let url = totalOutstandingUrl;
     if (viewType.current === "upcoming") {

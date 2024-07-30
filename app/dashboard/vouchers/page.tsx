@@ -153,7 +153,7 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
           },
         }}
         onRowClick={(params) => {
-          localStorage.setItem("voucherNumber", params.row);
+          localStorage.setItem("voucherNumber", params.row.voucherNumber);
           router.push("/dashboard/vouchers/voucherDetails");
         }}
         pageSizeOptions={[5, 10, 25, 50, 75, 100]}
