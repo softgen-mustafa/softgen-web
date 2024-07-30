@@ -12,12 +12,14 @@ import {
   LabelOffRounded,
   Refresh,
 } from "@mui/icons-material";
-import { Grid, IconButton, Typography } from "@mui/material";
+import { CircularProgress, Grid, Icon, IconButton, Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import Loading from "../loading";
 
 const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -52,6 +54,7 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
 
   const loadData = async () => {
     try {
+      setLoading(true);
       let url = `${getBmrmBaseUrl()}/meta-voucher/item-group/overview?voucherType=${voucherType}`;
       let response = await postAsync(url, {});
       setData(
@@ -66,9 +69,16 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
     } catch {
       alert("Could not load data");
     }
+    finally{
+      setLoading(false);
+    }
   };
   return (
     <div className="flex flex-col">
+      {
+        loading &&
+        <CircularProgress/>
+      }
       <DataGrid
         columns={columns}
         rows={data}
