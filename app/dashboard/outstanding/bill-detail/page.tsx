@@ -152,7 +152,7 @@ const Page = ({}) => {
             }}
             onRowClick={(params) => {
               localStorage.setItem("billNumber", params.row.billNumber);
-              router.push("/dashboard/outstanding/vouchers/voucherDetails");
+              router.push("/dashboard/vouchers/voucherDetails");
             }}
           />
         </CardView>
@@ -221,7 +221,7 @@ const Page = ({}) => {
       });
 
       setRows(entries);
-
+console.log(`requestBody Party bill Detail : ${JSON.stringify(response)}`)
       return entries;
     } catch {}
     //  console.log(`requestBody Party bill Detail : ${JSON.stringify(entries,  0 , index =2 )}`)

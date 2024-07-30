@@ -7,7 +7,11 @@ import {
 import { DataTable } from "@/app/ui/data_grid";
 import { DropDown } from "@/app/ui/drop_down";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
-import { ChevronLeftRounded, LabelOffRounded } from "@mui/icons-material";
+import {
+  ChevronLeftRounded,
+  LabelOffRounded,
+  Refresh,
+} from "@mui/icons-material";
 import { Grid, IconButton, Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
@@ -51,12 +55,13 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
       let url = `${getBmrmBaseUrl()}/meta-voucher/item-group/overview?voucherType=${voucherType}`;
       let response = await postAsync(url, {});
       setData(
-        response.map((entry: any) => {
+        response.map((entry: any, index: number) => {
           return {
-            id: entry.itemGroup,
+            id: index + 1,
+            itemGroup: entry.itemGroup,
             ...entry,
           };
-        }),
+        })
       );
     } catch {
       alert("Could not load data");
@@ -85,13 +90,14 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
 
 const BillsCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
+  const [refresh, triggerRefresh] = useState(false);
 
   const router = useRouter();
   useEffect(() => {
-    loadData();
+    triggerRefresh(!refresh);
   }, [voucherType]);
 
-  const columns: GridColDef[] = [
+  const columns: GridColDef<any[number]>[] = [
     {
       field: "voucherNumber",
       headerName: "Bill",
@@ -124,41 +130,48 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
     },
   ];
 
-  const loadData = async () => {
+  const loadData = async (
+    page: number,
+    pageSize: number,
+    searchValue?: string
+  ) => {
     try {
       let url = `${getBmrmBaseUrl()}/meta-voucher/bill/overview?voucherType=${voucherType}`;
-      let response = await postAsync(url, {});
-      setData(
-        response.map((entry: any) => {
-          return {
-            id: entry.voucherNumber,
-            ...entry,
-          };
-        }),
-      );
+      let requestBody = {
+        page_number: page,
+        page_size: pageSize,
+        search_text: searchValue ?? "",
+        filter: "",
+      };
+
+      let response = await postAsync(url, requestBody);
+      let entries = response.map((entry: any, index: number) => {
+        return {
+          id: index + 1,
+          voucherNumber: entry.voucherNumber,
+          ...entry,
+        };
+      });
+
+      setData(entries);
+      return entries;
     } catch {
       alert("Could not load data");
     }
   };
   return (
     <div className="flex flex-col">
-      <DataGrid
+      <DataTable
         columns={columns}
-        rows={data}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 5,
-            },
-          },
+        refresh={refresh}
+        useSearch={true}
+        onApi={async (page, pageSize, searchText) => {
+          return await loadData(page, pageSize, searchText);
         }}
         onRowClick={(params) => {
-          localStorage.setItem("voucherNumber", params.row.voucherNumber);
+          localStorage.setItem("voucherNumber", params.row.id);
           router.push("/dashboard/vouchers/voucherDetails");
         }}
-        pageSizeOptions={[5, 10, 25, 50, 75, 100]}
-        disableRowSelectionOnClick
-        onPaginationModelChange={(value) => {}}
       />
     </div>
   );
@@ -195,13 +208,13 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
       let response = await postAsync(url, {});
       console.log(`response: ${JSON.stringify(response)}`);
       setData(
-        response.map((entry: any) => {
+        response.map((entry: any, index: number) => {
           return {
-            id: entry.monthStr,
+            id: index + 1,
             monthStr: entry.monthStr,
             preGstAmount: entry.preGstAmount,
           };
-        }),
+        })
       );
     } catch {
       alert("Could not load data");
@@ -265,14 +278,14 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
       let url = `${getBmrmBaseUrl()}/meta-voucher/monthly/customer/overview?voucherType=${voucherType}`;
       let response = await postAsync(url, {});
       setData(
-        response.map((entry: any) => {
+        response.map((entry: any, index: number) => {
           return {
-            id: entry.partyName,
+            id: index + 1,
             partyName: entry.partyName,
             monthStr: entry.monthStr,
             preGstAmount: entry.preGstAmount,
           };
-        }),
+        })
       );
     } catch {
       alert("Could not load data");
@@ -329,13 +342,13 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
       let url = `${getBmrmBaseUrl()}/meta-voucher/customer/overview?voucherType=${voucherType}`;
       let response = await postAsync(url, {});
       setData(
-        response.map((entry: any) => {
+        response.map((entry: any, index: number) => {
           return {
-            id: entry.partyName,
+            id: index + 1,
             partyName: entry.partyName,
             preGstAmount: entry.preGstAmount,
           };
-        }),
+        })
       );
     } catch {
       alert("Could not load data");
@@ -382,7 +395,7 @@ const Page = () => {
             id: entry.name,
             name: entry.name,
           };
-        }),
+        })
       );
     } catch {
       alert("Could not load voucher types");

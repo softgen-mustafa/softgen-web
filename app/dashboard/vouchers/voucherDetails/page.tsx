@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { ChevronLeftRounded } from "@mui/icons-material";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
-import { useReducedMotion } from "@mui/x-charts/internals";
 
 interface VoucherItem {
   id: string;
@@ -57,14 +56,14 @@ const VoucherDetailScreen = () => {
     }
   }, [voucherDetail]);
 
-  //   let voucherId = "df89b80e-9048-49f1-9c5e-0c88fe9886f0-00017f21";
-
+  // let voucherId = "df89b80e-9048-49f1-9c5e-0c88fe9886f0-00017f21";
+  // let billNumber = "400";
   const onLoad = async () => {
     try {
       setLoadingStatus(true);
-      let url = voucherId
-        ? `${getBmrmBaseUrl()}/voucher/detail?voucherId=${voucherId}`
-        : `${getBmrmBaseUrl()}/voucher/detail/voucher-number?value=${billNumber}`;
+      let url = voucherId.current.length > 0
+        ? `${getBmrmBaseUrl()}/voucher/detail?voucherId=${voucherId.current}`
+        : `${getBmrmBaseUrl()}/voucher/detail/voucher-number?value=${billNumber.current}`;
       console.log("onLoad url ", url);
       const response = await getAsync(url);
       console.log("onLoad Resposne ", response);

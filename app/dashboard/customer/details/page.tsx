@@ -13,7 +13,7 @@ const CustomerDetailsScreen = ({}) => {
   let filterValue: string = "";
 
   useEffect(() => {
-  filterValue = localStorage.getItem("party_filter_value") || "";
+    filterValue = localStorage.getItem("party_filter_value") || "";
     onLoad();
   }, []);
 
@@ -21,7 +21,7 @@ const CustomerDetailsScreen = ({}) => {
     try {
       setLoadingStatus(true);
       let url = `${getBmrmBaseUrl()}/ledger/${filterValue}`;
-      console.log("CustomerDetailsScreen", url)
+      console.log("CustomerDetailsScreen", url);
       let response = await getAsync(url);
       setLedgerDetail(response);
 
@@ -279,4 +279,4 @@ const InfoItem: React.FC<InfoItemProps> = ({
   </div>
 );
 
-export default CustomerDetailsScreen ;
+export default CustomerDetailsScreen;
