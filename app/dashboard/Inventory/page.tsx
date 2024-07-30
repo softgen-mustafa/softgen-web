@@ -152,8 +152,7 @@ const InventoryOverviewScreen = () => {
       headerName: "Name",
       editable: false,
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
     },
     {
       field: "quantity",
@@ -161,8 +160,7 @@ const InventoryOverviewScreen = () => {
       type: "number",
       editable: false,
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
     },
     {
       field: "amount",
@@ -170,8 +168,7 @@ const InventoryOverviewScreen = () => {
       type: "number",
       editable: false,
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
       valueGetter: (params, row) =>
         `${row.currency} ${numericToString(row.amount)}`,
     },
@@ -179,7 +176,7 @@ const InventoryOverviewScreen = () => {
       field: "rate",
       headerName: "Rate",
       type: "number",
-      width: 110,
+      flex: 1,
       valueGetter: (params, row) =>
         selectedListType.current.code === "item" ? row.rate : "N/A",
     },
@@ -187,7 +184,7 @@ const InventoryOverviewScreen = () => {
       field: "itemCount",
       headerName: "Item Count",
       type: "number",
-      width: 110,
+      flex: 1,
       valueGetter: (params, row) =>
         selectedListType.current.code !== "item" ? row.itemCount : "N/A",
     },

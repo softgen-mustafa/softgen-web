@@ -59,6 +59,7 @@ const DashboardPage = () => {
       view: (
         <CardView>
           <CompanyCard />
+          <CustomerDetailsCard></CustomerDetailsCard>
         </CardView>
       ),
       className: "",
@@ -69,16 +70,6 @@ const DashboardPage = () => {
       view: (
         <CardView>
           <OutstandingCard />
-        </CardView>
-      ),
-      className: "",
-      children: [],
-    },
-    {
-      type: "item",
-      view: (
-        <CardView>
-          <SalesReportCard />
         </CardView>
       ),
       className: "",
@@ -99,16 +90,6 @@ const DashboardPage = () => {
       view: (
         <CardView>
           <OutstandingTask />
-        </CardView>
-      ),
-      className: "",
-      children: [],
-    },
-    {
-      type: "item",
-      view: (
-        <CardView>
-          <CustomerDetailsCard></CustomerDetailsCard>
         </CardView>
       ),
       className: "",

@@ -9,10 +9,12 @@ import {
   IconButton,
   Grid,
   Box,
+  Container,
 } from "@mui/material";
 import { ChevronRight } from "@mui/icons-material";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { useRouter } from "next/navigation";
+import { PieChart } from "@mui/x-charts";
 
 interface OutstandingData {
   payableTitle: string;
@@ -65,9 +67,9 @@ const OutstandingCard = () => {
   }) => (
     <div>
       <Typography variant="subtitle2" className="text-gray-600">
-        {title}
+        Total {title}
       </Typography>
-      <Typography variant="h6" className="font-bold">
+      <Typography variant="h6" className="font-bold text-red-400">
         {data?.currency}
         {amount.toLocaleString()}
       </Typography>
@@ -86,30 +88,72 @@ const OutstandingCard = () => {
         </CardContent>
       ) : (
         <Box onClick={handleCardClick} sx={{ cursor: "pointer" }}>
-          <CardContent className="p-0">
+          <div className="p-0">
             <Typography variant="h6" className="text-gray-800 mb-4">
               Outstanding Overview
             </Typography>
             <Grid container spacing={2} className="mb-1">
-              <Grid item xs={6}>
+              <Grid item xs={12}>
                 <AmountDisplay
                   title={data?.payableTitle || "Payable"}
                   amount={data?.payableAmount || 0}
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={12}>
                 <AmountDisplay
                   title={data?.receivableTitle || "Receivable"}
                   amount={data?.receivableAmount || 0}
                 />
               </Grid>
             </Grid>
-            <div className="flex justify-end">
-              <IconButton size="small">
-                <ChevronRight />
-              </IconButton>
-            </div>
-          </CardContent>
+            <br />
+            <Container className="overflow-x-auto flex">
+              <PieChart
+                width={300}
+                height={300}
+                margin={{ top: 100, left: 100, bottom: 100, right: 100 }}
+                sx={{
+                  flex: 1,
+                  borderWidth: 2,
+                  borderRadius: 4,
+                  marginBottom: 2,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                slotProps={{
+                  legend: {
+                    hidden: true,
+                    position: {
+                      horizontal: "right",
+                      vertical: "bottom",
+                    },
+                  },
+                }}
+                series={[
+                  {
+                    data: [
+                      {
+                        label: "Payable",
+                        value: data?.payableAmount || 0,
+                      },
+                      {
+                        label: "Receivable",
+                        value: data?.receivableAmount || 0,
+                      },
+                    ],
+                    innerRadius: 30,
+                    outerRadius: 100,
+                    paddingAngle: 1,
+                    cornerRadius: 5,
+                    startAngle: 0,
+                    endAngle: 360,
+                    // cx: 150,
+                    // cy: 150,
+                  },
+                ]}
+              />
+            </Container>
+          </div>
         </Box>
       )}
     </div>

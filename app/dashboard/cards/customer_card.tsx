@@ -39,33 +39,39 @@ const CustomerDetailsCard = () => {
 
   const handleCardClick = () => {
     router.push("/dashboard/customer");
-
   };
 
   return (
-    <Card className="bg-white shadow-md" sx={{ borderRadius: 6 }}>
+    <Box>
       {isLoading ? (
         <CardContent className="flex justify-center items-center h-40">
           <CircularProgress />
         </CardContent>
       ) : (
-        <Box onClick={handleCardClick} sx={{ cursor: "pointer" }}>
-          <CardContent className="p-6">
-            <Typography variant="h6" className="text-gray-800 mb-4">
-              Total Customers
-            </Typography>
-            <Typography variant="h4" className="font-bold mb-4">
-              {data?.totalCount.toLocaleString() || "0"}
-            </Typography>
-            <div className="flex justify-end">
-              <IconButton size="small">
-                <ChevronRight />
-              </IconButton>
-            </div>
-          </CardContent>
+        <Box
+          onClick={handleCardClick}
+          sx={{
+            cursor: "pointer",
+            borderWidth: 2,
+            borderRadius: 4,
+            padding: 2,
+            marginTop: 5,
+          }}
+        >
+          <Typography variant="h6" className="text-gray-800 mb-2">
+            Total Customers
+          </Typography>
+          <Typography variant="h5" className="font-bold ">
+            {data?.totalCount.toLocaleString() || "0"}
+          </Typography>
+          <div className="flex justify-end">
+            <IconButton size="small">
+              <ChevronRight />
+            </IconButton>
+          </div>
         </Box>
       )}
-    </Card>
+    </Box>
   );
 };
 

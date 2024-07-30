@@ -6,7 +6,7 @@ import {
   PendingActions,
   Receipt,
   Settings,
-  Inventory
+  Inventory,
 } from "@mui/icons-material";
 import {
   Box,
@@ -19,10 +19,11 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { inspiredPalette } from "../ui/theme";
 import { useRouter } from "next/navigation";
 import { GridConfig } from "../ui/responsive_grid";
+import Loading from "./loading";
 
 const drawerWidth = 240;
 
@@ -168,11 +169,13 @@ export default function DashboardLayout({
   return (
     <div className="w-full h-[100vh] flex flex-col md:flex-row bg-grey-200">
       <SideNav />
-      <Box component={"div"} className="ml-1 w-full overflow-x-hidden">
-        <div className="w-full h-full overflow-x-hidden bg-gray-100">
-          {children}
-        </div>
-      </Box>
+      <Suspense fallback={<Loading />}>
+        <Box component={"div"} className="ml-1 w-full overflow-x-hidden">
+          <div className="w-full h-full overflow-x-hidden bg-gray-100">
+            {children}
+          </div>
+        </Box>
+      </Suspense>
     </div>
   );
 }

@@ -1,33 +1,89 @@
 "use client";
 
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
-import { ReactNode, useEffect, useRef, useState } from "react";
-import {
-  Card,
-  CardContent,
-  Container,
-  Typography,
-  Box,
-  IconButton,
-  Grid,
-  Icon,
-  Button,
-} from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import { Container, Typography, Box, IconButton, Grid } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { DropDown } from "@/app/ui/drop_down";
 import { inspiredPalette } from "@/app/ui/theme";
-import {
-  ChevronLeft,
-  ChevronLeftRounded,
-  ChevronRight,
-  ChevronRightRounded,
-  PendingActions,
-} from "@mui/icons-material";
+import { ChevronLeftRounded, ChevronRightRounded } from "@mui/icons-material";
 import { AgingView } from "./aging_card";
-import { ResponsiveDiv, ResponsiveGrid } from "@/app/ui/custom_div";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { numericToString } from "@/app/services/Local/helper";
+import { TextInput } from "@/app/ui/text_inputs";
+
+const RankedPartyOutstandingCard = ({ billType }: { billType: string }) => {
+  let rank = useRef(5);
+  const [rows, setRows] = useState([]);
+
+  const columns: GridColDef[] = [
+    {
+      field: "name",
+      headerName: "Party",
+      editable: false,
+      sortable: true,
+      flex: 1,
+    },
+    {
+      field: "amount",
+      headerName: "Value",
+      type: "number",
+      editable: false,
+      sortable: true,
+      flex: 1,
+      valueGetter: (value, row) =>
+        `${row.amount != null ? numericToString(row.amount) : "0"}`,
+    },
+  ];
+
+  useEffect(() => {
+    loadData();
+  }, [billType]);
+
+  const loadData = async () => {
+    try {
+      let url = `${getBmrmBaseUrl()}/bill/get/party-os/overview?groupType=${billType}&rank=${rank.current}`;
+      let response = await getAsync(url);
+      let values = response.map((entry: any) => {
+        return {
+          id: entry.name,
+          name: entry.name,
+          amount: entry.totalAmount,
+        };
+      });
+      setRows(values);
+    } catch {}
+  };
+  return (
+    <div>
+      <TextInput
+        mode={"number"}
+        placeHolder="Enter Rank"
+        onTextChange={(value) => {
+          rank.current = value && value.length > 0 ? parseInt(value) : 5;
+          loadData();
+        }}
+      />
+      <br />
+      <DataGrid
+        columns={columns}
+        rows={rows}
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 5,
+            },
+          },
+        }}
+        onRowClick={(params) => {}}
+        pageSizeOptions={[5, 10, 25, 50, 75, 100]}
+        disableRowSelectionOnClick
+        onPaginationModelChange={(value) => {}}
+      />
+    </div>
+  );
+};
 
 const Page = () => {
   const router = useRouter();
@@ -98,16 +154,15 @@ const Page = () => {
       headerName: "Duration Name",
       editable: false,
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
     },
     {
       field: "amount",
       headerName: "Value",
       editable: false,
       sortable: true,
-      minWidth: 50,
-      maxWidth: 400,
+      flex: 1,
+      type: "number",
       valueGetter: (value, row) => `${row.currency || ""} ${row.amount || "0"}`,
     },
   ];
@@ -175,6 +230,16 @@ const Page = () => {
           children: [],
         },
       ],
+    },
+    {
+      type: "item",
+      view: (
+        <CardView title="Ranked Parties">
+          <RankedPartyOutstandingCard billType={selectedType.current.code} />
+        </CardView>
+      ),
+      className: "",
+      children: [],
     },
     {
       type: "item",

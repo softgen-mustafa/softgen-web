@@ -8,6 +8,7 @@ import {
   Grid,
   IconButton,
   CircularProgress,
+  Box,
 } from "@mui/material";
 import { Inventory2TwoTone as Icon } from "@mui/icons-material";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
@@ -52,7 +53,7 @@ const InventoryCard = ({}) => {
 
       const totalStockCount = response.reduce(
         (acc, cur) => acc + cur.totalItems,
-        0
+        0,
       );
       const unitValue = totalStockCount / 10;
 
@@ -82,11 +83,9 @@ const InventoryCard = ({}) => {
     console.log(`Navigating to ${movementCycle} inventory overview`);
   };
 
-
- 
   return (
-    <Card className="bg-white rounded-2xl shadow-md">
-      <CardContent>
+    <Box>
+      <div>
         {isLoading ? (
           <CircularProgress />
         ) : (
@@ -121,9 +120,9 @@ const InventoryCard = ({}) => {
                   value: details.totalAmount,
                 },
               ].map((item) => (
-                <Grid item xs={6} key={item.type}>
+                <Grid item xs={12} key={item.type}>
                   <Card
-                    className="bg-yellow-600 text-white rounded-lg cursor-pointer"
+                    className="bg-green-800 text-white rounded-lg cursor-pointer"
                     onClick={() => navigateToInventoryOverview(item.type)}
                   >
                     <CardContent>
@@ -148,8 +147,8 @@ const InventoryCard = ({}) => {
             </Grid>
           </>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </Box>
   );
 };
 
