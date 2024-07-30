@@ -149,11 +149,15 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
         return {
           id: index + 1,
           voucherNumber: entry.voucherNumber,
+          guid : entry.guid,
           ...entry,
         };
       });
 
       setData(entries);
+      console.log(
+        `Voucher Details Response : ${JSON.stringify(response)}`
+      );
       return entries;
     } catch {
       alert("Could not load data");
@@ -169,7 +173,7 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
           return await loadData(page, pageSize, searchText);
         }}
         onRowClick={(params) => {
-          localStorage.setItem("voucherNumber", params.row.id);
+          localStorage.setItem("guid", params.row.guid);
           router.push("/dashboard/vouchers/voucherDetails");
         }}
       />

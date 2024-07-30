@@ -28,9 +28,9 @@ interface VoucherDetail {
   list_of_items: VoucherItem[];
 }
 
-const VoucherDetailScreen = () => {
+const VoucherDetailScreen = ({}) => {
   let billNumber = useRef("");
-  let voucherId = useRef("");
+  let guid = useRef("");
 
   const router = useRouter();
   const [voucherDetail, setVoucherDetail] = useState<VoucherDetail | null>(
@@ -41,7 +41,7 @@ const VoucherDetailScreen = () => {
 
   useEffect(() => {
     billNumber.current = localStorage.getItem("billNumber") || "";
-    voucherId.current = localStorage.getItem("voucherId") || "";
+    guid.current = localStorage.getItem("guid") || "";
     onLoad();
   }, []);
 
@@ -56,14 +56,15 @@ const VoucherDetailScreen = () => {
     }
   }, [voucherDetail]);
 
+
   // let voucherId = "df89b80e-9048-49f1-9c5e-0c88fe9886f0-00017f21";
   // let billNumber = "400";
   const onLoad = async () => {
     try {
       setLoadingStatus(true);
-      let url = voucherId.current.length > 0
-        ? `${getBmrmBaseUrl()}/voucher/detail?voucherId=${voucherId.current}`
-        : `${getBmrmBaseUrl()}/voucher/detail/voucher-number?value=${billNumber.current}`;
+      let url = guid.current.length > 0
+        ? `${getBmrmBaseUrl()}/voucher/detail?voucherId=${encodeURIComponent(guid.current)}`
+        : `${getBmrmBaseUrl()}/voucher/detail/voucher-number?value=${encodeURIComponent(billNumber.current)}`;
       console.log("onLoad url ", url);
       const response = await getAsync(url);
       console.log("onLoad Resposne ", response);
@@ -86,8 +87,7 @@ const VoucherDetailScreen = () => {
       headerName: "Name",
       editable: false,
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
     },
     {
       field: "quantity",
@@ -95,28 +95,27 @@ const VoucherDetailScreen = () => {
       type: "number",
       editable: false,
       sortable: true,
-      minWidth: 300,
-      maxWidth: 400,
+      flex: 1,
     },
     {
       field: "rate",
       headerName: "Rate",
       type: "number",
-      width: 110,
+      flex: 1,
       valueGetter: (params, row) => row.rate ?? "N/A",
     },
     {
       field: "hsn_or_sac",
       headerName: "HSNSAC",
       type: "number",
-      width: 110,
+      flex: 1,
       valueGetter: (params, row) => row.hsn_or_sac ?? "N/A",
     },
     {
       field: "amount",
       headerName: "Amount",
       type: "number",
-      width: 110,
+      flex: 1,
       valueGetter: (params, row) => row.amount ?? "N/A",
     },
   ];
