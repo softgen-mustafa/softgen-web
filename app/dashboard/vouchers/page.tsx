@@ -174,6 +174,7 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
         }}
         onRowClick={(params) => {
           localStorage.setItem("guid", params.row.guid);
+          localStorage.setItem("party_view_type", "voucher");
           router.push("/dashboard/vouchers/voucherDetails");
         }}
       />

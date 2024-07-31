@@ -152,6 +152,7 @@ const Page = ({}) => {
             }}
             onRowClick={(params) => {
               localStorage.setItem("billNumber", params.row.billNumber);
+              localStorage.setItem("party_view_type", "outstanding");
               router.push("/dashboard/vouchers/voucherDetails");
             }}
           />
