@@ -29,13 +29,9 @@ interface VoucherDetail {
 }
 
 const VoucherDetailScreen = ({}) => {
-
-
-  
   let billNumber = useRef("");
   let guid = useRef("");
   let viewType = useRef("");
-
 
   const router = useRouter();
   const [voucherDetail, setVoucherDetail] = useState<VoucherDetail | null>(
@@ -67,18 +63,22 @@ const VoucherDetailScreen = ({}) => {
   const onLoad = async () => {
     try {
       setLoadingStatus(true);
-  
+
       let url;
       if (viewType.current === "outstanding") {
-        url = `${getBmrmBaseUrl()}/voucher/detail/voucher-number?value=${encodeURIComponent(billNumber.current)}`;
+        url = `${getBmrmBaseUrl()}/voucher/detail/voucher-number?value=${encodeURIComponent(
+          billNumber.current
+        )}`;
       } else {
-        url = `${getBmrmBaseUrl()}/voucher/detail?voucherId=${encodeURIComponent(guid.current)}`;
+        url = `${getBmrmBaseUrl()}/voucher/detail?voucherId=${encodeURIComponent(
+          guid.current
+        )}`;
       }
-  
+
       console.log("onLoad url ", url);
       const response = await getAsync(url);
       console.log("onLoad Response ", response);
-  
+
       if (response) {
         setVoucherDetail(response);
       } else {
@@ -90,28 +90,6 @@ const VoucherDetailScreen = ({}) => {
       setLoadingStatus(false);
     }
   };
-
-  // const onLoad = async () => {
-  //   try {
-  //     setLoadingStatus(true);
-  //     let url = guid.current.length > 0
-  //       ? `${getBmrmBaseUrl()}/voucher/detail?voucherId=${encodeURIComponent(guid.current)}`
-  //       : `${getBmrmBaseUrl()}/voucher/detail/voucher-number?value=${encodeURIComponent(billNumber.current)}`;
-  //     console.log("onLoad url ", url);
-  //     const response = await getAsync(url);
-  //     console.log("onLoad Resposne ", response);
-
-  //     if (response) {
-  //       setVoucherDetail(response);
-  //     } else {
-  //       setVoucherDetail(null);
-  //     }
-  //   } catch (error) {
-  //     console.error("Could not load voucher detail", error);
-  //   } finally {
-  //     setLoadingStatus(false);
-  //   }
-  // };
 
   const columns: GridColDef[] = [
     {
@@ -283,7 +261,7 @@ export default VoucherDetailScreen;
 
 //     try {
 //       setLoadingStatus(true);
-//       setVoucherDetail(null); 
+//       setVoucherDetail(null);
 
 //       const url =
 //         guid.length > 0
