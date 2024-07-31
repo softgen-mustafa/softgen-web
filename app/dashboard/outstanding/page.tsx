@@ -2,7 +2,14 @@
 
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { useEffect, useRef, useState } from "react";
-import { Container, Typography, Box, IconButton, Grid } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Box,
+  IconButton,
+  Grid,
+  CircularProgress,
+} from "@mui/material";
 import { useRouter } from "next/navigation";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { DropDown } from "@/app/ui/drop_down";
@@ -16,6 +23,7 @@ import { TextInput } from "@/app/ui/text_inputs";
 const RankedPartyOutstandingCard = ({ billType }: { billType: string }) => {
   let rank = useRef(5);
   const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const columns: GridColDef[] = [
     {
@@ -43,7 +51,10 @@ const RankedPartyOutstandingCard = ({ billType }: { billType: string }) => {
 
   const loadData = async () => {
     try {
-      let url = `${getBmrmBaseUrl()}/bill/get/party-os/overview?groupType=${billType}&rank=${rank.current}`;
+      setLoading(true);
+      let url = `${getBmrmBaseUrl()}/bill/get/party-os/overview?groupType=${billType}&rank=${
+        rank.current
+      }`;
       let response = await getAsync(url);
       let values = response.map((entry: any) => {
         return {
@@ -53,7 +64,10 @@ const RankedPartyOutstandingCard = ({ billType }: { billType: string }) => {
         };
       });
       setRows(values);
-    } catch {}
+    } catch {
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <div>
@@ -66,6 +80,12 @@ const RankedPartyOutstandingCard = ({ billType }: { billType: string }) => {
         }}
       />
       <br />
+      {loading && (
+        <div className="flex justify-center">
+          <CircularProgress />
+        </div>
+      )}
+
       <DataGrid
         columns={columns}
         rows={rows}
@@ -195,7 +215,7 @@ const Page = () => {
                     localStorage.setItem("party_view_type", "all");
                     localStorage.setItem(
                       "party_bill_type",
-                      selectedType.current.code,
+                      selectedType.current.code
                     );
                     localStorage.setItem("party_filter_type", "");
                     router.push("/dashboard/outstanding/party-search");
@@ -307,11 +327,11 @@ const Page = () => {
               localStorage.setItem("party_view_type", "upcoming");
               localStorage.setItem(
                 "party_bill_type",
-                selectedType.current.code,
+                selectedType.current.code
               );
               localStorage.setItem(
                 "party_filter_type",
-                selectedFilter.current.value,
+                selectedFilter.current.value
               );
               router.push("/dashboard/outstanding/party-search");
             }}

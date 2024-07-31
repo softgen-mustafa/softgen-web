@@ -12,12 +12,20 @@ import {
   LabelOffRounded,
   Refresh,
 } from "@mui/icons-material";
-import { Grid, IconButton, Typography } from "@mui/material";
+import {
+  CircularProgress,
+  Grid,
+  Icon,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import Loading from "../loading";
 
 const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -52,6 +60,7 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
 
   const loadData = async () => {
     try {
+      setLoading(true);
       let url = `${getBmrmBaseUrl()}/meta-voucher/item-group/overview?voucherType=${voucherType}`;
       let response = await postAsync(url, {});
       setData(
@@ -65,10 +74,17 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
       );
     } catch {
       alert("Could not load data");
+    } finally {
+      setLoading(false);
     }
   };
   return (
     <div className="flex flex-col">
+      {loading && (
+        <div className="flex justify-center">
+          <CircularProgress />
+        </div>
+      )}
       <DataGrid
         columns={columns}
         rows={data}
@@ -149,15 +165,13 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
         return {
           id: index + 1,
           voucherNumber: entry.voucherNumber,
-          guid : entry.guid,
+          guid: entry.guid,
           ...entry,
         };
       });
 
       setData(entries);
-      console.log(
-        `Voucher Details Response : ${JSON.stringify(response)}`
-      );
+      console.log(`Voucher Details Response : ${JSON.stringify(response)}`);
       return entries;
     } catch {
       alert("Could not load data");
@@ -184,6 +198,7 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
 
 const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -209,6 +224,8 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
 
   const loadData = async () => {
     try {
+      setLoading(true);
+
       let url = `${getBmrmBaseUrl()}/meta-voucher/monthly/overview?voucherType=${voucherType}`;
       let response = await postAsync(url, {});
       console.log(`response: ${JSON.stringify(response)}`);
@@ -223,10 +240,17 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
       );
     } catch {
       alert("Could not load data");
+    } finally {
+      setLoading(false);
     }
   };
   return (
     <div className="flex flex-col">
+      {loading && (
+        <div className="flex justify-center">
+          <CircularProgress />
+        </div>
+      )}
       <DataGrid
         columns={columns}
         rows={data}
@@ -248,6 +272,7 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
 
 const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -280,6 +305,7 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
 
   const loadData = async () => {
     try {
+      setLoading(true);
       let url = `${getBmrmBaseUrl()}/meta-voucher/monthly/customer/overview?voucherType=${voucherType}`;
       let response = await postAsync(url, {});
       setData(
@@ -294,10 +320,17 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
       );
     } catch {
       alert("Could not load data");
+    } finally {
+      setLoading(false);
     }
   };
   return (
     <div className="flex flex-col">
+      {loading && (
+        <div className="flex justify-center">
+          <CircularProgress />
+        </div>
+      )}
       <DataGrid
         columns={columns}
         rows={data}
@@ -319,6 +352,7 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
 
 const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -344,6 +378,7 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
 
   const loadData = async () => {
     try {
+      setLoading(true);
       let url = `${getBmrmBaseUrl()}/meta-voucher/customer/overview?voucherType=${voucherType}`;
       let response = await postAsync(url, {});
       setData(
@@ -357,10 +392,17 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
       );
     } catch {
       alert("Could not load data");
+    } finally {
+      setLoading(false);
     }
   };
   return (
     <div className="flex flex-col">
+      {loading && (
+        <div className="flex justify-center">
+          <CircularProgress />
+        </div>
+      )}
       <DataGrid
         columns={columns}
         rows={data}

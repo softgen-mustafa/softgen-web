@@ -11,7 +11,7 @@ interface TableViewProps {
   onApi: (
     page: number,
     pageSize: number,
-    searchText?: string,
+    searchText?: string
   ) => Promise<any[]>;
   onRowClick: (params: any) => void;
   useSearch?: boolean;
@@ -37,13 +37,17 @@ const DataTable: React.FC<TableViewProps> = ({
       (entries) => {
         setRows(entries);
         setLoading(false);
-      },
+      }
     );
   }, [refresh]);
 
   return (
     <Box className="h-fit">
-      {loading && <CircularProgress />}
+      {loading && (
+        <div className="flex justify-center">
+          <CircularProgress />
+        </div>
+      )}
       {useSearch && (
         <div className="w-full flex flex-row justify-end mb-4">
           <SearchInput
@@ -53,7 +57,7 @@ const DataTable: React.FC<TableViewProps> = ({
               onApi(
                 paginationModel.page + 1,
                 paginationModel.pageSize,
-                value,
+                value
               ).then((entries) => {
                 setRows(entries);
                 setLoading(false);
