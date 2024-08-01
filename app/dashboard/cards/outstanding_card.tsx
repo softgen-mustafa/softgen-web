@@ -15,6 +15,7 @@ import { ChevronRight } from "@mui/icons-material";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { useRouter } from "next/navigation";
 import { PieChart } from "@mui/x-charts";
+import { numericToString } from "@/app/services/Local/helper";
 
 interface OutstandingData {
   payableTitle: string;
@@ -71,7 +72,7 @@ const OutstandingCard = () => {
       </Typography>
       <Typography variant="h6" className="font-bold text-red-400">
         {data?.currency}
-        {amount.toLocaleString()}
+        {numericToString(amount)}
       </Typography>
     </div>
   );
