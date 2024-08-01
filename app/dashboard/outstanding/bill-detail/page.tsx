@@ -1,4 +1,5 @@
 "use client";
+import { numericToString } from "@/app/services/Local/helper";
 import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
 import { DataTable } from "@/app/ui/data_grid";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
@@ -52,7 +53,7 @@ const Page = ({}) => {
       sortable: true,
       flex: 1,
       type: "number",
-      valueGetter: (value, row) => `${row.currency || ""} ${row.amount || "0"}`,
+      valueGetter: (value, row) => `${row.currency || ""} ${numericToString(row.amount) || "0"}`,
     },
     {
       field: "dueDate",

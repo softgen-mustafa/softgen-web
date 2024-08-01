@@ -24,8 +24,12 @@ import { inspiredPalette } from "../ui/theme";
 import { useRouter } from "next/navigation";
 import { GridConfig } from "../ui/responsive_grid";
 import Loading from "./loading";
+import Cookies from "js-cookie";
+
 
 const drawerWidth = 240;
+
+
 
 const drawerNavigations = [
   {
@@ -65,6 +69,18 @@ const DrawerContent = () => {
 
   const [paths, setPaths] = useState(drawerNavigations);
 
+  
+useEffect(() => {
+  const token = Cookies.get("authToken");
+    if (token===null || token!.length < 1) {
+      router.push("/auth");
+      return;
+    }
+
+}, []);
+
+
+
   return (
     <div className="flex flex-col w-full h-full overflow-x-hidden" style={{}}>
       <div
@@ -74,7 +90,10 @@ const DrawerContent = () => {
         }}
       >
         <Typography style={{ color: "white" }}>Log-out</Typography>
-        <IconButton size="medium" style={{ color: "white" }}>
+        <IconButton size="medium" style={{ color: "white" }} onClick={()=> {
+            Cookies.set("authToken", "" , { expires: 400 });
+            router.push("/auth")
+        }}>
           <Logout fontSize="inherit" />
         </IconButton>
       </div>

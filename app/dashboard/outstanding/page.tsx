@@ -183,7 +183,8 @@ const Page = () => {
       sortable: true,
       flex: 1,
       type: "number",
-      valueGetter: (value, row) => `${row.currency || ""} ${row.amount || "0"}`,
+      // valueGetter: (value, row) => `${row.currency || ""} ${row.amount || "0"}`,
+      valueGetter: (value, row) => `${row.currency || ""} ${numericToString(row.amount) || "0"}`,
     },
   ];
 

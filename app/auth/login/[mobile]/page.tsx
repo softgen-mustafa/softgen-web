@@ -20,7 +20,7 @@ const Page = ({ params }: { params: any }) => {
 
   useEffect(() => {
     const token = Cookies.get("authToken");
-    if (token) {
+    if (token !== null && token!.length  >0) {
       router.push("/dashboard");
       return;
     }
