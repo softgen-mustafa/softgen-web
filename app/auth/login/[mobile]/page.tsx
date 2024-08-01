@@ -19,7 +19,7 @@ const Page = ({ params }: { params: any }) => {
   const [hasReloaded, setHasReloaded] = useState(false);
 
   useEffect(() => {
-    const token = Cookies.get("authToken");
+    let token = Cookies.get("authToken") ?? null;
     if (token !== null && token!.length  >0) {
       router.push("/dashboard");
       return;

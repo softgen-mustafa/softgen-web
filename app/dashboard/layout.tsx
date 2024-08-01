@@ -71,7 +71,7 @@ const DrawerContent = () => {
 
   
 useEffect(() => {
-  const token = Cookies.get("authToken");
+  let token = Cookies.get("authToken") ?? null;
     if (token===null || token!.length < 1) {
       router.push("/auth");
       return;
