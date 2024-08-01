@@ -2,18 +2,11 @@
 
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { useEffect, useRef, useState } from "react";
-import {
-  Container,
-  Typography,
-  IconButton,
-  Grid,
-} from "@mui/material";
+import { Container, Typography, IconButton, Grid } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { GridColDef } from "@mui/x-data-grid";
 import { DropDown } from "@/app/ui/drop_down";
-import {
-  ChevronLeftRounded,
-} from "@mui/icons-material";
+import { ChevronLeftRounded } from "@mui/icons-material";
 import { postAsync } from "@/app/services/rest_services";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { numericToString } from "@/app/services/Local/helper";
@@ -22,6 +15,7 @@ import { DataTable } from "@/app/ui/data_grid";
 const InventoryOverviewScreen = () => {
   const router = useRouter();
 
+  let movementCycle: string = "";
   const [refresh, setRefresh] = useState(false);
 
   const [movementTypes, setmovementTypes] = useState([
@@ -53,11 +47,18 @@ const InventoryOverviewScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   let searchText = useRef("");
-  const selectedMovementType = useRef(movementTypes[0]);
+
+  // const selectedMovementType = useRef(movementTypes[0]);
+  const selectedMovementType = useRef(
+    movementTypes.find((m) => m.code === movementCycle) || movementTypes[0]
+  );
+
   const selectedListType = useRef(listTypes[0]);
   const selectedRateByType = useRef(rateByTypes[0]);
 
   useEffect(() => {
+    movementCycle = localStorage.getItem("movementCycle") || "";
+    alert(movementCycle)
     fetchDetails();
     fetchInventoryItems(1, 10);
   }, []);
@@ -104,15 +105,15 @@ const InventoryOverviewScreen = () => {
                 selectedListType.current.code === "godown"
                   ? "godownId"
                   : selectedListType.current.code === "category"
-                    ? "categoryId"
-                    : "groupId"
+                  ? "categoryId"
+                  : "groupId"
               ] || index,
             name: entry[
               selectedListType.current.code === "godown"
                 ? "godownName"
                 : selectedListType.current.code === "category"
-                  ? "categoryName"
-                  : "name"
+                ? "categoryName"
+                : "name"
             ],
             itemCount: entry.totalItems,
             amount: entry.closingValue,
@@ -295,7 +296,7 @@ const InventoryOverviewScreen = () => {
                 localStorage.setItem("record", JSON.stringify(params.row));
                 localStorage.setItem(
                   "viewType",
-                  selectedListType.current.code || "",
+                  selectedListType.current.code || ""
                 );
                 router.push("/dashboard/Inventory/InventoryDetails");
               }
