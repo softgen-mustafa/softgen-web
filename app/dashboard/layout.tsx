@@ -18,6 +18,8 @@ import {
   ListItemIcon,
   ListItemText,
   Typography,
+  Modal,
+  Button,
 } from "@mui/material";
 import React, { Suspense, useEffect, useState } from "react";
 import { inspiredPalette } from "../ui/theme";
@@ -26,10 +28,7 @@ import { GridConfig } from "../ui/responsive_grid";
 import Loading from "./loading";
 import Cookies from "js-cookie";
 
-
 const drawerWidth = 240;
-
-
 
 const drawerNavigations = [
   {
@@ -68,18 +67,20 @@ const DrawerContent = () => {
   const router = useRouter();
 
   const [paths, setPaths] = useState(drawerNavigations);
+  const [openLogoutModal, setOpenLogoutModal] = useState(false);
 
-  
-useEffect(() => {
-  let token = Cookies.get("authToken") ?? null;
-    if (token===null || token!.length < 1) {
+  useEffect(() => {
+    let token = Cookies.get("authToken") ?? null;
+    if (token === null || token!.length < 1) {
       router.push("/auth");
       return;
     }
+  }, []);
 
-}, []);
-
-
+  const handleLogout = () => {
+    Cookies.set("authToken", "", { expires: 400 });
+    router.push("/auth");
+  };
 
   return (
     <div className="flex flex-col w-full h-full overflow-x-hidden" style={{}}>
@@ -90,13 +91,55 @@ useEffect(() => {
         }}
       >
         <Typography style={{ color: "white" }}>Log-out</Typography>
-        <IconButton size="medium" style={{ color: "white" }} onClick={()=> {
-            Cookies.set("authToken", "" , { expires: 400 });
-            router.push("/auth")
-        }}>
+        <IconButton
+          size="medium"
+          style={{ color: "white" }}
+          onClick={() => setOpenLogoutModal(true)}
+        >
           <Logout fontSize="inherit" />
         </IconButton>
       </div>
+      <Modal
+        open={openLogoutModal}
+        onClose={() => setOpenLogoutModal(false)}
+        aria-labelledby="logout-modal-title"
+        aria-describedby="logout-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            borderRadius: 4,
+            p: 4,
+          }}
+        >
+          <Typography id="logout-modal-title" variant="h6" component="h2">
+            Confirm Logout
+          </Typography>
+          <Typography id="logout-modal-description" sx={{ mt: 2 }}>
+            Are you sure you want to log out?
+          </Typography>
+          <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
+            <Button onClick={() => setOpenLogoutModal(false)} sx={{ mr: 1 }}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleLogout}
+              variant="contained"
+              style={{ background: inspiredPalette.darkRed }}
+            >
+              Logout
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+
       <List className="justify-center">
         {paths.map((path, index) => (
           <ButtonBase
