@@ -4,8 +4,7 @@ import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { TextInput } from "@/app/ui/text_inputs";
 import { inspiredPalette } from "@/app/ui/theme";
 import { Button, Grid } from "@mui/material";
-import { btoa } from "buffer";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
 
@@ -17,13 +16,20 @@ const Page = ({ params }: { params: any }) => {
     password: "",
   });
 
-  let hasReloaded = false;
+  const [hasReloaded, setHasReloaded] = useState(false);
 
   useEffect(() => {
+    const token = Cookies.get("authToken");
+    if (token) {
+      router.push("/dashboard");
+      return;
+    }
+
     if (!hasReloaded) {
       sendOtp();
+      setHasReloaded(true);
     }
-  }, []);
+  }, [hasReloaded, router]);
 
   const gridConfig: GridConfig[] = [
     {
@@ -81,7 +87,6 @@ const Page = ({ params }: { params: any }) => {
   ];
 
   const sendOtp = async () => {
-    hasReloaded = true;
     try {
       let url = `${getUmsBaseUrl()}/auth/otp/send`;
       let body = {
@@ -102,7 +107,9 @@ const Page = ({ params }: { params: any }) => {
       let response = await postAsync(url, body);
       console.log(`verify OTP: ${JSON.stringify(response)}`);
       return response["is_success"];
-    } catch {}
+    } catch {
+      return false;
+    }
   };
 
   const login = async () => {
@@ -121,21 +128,26 @@ const Page = ({ params }: { params: any }) => {
       let tokenInfo = response["token"];
       Cookies.set("authToken", tokenInfo["value"], { expires: 14 });
       return true;
-    } catch {}
+    } catch {
+      return false;
+    }
   };
 
   const onSubmit = async () => {
-    let isOtpValid = await verifyOtp();
+    const isOtpValid = await verifyOtp();
     if (!isOtpValid) {
       alert("Invalid OTP");
       return;
     }
-    console.log(`is valid otp: ${isOtpValid} `);
-    let isLoggedIn = await login();
+
+    const isLoggedIn = await login();
     if (!isLoggedIn) {
       alert("Invalid Credentials");
-      router.back();
+      return;
     }
+
+    // Prevent back navigation to login page
+    window.history.replaceState(null, "", "/dashboard");
     router.push("/dashboard");
   };
 

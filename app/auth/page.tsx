@@ -2,14 +2,25 @@
 import { TextInput } from "@/app/ui/text_inputs";
 import { Button, Grid } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { getAsync, getUmsBaseUrl } from "../services/rest_services";
 import { CardView, GridConfig, RenderGrid } from "../ui/responsive_grid";
 import { inspiredPalette } from "../ui/theme";
+import Cookies from "js-cookie";
 
 const Page = () => {
   let mobileNumber = useRef("");
   const router = useRouter();
+
+
+  useEffect(() => {
+    const token = Cookies.get("authToken");
+    if (token) {
+      router.push("/dashboard");
+      return;
+    }
+
+  }, [ router]);
 
   const gridConfig: GridConfig[] = [
     {
