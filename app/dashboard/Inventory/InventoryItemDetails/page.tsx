@@ -22,6 +22,8 @@ const ItemDetailScreen = () => {
   ]);
 
   const [item, setItem] = useState<any>(null);
+  const [refresh, triggerRefresh] = useState(false);
+
 
   const [details, setDetails] = useState({
     totalAmount: 0,
@@ -33,12 +35,12 @@ const ItemDetailScreen = () => {
   const [rows, setRows] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const searchText = useRef("");
   let selectedListType = useRef(listTypes[0]);
 
   useEffect(() => {
     const itemString = localStorage.getItem("item") || "{}";
     const parsedItem = JSON.parse(itemString);
+
     setItem(parsedItem);
 
     setDetails({
@@ -51,7 +53,8 @@ const ItemDetailScreen = () => {
     onApi(1, 10);
   }, []);
 
-  const onApi = async (page: number, pageSize: number) => {
+  const onApi = async (page: number, pageSize: number,    searchValue?: string,
+  ) => {
     if (!item) return;
 
     let nameField = "name";
@@ -80,7 +83,7 @@ const ItemDetailScreen = () => {
       let requestBody = {
         page_number: page,
         page_size: pageSize,
-        search_text: searchText.current,
+        search_text: searchValue ?? "",
         sort_by: "name",
         sort_order: "asc",
       };
@@ -105,6 +108,7 @@ const ItemDetailScreen = () => {
       });
 
       setRows(entries);
+      
       return entries;
     } catch (error) {
       console.error("Could not load inventory items:", error);
@@ -219,6 +223,9 @@ const ItemDetailScreen = () => {
                 helperText={"Select  Type"}
                 onSelection={(selection) => {
                   selectedListType.current = selection;
+                  triggerRefresh(!refresh);
+
+
                   onApi(1, 10);
                 }}
               />
@@ -236,8 +243,10 @@ const ItemDetailScreen = () => {
         <CardView>
           <DataTable
             columns={columns}
-            onApi={async (page, pageSize) => {
-              return await onApi(page, pageSize);
+            refresh={refresh}
+            useSearch={true}
+            onApi={async (page, pageSize,searchText ) => {
+              return await onApi(page, pageSize,searchText);
             }}
             onRowClick={(params) => {}}
           />

@@ -23,11 +23,13 @@ const InventoryDetailScreen = () => {
   const [rows, setRows] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [viewType, setViewType] = useState<string>("");
-  const searchText = useRef("");
+  const [refresh, triggerRefresh] = useState(false);
+
 
   useEffect(() => {
     const itemString = localStorage.getItem("record") || "{}";
     const parsedItem = JSON.parse(itemString);
+    triggerRefresh(!refresh);
     setItem(parsedItem);
 
     setDetails({
@@ -43,7 +45,8 @@ const InventoryDetailScreen = () => {
     onApi(1, 10);
   }, []);
 
-  const onApi = async (page: number, pageSize: number) => {
+  const onApi = async (page: number, pageSize: number, searchValue?: string,
+  ) => {
     if (!viewType || !item) return;
 
     try {
@@ -55,7 +58,7 @@ const InventoryDetailScreen = () => {
       const requestBody = {
         page_number: page,
         page_size: pageSize,
-        search_text: searchText.current,
+        search_text: searchValue ?? "",
         sort_by: "name",
         sort_order: "asc",
       };
@@ -147,8 +150,10 @@ const InventoryDetailScreen = () => {
       view: (
         <CardView>
           <DataTable
+            refresh={refresh}
+            useSearch={true}
             columns={columns}
-            onApi={async (page, pageSize) => await onApi(page, pageSize)}
+            onApi={async (page, pageSize, searchText) => await onApi(page, pageSize,searchText)}
             onRowClick={(params) => {
               if (viewType === "item") {
                 localStorage.setItem("item", JSON.stringify(params.row));

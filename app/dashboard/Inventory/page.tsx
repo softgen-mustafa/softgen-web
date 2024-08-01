@@ -58,7 +58,7 @@ const InventoryOverviewScreen = () => {
 
   useEffect(() => {
     movementCycle = localStorage.getItem("movementCycle") || "";
-    alert(movementCycle)
+    // alert(movementCycle)
     fetchDetails();
     fetchInventoryItems(1, 10);
   }, []);
@@ -81,7 +81,8 @@ const InventoryOverviewScreen = () => {
     }
   };
 
-  const fetchInventoryItems = async (page: number, pageSize: number) => {
+  const fetchInventoryItems = async (page: number, pageSize: number,    searchValue?: string,
+  ) => {
     try {
       setIsLoading(true);
       let url = `${getBmrmBaseUrl()}/stock-${
@@ -92,7 +93,7 @@ const InventoryOverviewScreen = () => {
       let requestBody = {
         page_number: page,
         page_size: pageSize,
-        search_text: searchText.current,
+        search_text: searchValue ?? "",
         sort_by: "name",
         sort_order: "asc",
       };
@@ -285,8 +286,9 @@ const InventoryOverviewScreen = () => {
           <DataTable
             refresh={refresh}
             columns={columns}
-            onApi={async (page, pageSize) => {
-              return await fetchInventoryItems(page, pageSize);
+            useSearch={true}
+            onApi={async (page, pageSize, searchText) => {
+              return await fetchInventoryItems(page, pageSize, searchText);
             }}
             onRowClick={(params) => {
               if (selectedListType.current.code === "item") {
