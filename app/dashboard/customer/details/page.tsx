@@ -4,6 +4,8 @@ import { Card, Typography, Button, CircularProgress } from "@mui/material";
 import { numericToString } from "@/app/services/Local/helper";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { handleCall, handleEmail, handleMapPress } from "./helper";
+import { inspiredPalette } from "@/app/ui/theme";
+
 
 const CustomerDetailsScreen = ({}) => {
   const [ledgerDetail, setLedgerDetail] = useState<any>({});
@@ -273,7 +275,7 @@ const InfoItem: React.FC<InfoItemProps> = ({
     <Typography variant="body2" className="text-gray-600">
       {label}
     </Typography>
-    <Typography variant="body1" className="font-semibold text-green-600">
+    <Typography variant="body1" className="font-semibold" style={{ color: inspiredPalette.darkBlue }}>
       {value}
     </Typography>
   </div>
