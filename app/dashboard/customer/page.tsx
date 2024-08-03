@@ -21,16 +21,14 @@ const CustomerPartySearch = () => {
       headerName: "Name",
       editable: false,
       sortable: true,
-      minWidth: 50,
-      maxWidth: 400,
+      flex: 1,
     },
     {
       field: "mobileNo",
       headerName: "Mobile",
       editable: false,
       sortable: true,
-      minWidth: 50,
-      maxWidth: 400,
+      flex: 1,
     },
     {
       field: "landlineNumber",
@@ -45,8 +43,7 @@ const CustomerPartySearch = () => {
       headerName: "EmailId",
       editable: false,
       sortable: true,
-      minWidth: 50,
-      maxWidth: 400,
+      flex: 1,
     },
   ];
 
