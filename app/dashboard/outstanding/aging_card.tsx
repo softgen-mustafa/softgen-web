@@ -20,6 +20,7 @@ interface AgingData {
   title: string;
   code: string;
   amount: number;
+  currency :string,
 }
 
 interface AgingCardProps {
@@ -43,7 +44,7 @@ const AgingCard: React.FC<AgingCardProps> = ({ data, onPress }) => {
       }}
     >
       <Typography component="div" className="text-xl text-red-500">
-        {numericToString(data.amount)}
+       {data.currency} {numericToString(data.amount)}
       </Typography>
       <Typography component="div" className="text-md">
         {data.title}
@@ -69,7 +70,8 @@ const AgingView = ({ billType }: { billType: string }) => {
         let newEntry: AgingData = {
           title: entry.title,
           code: entry.code,
-          amount: entry.amount,
+          amount: entry.amount, 
+          currency: entry.currency ?? "₹",
         };
         return newEntry;
       });

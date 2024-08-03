@@ -41,7 +41,7 @@ const RankedPartyOutstandingCard = ({ billType }: { billType: string }) => {
       sortable: true,
       flex: 1,
       valueGetter: (value, row) =>
-        `${row.amount != null ? numericToString(row.amount) : "0"}`,
+        `${row.currency || ""} ${row.amount != null ? numericToString(row.amount) : "0"}`,
     },
   ];
 
@@ -61,6 +61,7 @@ const RankedPartyOutstandingCard = ({ billType }: { billType: string }) => {
           id: entry.name,
           name: entry.name,
           amount: entry.totalAmount,
+          currency: entry.currency ?? "₹",
         };
       });
       setRows(values);

@@ -80,7 +80,7 @@ const InventoryCard = ({}) => {
   };
   const navigateToInventoryOverview = (movementCycle: string) => {
     router.push("/dashboard/Inventory");
-    alert(`Navigating to ${movementCycle} inventory overview`);
+    // alert(`Navigating to ${movementCycle} inventory overview`);
   };
 
   return (
