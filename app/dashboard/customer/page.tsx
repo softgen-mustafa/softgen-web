@@ -35,8 +35,7 @@ const CustomerPartySearch = () => {
       headerName: "Landline Number",
       editable: false,
       sortable: true,
-      minWidth: 50,
-      maxWidth: 400,
+      flex: 1,
     },
     {
       field: "emailId",
