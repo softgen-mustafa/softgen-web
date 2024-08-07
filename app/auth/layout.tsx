@@ -8,8 +8,8 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="w-full h-[100vh] flex flex-col  bg-gray-100 justify-center items-center overflow-x-hidden ">
-      <Box className="justify-center items-center mt-20">
+    <div className="w-full h-[100vh] flex flex-col  bg-gray-100  items-center overflow-x-hidden ">
+      <Box className="items-center">
         <Image
           src={logoImage}
           alt="SoftGen Logo"

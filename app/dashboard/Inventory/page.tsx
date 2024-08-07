@@ -81,7 +81,10 @@ const InventoryOverviewScreen = () => {
     }
   };
 
-  const fetchInventoryItems = async (page: number, pageSize: number,    searchValue?: string,
+  const fetchInventoryItems = async (
+    page: number,
+    pageSize: number,
+    searchValue?: string
   ) => {
     try {
       setIsLoading(true);
