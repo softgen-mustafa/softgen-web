@@ -6,6 +6,7 @@ import { Grid, Typography } from "@mui/material";
 import Cookies from "js-cookie";
 import { AgingSettings } from "./aging_setting";
 import UserPermissions from "./user_permissions";
+import MasterPermissions from "./master_permissions";
 
 const Page = () => {
   const gridConfig: GridConfig[] = [
@@ -22,6 +23,20 @@ const Page = () => {
       type: "item",
       children: [],
       view: (
+        <CardView className="max-h-fit h-fit" title="Date Range Setting">
+          <DateRangePicker
+            onDateChange={(fromDate, toDate) => {
+              Cookies.set("fromDate", fromDate ?? "", { expires: 365 });
+              Cookies.set("toDate", toDate ?? "", { expires: 365 });
+            }}
+          />
+        </CardView>
+      ),
+    },
+    {
+      type: "item",
+      children: [],
+      view: (
         <CardView className="max-h-fit h-fit" title="User Permissions">
           <UserPermissions />
         </CardView>
@@ -31,13 +46,8 @@ const Page = () => {
       type: "item",
       children: [],
       view: (
-        <CardView className="max-h-fit h-fit" title="Date Range Setting">
-          <DateRangePicker
-            onDateChange={(fromDate, toDate) => {
-              Cookies.set("fromDate", fromDate ?? "", { expires: 365 });
-              Cookies.set("toDate", toDate ?? "", { expires: 365 });
-            }}
-          />
+        <CardView className="max-h-fit h-fit" title="Master Permissions">
+          <MasterPermissions />
         </CardView>
       ),
     },
