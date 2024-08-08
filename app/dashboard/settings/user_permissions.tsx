@@ -52,8 +52,10 @@ const UserPermissions = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedUser) {
-      onApi(1, 10, "");
+    if (!!selectedUser) {
+      onApi(1, 10, "").then((_) => {
+        setIsLoading(!isLoading);
+      });
     }
   }, [filter, selectedUser]);
 
@@ -120,10 +122,26 @@ const UserPermissions = () => {
           id: index,
           name: _data?.name,
           status: _data?.is_active,
+          code: _data?.code,
         };
       });
       console.log(response);
       return entries;
+    }
+  };
+
+  const updateUserStatus = async (
+    code: string | number,
+    currentStatus: boolean
+  ) => {
+    try {
+      let status = currentStatus ? "revoke" : "assign";
+      const url = `${getBmrmBaseUrl()}/user-info/${status}-permission?userId=${selectedUser}&code=${code}`;
+      const requestBody = { isActive: currentStatus };
+      const response = await postAsync(url, requestBody);
+      setIsLoading(!isLoading);
+    } catch (error) {
+      console.log("Something went wrong...");
     }
   };
 
@@ -161,7 +179,8 @@ const UserPermissions = () => {
         }}
         useSearch={true}
         onRowClick={(params) => {
-          console.log(params);
+          let rowData = params?.row;
+          updateUserStatus(rowData?.code, rowData?.status);
         }}
       />
     </Box>
