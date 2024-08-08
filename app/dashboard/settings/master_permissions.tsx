@@ -21,7 +21,7 @@ const compId = Cookies.get("companyId");
 
 const masterTypes = [
   {
-    title: "Ledger Group",
+    title: "Ledger",
     namesUrl: "/ledger/get/names",
     mappedNamesUrl: "/table-mapping/get/Ledger",
     mapUrl: "/table-mapping/map/ledger",
@@ -108,7 +108,7 @@ const MasterPermissions = () => {
       flex: 2,
     },
     {
-      field: "status",
+      field: "selected",
       headerName: "Status",
       editable: false,
       sortable: false,
@@ -116,7 +116,7 @@ const MasterPermissions = () => {
       renderCell: (params) => {
         return (
           <Box>
-            <Switch checked={false} />
+            <Switch checked={params.row.selected ? true : false} />
           </Box>
         );
       },
@@ -149,24 +149,40 @@ const MasterPermissions = () => {
       selection.title == "User" ? getUmsBaseUrl() : getBmrmBaseUrl();
     let namesResponseTask = getAsync(`${baseNameUrl}${selection.namesUrl}`);
     let mappedResponse = await getAsync(
-      `${getBmrmBaseUrl()}${selection.mappedNamesUrl}`
+      `${getBmrmBaseUrl()}${selection.mappedNamesUrl}?userId=${
+        selectedUser.current
+      }`
     );
     let namesResponse = await namesResponseTask;
 
+    console.log(
+      `mapped: ${JSON.stringify(
+        `${getBmrmBaseUrl()}${selection.mappedNamesUrl}?userId=${
+          selectedUser.current
+        }`
+      )}`
+    );
+    // console.log(namesResponse);
+
     let entries = namesResponse.map((entry: any, index: number) => {
       let nameKey = selection.title == "User" ? "name" : "title";
-      let existing = mappedResponse.filter(
+      let existing = mappedResponse.some(
         (element: any) => element.entry_name === entry[nameKey]
       );
+      if (existing) {
+        console.log(`${entry[nameKey]}`);
+      }
       return {
         id: index + 1,
         name: entry[nameKey],
-        selected: existing != null,
+        selected: existing,
       };
     });
 
     return entries ?? [];
   };
+
+  const updateStatus = async () => {};
 
   return (
     <Box>
