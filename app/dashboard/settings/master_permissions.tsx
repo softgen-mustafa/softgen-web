@@ -5,6 +5,7 @@ import {
   getAsync,
   getBmrmBaseUrl,
   getUmsBaseUrl,
+  postAsync,
 } from "@/app/services/rest_services";
 import Cookies from "js-cookie";
 import { Box, Stack, Switch } from "@mui/material";
@@ -114,14 +115,26 @@ const MasterPermissions = () => {
       sortable: false,
       flex: 1,
       renderCell: (params) => {
+        console.log(params);
         return (
           <Box>
-            <Switch checked={params.row.selected ? true : false} />
+            <Switch
+              checked={params.row.selected ? true : false}
+              onChange={() =>
+                updateStatus(
+                  selectedUser.current,
+                  params.row.name,
+                  params.row.selected
+                )
+              }
+            />
           </Box>
         );
       },
     },
   ];
+
+  console.log(selectedUser.current);
 
   const loadUser = async () => {
     try {
@@ -155,15 +168,6 @@ const MasterPermissions = () => {
     );
     let namesResponse = await namesResponseTask;
 
-    console.log(
-      `mapped: ${JSON.stringify(
-        `${getBmrmBaseUrl()}${selection.mappedNamesUrl}?userId=${
-          selectedUser.current
-        }`
-      )}`
-    );
-    // console.log(namesResponse);
-
     let entries = namesResponse.map((entry: any, index: number) => {
       let nameKey = selection.title == "User" ? "name" : "title";
       let existing = mappedResponse.some(
@@ -182,7 +186,24 @@ const MasterPermissions = () => {
     return entries ?? [];
   };
 
-  const updateStatus = async () => {};
+  const updateStatus = async (
+    id: any,
+    name: string,
+    currentStatus: boolean
+  ) => {
+    try {
+      let selection = selectedMasterType.current;
+      let url = `${getBmrmBaseUrl()}${
+        currentStatus ? selection.removeUrl : selection.mapUrl
+      }`;
+
+      const requestBody = { userId: id, entryName: name };
+      const response = await postAsync(url, requestBody);
+      triggerRefresh(!refresh);
+    } catch (error) {
+      console.log("Something went wrong...");
+    }
+  };
 
   return (
     <Box>
@@ -214,7 +235,7 @@ const MasterPermissions = () => {
         columns={columns}
         useServerPagination={false}
         refresh={refresh}
-        onApi={async (page, pageSize, searchText) => {
+        onApi={async () => {
           return await onApi();
         }}
         useSearch={false}
