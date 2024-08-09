@@ -56,7 +56,7 @@ const AgingView = ({ billType }: { billType: string }) => {
   const router = useRouter();
   const [data, setData] = useState<AgingData[]>([]);
   const [open, setOpen] = useState(false);
-  const [hasPermission, setHasPermission] = useState(false);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
 
 
@@ -106,12 +106,12 @@ const AgingView = ({ billType }: { billType: string }) => {
     }
   };
 
-  if (!hasPermission) {
+  if (hasPermission === false) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
-      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-            Get the Premium For this Service Or Contact Admin - 7977662924
-          </Typography>
+        <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+          Get the Premium For this Service Or Contact Admin - 7977662924
+        </Typography>
       </div>
     );
   }

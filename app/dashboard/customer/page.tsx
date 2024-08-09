@@ -2,16 +2,15 @@
 import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
 import { DataTable } from "@/app/ui/data_grid";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
-import { Grid, Typography } from "@mui/material";
+import { CircularProgress, Grid, Typography } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import FeatureControl from "@/app/components/featurepermission/page";
-
 const CustomerPartySearch = () => {
   const router = useRouter();
   const [rows, setRows] = useState([]);
-  const [hasPermission, setHasPermission] = useState(false);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   useEffect(() => {
     FeatureControl("CustomerPartySearch").then((permission) => {
@@ -116,8 +115,9 @@ const CustomerPartySearch = () => {
           height: "100vh",
         }}
       >
-        {" "}
-        {hasPermission ? (
+        {hasPermission === null ? (
+          <CircularProgress />
+        ) : hasPermission ? (
           RenderGrid(gridConfig)
         ) : (
           <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
