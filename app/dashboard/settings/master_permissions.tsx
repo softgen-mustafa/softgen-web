@@ -95,12 +95,19 @@ const masterTypes = [
   },
 ];
 
+const filterData = [
+  { id: 1, title: "All" },
+  { id: 2, title: "Active" },
+  { id: 3, title: "Inactive" },
+];
+
 const MasterPermissions = () => {
   const [data, setData] = useState([]);
   const [refresh, triggerRefresh] = useState(false);
 
   let selectedMasterType = useRef(masterTypes[0]);
   let selectedUser = useRef(null);
+  let selectedFilter = useRef(filterData[0]?.title);
 
   useEffect(() => {
     loadUser().then((_) => {
@@ -178,19 +185,35 @@ const MasterPermissions = () => {
 
     let isUserMasterSelected = selection.title == "User";
 
-    let entries = namesResponse.map((entry: any, index: number) => {
+    let entries: any[] = [];
+    namesResponse.map((entry: any, index: number) => {
       let nameKey = isUserMasterSelected ? "name" : "title";
       let compareKey = isUserMasterSelected ? "id" : "title";
       let existing = mappedResponse.some(
         (element: any) => element.entry_name === entry[compareKey].toString()
       );
 
-      return {
+      let newEntry: any | null = {
         id: index + 1,
         name: entry[nameKey],
         selected: existing,
         userId: isUserMasterSelected ? entry["id"].toString() : "0",
       };
+
+      let filterValue = selectedFilter.current;
+
+      if (filterValue !== "All") {
+        if (
+          !(
+            (filterValue === "Active" && !newEntry.selected) ||
+            (filterValue === "Inactive" && newEntry.selected)
+          )
+        ) {
+          entries.push(newEntry);
+        }
+      } else {
+        entries.push(newEntry);
+      }
     });
 
     console.log(`Mapping response: ${JSON.stringify(entries)}`);
@@ -246,32 +269,43 @@ const MasterPermissions = () => {
   };
 
   return (
-    <Box>
-      <Stack flexDirection={"row"} gap={1.5} mb={1.5}>
-        <DropDown
-          label={"Select User"}
-          displayFieldKey={"name"}
-          valueFieldKey={null}
-          selectionValues={data}
-          helperText={""}
-          onSelection={(_data) => {
-            selectedUser.current = _data?.id;
-            triggerRefresh(!refresh);
-          }}
-        />
-      </Stack>
-      <Stack flexDirection={"row"} alignItems={"center"} gap={1.5} mb={1}>
-        <DropDown
-          label={"Select Master"}
-          displayFieldKey={"title"}
-          valueFieldKey={null}
-          selectionValues={masterTypes}
-          helperText={""}
-          onSelection={(selection) => {
-            selectedMasterType.current = selection;
-            triggerRefresh(!refresh);
-          }}
-        />
+    <Stack flexDirection={"column"} gap={1.5}>
+      <DropDown
+        label={"Select User"}
+        displayFieldKey={"name"}
+        valueFieldKey={null}
+        selectionValues={data}
+        helperText={""}
+        onSelection={(_data) => {
+          selectedUser.current = _data?.id;
+          triggerRefresh(!refresh);
+        }}
+      />
+      <DropDown
+        label={"Select Master"}
+        displayFieldKey={"title"}
+        valueFieldKey={null}
+        selectionValues={masterTypes}
+        helperText={""}
+        onSelection={(selection) => {
+          selectedMasterType.current = selection;
+          triggerRefresh(!refresh);
+        }}
+      />
+      <Stack flexDirection={"row"} gap={1.5}>
+        <Box sx={{ flex: 1 }}>
+          <DropDown
+            label="Filter"
+            displayFieldKey={"title"}
+            valueFieldKey={null}
+            selectionValues={filterData}
+            helperText={""}
+            onSelection={(_selection) => {
+              selectedFilter.current = _selection.title;
+              triggerRefresh(!refresh);
+            }}
+          />
+        </Box>
         <Button variant="contained" onClick={handleMapAll}>
           <Typography textTransform={"capitalize"} letterSpacing={0.8}>
             Map All
@@ -293,7 +327,7 @@ const MasterPermissions = () => {
         useSearch={false}
         onRowClick={(params) => {}}
       />
-    </Box>
+    </Stack>
   );
 };
 
