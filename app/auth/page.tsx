@@ -63,7 +63,8 @@ const Page = () => {
       type: "item",
       view: (
         <CardView className="flex flex-col justify-center items-center">
-          <h1 className="text-2xl font-bold mb-4">Login To BizOpp</h1>
+          <h1 className="text-2xl font-bold mb-1 color ">  Welcome To BizOpp</h1>
+          <h3 className="mb-8 justify-center">Your Decision Making Buddy</h3>
           <TextInput
             mode="number"
             placeHolder="Enter Mobile Number"

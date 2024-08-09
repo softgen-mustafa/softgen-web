@@ -3,7 +3,7 @@ import { getUmsBaseUrl, postAsync } from "@/app/services/rest_services";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { TextInput } from "@/app/ui/text_inputs";
 import { inspiredPalette } from "@/app/ui/theme";
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, Snackbar } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
@@ -11,16 +11,17 @@ import Cookies from "js-cookie";
 const Page = ({ params }: { params: any }) => {
   const router = useRouter();
   const mobile = params.mobile;
+  const error = useRef<string[]>([]);
   let userDetail = useRef({
     otp: "",
     password: "",
   });
-
+  const [snackbar, setSnackbar] = useState({ open: false, message: "" });
   const [hasReloaded, setHasReloaded] = useState(false);
 
   useEffect(() => {
     let token = Cookies.get("authToken") ?? null;
-    if (token !== null && token!.length  >0) {
+    if (token !== null && token!.length > 0) {
       router.push("/dashboard");
       return;
     }
@@ -31,23 +32,53 @@ const Page = ({ params }: { params: any }) => {
     }
   }, [hasReloaded, router]);
 
+  const isPasswordInvalid = (text: string): [boolean, string] => {
+    error.current = [];
+
+    if (text.length < 8 || text.length > 15) {
+      error.current.push("Password must be between 8 and 15 characters.");
+    } else if (!/[a-z]/.test(text)) {
+      error.current.push(
+        "Password must contain at least one lowercase letter."
+      );
+    } else if (!/[A-Z]/.test(text)) {
+      error.current.push(
+        "Password must contain at least one uppercase letter."
+      );
+    } else if (!/[\d#$%&*@!_]/.test(text)) {
+      error.current.push(
+        "Password must contain at least one of the allowed symbols (# $ % & * @ ! _) or a number."
+      );
+    }
+
+    return [error.current.length > 0, error.current.join("\n")];
+  };
+
+  const handlePasswordChange = (value = "") => {
+    userDetail.current.password = value;
+    const [isInvalid, validationMessages] = isPasswordInvalid(value);
+    if (isInvalid) {
+      error.current = validationMessages.split("\n");
+    }
+  };
+
+  const showSnackbar = (message: string) => {
+    setSnackbar({ open: true, message });
+  };
+
+  const closeSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   const gridConfig: GridConfig[] = [
     {
       type: "item",
       view: (
-        <div className="flex flex-col justify-center items-center">
-          Image here
-        </div>
-      ),
-      className: "",
-      children: [],
-    },
-    {
-      type: "item",
-      view: (
         <CardView className="flex flex-col justify-center items-center">
-          <p>Login Page</p>
-          <p>{`You'll get an OTP on your this mobile number: ${mobile}`}</p>
+          <h1 className="justify-center center self-center text-2xl font-bold mb-5">
+            Login to Your Account{" "}
+          </h1>
+          <p className="font-medium text-1xl">{`You'll get an OTP on your this mobile number: ${mobile}`}</p>
           <br />
           <TextInput
             mode="number"
@@ -60,10 +91,12 @@ const Page = ({ params }: { params: any }) => {
           <TextInput
             mode="password"
             placeHolder="Enter Password"
-            onTextChange={(value: string) => {
-              userDetail.current.password = value;
-            }}
+            onTextChange={handlePasswordChange}
           />
+          {error.current.length > 0 && (
+            <p className="text-red-500 mt-2">{error.current.join(", ")}</p>
+          )}
+
           <br />
           <br />
           <div className="flex flex-row justify-end">
@@ -94,7 +127,7 @@ const Page = ({ params }: { params: any }) => {
       };
       await postAsync(url, body);
     } catch {
-      alert("Could not send OTP");
+      showSnackbar("Could not send OTP");
     }
   };
   const verifyOtp = async () => {
@@ -122,7 +155,7 @@ const Page = ({ params }: { params: any }) => {
       };
       let response = await postAsync(url, body);
       if (!response["is_success"]) {
-        alert(response["message"] || "Login Failed");
+        showSnackbar(response["message"] || "Login Failed");
         return false;
       }
       let tokenInfo = response["token"];
@@ -136,13 +169,14 @@ const Page = ({ params }: { params: any }) => {
   const onSubmit = async () => {
     const isOtpValid = await verifyOtp();
     if (!isOtpValid) {
-      alert("Invalid OTP");
+      showSnackbar("Invalid OTP");
+
       return;
     }
 
     const isLoggedIn = await login();
     if (!isLoggedIn) {
-      alert("Invalid Credentials");
+      showSnackbar("Invalid Credentials");
       return;
     }
 
@@ -157,11 +191,19 @@ const Page = ({ params }: { params: any }) => {
         container
         sx={{
           flexGrow: 1,
-          height: "100vh",
+          // height: "100vh",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         {RenderGrid(gridConfig)}
       </Grid>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={closeSnackbar}
+        message={snackbar.message}
+      />
     </div>
   );
 };
