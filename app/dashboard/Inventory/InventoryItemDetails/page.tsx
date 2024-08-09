@@ -12,7 +12,7 @@ import { postAsync } from "@/app/services/rest_services";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { numericToString } from "@/app/services/Local/helper";
 import { DataTable } from "@/app/ui/data_grid";
-
+import FeatureControl from "@/app/components/featurepermission/page";
 const ItemDetailScreen = () => {
   const router = useRouter();
 
@@ -23,7 +23,7 @@ const ItemDetailScreen = () => {
 
   const [item, setItem] = useState<any>(null);
   const [refresh, triggerRefresh] = useState(false);
-
+  const [hasPermission, setHasPermission] = useState(false);
 
   const [details, setDetails] = useState({
     totalAmount: 0,
@@ -36,24 +36,45 @@ const ItemDetailScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   let selectedListType = useRef(listTypes[0]);
+  useEffect(() => {
+    checkPermissionAndInitialize();
+  }, []);
 
   useEffect(() => {
     const itemString = localStorage.getItem("item") || "{}";
     const parsedItem = JSON.parse(itemString);
-
     setItem(parsedItem);
-
     setDetails({
       totalAmount: parsedItem.amount || 0,
       totalItem: 1,
       totalItemsStock: parsedItem.quantity || 0,
       currency: parsedItem.currency || "₹",
     });
-
     onApi(1, 10);
   }, []);
 
-  const onApi = async (page: number, pageSize: number,    searchValue?: string,
+  const checkPermissionAndInitialize = async () => {
+    const permission = await FeatureControl("ItemDetailScreen");
+    setHasPermission(permission);
+    if (permission) {
+      const itemString = localStorage.getItem("record") || "{}";
+      const parsedItem = JSON.parse(itemString);
+      triggerRefresh(!refresh);
+      setItem(parsedItem);
+      setDetails({
+        totalAmount: parsedItem.amount || 0,
+        totalItem: 1,
+        totalItemsStock: parsedItem.quantity || 0,
+        currency: parsedItem.currency || "₹",
+      });
+      onApi(1, 10);
+    }
+  };
+
+  const onApi = async (
+    page: number,
+    pageSize: number,
+    searchValue?: string
   ) => {
     if (!item) return;
 
@@ -108,7 +129,7 @@ const ItemDetailScreen = () => {
       });
 
       setRows(entries);
-      
+
       return entries;
     } catch (error) {
       console.error("Could not load inventory items:", error);
@@ -198,7 +219,7 @@ const ItemDetailScreen = () => {
           <br />
           <Typography className="text-xl flex">Closing Value</Typography>
           <Typography className="text-2xl md:text-3xl mt-2 flex">
-          {item?.currency}  {numericToString(item?.amount)}
+            {item?.currency} {numericToString(item?.amount)}
           </Typography>
         </CardView>
       ),
@@ -225,7 +246,6 @@ const ItemDetailScreen = () => {
                   selectedListType.current = selection;
                   triggerRefresh(!refresh);
 
-
                   onApi(1, 10);
                 }}
               />
@@ -245,8 +265,8 @@ const ItemDetailScreen = () => {
             columns={columns}
             refresh={refresh}
             useSearch={true}
-            onApi={async (page, pageSize,searchText ) => {
-              return await onApi(page, pageSize,searchText);
+            onApi={async (page, pageSize, searchText) => {
+              return await onApi(page, pageSize, searchText);
             }}
             onRowClick={(params) => {}}
           />

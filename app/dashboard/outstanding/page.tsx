@@ -19,6 +19,7 @@ import { AgingView } from "./aging_card";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { numericToString } from "@/app/services/Local/helper";
 import { TextInput } from "@/app/ui/text_inputs";
+import FeatureControl from "@/app/components/featurepermission/page";
 
 const RankedPartyOutstandingCard = ({ billType }: { billType: string }) => {
   let rank = useRef(5);
@@ -108,6 +109,9 @@ const RankedPartyOutstandingCard = ({ billType }: { billType: string }) => {
 
 const Page = () => {
   const router = useRouter();
+  const [hasPermission, setHasPermission] = useState(false);
+
+
 
   let incomingBillType = "Receivable"; // populate later
   const [types, updateTypes] = useState([
@@ -129,11 +133,23 @@ const Page = () => {
   const [totalAmount, setAmount] = useState("0");
 
   const [rows, setRows] = useState([]);
-
   useEffect(() => {
-    loadAmount();
-    loadUpcoming();
+    checkPermission();
   }, []);
+
+  const checkPermission = async () => {
+    const permission = await FeatureControl("OutstandingDashboardScreen");
+    setHasPermission(permission);
+    if (permission) {
+      loadAmount();
+      loadUpcoming();
+    }
+  };
+
+  // useEffect(() => {
+  //   loadAmount();
+  //   loadUpcoming();
+  // }, []);
 
   const loadAmount = async () => {
     try {
@@ -349,6 +365,16 @@ const Page = () => {
       children: [],
     },
   ];
+
+  if (!hasPermission) {
+    return (
+      <div className="bg-white min-h-screen flex items-center justify-center">
+      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+          Get the Premium For this Service Or Contact Admin - 7977662924
+        </Typography>
+    </div>
+    );
+  }
 
   return (
     <Container sx={{ overflowX: "hidden" }}>

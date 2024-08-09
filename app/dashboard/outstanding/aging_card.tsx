@@ -1,7 +1,6 @@
 "use client";
 import { numericToString } from "@/app/services/Local/helper";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
-import { ResponsiveDiv } from "@/app/ui/custom_div";
 import { inspiredPalette } from "@/app/ui/theme";
 import {
   Box,
@@ -15,7 +14,7 @@ import {
 import { PieChart } from "@mui/x-charts";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-
+import FeatureControl from "@/app/components/featurepermission/page";
 interface AgingData {
   title: string;
   code: string;
@@ -57,10 +56,24 @@ const AgingView = ({ billType }: { billType: string }) => {
   const router = useRouter();
   const [data, setData] = useState<AgingData[]>([]);
   const [open, setOpen] = useState(false);
+  const [hasPermission, setHasPermission] = useState(false);
+
+
 
   useEffect(() => {
-    loadData();
+    checkPermissionAndLoadData();
   }, [billType]);
+
+
+  
+  
+  const checkPermissionAndLoadData = async () => {
+    const permission = await FeatureControl("AgingOutstandingCard");
+    setHasPermission(permission);
+    if (permission) {
+      loadData();
+    }
+  };
 
   const loadData = async () => {
     try {
@@ -92,6 +105,16 @@ const AgingView = ({ billType }: { billType: string }) => {
       setOpen(true);
     }
   };
+
+  if (!hasPermission) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full">
+      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+            Get the Premium For this Service Or Contact Admin - 7977662924
+          </Typography>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col ">

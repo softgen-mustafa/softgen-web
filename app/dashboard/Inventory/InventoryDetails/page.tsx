@@ -10,6 +10,7 @@ import { postAsync } from "@/app/services/rest_services";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { numericToString } from "@/app/services/Local/helper";
 import { DataTable } from "@/app/ui/data_grid";
+import FeatureControl from "@/app/components/featurepermission/page";
 
 const InventoryDetailScreen = () => {
   const router = useRouter();
@@ -24,27 +25,33 @@ const InventoryDetailScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [viewType, setViewType] = useState<string>("");
   const [refresh, triggerRefresh] = useState(false);
-
+  const [hasPermission, setHasPermission] = useState(false);
 
   useEffect(() => {
-    const itemString = localStorage.getItem("record") || "{}";
-    const parsedItem = JSON.parse(itemString);
-    triggerRefresh(!refresh);
-    setItem(parsedItem);
-
-    setDetails({
-      totalAmount: parsedItem.amount || 0,
-      totalItem: parsedItem.itemCount || 1,
-      totalItemsStock: parsedItem.quantity || 0,
-      currency: parsedItem.currency || "₹",
-    });
-
-    const storedViewType = localStorage.getItem("viewType") || "";
-    setViewType(storedViewType);
-
-    onApi(1, 10);
+    checkPermissionAndInitialize();
   }, []);
+ const checkPermissionAndInitialize = async () => {
+    const permission = await FeatureControl("InventoryDetailScreen");
+    setHasPermission(permission);
+    if (permission) {
+      const itemString = localStorage.getItem("record") || "{}";
+      const parsedItem = JSON.parse(itemString);
+      triggerRefresh(!refresh);
+      setItem(parsedItem);
+      setDetails({
+        totalAmount: parsedItem.amount || 0,
+        totalItem: parsedItem.itemCount || 1,
+        totalItemsStock: parsedItem.quantity || 0,
+        currency: parsedItem.currency || "₹",
+      });
 
+      const storedViewType = localStorage.getItem("viewType") || "";
+      setViewType(storedViewType);
+
+      onApi(1, 10);
+    }
+  };
+  
   const onApi = async (page: number, pageSize: number, searchValue?: string,
   ) => {
     if (!viewType || !item) return;
@@ -170,6 +177,18 @@ const InventoryDetailScreen = () => {
       children: [],
     },
   ];
+
+
+  if (!hasPermission) {
+    return (
+      <div className="bg-white min-h-screen flex items-center justify-center">
+      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+          Get the Premium For this Service Or Contact Admin - 7977662924
+        </Typography>
+    </div>
+    );
+  }
+
 
   return (
     <Container sx={{ overflowX: "hidden" }}>

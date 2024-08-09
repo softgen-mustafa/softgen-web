@@ -11,7 +11,7 @@ import { postAsync } from "@/app/services/rest_services";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { numericToString } from "@/app/services/Local/helper";
 import { DataTable } from "@/app/ui/data_grid";
-
+import FeatureControl from "@/app/components/featurepermission/page";
 const InventoryOverviewScreen = () => {
   const router = useRouter();
 
@@ -48,6 +48,8 @@ const InventoryOverviewScreen = () => {
 
   let searchText = useRef("");
 
+  const [hasPermission, setHasPermission] = useState(false);
+
   // const selectedMovementType = useRef(movementTypes[0]);
   const selectedMovementType = useRef(
     movementTypes.find((m) => m.code === movementCycle) || movementTypes[0]
@@ -57,11 +59,25 @@ const InventoryOverviewScreen = () => {
   const selectedRateByType = useRef(rateByTypes[0]);
 
   useEffect(() => {
-    movementCycle = localStorage.getItem("movementCycle") || "";
-    // alert(movementCycle)
-    fetchDetails();
-    fetchInventoryItems(1, 10);
+    FeatureControl("InventoryOverviewScreen").then((permission) => {
+      setHasPermission(permission);
+      if (permission) {
+        fetchDetails();
+        fetchInventoryItems(1, 10);
+      }
+      // else {
+      //   router.back();
+      //   // Toast("Access Denied for Customer Overview");
+      // }
+    });
   }, []);
+
+  // useEffect(() => {
+  //   movementCycle = localStorage.getItem("movementCycle") || "";
+  //   // alert(movementCycle)
+  //   fetchDetails();
+  //   fetchInventoryItems(1, 10);
+  // }, []);
 
   const fetchDetails = async () => {
     try {
@@ -324,7 +340,14 @@ const InventoryOverviewScreen = () => {
           height: "100vh",
         }}
       >
-        {RenderGrid(gridConfig)}
+        {" "}
+        {hasPermission ? (
+          RenderGrid(gridConfig)
+        ) : (
+          <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+            Get the Premium For this Service Or Contact Admin - 7977662924
+          </Typography>
+        )}
       </Grid>
     </Container>
   );

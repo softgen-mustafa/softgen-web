@@ -6,13 +6,26 @@ import { Grid, Typography } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import FeatureControl from "@/app/components/featurepermission/page";
 
 const CustomerPartySearch = () => {
   const router = useRouter();
   const [rows, setRows] = useState([]);
+  const [hasPermission, setHasPermission] = useState(false);
 
   useEffect(() => {
-    onApi(1, 10);
+    FeatureControl("CustomerPartySearch").then((permission) => {
+      setHasPermission(permission);
+      if (permission) {
+        onApi(1, 10);
+      }
+      // else {
+      //   <Typography variant="h4">Get premium for the service </Typography>;
+
+      //   // router.back();
+      //   // Toast("Access Denied for Customer Overview");
+      // }
+    });
   }, []);
 
   const columns: GridColDef<any[number]>[] = [
@@ -103,7 +116,14 @@ const CustomerPartySearch = () => {
           height: "100vh",
         }}
       >
-        {RenderGrid(gridConfig)}
+        {" "}
+        {hasPermission ? (
+          RenderGrid(gridConfig)
+        ) : (
+          <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+            Get the Premium For this Service Or Contact Admin - 7977662924
+          </Typography>
+        )}
       </Grid>
     </div>
   );

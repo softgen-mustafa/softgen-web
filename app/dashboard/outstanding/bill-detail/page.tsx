@@ -9,7 +9,7 @@ import { PieChart } from "@mui/x-charts";
 import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-
+import FeatureControl from "@/app/components/featurepermission/page";
 const Page = ({}) => {
   let partyName = useRef("");
   let filterValue = useRef("");
@@ -18,16 +18,32 @@ const Page = ({}) => {
   let filterType = useRef("");
 
   const router = useRouter();
+  const [hasPermission, setHasPermission] = useState(false);
 
   useEffect(() => {
-    partyName.current = localStorage.getItem("bill_party_name") || "";
-    filterValue.current = localStorage.getItem("party_filter_value") || "";
-    viewType.current = localStorage.getItem("party_view_type") || "";
-    billType.current = localStorage.getItem("party_bill_type") || "";
-    filterType.current = localStorage.getItem("party_filter_type") || "";
-
-    onApi(1, 10);
+    checkPermissionAndInitialize();
   }, []);
+
+  const checkPermissionAndInitialize = async () => {
+    const permission = await FeatureControl("PartyBillDetailScreen");
+    setHasPermission(permission);
+    if (permission) {
+      partyName.current = localStorage.getItem("bill_party_name") || "";
+      filterValue.current = localStorage.getItem("party_filter_value") || "";
+      viewType.current = localStorage.getItem("party_view_type") || "";
+      billType.current = localStorage.getItem("party_bill_type") || "";
+      filterType.current = localStorage.getItem("party_filter_type") || "";
+      onApi(1, 10);
+    }
+  };
+  // useEffect(() => {
+  //   partyName.current = localStorage.getItem("bill_party_name") || "";
+  //   filterValue.current = localStorage.getItem("party_filter_value") || "";
+  //   viewType.current = localStorage.getItem("party_view_type") || "";
+  //   billType.current = localStorage.getItem("party_bill_type") || "";
+  //   filterType.current = localStorage.getItem("party_filter_type") || "";
+  //   onApi(1, 10);
+  // }, []);
 
   const [rows, setRows] = useState([]);
 
@@ -53,7 +69,8 @@ const Page = ({}) => {
       sortable: true,
       flex: 1,
       type: "number",
-      valueGetter: (value, row) => `${row.currency || ""} ${numericToString(row.amount) || "0"}`,
+      valueGetter: (value, row) =>
+        `${row.currency || ""} ${numericToString(row.amount) || "0"}`,
     },
     {
       field: "dueDate",
@@ -223,11 +240,23 @@ const Page = ({}) => {
       });
 
       setRows(entries);
-console.log(`requestBody Party bill Detail : ${JSON.stringify(response)}`)
+      console.log(
+        `requestBody Party bill Detail : ${JSON.stringify(response)}`
+      );
       return entries;
     } catch {}
     //  console.log(`requestBody Party bill Detail : ${JSON.stringify(entries,  0 , index =2 )}`)
   };
+
+  if (!hasPermission) {
+    return (
+      <div className="bg-white min-h-screen flex items-center justify-center">
+        <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+          Get the Premium For this Service Or Contact Admin - 7977662924
+        </Typography>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full" style={{}}>

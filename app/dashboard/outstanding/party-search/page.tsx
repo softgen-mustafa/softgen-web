@@ -10,9 +10,12 @@ import { PieChart } from "@mui/x-charts";
 import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import FeatureControl from "@/app/components/featurepermission/page";
 
 const Page = () => {
   const router = useRouter();
+  const [hasPermission, setHasPermission] = useState(false);
+
 
   let filterValue = useRef("");
   let viewType = useRef("");
@@ -23,12 +26,30 @@ const Page = () => {
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    filterValue.current = localStorage.getItem("party_filter_value") || "";
-    viewType.current = localStorage.getItem("party_view_type") || "";
-    billType.current = localStorage.getItem("party_bill_type") || "";
-    filterType.current = localStorage.getItem("party_filter_type") || "";
-    triggerRefresh(!refresh);
+    checkPermissionAndInitialize();
   }, []);
+
+  const checkPermissionAndInitialize = async () => {
+    const permission = await FeatureControl("PartySearchScreen");
+    setHasPermission(permission);
+    if (permission) {
+      filterValue.current = localStorage.getItem("party_filter_value") || "";
+      viewType.current = localStorage.getItem("party_view_type") || "";
+      billType.current = localStorage.getItem("party_bill_type") || "";
+      filterType.current = localStorage.getItem("party_filter_type") || "";
+      triggerRefresh(!refresh);
+    }
+  };
+
+  // useEffect(() => {
+  //   filterValue.current = localStorage.getItem("party_filter_value") || "";
+  //   viewType.current = localStorage.getItem("party_view_type") || "";
+  //   billType.current = localStorage.getItem("party_bill_type") || "";
+  //   filterType.current = localStorage.getItem("party_filter_type") || "";
+  //   triggerRefresh(!refresh);
+  // }, []);
+
+
 
   const onApi = async (
     page: number,
@@ -203,6 +224,16 @@ const Page = () => {
       children: [],
     },
   ];
+
+  if (!hasPermission) {
+    return (
+      <div className="bg-white min-h-screen flex items-center justify-center">
+      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+          Get the Premium For this Service Or Contact Admin - 7977662924
+        </Typography>
+    </div>
+    );
+  }
 
   return (
     <div className="w-full" style={{}}>

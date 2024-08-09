@@ -5,19 +5,36 @@ import { numericToString } from "@/app/services/Local/helper";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { handleCall, handleEmail, handleMapPress } from "./helper";
 import { inspiredPalette } from "@/app/ui/theme";
-
+import { useRouter } from "next/navigation";
+import FeatureControl from "@/app/components/featurepermission/page";
 
 const CustomerDetailsScreen = ({}) => {
+  const router = useRouter();
+
   const [ledgerDetail, setLedgerDetail] = useState<any>({});
   const [isDataLoading, setLoadingStatus] = useState(false);
   const [outstandingAmount, setOutstandingAmount] = useState("-");
+  const [hasPermission, setHasPermission] = useState(false);
 
   let filterValue: string = "";
 
   useEffect(() => {
-    filterValue = localStorage.getItem("party_filter_value") || "";
-    onLoad();
+    FeatureControl("CustomerDetailsScreen").then((permission) => {
+      setHasPermission(permission);
+      if (permission) {
+        filterValue = localStorage.getItem("party_filter_value") || "";
+        onLoad();
+      }
+      // else {
+      //   // Toast("Access Denied for Customer Overview");
+      // }
+    });
   }, []);
+
+  // useEffect(() => {
+  //   filterValue = localStorage.getItem("party_filter_value") || "";
+  //   onLoad();
+  // }, []);
 
   const onLoad = async () => {
     try {
@@ -38,6 +55,16 @@ const CustomerDetailsScreen = ({}) => {
       setLoadingStatus(false);
     }
   };
+
+  if (!hasPermission) {
+    return (
+      <div className="bg-white min-h-screen flex items-center justify-center">
+        <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+            Get the Premium For this Service Or Contact Admin - 7977662924
+          </Typography>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white min-h-screen">
@@ -275,7 +302,11 @@ const InfoItem: React.FC<InfoItemProps> = ({
     <Typography variant="body2" className="text-gray-600">
       {label}
     </Typography>
-    <Typography variant="body1" className="font-semibold" style={{ color: inspiredPalette.darkBlue }}>
+    <Typography
+      variant="body1"
+      className="font-semibold"
+      style={{ color: inspiredPalette.darkBlue }}
+    >
       {value}
     </Typography>
   </div>
