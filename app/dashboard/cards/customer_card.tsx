@@ -12,14 +12,28 @@ import {
 import { ChevronRight, Dashboard } from "@mui/icons-material";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { useRouter } from "next/navigation";
+import FeatureControl from "@/app/components/featurepermission/page";
 
 const CustomerDetailsCard = () => {
   const router = useRouter();
   const [data, setData] = useState<{ totalCount: number } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasPermission, setHasPermission] = useState(false);
+
+  // useEffect(() => {
+  //   CustomerCardApi();
+  // }, []);
 
   useEffect(() => {
-    CustomerCardApi();
+    FeatureControl("CustomerCard").then((permission) => {
+      setHasPermission(permission);
+      if (permission) {
+        CustomerCardApi();
+      } else {
+        router.back();
+        // Toast("Access Denied for Customer Overview");
+      }
+    });
   }, []);
 
   const CustomerCardApi = async () => {
@@ -42,39 +56,41 @@ const CustomerDetailsCard = () => {
   };
 
   return (
-    <Box>
-      {isLoading ? (
-        <CardContent className="flex justify-center items-center h-40">
-          <CircularProgress />
-        </CardContent>
-      ) : (
-        <Box
-          onClick={handleCardClick}
-          className="flex flex-row justify-between"
-          sx={{
-            cursor: "pointer",
-            borderWidth: 2,
-            borderRadius: 1,
-            padding: 2,
-            marginTop: 3,
-          }}
-        >
-          <div className="flex flex-col">
-            <Typography className="text-lg text-gray-800 mb-1">
-              Total Customers
-            </Typography>
-            <Typography className="text-2xl font-semibold ">
-              {data?.totalCount.toLocaleString() || "0"}
-            </Typography>
-          </div>
-          <div className="flex justify-end">
-            <IconButton size="small">
-              <ChevronRight />
-            </IconButton>
-          </div>
-        </Box>
-      )}
-    </Box>
+    hasPermission && (
+      <Box>
+        {isLoading ? (
+          <CardContent className="flex justify-center items-center h-40">
+            <CircularProgress />
+          </CardContent>
+        ) : (
+          <Box
+            onClick={handleCardClick}
+            className="flex flex-row justify-between"
+            sx={{
+              cursor: "pointer",
+              borderWidth: 2,
+              borderRadius: 1,
+              padding: 2,
+              marginTop: 3,
+            }}
+          >
+            <div className="flex flex-col">
+              <Typography className="text-lg text-gray-800 mb-1">
+                Total Customers
+              </Typography>
+              <Typography className="text-2xl font-semibold ">
+                {data?.totalCount.toLocaleString() || "0"}
+              </Typography>
+            </div>
+            <div className="flex justify-end">
+              <IconButton size="small">
+                <ChevronRight />
+              </IconButton>
+            </div>
+          </Box>
+        )}
+      </Box>
+    )
   );
 };
 

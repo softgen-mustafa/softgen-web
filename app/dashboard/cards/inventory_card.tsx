@@ -14,6 +14,7 @@ import { Inventory2TwoTone as Icon } from "@mui/icons-material";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { convertToDecimal } from "@/app/services/Local/helper";
 import { useRouter } from "next/navigation";
+import FeatureControl from "@/app/components/featurepermission/page";
 interface InventoryDetails {
   fastMoving?: { name: string; value: number; amount: number };
   slowMoving?: { name: string; value: number; amount: number };
@@ -36,7 +37,21 @@ interface OverviewResponse {
 const InventoryCard = ({}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [details, setDetails] = useState<InventoryDetails>({ totalAmount: 0 });
+  const [hasPermission, setHasPermission] = useState(false);
+
   const router = useRouter();
+
+  useEffect(() => {
+    FeatureControl("InventoryCard").then((permission) => {
+      setHasPermission(permission);
+      if (permission) {
+        inventoryDashboardApi().then((_) => {});
+      } else {
+        // Toast("Access Denied for Inventory Overview");
+      }
+    });
+  }, []);
+
   useEffect(() => {
     inventoryDashboardApi();
   }, []);
@@ -53,7 +68,7 @@ const InventoryCard = ({}) => {
 
       const totalStockCount = response.reduce(
         (acc, cur) => acc + cur.totalItems,
-        0,
+        0
       );
       const unitValue = totalStockCount / 10;
 
@@ -84,68 +99,70 @@ const InventoryCard = ({}) => {
   };
 
   return (
-    <Box>
-      <div>
-        {isLoading ? (
-          <CircularProgress />
-        ) : (
-          <>
-            <Grid container spacing={2}>
-              {[
-                {
-                  type: "fast",
-                  label: "Fast Moving",
-                  icon: <Icon />,
-                  value: details.fastMoving?.value,
-                },
-                {
-                  type: "slow",
-                  label: "Slow Moving",
-                  icon: <Icon />,
-                  value: details.slowMoving?.value,
-                },
-                {
-                  type: "dead",
-                  label: "Dead-Stock",
-                  icon: <Icon />,
-                  value: details.deadStock?.value,
-                },
-                {
-                  type: "all",
-                  label: "Total Value",
-                  icon: <Icon />,
-                  value: details.totalAmount,
-                },
-              ].map((item) => (
-                <Grid item xs={12} key={item.type}>
-                  <Card
-                    className="bg-green-800 text-white rounded-lg cursor-pointer"
-                    onClick={() => navigateToInventoryOverview(item.type)}
-                  >
-                    <CardContent>
-                      <Typography
-                        variant="subtitle2"
-                        className="font-bold text-center mb-2"
-                      >
-                        {item.label}
-                      </Typography>
-                      <div className="flex justify-center items-center">
-                        <IconButton size="small" className="text-white mr-1">
-                          {item.icon}
-                        </IconButton>
-                        <Typography variant="h6" className="font-bold">
-                          {convertToDecimal(item.value || 0)}
+    hasPermission && (
+      <Box>
+        <div>
+          {isLoading ? (
+            <CircularProgress />
+          ) : (
+            <>
+              <Grid container spacing={2}>
+                {[
+                  {
+                    type: "fast",
+                    label: "Fast Moving",
+                    icon: <Icon />,
+                    value: details.fastMoving?.value,
+                  },
+                  {
+                    type: "slow",
+                    label: "Slow Moving",
+                    icon: <Icon />,
+                    value: details.slowMoving?.value,
+                  },
+                  {
+                    type: "dead",
+                    label: "Dead-Stock",
+                    icon: <Icon />,
+                    value: details.deadStock?.value,
+                  },
+                  {
+                    type: "all",
+                    label: "Total Value",
+                    icon: <Icon />,
+                    value: details.totalAmount,
+                  },
+                ].map((item) => (
+                  <Grid item xs={12} key={item.type}>
+                    <Card
+                      className="bg-green-800 text-white rounded-lg cursor-pointer"
+                      onClick={() => navigateToInventoryOverview(item.type)}
+                    >
+                      <CardContent>
+                        <Typography
+                          variant="subtitle2"
+                          className="font-bold text-center mb-2"
+                        >
+                          {item.label}
                         </Typography>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </>
-        )}
-      </div>
-    </Box>
+                        <div className="flex justify-center items-center">
+                          <IconButton size="small" className="text-white mr-1">
+                            {item.icon}
+                          </IconButton>
+                          <Typography variant="h6" className="font-bold">
+                            {convertToDecimal(item.value || 0)}
+                          </Typography>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            </>
+          )}
+        </div>
+      </Box>
+    )
   );
 };
 

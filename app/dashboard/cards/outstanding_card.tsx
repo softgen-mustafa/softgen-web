@@ -16,6 +16,7 @@ import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { useRouter } from "next/navigation";
 import { PieChart } from "@mui/x-charts";
 import { numericToString } from "@/app/services/Local/helper";
+import FeatureControl from "@/app/components/featurepermission/page";
 
 interface OutstandingData {
   payableTitle: string;
@@ -30,10 +31,23 @@ const OutstandingCard = () => {
 
   const [data, setData] = useState<OutstandingData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasPermission, setHasPermission] = useState(false);
+
 
   useEffect(() => {
-    fetchOutstandingData();
+    FeatureControl("OutstandingCard").then((permission) => {
+      setHasPermission(permission);
+      if (permission) {
+        fetchOutstandingData();
+      } else {
+        // Toast("Access Denied for Customer Overview");
+      }
+    });
   }, []);
+
+  // useEffect(() => {
+  //   fetchOutstandingData();
+  // }, []);
 
   const fetchOutstandingData = async () => {
     try {
@@ -82,6 +96,7 @@ const OutstandingCard = () => {
   };
 
   return (
+    hasPermission && (
     <div>
       {isLoading ? (
         <CardContent className="flex justify-center items-center h-40">
@@ -155,6 +170,7 @@ const OutstandingCard = () => {
         </Box>
       )}
     </div>
+    )
   );
 };
 

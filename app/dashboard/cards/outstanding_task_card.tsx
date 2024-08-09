@@ -26,6 +26,18 @@ const OutstandingTask = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [durationKey] = useState(dayjs().format("YYYY-MM-DD"));
+  const [hasPermission, setHasPermission] = useState(false);
+
+  useEffect(() => {
+    fetchTasks();
+    // FeatureControl("OutstandingTask").then((permission) => {
+    //   setHasPermission(permission);
+    //   if (permission) {
+    //     fetchTasks(selectedCompany, refreshTrigger);
+    //   } else {
+    //   }
+    // });
+  }, []);
 
   useEffect(() => {
     fetchTasks();
@@ -83,6 +95,7 @@ const OutstandingTask = () => {
   );
 
   return (
+    // hasPermission && (
     <Box
       onClick={() => {
         localStorage.setItem("party_filter_value", durationKey);
@@ -101,6 +114,7 @@ const OutstandingTask = () => {
         </div>
       )}
     </Box>
+  // )
   );
 };
 
