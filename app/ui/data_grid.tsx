@@ -8,6 +8,7 @@ import { SearchInput } from "./text_inputs";
 interface TableViewProps {
   columns: GridColDef<any>[];
   refresh?: boolean;
+  useServerPagination?: boolean;
   onApi: (
     page: number,
     pageSize: number,
@@ -23,6 +24,7 @@ const DataTable: React.FC<TableViewProps> = ({
   onApi,
   onRowClick,
   useSearch,
+  useServerPagination = true,
 }) => {
   const [rows, setRows] = useState<any[]>([]);
   const [paginationModel, setPaginationModel] = useState({
@@ -70,9 +72,9 @@ const DataTable: React.FC<TableViewProps> = ({
         columns={columns}
         rows={rows}
         className="h-fit max-h-fit"
-        rowCount={100}
+        rowCount={useServerPagination ? 100 : rows.length}
         pagination
-        paginationMode="server"
+        paginationMode={useServerPagination ? "server" : "client"}
         paginationModel={paginationModel}
         initialState={{
           pagination: {
@@ -86,10 +88,14 @@ const DataTable: React.FC<TableViewProps> = ({
         onPaginationModelChange={(value) => {
           setPaginationModel(value);
           setLoading(true);
-          onApi(value.page + 1, value.pageSize).then((entries) => {
-            setRows(entries);
+          if (useServerPagination) {
+            onApi(value.page + 1, value.pageSize).then((entries) => {
+              setRows(entries);
+              setLoading(false);
+            });
+          } else {
             setLoading(false);
-          });
+          }
         }}
       />
     </Box>

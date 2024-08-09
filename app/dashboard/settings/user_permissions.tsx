@@ -38,26 +38,19 @@ const filterData = [
 ];
 
 const UserPermissions = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [filter, setFilter] = useState("all");
+  const [refresh, triggerRefresh] = useState(false);
+
+  let selectedUser = useRef(null);
+  let selectedFilter = useRef(null);
 
   const compId = Cookies.get("companyId");
 
   useEffect(() => {
     loadUser().then((_) => {
-      setIsLoading(!isLoading);
+      triggerRefresh(!refresh);
     });
   }, []);
-
-  useEffect(() => {
-    if (!!selectedUser) {
-      onApi(1, 10, "").then((_) => {
-        setIsLoading(!isLoading);
-      });
-    }
-  }, [filter, selectedUser]);
 
   const columns: GridColDef<any[number]>[] = [
     {
@@ -76,7 +69,12 @@ const UserPermissions = () => {
       renderCell: (params) => {
         return (
           <Box>
-            <Switch checked={params.row.status ? true : false} />
+            <Switch
+              checked={params.row.status ? true : false}
+              onChange={() =>
+                updateUserStatus(params.row.code, params.row.status)
+              }
+            />
           </Box>
         );
       },
@@ -94,11 +92,11 @@ const UserPermissions = () => {
             name: _data?.name,
           }));
           setData(values);
+          selectedUser.current = response[0]?.id;
         }
-        setSelectedUser(response[0]?.id);
       }
     } catch {
-      alert("Something went wrong...");
+      console.log("Something went wrong...");
     }
   };
 
@@ -107,13 +105,15 @@ const UserPermissions = () => {
     pageSize: number,
     searchValue?: string
   ) => {
-    let url = `${getBmrmBaseUrl()}/user-info/get/permission?userId=${selectedUser}`;
+    let url = `${getBmrmBaseUrl()}/user-info/get/permission?userId=${
+      selectedUser.current
+    }`;
 
     let requestBody = {
       page_number: page,
       page_size: pageSize,
       search_text: searchValue ?? "",
-      filter: filter,
+      filter: selectedFilter.current,
     };
     let response = await postAsync(url, requestBody);
     if (response && response.length > 0) {
@@ -125,7 +125,6 @@ const UserPermissions = () => {
           code: _data?.code,
         };
       });
-      console.log(response);
       return entries;
     }
   };
@@ -136,10 +135,12 @@ const UserPermissions = () => {
   ) => {
     try {
       let status = currentStatus ? "revoke" : "assign";
-      const url = `${getBmrmBaseUrl()}/user-info/${status}-permission?userId=${selectedUser}&code=${code}`;
+      const url = `${getBmrmBaseUrl()}/user-info/${status}-permission?userId=${
+        selectedUser.current
+      }&code=${code}`;
       const requestBody = { isActive: currentStatus };
       const response = await postAsync(url, requestBody);
-      setIsLoading(!isLoading);
+      triggerRefresh(!refresh);
     } catch (error) {
       console.log("Something went wrong...");
     }
@@ -155,7 +156,9 @@ const UserPermissions = () => {
           selectionValues={data}
           helperText={""}
           onSelection={(_data) => {
-            setSelectedUser(_data?.id);
+            // setSelectedUser(_data?.id);
+            selectedUser.current = _data?.id;
+            triggerRefresh(!refresh);
           }}
         />
         <Box sx={{ width: "20%" }}>
@@ -166,22 +169,20 @@ const UserPermissions = () => {
             selectionValues={filterData}
             helperText={""}
             onSelection={(_data) => {
-              setFilter(_data?.value);
+              selectedFilter.current = _data?.value;
+              triggerRefresh(!refresh);
             }}
           />
         </Box>
       </Stack>
       <DataTable
         columns={columns}
-        refresh={isLoading}
+        refresh={refresh}
         onApi={async (page, pageSize, searchText) => {
           return await onApi(page, pageSize, searchText);
         }}
         useSearch={true}
-        onRowClick={(params) => {
-          let rowData = params?.row;
-          updateUserStatus(rowData?.code, rowData?.status);
-        }}
+        onRowClick={(params) => {}}
       />
     </Box>
   );
