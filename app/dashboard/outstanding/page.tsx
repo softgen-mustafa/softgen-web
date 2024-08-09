@@ -109,7 +109,7 @@ const RankedPartyOutstandingCard = ({ billType }: { billType: string }) => {
 
 const Page = () => {
   const router = useRouter();
-  const [hasPermission, setHasPermission] = useState(false);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
 
 
@@ -366,15 +366,7 @@ const Page = () => {
     },
   ];
 
-  if (!hasPermission) {
-    return (
-      <div className="bg-white min-h-screen flex items-center justify-center">
-      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-          Get the Premium For this Service Or Contact Admin - 7977662924
-        </Typography>
-    </div>
-    );
-  }
+  
 
   return (
     <Container sx={{ overflowX: "hidden" }}>
@@ -386,7 +378,15 @@ const Page = () => {
           height: "100vh",
         }}
       >
-        {RenderGrid(gridConfig)}
+        {hasPermission === null ? (
+          <CircularProgress />
+        ) : hasPermission ? (
+          RenderGrid(gridConfig)
+        ) : (
+          <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+            Get the Premium For this Service Or Contact Admin - 7977662924
+          </Typography>
+        )}
       </Grid>
     </Container>
     // <div

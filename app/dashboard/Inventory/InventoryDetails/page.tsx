@@ -2,7 +2,7 @@
 
 import { getBmrmBaseUrl } from "@/app/services/rest_services";
 import { useEffect, useRef, useState } from "react";
-import { Container, Typography, IconButton, Grid } from "@mui/material";
+import { Container, Typography, IconButton, Grid, CircularProgress } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { GridColDef } from "@mui/x-data-grid";
 import { ChevronLeftRounded } from "@mui/icons-material";
@@ -11,7 +11,6 @@ import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { numericToString } from "@/app/services/Local/helper";
 import { DataTable } from "@/app/ui/data_grid";
 import FeatureControl from "@/app/components/featurepermission/page";
-
 const InventoryDetailScreen = () => {
   const router = useRouter();
   const [item, setItem] = useState<any>(null);
@@ -25,7 +24,7 @@ const InventoryDetailScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [viewType, setViewType] = useState<string>("");
   const [refresh, triggerRefresh] = useState(false);
-  const [hasPermission, setHasPermission] = useState(false);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   useEffect(() => {
     checkPermissionAndInitialize();
@@ -179,21 +178,21 @@ const InventoryDetailScreen = () => {
   ];
 
 
-  if (!hasPermission) {
-    return (
-      <div className="bg-white min-h-screen flex items-center justify-center">
-      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-          Get the Premium For this Service Or Contact Admin - 7977662924
-        </Typography>
-    </div>
-    );
-  }
+ 
 
 
   return (
     <Container sx={{ overflowX: "hidden" }}>
       <Grid container sx={{ flexGrow: 1, height: "100vh" }}>
-        {RenderGrid(gridConfig)}
+      {hasPermission === null ? (
+          <CircularProgress />
+        ) : hasPermission ? (
+          RenderGrid(gridConfig)
+        ) : (
+          <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+            Get the Premium For this Service Or Contact Admin - 7977662924
+          </Typography>
+        )}
       </Grid>
     </Container>
   );

@@ -5,7 +5,7 @@ import { DataTable } from "@/app/ui/data_grid";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { SearchInput } from "@/app/ui/text_inputs";
 import { ChevronLeftRounded } from "@mui/icons-material";
-import { Container, Grid, IconButton, Typography } from "@mui/material";
+import { CircularProgress, Container, Grid, IconButton, Typography } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
 import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
@@ -14,7 +14,7 @@ import FeatureControl from "@/app/components/featurepermission/page";
 
 const Page = () => {
   const router = useRouter();
-  const [hasPermission, setHasPermission] = useState(false);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
 
   let filterValue = useRef("");
@@ -225,15 +225,7 @@ const Page = () => {
     },
   ];
 
-  if (!hasPermission) {
-    return (
-      <div className="bg-white min-h-screen flex items-center justify-center">
-      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-          Get the Premium For this Service Or Contact Admin - 7977662924
-        </Typography>
-    </div>
-    );
-  }
+  
 
   return (
     <div className="w-full" style={{}}>
@@ -244,7 +236,15 @@ const Page = () => {
           height: "100vh",
         }}
       >
-        {RenderGrid(gridConfig)}
+         {hasPermission === null ? (
+          <CircularProgress />
+        ) : hasPermission ? (
+          RenderGrid(gridConfig)
+        ) : (
+          <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+            Get the Premium For this Service Or Contact Admin - 7977662924
+          </Typography>
+        )}
       </Grid>
     </div>
   );
