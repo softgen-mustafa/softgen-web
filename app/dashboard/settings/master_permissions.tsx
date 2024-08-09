@@ -8,7 +8,7 @@ import {
   postAsync,
 } from "@/app/services/rest_services";
 import Cookies from "js-cookie";
-import { Box, Stack, Switch } from "@mui/material";
+import { Box, Button, Stack, Switch, Typography } from "@mui/material";
 import { DropDown } from "@/app/ui/drop_down";
 import { DataTable } from "@/app/ui/data_grid";
 import { GridColDef } from "@mui/x-data-grid";
@@ -28,6 +28,7 @@ const masterTypes = [
     mapUrl: "/table-mapping/map/ledger",
     mapAllUrl: "/table-mapping/map/ledger/all",
     removeUrl: "/table-mapping/remove/ledger",
+    removeAllUrl: "/table-mapping/remove/ledger/all",
   },
   {
     title: "Stock Item",
@@ -36,6 +37,7 @@ const masterTypes = [
     mapUrl: "/table-mapping/map/item",
     mapAllUrl: "/table-mapping/map/item/all",
     removeUrl: "/table-mapping/remove/item",
+    removeAllUrl: "/table-mapping/remove/item/all",
   },
   {
     title: "Stock Group",
@@ -44,6 +46,7 @@ const masterTypes = [
     mapUrl: "/table-mapping/map/itemGroup",
     mapAllUrl: "/table-mapping/map/itemGroup/all",
     removeUrl: "/table-mapping/remove/itemGroup",
+    removeAllUrl: "/table-mapping/remove/itemGroup/all",
   },
   {
     title: "Stock Category",
@@ -52,6 +55,7 @@ const masterTypes = [
     mapUrl: "/table-mapping/map/itemCategory",
     mapAllUrl: "/table-mapping/map/itemCategory/all",
     removeUrl: "/table-mapping/remove/category",
+    removeAllUrl: "/table-mapping/remove/itemCategory/all",
   },
   {
     title: "Group",
@@ -60,6 +64,7 @@ const masterTypes = [
     mapUrl: "/table-mapping/map/group",
     mapAllUrl: "/table-mapping/map/group/all",
     removeUrl: "/table-mapping/remove/group",
+    removeAllUrl: "/table-mapping/remove/group/all",
   },
   {
     title: "Godown",
@@ -68,6 +73,7 @@ const masterTypes = [
     mapUrl: "/table-mapping/map/godown",
     mapAllUrl: "/table-mapping/map/godown/all",
     removeUrl: "/table-mapping/map/godown",
+    removeAllUrl: "/table-mapping/remove/godown/all",
   },
   {
     title: "Voucher Type",
@@ -76,6 +82,7 @@ const masterTypes = [
     mapUrl: "/table-mapping/map/vouchertype",
     mapAllUrl: "/table-mapping/map/vouchertypes/all",
     removeUrl: "/table-mapping/remove/vouchertype",
+    removeAllUrl: "/table-mapping/remove/voucherType/all",
   },
   {
     title: "User",
@@ -84,6 +91,7 @@ const masterTypes = [
     mapUrl: "/table-mapping/map/user",
     mapAllUrl: "/table-mapping/map/users/all",
     removeUrl: "/table-mapping/remove/user",
+    removeAllUrl: "/table-mapping/remove/user/all",
   },
 ];
 
@@ -115,7 +123,6 @@ const MasterPermissions = () => {
       sortable: false,
       flex: 1,
       renderCell: (params) => {
-        console.log(params);
         return (
           <Box>
             <Switch
@@ -123,7 +130,9 @@ const MasterPermissions = () => {
               onChange={() =>
                 updateStatus(
                   selectedUser.current,
-                  params.row.name,
+                  selectedMasterType.current.title === "User"
+                    ? params.row.userId
+                    : params.row.name,
                   params.row.selected
                 )
               }
@@ -133,8 +142,6 @@ const MasterPermissions = () => {
       },
     },
   ];
-
-  console.log(selectedUser.current);
 
   const loadUser = async () => {
     try {
@@ -161,6 +168,7 @@ const MasterPermissions = () => {
     let baseNameUrl =
       selection.title == "User" ? getUmsBaseUrl() : getBmrmBaseUrl();
     let namesResponseTask = getAsync(`${baseNameUrl}${selection.namesUrl}`);
+
     let mappedResponse = await getAsync(
       `${getBmrmBaseUrl()}${selection.mappedNamesUrl}?userId=${
         selectedUser.current
@@ -168,20 +176,24 @@ const MasterPermissions = () => {
     );
     let namesResponse = await namesResponseTask;
 
+    let isUserMasterSelected = selection.title == "User";
+
     let entries = namesResponse.map((entry: any, index: number) => {
-      let nameKey = selection.title == "User" ? "name" : "title";
+      let nameKey = isUserMasterSelected ? "name" : "title";
+      let compareKey = isUserMasterSelected ? "id" : "title";
       let existing = mappedResponse.some(
-        (element: any) => element.entry_name === entry[nameKey]
+        (element: any) => element.entry_name === entry[compareKey].toString()
       );
-      if (existing) {
-        console.log(`${entry[nameKey]}`);
-      }
+
       return {
         id: index + 1,
         name: entry[nameKey],
         selected: existing,
+        userId: isUserMasterSelected ? entry["id"].toString() : "0",
       };
     });
+
+    console.log(`Mapping response: ${JSON.stringify(entries)}`);
 
     return entries ?? [];
   };
@@ -205,9 +217,37 @@ const MasterPermissions = () => {
     }
   };
 
+  const handleMapAll = async () => {
+    try {
+      let selection = selectedMasterType.current;
+
+      let baseUrl = `${getBmrmBaseUrl()}${selection.mapAllUrl}?userId=${
+        selectedUser.current
+      }`;
+      let response = await getAsync(baseUrl);
+      triggerRefresh(!refresh);
+    } catch (error) {
+      console.log("Something went wrong...");
+    }
+  };
+
+  const handleRemoveAll = async () => {
+    try {
+      let selection = selectedMasterType.current;
+
+      let baseUrl = `${getBmrmBaseUrl()}${selection.removeAllUrl}?userId=${
+        selectedUser.current
+      }`;
+      let response = await getAsync(baseUrl);
+      triggerRefresh(!refresh);
+    } catch (error) {
+      console.log("Something went wrong...");
+    }
+  };
+
   return (
     <Box>
-      <Stack flexDirection={"row"} gap={1.5} mb={1}>
+      <Stack flexDirection={"row"} gap={1.5} mb={1.5}>
         <DropDown
           label={"Select User"}
           displayFieldKey={"name"}
@@ -219,6 +259,8 @@ const MasterPermissions = () => {
             triggerRefresh(!refresh);
           }}
         />
+      </Stack>
+      <Stack flexDirection={"row"} alignItems={"center"} gap={1.5} mb={1}>
         <DropDown
           label={"Select Master"}
           displayFieldKey={"title"}
@@ -230,6 +272,16 @@ const MasterPermissions = () => {
             triggerRefresh(!refresh);
           }}
         />
+        <Button variant="contained" onClick={handleMapAll}>
+          <Typography textTransform={"capitalize"} letterSpacing={0.8}>
+            Map All
+          </Typography>
+        </Button>
+        <Button variant="contained" onClick={handleRemoveAll}>
+          <Typography textTransform={"capitalize"} letterSpacing={0.8}>
+            Remove All
+          </Typography>
+        </Button>
       </Stack>
       <DataTable
         columns={columns}
