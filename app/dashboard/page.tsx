@@ -99,12 +99,12 @@ const DashboardPage = () => {
   ];
   return (
     <div className="">
-      <Typography
+      {/* <Typography
         className="mt-14 ml-2 text-3xl mb-2 font-medium"
         style={{ color: inspiredPalette.dark }}
       >
         Dashboard
-      </Typography>
+      </Typography> */}
       <Grid
         container
         sx={{

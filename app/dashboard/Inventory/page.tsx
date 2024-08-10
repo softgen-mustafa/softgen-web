@@ -2,7 +2,14 @@
 
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { useEffect, useRef, useState } from "react";
-import { Container, Typography, IconButton, Grid, CircularProgress } from "@mui/material";
+import {
+  Container,
+  Typography,
+  IconButton,
+  Grid,
+  CircularProgress,
+  Box,
+} from "@mui/material";
 import { useRouter } from "next/navigation";
 import { GridColDef } from "@mui/x-data-grid";
 import { DropDown } from "@/app/ui/drop_down";
@@ -332,7 +339,8 @@ const InventoryOverviewScreen = () => {
   ];
 
   return (
-    <Container sx={{ overflowX: "hidden" }}>
+    // <Container sx={{ overflowX: "hidden" }}>
+    <Box>
       <Grid
         container
         className=""
@@ -351,7 +359,8 @@ const InventoryOverviewScreen = () => {
           </Typography>
         )}
       </Grid>
-    </Container>
+    </Box>
+    // </Container>
   );
 };
 

@@ -19,7 +19,7 @@ interface AgingData {
   title: string;
   code: string;
   amount: number;
-  currency :string,
+  currency: string;
 }
 
 interface AgingCardProps {
@@ -43,7 +43,7 @@ const AgingCard: React.FC<AgingCardProps> = ({ data, onPress }) => {
       }}
     >
       <Typography component="div" className="text-xl text-red-500">
-       {data.currency} {numericToString(data.amount)}
+        {data.currency} {numericToString(data.amount)}
       </Typography>
       <Typography component="div" className="text-md">
         {data.title}
@@ -58,15 +58,10 @@ const AgingView = ({ billType }: { billType: string }) => {
   const [open, setOpen] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
-
-
   useEffect(() => {
     checkPermissionAndLoadData();
   }, [billType]);
 
-
-  
-  
   const checkPermissionAndLoadData = async () => {
     const permission = await FeatureControl("AgingOutstandingCard");
     setHasPermission(permission);
@@ -83,7 +78,7 @@ const AgingView = ({ billType }: { billType: string }) => {
         let newEntry: AgingData = {
           title: entry.title,
           code: entry.code,
-          amount: entry.amount, 
+          amount: entry.amount,
           currency: entry.currency ?? "₹",
         };
         return newEntry;
@@ -123,6 +118,7 @@ const AgingView = ({ billType }: { billType: string }) => {
         width={320}
         margin={{ top: 100, left: 100, bottom: 100, right: 100 }}
         sx={{
+          flex: 1,
           borderWidth: 2,
           borderRadius: 4,
           marginBottom: 2,
@@ -143,10 +139,10 @@ const AgingView = ({ billType }: { billType: string }) => {
                 value: entry.amount,
               };
             }),
-            innerRadius: 20,
+            innerRadius: 120,
             outerRadius: 100,
-            paddingAngle: 2,
-            cornerRadius: 8,
+            paddingAngle: 1,
+            cornerRadius: 1,
             startAngle: 0,
             endAngle: 360,
             // cx: 150,
