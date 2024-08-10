@@ -112,9 +112,9 @@ const DrawerContent = () => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 400,
+            width: 450,
             bgcolor: "background.paper",
-            border: "2px solid #000",
+            border: "0px solid #000",
             boxShadow: 24,
             borderRadius: 4,
             p: 4,
@@ -126,8 +126,8 @@ const DrawerContent = () => {
           <Typography id="logout-modal-description" sx={{ mt: 2 }}>
             Are you sure you want to log out?
           </Typography>
-          <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
-            <Button onClick={() => setOpenLogoutModal(false)} sx={{ mr: 1 }}>
+          <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
+            <Button onClick={() => setOpenLogoutModal(false)} sx={{ mr: 1.5 }}>
               Cancel
             </Button>
             <Button
@@ -159,26 +159,42 @@ const DrawerContent = () => {
             }}
           >
             <ListItem
+              className={path.selected ? "rounded-md" : ""}
               style={{
-                borderWidth: path.selected ? 1 : 0,
-                borderRadius: 8,
-                borderColor: path.selected ? "white" : inspiredPalette.dark,
+                // borderWidth: path.selected ? 1 : 0,
+                // borderRadius: 8,
+                // borderColor: path.selected ? "white" : inspiredPalette.dark,
+                backgroundColor: path.selected ? "#FFFFFF" : "",
               }}
             >
-              <ListItemIcon style={{ color: "white" }}>
+              <ListItemIcon
+                style={{
+                  color: path.selected ? inspiredPalette.darker : "white",
+                }}
+              >
                 {path.icon}
               </ListItemIcon>
-              <ListItemText style={{ color: "white" }} primary={path.title} />
+              <ListItemText
+                style={{
+                  color: path.selected ? inspiredPalette.darker : "white",
+                }}
+                primary={path.title}
+              />
             </ListItem>
           </ButtonBase>
         ))}
       </List>
-      <ButtonBase className="w-11/12 m-2 mb-3 rounded-md flex flex-row align-middle justify-center bg-white">
+      <ButtonBase
+        className="w-11/12 m-2 mb-3 rounded-md flex flex-row align-middle justify-center bg-white"
+        onClick={() => {
+          setOpenLogoutModal(true);
+        }}
+      >
         <ListItem>
           <ListItemIcon>
-            <Logout />
+            <Logout style={{ color: inspiredPalette.darker }} />
           </ListItemIcon>
-          <ListItemText primary={"Logout"} />
+          <ListItemText color={inspiredPalette.darker} primary={"Logout"} />
         </ListItem>
       </ButtonBase>
     </div>
