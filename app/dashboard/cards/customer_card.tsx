@@ -14,7 +14,12 @@ import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { useRouter } from "next/navigation";
 import FeatureControl from "@/app/components/featurepermission/page";
 
-const CustomerDetailsCard = () => {
+
+interface CustomerDetailsCardProps {
+  companyId: string | null;
+}
+
+const CustomerDetailsCard: React.FC<CustomerDetailsCardProps> = ({ companyId }) => {
   const router = useRouter();
   const [data, setData] = useState<{ totalCount: number } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -27,16 +32,16 @@ const CustomerDetailsCard = () => {
   useEffect(() => {
     FeatureControl("CustomerCard").then((permission) => {
       setHasPermission(permission);
-      if (permission) {
-        CustomerCardApi();
-      } else {
+      if (permission && companyId) {
+        CustomerCardApi(companyId);
+      } else if (!permission) {
         router.back();
         // Toast("Access Denied for Customer Overview");
       }
     });
-  }, []);
+  }, [companyId]);
 
-  const CustomerCardApi = async () => {
+  const CustomerCardApi = async (companyId: string) => {
     try {
       setIsLoading(true);
       let url = `${getBmrmBaseUrl()}/ledger/total-count`;
