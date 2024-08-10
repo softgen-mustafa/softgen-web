@@ -216,8 +216,6 @@ const MasterPermissions = () => {
       }
     });
 
-    console.log(`Mapping response: ${JSON.stringify(entries)}`);
-
     return entries ?? [];
   };
 
