@@ -28,6 +28,17 @@ const permission_config = {
   IndividualSalesReportButton: "CNF0007",
   SalesReportCard: "CNF0008",
 
+
+
+  UserPermissions: "TRAN000",
+  ItemGroupCard :"TRAN001",
+  BillsCard : "TRAN002",
+  MonthlySalesCard :"TRAN003",
+  MonthlyCustomerSalesCard :"TRAN004",
+  MovementConfig : "TRAN005",
+  AgingSettings : "TRAN006",
+
+
   BrokerOutstandingCard: "BBROK000",
   BrokerOutstandingDashboardScreen: "BBROK001",
   BrokerPartySearchScreen: "BBROK002",

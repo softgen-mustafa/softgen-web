@@ -4,15 +4,28 @@ import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Box, IconButton, Typography } from '@mui/material';
+import { Box, CircularProgress, IconButton, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import FeatureControl from "@/app/components/featurepermission/page";
 
 const AgingSettings = () => {
   const [data, setData] = useState([]);
   const router = useRouter();
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+
+
+  // useEffect(() => {
+  //   loadData();
+  // }, []);
+
 
   useEffect(() => {
-    loadData();
+    FeatureControl("MasterConfigButton").then((permission) => {
+      setHasPermission(permission);
+      if (permission) {
+        loadData();
+      }
+    });
   }, []);
 
   const loadData = async () => {
@@ -62,6 +75,20 @@ const AgingSettings = () => {
     localStorage.removeItem("aging_code");
     router.push("/dashboard/settings/aging-edit");
   };
+
+  if (hasPermission === null) {
+    return <CircularProgress />;
+  }
+
+  if (hasPermission === false) {
+    return (
+      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+        Get the Premium For this Service Or Contact Admin - 7977662924
+      </Typography>
+    );
+  }
+
+
 
   return (
     <div>
