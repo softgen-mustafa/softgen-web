@@ -2,6 +2,8 @@ import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 import type { Metadata } from "next";
 import "./globals.css";
+import { ThemeProvider } from "@mui/material";
+import theme from "./ui/mui_theme";
 
 export const metadata: Metadata = {
   title: "Softgen",
@@ -15,7 +17,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`w-full pr-2 bg-gray-50 ${inter.className} overflow-x-hidden`}>{children}</body>
+      <body
+        className={`w-full pr-2 bg-gray-100 ${inter.className} overflow-x-hidden`}
+      >
+        <ThemeProvider theme={theme}>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }
