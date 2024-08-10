@@ -7,18 +7,10 @@ import Cookies from "js-cookie";
 import { AgingSettings } from "./aging_setting";
 import UserPermissions from "./user_permissions";
 import MasterPermissions from "./master_permissions";
+import MovementConfig from "./movement_config";
 
 const Page = () => {
   const gridConfig: GridConfig[] = [
-    {
-      type: "item",
-      children: [],
-      view: (
-        <CardView className="h-fit" title="Aging Settings">
-          <AgingSettings />
-        </CardView>
-      ),
-    },
     {
       type: "item",
       children: [],
@@ -37,6 +29,15 @@ const Page = () => {
       type: "item",
       children: [],
       view: (
+        <CardView className="max-h-fit h-fit" title="Company Configuration">
+          <MovementConfig />
+        </CardView>
+      ),
+    },
+    {
+      type: "item",
+      children: [],
+      view: (
         <CardView className="max-h-fit h-fit" title="User Permissions">
           <UserPermissions />
         </CardView>
@@ -48,6 +49,16 @@ const Page = () => {
       view: (
         <CardView className="max-h-fit h-fit" title="Master Permissions">
           <MasterPermissions />
+        </CardView>
+      ),
+    },
+
+    {
+      type: "item",
+      children: [],
+      view: (
+        <CardView className="h-fit" title="Aging Settings">
+          <AgingSettings />
         </CardView>
       ),
     },
