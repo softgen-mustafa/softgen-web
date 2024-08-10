@@ -20,6 +20,7 @@ import {
   Typography,
   Modal,
   Button,
+  useTheme,
 } from "@mui/material";
 import React, { Suspense, useEffect, useState } from "react";
 import { inspiredPalette } from "../ui/theme";
@@ -84,7 +85,7 @@ const DrawerContent = () => {
 
   return (
     <div className="flex flex-col w-full h-full overflow-x-hidden" style={{}}>
-      <div
+      {/* <div
         className="flex flex-row justify-center md:justify-start items-center pt-1 pl-3 z-50"
         style={{
           background: inspiredPalette.dark,
@@ -98,7 +99,7 @@ const DrawerContent = () => {
         >
           <Logout fontSize="inherit" />
         </IconButton>
-      </div>
+      </div> */}
       <Modal
         open={openLogoutModal}
         onClose={() => setOpenLogoutModal(false)}
@@ -140,14 +141,11 @@ const DrawerContent = () => {
         </Box>
       </Modal>
 
-      <List className="justify-center">
+      <List className="h-full justify-center">
         {paths.map((path, index) => (
           <ButtonBase
             key={index}
-            className="w-11/12 m-2 flex flex-row justify-center"
-            style={{
-              marginTop: 5,
-            }}
+            className="w-11/12 m-2 mb-3 flex flex-row align-middle justify-center"
             onClick={() => {
               let values = paths.map((entry: any) => {
                 let selected = path.title == entry.title;
@@ -175,6 +173,14 @@ const DrawerContent = () => {
           </ButtonBase>
         ))}
       </List>
+      <ButtonBase className="w-11/12 m-2 mb-3 rounded-md flex flex-row align-middle justify-center bg-white">
+        <ListItem>
+          <ListItemIcon>
+            <Logout />
+          </ListItemIcon>
+          <ListItemText primary={"Logout"} />
+        </ListItem>
+      </ButtonBase>
     </div>
   );
 };
@@ -227,6 +233,7 @@ const SideNav: React.FC = () => {
         </Drawer>
       </Box>
       <Box
+        height={"100%"}
         sx={{
           display: {
             md: "block",
@@ -249,7 +256,10 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="w-full h-[100vh] flex flex-col md:flex-row bg-gray-100">
+    <div
+      className="w-full h-[100vh] flex flex-col md:flex-row "
+      style={{ background: "#F9F9FA" }}
+    >
       <SideNav />
       <Suspense fallback={<Loading />}>
         <Box component={"div"} className="ml-1 w-full overflow-x-hidden">
