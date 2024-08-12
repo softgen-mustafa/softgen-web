@@ -28,8 +28,13 @@ import { useRouter } from "next/navigation";
 import { GridConfig } from "../ui/responsive_grid";
 import Loading from "./loading";
 import Cookies from "js-cookie";
+import {
+  getAsync,
+  getBmrmBaseUrl,
+  getUmsBaseUrl,
+} from "../services/rest_services";
 
-const drawerWidth = 240;
+const drawerWidth = 300;
 
 const drawerNavigations = [
   {
@@ -75,6 +80,7 @@ const DrawerContent = () => {
 
   const [paths, setPaths] = useState(drawerNavigations);
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
+  const [userName, setUserName] = useState("");
 
   useEffect(() => {
     let token = Cookies.get("authToken") ?? null;
@@ -82,11 +88,29 @@ const DrawerContent = () => {
       router.push("/auth");
       return;
     }
+    fetchUserName();
   }, []);
 
   const handleLogout = () => {
     Cookies.set("authToken", "", { expires: 400 });
     router.push("/auth");
+  };
+
+  const fetchUserName = async () => {
+    try {
+      let url = `${getBmrmBaseUrl()}/user-info/get/self-id`;
+      let response = await getAsync(url);
+      console.log(response);
+      if (response) {
+        try {
+          let baseUrl = `${getUmsBaseUrl()}/users/get?userId=${response}`;
+          let res = await getAsync(baseUrl);
+          setUserName(res.name);
+        } catch (error) {
+          console.log("Something went wrong...");
+        }
+      }
+    } catch {}
   };
 
   return (
@@ -147,6 +171,11 @@ const DrawerContent = () => {
         </Box>
       </Modal>
 
+      <Box className="mx-3 mt-5 mb-1">
+        <Typography color="#FFFFFF" fontSize={20}>
+          Hello, {userName}👋🏻
+        </Typography>
+      </Box>
       <List className="h-full justify-center">
         {paths.map((path, index) => (
           <ButtonBase
@@ -217,7 +246,7 @@ const SideNav: React.FC = () => {
   return (
     <div
       style={{
-        background: inspiredPalette.dark,
+        background: "#303f9f",
       }}
     >
       <div
@@ -280,7 +309,7 @@ export default function DashboardLayout({
   return (
     <div
       className="w-full h-[100vh] flex flex-col md:flex-row "
-      style={{ background: "#F9F9FA" }}
+      style={{ background: "rgb(247, 249, 252)" }}
     >
       <SideNav />
       <Suspense fallback={<Loading />}>

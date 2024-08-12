@@ -9,6 +9,7 @@ import {
   IconButton,
   Grid,
   CircularProgress,
+  Stack,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -42,7 +43,9 @@ const RankedPartyOutstandingCard = ({ billType }: { billType: string }) => {
       sortable: true,
       flex: 1,
       valueGetter: (value, row) =>
-        `${row.currency || ""} ${row.amount != null ? numericToString(row.amount) : "0"}`,
+        `${row.currency || ""} ${
+          row.amount != null ? numericToString(row.amount) : "0"
+        }`,
     },
   ];
 
@@ -110,8 +113,6 @@ const RankedPartyOutstandingCard = ({ billType }: { billType: string }) => {
 const Page = () => {
   const router = useRouter();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-
-
 
   let incomingBillType = "Receivable"; // populate later
   const [types, updateTypes] = useState([
@@ -201,7 +202,8 @@ const Page = () => {
       flex: 1,
       type: "number",
       // valueGetter: (value, row) => `${row.currency || ""} ${row.amount || "0"}`,
-      valueGetter: (value, row) => `${row.currency || ""} ${numericToString(row.amount) || "0"}`,
+      valueGetter: (value, row) =>
+        `${row.currency || ""} ${numericToString(row.amount) || "0"}`,
     },
   ];
 
@@ -293,7 +295,8 @@ const Page = () => {
       type: "item",
       view: (
         <CardView title="Upcoming Collections">
-          <Container className="flex overflow-x-auto">
+          {/* <Container className="flex overflow-x-auto"> */}
+          <Stack flexDirection="row">
             {filters.map((card, index) => (
               <Box
                 key={index}
@@ -307,6 +310,7 @@ const Page = () => {
                     ? inspiredPalette.darkPurple
                     : inspiredPalette.lightTextGrey,
                   color: card.isSelected ? "white" : inspiredPalette.dark,
+                  cursor: "pointer",
                 }}
                 onClick={(event) => {
                   let values: any[] = filters;
@@ -328,7 +332,8 @@ const Page = () => {
                 </Typography>
               </Box>
             ))}
-          </Container>
+          </Stack>
+          {/* </Container> */}
           <br />
           <DataGrid
             columns={columns}
@@ -366,10 +371,9 @@ const Page = () => {
     },
   ];
 
-  
-
   return (
-    <Container sx={{ overflowX: "hidden" }}>
+    // <Container sx={{ overflowX: "hidden" }}>
+    <Box>
       <Grid
         container
         className=""
@@ -388,7 +392,8 @@ const Page = () => {
           </Typography>
         )}
       </Grid>
-    </Container>
+    </Box>
+    // </Container>
     // <div
     //   className="overflow-x-hidden"
     //   style={{
