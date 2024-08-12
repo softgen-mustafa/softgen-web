@@ -8,6 +8,7 @@ import {
   getBmrmBaseUrl,
   postAsync,
 } from "@/app/services/rest_services";
+import FeatureControl from "@/app/components/featurepermission/page";
 
 const MovementConfig = () => {
   const [data, setData] = useState({
@@ -15,9 +16,19 @@ const MovementConfig = () => {
     textInput2: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+
+  // useEffect(() => {
+  //   fetchCompanyConfig();
+  // }, []);
 
   useEffect(() => {
-    fetchCompanyConfig();
+    FeatureControl("MasterConfigButton").then((permission) => {
+      setHasPermission(permission);
+      if (permission) {
+        fetchCompanyConfig();
+      }
+    });
   }, []);
 
   const fetchCompanyConfig = async () => {
@@ -49,6 +60,19 @@ const MovementConfig = () => {
       console.log("Something went wrong...");
     }
   };
+
+  if (hasPermission === null) {
+    return <CircularProgress />;
+  }
+
+  if (hasPermission === false) {
+    return (
+      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+        Get the Premium For this Service Or Contact Admin - 7977662924
+      </Typography>
+    );
+  }
+
 
   return (
     <Stack flexDirection={"column"} gap={1.5}>

@@ -8,10 +8,18 @@ import {
   postAsync,
 } from "@/app/services/rest_services";
 import Cookies from "js-cookie";
-import { Box, Button, Stack, Switch, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Stack,
+  Switch,
+  Typography,
+} from "@mui/material";
 import { DropDown } from "@/app/ui/drop_down";
 import { DataTable } from "@/app/ui/data_grid";
 import { GridColDef } from "@mui/x-data-grid";
+import FeatureControl from "@/app/components/featurepermission/page";
 
 interface UserProps {
   id: number;
@@ -104,14 +112,25 @@ const filterData = [
 const MasterPermissions = () => {
   const [data, setData] = useState([]);
   const [refresh, triggerRefresh] = useState(false);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   let selectedMasterType = useRef(masterTypes[0]);
   let selectedUser = useRef(null);
   let selectedFilter = useRef(filterData[0]?.title);
 
+  // useEffect(() => {
+  //   loadUser().then((_) => {
+  //     triggerRefresh(!refresh);
+  //   });
+  // }, []);
   useEffect(() => {
-    loadUser().then((_) => {
-      triggerRefresh(!refresh);
+    FeatureControl("MasterConfigButton").then((permission) => {
+      setHasPermission(permission);
+      if (permission) {
+        loadUser().then((_) => {
+          triggerRefresh(!refresh);
+        });
+      }
     });
   }, []);
 
@@ -265,6 +284,18 @@ const MasterPermissions = () => {
       console.log("Something went wrong...");
     }
   };
+
+  if (hasPermission === null) {
+    return <CircularProgress />;
+  }
+
+  if (hasPermission === false) {
+    return (
+      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+        Get the Premium For this Service Or Contact Admin - 7977662924
+      </Typography>
+    );
+  }
 
   return (
     <Stack flexDirection={"column"} gap={1.5}>

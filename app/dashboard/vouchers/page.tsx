@@ -22,14 +22,24 @@ import {
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import Loading from "../loading";
+import FeatureControl from "@/app/components/featurepermission/page";
 
 const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+
+  // useEffect(() => {
+  //   loadData();
+  // }, [voucherType]);
 
   useEffect(() => {
-    loadData();
+    FeatureControl("CustomerPartySearch").then((permission) => {
+      setHasPermission(permission);
+      if (permission) {
+        loadData();
+      }
+    });
   }, [voucherType]);
 
   const columns: GridColDef[] = [
@@ -78,6 +88,18 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
       setLoading(false);
     }
   };
+  if (hasPermission === null) {
+    return <CircularProgress />;
+  }
+
+  if (hasPermission === false) {
+    return (
+      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+        Get the Premium For this Service Or Contact Admin - 7977662924
+      </Typography>
+    );
+  }
+
   return (
     <div className="flex flex-col">
       {loading && (
@@ -107,11 +129,20 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
 const BillsCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
   const [refresh, triggerRefresh] = useState(false);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   const router = useRouter();
   useEffect(() => {
-    triggerRefresh(!refresh);
+    FeatureControl("CustomerPartySearch").then((permission) => {
+      setHasPermission(permission);
+      if (permission) {
+        triggerRefresh(!refresh);
+      }
+    });
   }, [voucherType]);
+  // useEffect(() => {
+  //   triggerRefresh(!refresh);
+  // }, [voucherType]);
 
   const columns: GridColDef<any[number]>[] = [
     {
@@ -177,6 +208,19 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
       alert("Could not load data");
     }
   };
+
+  if (hasPermission === null) {
+    return <CircularProgress />;
+  }
+
+  if (hasPermission === false) {
+    return (
+      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+        Get the Premium For this Service Or Contact Admin - 7977662924
+      </Typography>
+    );
+  }
+
   return (
     <div className="flex flex-col">
       <DataTable
@@ -199,10 +243,20 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
 const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   useEffect(() => {
-    loadData();
+    FeatureControl("CustomerPartySearch").then((permission) => {
+      setHasPermission(permission);
+      if (permission) {
+        loadData();
+      }
+    });
   }, [voucherType]);
+
+  // useEffect(() => {
+  //   loadData();
+  // }, [voucherType]);
 
   const columns: GridColDef[] = [
     {
@@ -244,6 +298,18 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
       setLoading(false);
     }
   };
+  if (hasPermission === null) {
+    return <CircularProgress />;
+  }
+
+  if (hasPermission === false) {
+    return (
+      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+        Get the Premium For this Service Or Contact Admin - 7977662924
+      </Typography>
+    );
+  }
+
   return (
     <div className="flex flex-col">
       {loading && (
@@ -273,10 +339,20 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
 const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   useEffect(() => {
-    loadData();
+    FeatureControl("CustomerPartySearch").then((permission) => {
+      setHasPermission(permission);
+      if (permission) {
+        loadData();
+      }
+    });
   }, [voucherType]);
+
+  // useEffect(() => {
+  //   loadData();
+  // }, [voucherType]);
 
   const columns: GridColDef[] = [
     {
@@ -324,6 +400,18 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
       setLoading(false);
     }
   };
+
+  if (hasPermission === null) {
+    return <CircularProgress />;
+  }
+
+  if (hasPermission === false) {
+    return (
+      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+        Get the Premium For this Service Or Contact Admin - 7977662924
+      </Typography>
+    );
+  }
   return (
     <div className="flex flex-col">
       {loading && (
@@ -353,10 +441,20 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
 const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   useEffect(() => {
-    loadData();
+    FeatureControl("CustomerPartySearch").then((permission) => {
+      setHasPermission(permission);
+      if (permission) {
+        loadData();
+      }
+    });
   }, [voucherType]);
+
+  // useEffect(() => {
+  //   loadData();
+  // }, [voucherType]);
 
   const columns: GridColDef[] = [
     {
@@ -396,6 +494,18 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
       setLoading(false);
     }
   };
+
+  if (hasPermission === null) {
+    return <CircularProgress />;
+  }
+
+  if (hasPermission === false) {
+    return (
+      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+        Get the Premium For this Service Or Contact Admin - 7977662924
+      </Typography>
+    );
+  }
   return (
     <div className="flex flex-col">
       {loading && (

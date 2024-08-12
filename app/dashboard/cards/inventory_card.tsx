@@ -34,7 +34,10 @@ interface OverviewResponse {
   total_items: number;
 }
 
-const InventoryCard = ({}) => {
+interface InventoryCardProps {
+  companyId: string | null;
+}
+const InventoryCard: React.FC<InventoryCardProps> = ({ companyId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [details, setDetails] = useState<InventoryDetails>({ totalAmount: 0 });
   const [hasPermission, setHasPermission] = useState(false);
@@ -44,19 +47,19 @@ const InventoryCard = ({}) => {
   useEffect(() => {
     FeatureControl("InventoryCard").then((permission) => {
       setHasPermission(permission);
-      if (permission) {
-        inventoryDashboardApi().then((_) => {});
+      if (permission && companyId) {
+        inventoryDashboardApi(companyId).then((_) => {});
       } else {
         // Toast("Access Denied for Inventory Overview");
       }
     });
   }, []);
 
-  useEffect(() => {
-    inventoryDashboardApi();
-  }, []);
+  // useEffect(() => {
+  //   inventoryDashboardApi();
+  // }, []);
 
-  const inventoryDashboardApi = async () => {
+  const inventoryDashboardApi = async (companyId: string) => {
     try {
       setIsLoading(true);
       const url = `${getBmrmBaseUrl()}/stock-item/get/movement-overview`;

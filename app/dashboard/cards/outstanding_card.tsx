@@ -24,9 +24,14 @@ interface OutstandingData {
   payableAmount: number;
   receivableAmount: number;
   currency: string;
+  
 }
 
-const OutstandingCard = () => {
+interface OutstandingCardProps {
+  companyId: string | null;
+}
+
+const OutstandingCard: React.FC<OutstandingCardProps> = ({ companyId }) => {
   const router = useRouter();
 
   const [data, setData] = useState<OutstandingData | null>(null);
@@ -36,19 +41,18 @@ const OutstandingCard = () => {
   useEffect(() => {
     FeatureControl("OutstandingCard").then((permission) => {
       setHasPermission(permission);
-      if (permission) {
-        fetchOutstandingData();
-      } else {
-        // Toast("Access Denied for Customer Overview");
+      if (permission && companyId) {
+        fetchOutstandingData(companyId);
       }
     });
-  }, []);
+  }, [companyId]);
+
 
   // useEffect(() => {
   //   fetchOutstandingData();
   // }, []);
 
-  const fetchOutstandingData = async () => {
+  const fetchOutstandingData = async (companyId: string) => {
     try {
       setIsLoading(true);
       let url = `${getBmrmBaseUrl()}/bill/get/outstanding-overview`;

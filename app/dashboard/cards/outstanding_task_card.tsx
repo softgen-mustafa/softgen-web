@@ -21,29 +21,35 @@ interface Task {
   currency: string;
 }
 
-const OutstandingTask = () => {
+interface OutstandingTaskProps {
+  companyId: string | null;
+}
+const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [durationKey] = useState(dayjs().format("YYYY-MM-DD"));
   const [hasPermission, setHasPermission] = useState(false);
 
-  useEffect(() => {
-    fetchTasks();
-    // FeatureControl("OutstandingTask").then((permission) => {
-    //   setHasPermission(permission);
-    //   if (permission) {
-    //     fetchTasks(selectedCompany, refreshTrigger);
-    //   } else {
-    //   }
-    // });
-  }, []);
+
+
+
+  // useEffect(() => {
+  //   fetchTasks();
+  //   // FeatureControl("OutstandingTask").then((permission) => {
+  //   //   setHasPermission(permission);
+  //   //   if (permission) {
+  //   //     fetchTasks(selectedCompany, refreshTrigger);
+  //   //   } else {
+  //   //   }
+  //   // });
+  // }, []);
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    fetchTasks(companyId);
+  }, [companyId]);
 
-  const fetchTasks = async () => {
+  const fetchTasks = async (companyId: string) => {
     setIsLoading(true);
     try {
       const url = `${getBmrmBaseUrl()}/bill/get/upcoming-bills?groupType=receivable&durationType=daily&durationKey=${durationKey}`;
