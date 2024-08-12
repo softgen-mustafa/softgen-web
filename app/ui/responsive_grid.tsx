@@ -33,7 +33,7 @@ const CardView: React.FC<CardViewProps> = ({
   actions,
 }) => {
   return (
-    <Card className={`h-full p-3 rounded-3xl ${className}`}>
+    <Card className={`h-full p-3 rounded-3xl shadow-md ${className}`}>
       {title != null && title.length > 0 && (
         <CardHeader title={title} className="" />
       )}

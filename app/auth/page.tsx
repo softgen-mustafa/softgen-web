@@ -1,6 +1,6 @@
 "use client";
 import { TextInput } from "@/app/ui/text_inputs";
-import { Button, Grid, Snackbar } from "@mui/material";
+import { Button, Grid, Snackbar, Typography, useTheme } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { getAsync, getUmsBaseUrl } from "../services/rest_services";
@@ -13,6 +13,7 @@ const Page = () => {
   const error = useRef("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const router = useRouter();
+  const theme = useTheme();
 
   useEffect(() => {
     const token = Cookies.get("authToken") ?? null;
@@ -63,8 +64,13 @@ const Page = () => {
       type: "item",
       view: (
         <CardView className="flex flex-col justify-center items-center">
-          <h1 className="text-2xl font-bold mb-1 color ">  Welcome To BizOpp</h1>
-          <h3 className="mb-8 justify-center">Your Decision Making Buddy</h3>
+          <Typography className="text-2xl font-bold mb-1 color ">
+            {" "}
+            Welcome To BizOpp
+          </Typography>
+          <Typography className="text-base mb-8 justify-center">
+            Your Decision Making Buddy
+          </Typography>
           <TextInput
             mode="number"
             placeHolder="Enter Mobile Number"
@@ -76,12 +82,13 @@ const Page = () => {
           <div className="mt-4">
             <Button
               variant="contained"
-              style={{
-                background: inspiredPalette.dark,
+              sx={{
+                height: 45,
+                background: theme.palette.primary.main,
               }}
               onClick={onNext}
             >
-              Send OTP
+              <Typography textTransform="capitalize">Send OTP</Typography>
             </Button>
           </div>
         </CardView>

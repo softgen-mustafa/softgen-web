@@ -10,6 +10,7 @@ import {
   Grid,
   CircularProgress,
   Stack,
+  useTheme,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -113,6 +114,7 @@ const RankedPartyOutstandingCard = ({ billType }: { billType: string }) => {
 const Page = () => {
   const router = useRouter();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const theme = useTheme();
 
   let incomingBillType = "Receivable"; // populate later
   const [types, updateTypes] = useState([
@@ -300,14 +302,14 @@ const Page = () => {
             {filters.map((card, index) => (
               <Box
                 key={index}
-                className="shadow-xl mr-4 rounded-3xl"
+                className=" mr-4 rounded-3xl"
                 sx={{
                   minWidth: 100,
                   justifyContent: "center",
                   alignItems: "center",
                   height: 40,
                   background: card.isSelected
-                    ? inspiredPalette.darkPurple
+                    ? theme.palette.primary.main
                     : inspiredPalette.lightTextGrey,
                   color: card.isSelected ? "white" : inspiredPalette.dark,
                   cursor: "pointer",

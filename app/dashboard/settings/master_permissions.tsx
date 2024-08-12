@@ -290,7 +290,7 @@ const MasterPermissions = () => {
           triggerRefresh(!refresh);
         }}
       />
-      <Stack flexDirection={"row"} gap={1.5}>
+      <Stack flexDirection={"row"} alignItems={"center"} gap={1.2}>
         <Box sx={{ flex: 1 }}>
           <DropDown
             label="Filter"
@@ -304,12 +304,16 @@ const MasterPermissions = () => {
             }}
           />
         </Box>
-        <Button variant="contained" onClick={handleMapAll}>
+        <Button variant="contained" onClick={handleMapAll} sx={{ height: 50 }}>
           <Typography textTransform={"capitalize"} letterSpacing={0.8}>
             Map All
           </Typography>
         </Button>
-        <Button variant="contained" onClick={handleRemoveAll}>
+        <Button
+          variant="contained"
+          onClick={handleRemoveAll}
+          sx={{ height: 50 }}
+        >
           <Typography textTransform={"capitalize"} letterSpacing={0.8}>
             Remove All
           </Typography>

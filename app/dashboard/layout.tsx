@@ -167,7 +167,7 @@ const DrawerContent = () => {
 
       <Box className="mx-3 mt-5 mb-1">
         <Typography color="#FFFFFF" fontSize={20}>
-          Hello, {userName}👋🏻
+          Hello, {userName} 👋🏻
         </Typography>
       </Box>
       <List className="h-full justify-center">
@@ -270,7 +270,7 @@ const SideNav: React.FC = () => {
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: drawerWidth,
-              background: inspiredPalette.dark,
+              background: "#303f9f",
             },
           }}
         >

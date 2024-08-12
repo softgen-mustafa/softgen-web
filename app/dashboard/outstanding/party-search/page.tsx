@@ -5,7 +5,13 @@ import { DataTable } from "@/app/ui/data_grid";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { SearchInput } from "@/app/ui/text_inputs";
 import { ChevronLeftRounded } from "@mui/icons-material";
-import { CircularProgress, Container, Grid, IconButton, Typography } from "@mui/material";
+import {
+  CircularProgress,
+  Container,
+  Grid,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import { PieChart } from "@mui/x-charts";
 import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
@@ -15,7 +21,6 @@ import FeatureControl from "@/app/components/featurepermission/page";
 const Page = () => {
   const router = useRouter();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-
 
   let filterValue = useRef("");
   let viewType = useRef("");
@@ -49,16 +54,20 @@ const Page = () => {
   //   triggerRefresh(!refresh);
   // }, []);
 
-
-
   const onApi = async (
     page: number,
     pageSize: number,
-    searchValue?: string,
+    searchValue?: string
   ) => {
-    let collectionUrl = `${getBmrmBaseUrl()}/bill/get/upcoming-bills?groupType=${billType.current}&durationType=${filterType.current}&durationKey=${filterValue.current}`;
-    let agingUrl = `${getBmrmBaseUrl()}/bill/get/aging-bills?agingCode=${filterValue.current}&groupType=${billType.current}`;
-    let totalOutstandingUrl = `${getBmrmBaseUrl()}/bill/get/all-party-bills?groupType=${billType.current}`;
+    let collectionUrl = `${getBmrmBaseUrl()}/bill/get/upcoming-bills?groupType=${
+      billType.current
+    }&durationType=${filterType.current}&durationKey=${filterValue.current}`;
+    let agingUrl = `${getBmrmBaseUrl()}/bill/get/aging-bills?agingCode=${
+      filterValue.current
+    }&groupType=${billType.current}`;
+    let totalOutstandingUrl = `${getBmrmBaseUrl()}/bill/get/all-party-bills?groupType=${
+      billType.current
+    }`;
 
     let url = totalOutstandingUrl;
     if (viewType.current === "upcoming") {
@@ -106,7 +115,9 @@ const Page = () => {
       type: "number",
       flex: 1,
       valueGetter: (value, row) =>
-        `${row.currency || ""} ${row.amount != null ? numericToString(row.amount) : "0"}`,
+        `${row.currency || ""} ${
+          row.amount != null ? numericToString(row.amount) : "0"
+        }`,
     },
     {
       field: "billCount",
@@ -141,8 +152,8 @@ const Page = () => {
             {viewType.current === "upcoming"
               ? `View based on filter:  ${filterType}`
               : viewType.current == "aging"
-                ? `Aging-wise outstanding values`
-                : `All parties outstanding values`}
+              ? `Aging-wise outstanding values`
+              : `All parties outstanding values`}
           </Typography>
           <br />
           <Container className="overflow-x-auto flex">
@@ -175,10 +186,10 @@ const Page = () => {
                       value: entry.amount,
                     };
                   }),
-                  innerRadius: 30,
+                  innerRadius: 120,
                   outerRadius: 100,
                   paddingAngle: 1,
-                  cornerRadius: 5,
+                  cornerRadius: 1,
                   startAngle: 0,
                   endAngle: 360,
                   // cx: 150,
@@ -206,13 +217,13 @@ const Page = () => {
             onRowClick={(params) => {
               localStorage.setItem(
                 "party_filter_value",
-                filterValue.current || "",
+                filterValue.current || ""
               );
               localStorage.setItem("party_view_type", viewType.current || "");
               localStorage.setItem("party_bill_type", billType.current || "");
               localStorage.setItem(
                 "party_filter_type",
-                filterType.current || "",
+                filterType.current || ""
               );
               localStorage.setItem("bill_party_name", params.row.partyName);
               router.push("/dashboard/outstanding/bill-detail");
@@ -225,8 +236,6 @@ const Page = () => {
     },
   ];
 
-  
-
   return (
     <div className="w-full" style={{}}>
       <Grid
@@ -236,7 +245,7 @@ const Page = () => {
           height: "100vh",
         }}
       >
-         {hasPermission === null ? (
+        {hasPermission === null ? (
           <CircularProgress />
         ) : hasPermission ? (
           RenderGrid(gridConfig)

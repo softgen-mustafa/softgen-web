@@ -76,6 +76,7 @@ const MovementConfig = () => {
         )}
       </Stack>
       <Button
+        sx={{ height: "50px" }}
         variant="contained"
         disabled={
           data.textInput1.length == 0 || data.textInput2.length == 0
