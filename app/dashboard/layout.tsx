@@ -62,6 +62,12 @@ const drawerNavigations = [
     icon: <Settings />,
     selected: false,
   },
+  {
+    title: "Broker Sales",
+    destination: "/dashboard/broker/sales",
+    icon: <Receipt />,
+    selected: false,
+  },
 ];
 
 const DrawerContent = () => {
