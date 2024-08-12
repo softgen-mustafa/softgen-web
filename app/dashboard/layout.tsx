@@ -73,6 +73,12 @@ const drawerNavigations = [
     icon: <Receipt />,
     selected: false,
   },
+  {
+    title: "Broker Outstanding",
+    destination: "/dashboard/broker/outstanding",
+    icon: <Receipt />,
+    selected: false,
+  },
 ];
 
 const DrawerContent = () => {
@@ -171,7 +177,7 @@ const DrawerContent = () => {
         </Box>
       </Modal>
 
-      <Box className="mx-3 mt-5 mb-1">
+      <Box className="ml-6 mt-5 mb-1">
         <Typography color="#FFFFFF" fontSize={20}>
           Hello, {userName} 👋🏻
         </Typography>

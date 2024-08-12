@@ -3,7 +3,7 @@ import { getUmsBaseUrl, postAsync } from "@/app/services/rest_services";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { TextInput } from "@/app/ui/text_inputs";
 import { inspiredPalette } from "@/app/ui/theme";
-import { Button, Grid, Snackbar } from "@mui/material";
+import { Button, Grid, Snackbar, Typography, useTheme } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
@@ -18,6 +18,7 @@ const Page = ({ params }: { params: any }) => {
   });
   const [snackbar, setSnackbar] = useState({ open: false, message: "" });
   const [hasReloaded, setHasReloaded] = useState(false);
+  const theme = useTheme();
 
   useEffect(() => {
     let token = Cookies.get("authToken") ?? null;
@@ -75,10 +76,10 @@ const Page = ({ params }: { params: any }) => {
       type: "item",
       view: (
         <CardView className="flex flex-col justify-center items-center">
-          <h1 className="justify-center center self-center text-2xl font-bold mb-5">
+          <Typography className="justify-center center self-center text-2xl font-bold mb-5">
             Login to Your Account{" "}
-          </h1>
-          <p className="font-medium text-1xl">{`You'll get an OTP on your this mobile number: ${mobile}`}</p>
+          </Typography>
+          <Typography className="font-medium text-1xl">{`You'll get an OTP on your this mobile number: ${mobile}`}</Typography>
           <br />
           <TextInput
             mode="number"
@@ -101,15 +102,19 @@ const Page = ({ params }: { params: any }) => {
           <br />
           <div className="flex flex-row justify-end">
             <Button
-              style={{
-                background: inspiredPalette.dark,
+              sx={{
+                background: theme.palette.primary.main,
+                height: 45,
+                width: 100,
               }}
               variant="contained"
               onClick={() => {
                 onSubmit();
               }}
             >
-              Login
+              <Typography textTransform={"capitalize"} letterSpacing={0.8}>
+                Login
+              </Typography>
             </Button>
           </div>
         </CardView>

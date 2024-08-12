@@ -72,7 +72,7 @@ const DataTable: React.FC<TableViewProps> = ({
         columns={columns}
         rows={rows}
         className="h-fit max-h-fit"
-        rowCount={useServerPagination ? 100 : rows.length}
+        rowCount={useServerPagination ? 10000 : rows?.length}
         pagination
         paginationMode={useServerPagination ? "server" : "client"}
         paginationModel={paginationModel}

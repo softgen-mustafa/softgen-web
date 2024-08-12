@@ -42,7 +42,10 @@ const AgingCard: React.FC<AgingCardProps> = ({ data, onPress }) => {
         onPress();
       }}
     >
-      <Typography component="div" className="text-xl text-red-500">
+      <Typography
+        component="div"
+        className="text-xl font-semibold text-red-500"
+      >
         {data.currency} {numericToString(data.amount)}
       </Typography>
       <Typography component="div" className="text-md">

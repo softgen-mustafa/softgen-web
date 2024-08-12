@@ -1,107 +1,151 @@
 "use client";
-import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
-import { useEffect, useState } from "react";
 import {
-    Typography,
-    IconButton,
-    Grid,
-} from "@mui/material";
+  getAsync,
+  getBmrmBaseUrl,
+  postAsync,
+} from "@/app/services/rest_services";
+import { useEffect, useRef, useState } from "react";
+import { Typography, IconButton, Grid } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { GridColDef } from "@mui/x-data-grid";
-import { ChevronLeftRounded} from "@mui/icons-material";
+import { ChevronLeftRounded } from "@mui/icons-material";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { DataTable } from "@/app/ui/data_grid";
-
+import { DropDown } from "@/app/ui/drop_down";
 
 const Page = () => {
-    const router = useRouter();
-    const [refresh, triggerRefresh] = useState(false);
+  const router = useRouter();
+  const [refresh, triggerRefresh] = useState(false);
+  const [filterData, setFilterData] = useState([]);
 
-    useEffect(() => {
-    },[])
+  let selection = useRef("all");
 
-    const loadData = async () => {
-        try {
-            let url = `${getBmrmBaseUrl()}/broker-outstanding/party/overview`;
-            let requestBody = {
-                "aging_code": "all",
-            };
-            return await postAsync(url, requestBody);
-        } catch {
-            return [];
-        }
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      let url = `${getBmrmBaseUrl()}/aging-settings`;
+      let response = await getAsync(url);
+
+      if (response && response.length > 0) {
+        let values: any = [{ title: "All", code: "all" }];
+        response.map((_data: any) => {
+          values.push({
+            title: _data.title,
+            code: _data.agingCode,
+          });
+        });
+        setFilterData(values);
+      }
+    } catch (error) {
+      console.log("Something went wrong...");
     }
+  };
 
-    const columns: GridColDef[] = [
-        {
-            field: "partyName",
-            headerName: "Party",
-            editable: false,
-            sortable: true,
-            flex: 1,
-        },
-        {
-            field: "amount",
-            headerName: "Value",
-            editable: false,
-            sortable: true,
-            flex: 1,
-        },
-    ];
+  const onApi = async () => {
+    try {
+      let url = `${getBmrmBaseUrl()}/broker-outstanding/party/overview`;
+      let requestBody = {
+        aging_code: selection.current,
+      };
+      let response = await postAsync(url, requestBody);
+      if (response && response.length > 0) {
+        let entries = response.map((_data: any, index: number) => ({
+          id: index + 1,
+          partyName: _data.partyName,
+          amount: _data.amount,
+        }));
+        return entries;
+      }
+      console.log(response);
+    } catch {
+      return [];
+    }
+  };
 
-    const gridConfig: GridConfig[] = [
-        {
-            type: "item",
-            className: "",
-            view: (
-                <CardView
-                title={"Overview"}
-                className="h-fit"
-                actions={[
-                    <IconButton
-                    key={1}
-                    onClick={() => {
-                        router.back();
-                    }}
-                    >
-                    <ChevronLeftRounded />
-                    <Typography>Go Back</Typography>
-                    </IconButton>,
-                ]}
-                >
-                <DataTable
-                columns={columns}
-                refresh={refresh}
-                useSearch={false}
-                useServerPagination={false}
-                onApi={async (page, pageSize, searchText) => {
-                    return await loadData();
-                }}
-                onRowClick={(params) => {
-                    localStorage.setItem("partyName", params.row.partyName);
-                    router.push("/dashboard/broker/outstanding/bill-overview");
-                }}
-                />
-                </CardView>
-            ),
-            children: [],
-        },
-    ];
+  const columns: GridColDef[] = [
+    {
+      field: "partyName",
+      headerName: "Party",
+      editable: false,
+      sortable: true,
+      flex: 1,
+    },
+    {
+      field: "amount",
+      headerName: "Value",
+      editable: false,
+      sortable: true,
+      flex: 1,
+    },
+  ];
 
-    return (
-        <div className="w-full" style={{}}>
-        <Grid
+  const gridConfig: GridConfig[] = [
+    {
+      type: "item",
+      className: "",
+      view: (
+        <CardView
+          title={"Overview"}
+          className="h-fit"
+          actions={[
+            <IconButton
+              key={1}
+              onClick={() => {
+                router.back();
+              }}
+            >
+              <ChevronLeftRounded />
+              <Typography>Go Back</Typography>
+            </IconButton>,
+          ]}
+        >
+          <DropDown
+            label={"Filter"}
+            displayFieldKey={"title"}
+            valueFieldKey={null}
+            selectionValues={filterData}
+            helperText={""}
+            onSelection={(_data) => {
+              selection.current = _data?.code;
+              triggerRefresh(!refresh);
+            }}
+          />
+          <DataTable
+            columns={columns}
+            refresh={refresh}
+            useSearch={false}
+            useServerPagination={false}
+            onApi={async (page, pageSize, searchText) => {
+              return await onApi();
+            }}
+            onRowClick={(params) => {
+              localStorage.setItem("partyName", params.row.partyName);
+              router.push("/dashboard/broker/outstanding/bill-overview");
+            }}
+          />
+        </CardView>
+      ),
+      children: [],
+    },
+  ];
+
+  return (
+    <div className="w-full" style={{}}>
+      <Grid
         container
         className="bg-gray-200"
         sx={{
-            flexGrow: 1,
-            height: "100vh",
+          flexGrow: 1,
+          height: "100vh",
         }}
-        >
+      >
         {RenderGrid(gridConfig)}
-        </Grid>
-        </div>
-    );
-}
+      </Grid>
+    </div>
+  );
+};
 
 export default Page;
