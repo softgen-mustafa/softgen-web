@@ -119,21 +119,30 @@
 // };
 // export default DashboardPage;
 
-
 "use client";
 import { CustomerDetailsCard } from "./cards/customer_card";
-import { Grid, Typography } from "@mui/material";
+import { Box, Grid, Stack, Typography, useTheme } from "@mui/material";
 import { OutstandingCard } from "./cards/outstanding_card";
 import { InventoryCard } from "./cards/inventory_card";
 import { OutstandingTask } from "./cards/outstanding_task_card";
 import { CardView, GridConfig, RenderGrid } from "../ui/responsive_grid";
 import { DropDown } from "../ui/drop_down";
 import { getAsync, getBmrmBaseUrl } from "../services/rest_services";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
 import { inspiredPalette } from "../ui/theme";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { numericToString } from "../services/Local/helper";
+import { useRouter } from "next/navigation";
+import FeatureControl from "../components/featurepermission/page";
+import RankedPartyOutstandingCard from "./cards/ranked_party";
+import { AgingView } from "./cards/aging_card";
 
-const CompanyCard = ({ onCompanyChange }: { onCompanyChange: (companyId: string) => void }) => {
+const CompanyCard = ({
+  onCompanyChange,
+}: {
+  onCompanyChange: (companyId: string) => void;
+}) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -181,7 +190,32 @@ const CompanyCard = ({ onCompanyChange }: { onCompanyChange: (companyId: string)
 };
 
 const DashboardPage = () => {
-  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(
+    null
+  );
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [filters, updateFilters] = useState([
+    { id: 1, label: "Daily", value: "daily", isSelected: true },
+    { id: 2, label: "Weekly", value: "weekly", isSelected: false },
+    { id: 3, label: "Montly", value: "monthly", isSelected: false },
+    { id: 4, label: "Quarterly", value: "quarterly", isSelected: false },
+    { id: 5, label: "Yearly", value: "yearly", isSelected: false },
+  ]);
+
+  let incomingBillType = "Receivable"; // populate later
+  const [types, updateTypes] = useState([
+    { id: 1, label: "Receivable", code: "receivable" },
+    { id: 2, label: "Payable", code: "payable" },
+  ]);
+
+  let selectedType = useRef(types[incomingBillType === "Payable" ? 1 : 0]);
+  let selectedFilter = useRef(filters[0]);
+
+  const [totalAmount, setAmount] = useState("0");
+  const [rows, setRows] = useState([]);
+
+  const theme = useTheme();
+  const router = useRouter();
 
   useEffect(() => {
     if (selectedCompanyId) {
@@ -193,6 +227,74 @@ const DashboardPage = () => {
   const handleCompanyChange = (companyId: string) => {
     setSelectedCompanyId(companyId);
   };
+
+  useEffect(() => {
+    checkPermission();
+  }, []);
+
+  const checkPermission = async () => {
+    const permission = await FeatureControl("OutstandingDashboardScreen");
+    setHasPermission(permission);
+    if (permission) {
+      loadAmount();
+      loadUpcoming();
+    }
+  };
+
+  const loadAmount = async () => {
+    try {
+      let url = `${getBmrmBaseUrl()}/bill/get/outstanding-amount?groupType=${
+        selectedType.current.code
+      }`;
+      let response = await getAsync(url);
+      let amount = `${"₹"} ${numericToString(response)}`;
+      setAmount(amount);
+    } catch {
+      alert("Coult not load amount");
+    }
+  };
+
+  const loadUpcoming = async () => {
+    try {
+      let url = `${getBmrmBaseUrl()}/bill/get/upcoming-overview?groupType=${
+        selectedType.current.code
+      }&durationType=${selectedFilter.current.value}`;
+      let response = await getAsync(url);
+      let entries = response.map((entry: any) => {
+        return {
+          id: entry.id,
+          name: entry.title,
+          amount: entry.amount,
+          billCount: entry.billCount,
+          currency: entry.currency ?? "₹",
+        };
+      });
+      setRows(entries);
+    } catch {
+      alert("Could not load upcoming outstanding");
+    }
+  };
+
+  const columns: GridColDef<any[number]>[] = [
+    {
+      field: "name",
+      headerName: "Duration Name",
+      editable: false,
+      sortable: true,
+      flex: 1,
+    },
+    {
+      field: "amount",
+      headerName: "Value",
+      editable: false,
+      sortable: true,
+      flex: 1,
+      type: "number",
+      // valueGetter: (value, row) => `${row.currency || ""} ${row.amount || "0"}`,
+      valueGetter: (value, row) =>
+        `${row.currency || ""} ${numericToString(row.amount) || "0"}`,
+    },
+  ];
 
   const gridConfig: GridConfig[] = [
     {
@@ -216,11 +318,21 @@ const DashboardPage = () => {
       className: "",
       children: [],
     },
+    // {
+    //   type: "item",
+    //   view: (
+    //     <CardView title="Inventory">
+    //       <InventoryCard companyId={selectedCompanyId} />
+    //     </CardView>
+    //   ),
+    //   className: "",
+    //   children: [],
+    // },
     {
       type: "item",
       view: (
-        <CardView title="Inventory">
-          <InventoryCard companyId={selectedCompanyId} />
+        <CardView title="Today's O/S">
+          <OutstandingTask companyId={selectedCompanyId} />
         </CardView>
       ),
       className: "",
@@ -229,8 +341,96 @@ const DashboardPage = () => {
     {
       type: "item",
       view: (
-        <CardView title="Today's O/S">
-          <OutstandingTask companyId={selectedCompanyId} />
+        <CardView title="Aging-Wise O/S">
+          <AgingView billType={selectedType.current.code} />
+        </CardView>
+      ),
+      className: "",
+      children: [],
+    },
+    {
+      type: "item",
+      view: (
+        <CardView title="Ranked Parties">
+          <RankedPartyOutstandingCard billType={selectedType.current.code} />
+        </CardView>
+      ),
+      className: "",
+      children: [],
+    },
+    {
+      type: "item",
+      view: (
+        <CardView title="Upcoming Collections">
+          {/* <Container className="flex overflow-x-auto"> */}
+          <Stack flexDirection="row">
+            {filters.map((card, index) => (
+              <Box
+                key={index}
+                className=" mr-4 rounded-3xl"
+                sx={{
+                  minWidth: 100,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: 40,
+                  background: card.isSelected
+                    ? theme.palette.primary.main
+                    : inspiredPalette.lightTextGrey,
+                  color: card.isSelected ? "white" : inspiredPalette.dark,
+                  cursor: "pointer",
+                }}
+                onClick={(event) => {
+                  let values: any[] = filters;
+                  values = values.map((entry: any) => {
+                    let isSelected = card.value === entry.value;
+                    entry.isSelected = isSelected;
+                    return entry;
+                  });
+                  updateFilters(values);
+                  selectedFilter.current = card;
+                  loadUpcoming();
+                }}
+              >
+                <Typography
+                  component="div"
+                  className="flex h-full w-full flex-row justify-center items-center"
+                >
+                  {card.label}
+                </Typography>
+              </Box>
+            ))}
+          </Stack>
+          {/* </Container> */}
+          <br />
+          <DataGrid
+            columns={columns}
+            rows={rows}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 10,
+                },
+              },
+            }}
+            onRowClick={(params) => {
+              localStorage.setItem("party_filter_value", params.row.id);
+              localStorage.setItem("party_view_type", "upcoming");
+              localStorage.setItem(
+                "party_bill_type",
+                selectedType.current.code
+              );
+              localStorage.setItem(
+                "party_filter_type",
+                selectedFilter.current.value
+              );
+              router.push("/dashboard/outstanding/party-search");
+            }}
+            pageSizeOptions={[5, 10, 25, 50, 75, 100]}
+            disableRowSelectionOnClick
+            onPaginationModelChange={(value) => {
+              alert(`page model:  ${JSON.stringify(value)}`);
+            }}
+          />
         </CardView>
       ),
       className: "",

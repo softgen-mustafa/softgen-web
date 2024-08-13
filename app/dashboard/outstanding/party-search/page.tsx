@@ -17,6 +17,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import FeatureControl from "@/app/components/featurepermission/page";
+import OutstandingOverview from "./outstanding_overview";
 
 const Page = () => {
   const router = useRouter();
@@ -59,20 +60,14 @@ const Page = () => {
     pageSize: number,
     searchValue?: string
   ) => {
-    let collectionUrl = `${getBmrmBaseUrl()}/bill/get/upcoming-bills?groupType=${
-      billType.current
-    }&durationType=${filterType.current}&durationKey=${filterValue.current}`;
-    let agingUrl = `${getBmrmBaseUrl()}/bill/get/aging-bills?agingCode=${
-      filterValue.current
-    }&groupType=${billType.current}`;
-    let totalOutstandingUrl = `${getBmrmBaseUrl()}/bill/get/all-party-bills?groupType=${
-      billType.current
-    }`;
+    let groupType = localStorage.getItem("os_bill_type");
+    let agingType = localStorage.getItem("os_aging_type");
+
+    let agingUrl = `${getBmrmBaseUrl()}/bill/get/aging-bills?agingCode=${agingType}&groupType=${groupType}`;
+    let totalOutstandingUrl = `${getBmrmBaseUrl()}/bill/get/all-party-bills?groupType=${groupType}`;
 
     let url = totalOutstandingUrl;
-    if (viewType.current === "upcoming") {
-      url = collectionUrl;
-    } else if (viewType.current === "aging") {
+    if (agingType !== null && agingType !== "all") {
       url = agingUrl;
     }
 
@@ -130,78 +125,99 @@ const Page = () => {
   ];
 
   const gridConfig: GridConfig[] = [
+    // {
+    //   type: "item",
+    //   view: (
+    //     <CardView
+    //       className="max-h-fit h-fit"
+    //       title="Party Search"
+    //       actions={[
+    //         <IconButton
+    //           key={1}
+    //           onClick={() => {
+    //             router.back();
+    //           }}
+    //         >
+    //           <ChevronLeftRounded />
+    //           <Typography>Go Back</Typography>
+    //         </IconButton>,
+    //       ]}
+    //     >
+    //       <Typography className="text-2xl">
+    //         {viewType.current === "upcoming"
+    //           ? `View based on filter:  ${filterType}`
+    //           : viewType.current == "aging"
+    //           ? `Aging-wise outstanding values`
+    //           : `All parties outstanding values`}
+    //       </Typography>
+    //       <br />
+    //       <Container className="overflow-x-auto flex">
+    //         <PieChart
+    //           width={300}
+    //           height={300}
+    //           margin={{ top: 100, left: 100, bottom: 100, right: 100 }}
+    //           sx={{
+    //             flex: 1,
+    //             borderWidth: 2,
+    //             borderRadius: 4,
+    //             marginBottom: 2,
+    //             justifyContent: "center",
+    //             alignItems: "center",
+    //           }}
+    //           slotProps={{
+    //             legend: {
+    //               hidden: true,
+    //               position: {
+    //                 horizontal: "right",
+    //                 vertical: "bottom",
+    //               },
+    //             },
+    //           }}
+    //           series={[
+    //             {
+    //               data: rows.map((entry: any) => {
+    //                 return {
+    //                   label: entry.partyName,
+    //                   value: entry.amount,
+    //                 };
+    //               }),
+    //               innerRadius: 120,
+    //               outerRadius: 100,
+    //               paddingAngle: 1,
+    //               cornerRadius: 1,
+    //               startAngle: 0,
+    //               endAngle: 360,
+    //               // cx: 150,
+    //               // cy: 150,
+    //             },
+    //           ]}
+    //         />
+    //       </Container>
+    //     </CardView>
+    //   ),
+    //   className: "",
+    //   children: [],
+    // },
     {
-      type: "item",
-      view: (
-        <CardView
-          className="max-h-fit h-fit"
-          title="Party Search"
-          actions={[
-            <IconButton
-              key={1}
-              onClick={() => {
-                router.back();
-              }}
-            >
-              <ChevronLeftRounded />
-              <Typography>Go Back</Typography>
-            </IconButton>,
-          ]}
-        >
-          <Typography className="text-2xl">
-            {viewType.current === "upcoming"
-              ? `View based on filter:  ${filterType}`
-              : viewType.current == "aging"
-              ? `Aging-wise outstanding values`
-              : `All parties outstanding values`}
-          </Typography>
-          <br />
-          <Container className="overflow-x-auto flex">
-            <PieChart
-              width={300}
-              height={300}
-              margin={{ top: 100, left: 100, bottom: 100, right: 100 }}
-              sx={{
-                flex: 1,
-                borderWidth: 2,
-                borderRadius: 4,
-                marginBottom: 2,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              slotProps={{
-                legend: {
-                  hidden: true,
-                  position: {
-                    horizontal: "right",
-                    vertical: "bottom",
-                  },
-                },
-              }}
-              series={[
-                {
-                  data: rows.map((entry: any) => {
-                    return {
-                      label: entry.partyName,
-                      value: entry.amount,
-                    };
-                  }),
-                  innerRadius: 120,
-                  outerRadius: 100,
-                  paddingAngle: 1,
-                  cornerRadius: 1,
-                  startAngle: 0,
-                  endAngle: 360,
-                  // cx: 150,
-                  // cy: 150,
-                },
-              ]}
-            />
-          </Container>
-        </CardView>
-      ),
+      type: "container",
+      view: null,
       className: "",
-      children: [],
+      children: [
+        {
+          type: "item",
+          view: (
+            <CardView title="Outstanding Overview">
+              <OutstandingOverview
+                onChange={() => {
+                  triggerRefresh(!refresh);
+                }}
+              />
+            </CardView>
+          ),
+          className: "",
+          children: [],
+        },
+      ],
     },
     {
       type: "item",
