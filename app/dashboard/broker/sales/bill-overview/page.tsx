@@ -8,10 +8,13 @@ import { ChevronLeftRounded } from "@mui/icons-material";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { DataTable } from "@/app/ui/data_grid";
 import Cookies from "js-cookie";
+import { convertToDate, numericToString } from "@/app/services/Local/helper";
 
 const Page = () => {
   const router = useRouter();
   const [refresh, triggerRefresh] = useState(false);
+
+  const partyName: any = localStorage.getItem("partyName");
 
   useEffect(() => {}, []);
 
@@ -20,9 +23,8 @@ const Page = () => {
       const fromDate = Cookies.get("fromDate");
       const toDate = Cookies.get("toDate");
 
-      let partyName = localStorage.getItem("partyName");
       let brokerName = localStorage.getItem("brokerName");
-      let url = `${getBmrmBaseUrl()}/broker-sales/party/overview?brokerName=${brokerName}&partyName=${partyName}`;
+      let url = `${getBmrmBaseUrl()}/broker-sales/bill/overview?brokerName=${brokerName}&partyName=${partyName}`;
       let requestBody = {
         startDate: fromDate ? fromDate : "",
         endDate: toDate ? toDate : "",
@@ -32,11 +34,13 @@ const Page = () => {
         let entries = response.map((_data: any, index: number) => {
           return {
             id: index + 1,
-            partyName,
-            preGstAmount: `\u20B9 ${_data.preGstAmount.toLocaleString()}`,
-            postGstAmount: `\u20B9 ${_data.postGstAmount.toLocaleString()}`,
+            voucherNumber: _data.voucherNumber,
+            billDate: `${convertToDate(_data.date)}`,
+            preGstAmount: `\u20B9 ${numericToString(_data.preGstAmount)}`,
+            postGstAmount: `\u20B9 ${numericToString(_data.postGstAmount)}`,
           };
         });
+        console.log(response);
         return entries;
       }
     } catch {
@@ -46,8 +50,15 @@ const Page = () => {
 
   const columns: GridColDef[] = [
     {
-      field: "partyName",
-      headerName: "Party",
+      field: "voucherNumber",
+      headerName: "Voucher Number",
+      editable: false,
+      sortable: true,
+      flex: 1,
+    },
+    {
+      field: "billDate",
+      headerName: "Date",
       editable: false,
       sortable: true,
       flex: 1,
@@ -74,7 +85,7 @@ const Page = () => {
       className: "",
       view: (
         <CardView
-          title={"Overview"}
+          title={partyName}
           className="h-fit"
           actions={[
             <IconButton

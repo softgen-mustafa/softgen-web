@@ -91,7 +91,7 @@ const Page = () => {
             columns={columns}
             refresh={refresh}
             useSearch={false}
-            // useServerPagination={false}
+            useServerPagination={false}
             onApi={async (page, pageSize, searchText) => {
               return await loadData();
             }}
