@@ -82,7 +82,7 @@ const RankedPartyOutstandingCard = ({ billType }: { billType: string }) => {
         initialState={{
           pagination: {
             paginationModel: {
-              pageSize: 5,
+              pageSize: 10,
             },
           },
         }}

@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { PieChart } from "@mui/x-charts";
 import { numericToString } from "@/app/services/Local/helper";
 import FeatureControl from "@/app/components/featurepermission/page";
+import { SingleChartView } from "@/app/ui/graph_util";
 
 interface OutstandingData {
   payableTitle: string;
@@ -24,14 +25,17 @@ interface OutstandingData {
   payableAmount: number;
   receivableAmount: number;
   currency: string;
-  
 }
 
 interface OutstandingCardProps {
   companyId: string | null;
+  title: string;
 }
 
-const OutstandingCard: React.FC<OutstandingCardProps> = ({ companyId }) => {
+const OutstandingCard: React.FC<OutstandingCardProps> = ({
+  companyId,
+  title,
+}) => {
   const router = useRouter();
 
   const [data, setData] = useState<OutstandingData | null>(null);
@@ -46,7 +50,6 @@ const OutstandingCard: React.FC<OutstandingCardProps> = ({ companyId }) => {
       }
     });
   }, [companyId]);
-
 
   // useEffect(() => {
   //   fetchOutstandingData();
@@ -98,6 +101,19 @@ const OutstandingCard: React.FC<OutstandingCardProps> = ({ companyId }) => {
     router.push("/dashboard/outstanding");
   };
 
+  const chartData = [
+    {
+      label: "Payable",
+      value: data?.payableAmount || 0,
+      color: "#FF9800",
+    },
+    {
+      label: "Receivable",
+      value: data?.receivableAmount || 0,
+      color: "#F44336",
+    },
+  ];
+
   return (
     hasPermission && (
       <div>
@@ -106,72 +122,79 @@ const OutstandingCard: React.FC<OutstandingCardProps> = ({ companyId }) => {
             <CircularProgress />
           </CardContent>
         ) : (
-          <Box onClick={handleCardClick} sx={{ cursor: "pointer" }}>
-            <div className="p-0">
-              <Grid container spacing={2} className="mb-1">
-                <Grid item xs={12}>
-                  <AmountDisplay
-                    title={data?.payableTitle || "Payable"}
-                    amount={data?.payableAmount || 0}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <AmountDisplay
-                    title={data?.receivableTitle || "Receivable"}
-                    amount={data?.receivableAmount || 0}
-                  />
-                </Grid>
-              </Grid>
-              <br />
-              <Container className="overflow-x-auto flex">
-                <PieChart
-                  width={300}
-                  height={300}
-                  margin={{ top: 100, left: 100, bottom: 100, right: 100 }}
-                  sx={{
-                    flex: 1,
-                    borderWidth: 2,
-                    borderRadius: 2,
-                    marginBottom: 2,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                  slotProps={{
-                    legend: {
-                      hidden: true,
-                      position: {
-                        horizontal: "right",
-                        vertical: "bottom",
-                      },
-                    },
-                  }}
-                  series={[
-                    {
-                      data: [
-                        {
-                          label: "Payable",
-                          value: data?.payableAmount || 0,
-                          color: "#FF9800",
-                        },
-                        {
-                          label: "Receivable",
-                          value: data?.receivableAmount || 0,
-                          color: "#F44336",
-                        },
-                      ],
-                      innerRadius: 120,
-                      outerRadius: 100,
-                      paddingAngle: 1,
-                      cornerRadius: 1,
-                      startAngle: 0,
-                      endAngle: 360,
-                      // cx: 150,
-                      // cy: 150,
-                    },
-                  ]}
-                />
-              </Container>
-            </div>
+          // <Box onClick={handleCardClick} sx={{ cursor: "pointer" }}>
+          //   <div className="p-0">
+          //     {/* <Grid container spacing={2} className="mb-1">
+          //       <Grid item xs={12}>
+          //         <AmountDisplay
+          //           title={data?.payableTitle || "Payable"}
+          //           amount={data?.payableAmount || 0}
+          //         />
+          //       </Grid>
+          //       <Grid item xs={12}>
+          //         <AmountDisplay
+          //           title={data?.receivableTitle || "Receivable"}
+          //           amount={data?.receivableAmount || 0}
+          //         />
+          //       </Grid>
+          //     </Grid>
+          //     <br /> */}
+          //     <Container className="overflow-x-auto flex">
+          //       <PieChart
+          //         width={300}
+          //         height={300}
+          //         margin={{ top: 100, left: 100, bottom: 100, right: 100 }}
+          //         sx={{
+          //           flex: 1,
+          //           borderWidth: 2,
+          //           borderRadius: 2,
+          //           marginBottom: 2,
+          //           justifyContent: "center",
+          //           alignItems: "center",
+          //         }}
+          //         slotProps={{
+          //           legend: {
+          //             hidden: true,
+          //             position: {
+          //               horizontal: "right",
+          //               vertical: "bottom",
+          //             },
+          //           },
+          //         }}
+          //         series={[
+          //           {
+          //             data: [
+          //               {
+          //                 label: "Payable",
+          //                 value: data?.payableAmount || 0,
+          //                 color: "#FF9800",
+          //               },
+          //               {
+          //                 label: "Receivable",
+          //                 value: data?.receivableAmount || 0,
+          //                 color: "#F44336",
+          //               },
+          //             ],
+          //             innerRadius: 120,
+          //             outerRadius: 100,
+          //             paddingAngle: 1,
+          //             cornerRadius: 1,
+          //             startAngle: 0,
+          //             endAngle: 360,
+          //             // cx: 150,
+          //             // cy: 150,
+          //           },
+          //         ]}
+          //       />
+          //     </Container>
+          //   </div>
+          // </Box>
+          <Box className="p-0">
+            <SingleChartView
+              values={chartData}
+              defaultChart="pie"
+              title={title}
+            />
           </Box>
         )}
       </div>

@@ -14,6 +14,8 @@ import { postAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { numericToString } from "@/app/services/Local/helper";
 import { useRouter } from "next/navigation";
 import { inspiredPalette } from "@/app/ui/theme";
+import { DataTable } from "@/app/ui/data_grid";
+import { GridColDef } from "@mui/x-data-grid";
 
 interface Task {
   partyName: string;
@@ -30,9 +32,24 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [durationKey] = useState(dayjs().format("YYYY-MM-DD"));
   const [hasPermission, setHasPermission] = useState(false);
+  const [refresh, triggerRefresh] = useState(false);
 
-
-
+  const columns: GridColDef[] = [
+    {
+      field: "partyName",
+      headerName: "Party",
+      editable: false,
+      sortable: true,
+      flex: 1,
+    },
+    {
+      field: "amount",
+      headerName: "Amount",
+      editable: false,
+      sortable: true,
+      flex: 1,
+    },
+  ];
 
   // useEffect(() => {
   //   fetchTasks();
@@ -45,12 +62,12 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
   //   // });
   // }, []);
 
-  useEffect(() => {
-    fetchTasks(companyId);
-  }, [companyId]);
+  // useEffect(() => {
+  //   fetchTasks();
+  // }, [companyId]);
 
-  const fetchTasks = async (companyId: string) => {
-    setIsLoading(true);
+  const fetchTasks = async () => {
+    // setIsLoading(true);
     try {
       const url = `${getBmrmBaseUrl()}/bill/get/upcoming-bills?groupType=receivable&durationType=daily&durationKey=${durationKey}`;
       const requestBody = {
@@ -62,17 +79,21 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
       };
 
       const response = await postAsync(url, requestBody);
-      const entries = response.slice(0, 2).map((entry: any) => ({
-        partyName: entry.name,
-        amount: entry.totalAmount,
-        currency: entry.currency ?? "₹",
-      }));
+      const entries = response.slice(0, 2).map((entry: any, index: number) => {
+        return {
+          id: index + 1,
+          partyName: entry.name,
+          amount: entry.totalAmount,
+          // currency: entry.currency ?? "₹",
+        };
+      });
 
-      setTasks(entries);
+      // setTasks(entries);
+      return entries;
     } catch (error) {
       console.log("Error fetching tasks:", error);
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 
@@ -111,16 +132,26 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
         router.push("/dashboard/outstanding/party-search");
       }}
     >
-      {isLoading ? (
+      {/* {isLoading ? (
         <CircularProgress />
-      ) : (
-        <div className="flex flex-col justify-between mb-4">
-          {tasks.map(renderTask)}
-          <br />
-        </div>
-      )}
+      ) : ( */}
+      {/* // <div className="flex flex-col justify-between mb-4">
+        //   {tasks.map(renderTask)}
+        //   <br />
+        // </div> */}
+      <DataTable
+        columns={columns}
+        refresh={refresh}
+        useSearch={false}
+        useServerPagination={false}
+        onApi={async (page, pageSize, searchText) => {
+          return await fetchTasks();
+        }}
+        onRowClick={() => {}}
+      />
+      {/* )} */}
     </Box>
-  // )
+    // )
   );
 };
 

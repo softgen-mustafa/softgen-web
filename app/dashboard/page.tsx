@@ -301,23 +301,55 @@ const DashboardPage = () => {
     {
       type: "item",
       view: (
-        <CardView title="Overview">
-          {/* <CompanyCard onCompanyChange={handleCompanyChange} /> */}
-          <CustomerDetailsCard companyId={selectedCompanyId} />
+        <CardView title="Today's O/S">
+          <OutstandingTask companyId={selectedCompanyId} />
         </CardView>
       ),
       className: "",
       children: [],
     },
     {
-      type: "item",
-      view: (
-        <CardView title="Outstanding Overview">
-          <OutstandingCard companyId={selectedCompanyId} />
-        </CardView>
-      ),
+      type: "container",
+      view: null,
       className: "",
-      children: [],
+      children: [
+        {
+          type: "item",
+          view: (
+            <CardView>
+              <OutstandingCard
+                companyId={selectedCompanyId}
+                title="Outstanding Overview"
+              />
+            </CardView>
+          ),
+          className: "",
+          children: [],
+        },
+        {
+          type: "item",
+          view: (
+            <CardView>
+              <AgingView
+                billType={selectedType.current.code}
+                title="Aging-Wise O/S"
+              />
+            </CardView>
+          ),
+          className: "",
+          children: [],
+        },
+        {
+          type: "item",
+          view: (
+            <CardView className="bg-red-500">
+              <CustomerDetailsCard companyId={selectedCompanyId} />
+            </CardView>
+          ),
+          className: "",
+          children: [],
+        },
+      ],
     },
     // {
     //   type: "item",
@@ -330,34 +362,23 @@ const DashboardPage = () => {
     //   children: [],
     // },
     {
-      type: "item",
-      view: (
-        <CardView title="Today's O/S">
-          <OutstandingTask companyId={selectedCompanyId} />
-        </CardView>
-      ),
+      type: "container",
+      view: null,
       className: "",
-      children: [],
-    },
-    {
-      type: "item",
-      view: (
-        <CardView title="Aging-Wise O/S">
-          <AgingView billType={selectedType.current.code} />
-        </CardView>
-      ),
-      className: "",
-      children: [],
-    },
-    {
-      type: "item",
-      view: (
-        <CardView title="Ranked Parties">
-          <RankedPartyOutstandingCard billType={selectedType.current.code} />
-        </CardView>
-      ),
-      className: "",
-      children: [],
+      children: [
+        {
+          type: "item",
+          view: (
+            <CardView title="Ranked Parties">
+              <RankedPartyOutstandingCard
+                billType={selectedType.current.code}
+              />
+            </CardView>
+          ),
+          className: "",
+          children: [],
+        },
+      ],
     },
     {
       type: "item",

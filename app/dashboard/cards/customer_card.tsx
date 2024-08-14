@@ -65,32 +65,44 @@ const CustomerDetailsCard: React.FC<CustomerDetailsCardProps> = ({
     hasPermission && (
       <Box>
         {isLoading ? (
-          <CardContent className="flex justify-center items-center h-40">
-            <CircularProgress />
-          </CardContent>
+          // <CardContent className="flex justify-center items-center h-40">
+          <Box display={"flex"} justifyContent={"center"}>
+            <CircularProgress sx={{ color: "#F8F9FA" }} />
+          </Box>
         ) : (
+          // </CardContent>
           <Box
             onClick={handleCardClick}
             className="flex flex-row justify-between"
             sx={{
               cursor: "pointer",
-              borderWidth: 2,
-              borderRadius: 1,
-              padding: 2,
-              marginTop: 3,
+              // borderWidth: 2,
+              // borderRadius: 1,
+              // padding: 2,
+              // marginTop: 3,
             }}
           >
             <div className="flex flex-col">
-              <Typography className="text-lg text-gray-800 mb-1">
+              <Typography
+                sx={{
+                  color: "white",
+                  letterSpacing: 1,
+                  mb: 1,
+                  fontWeight: "500",
+                  fontSize: 20,
+                }}
+              >
                 Total Customers
               </Typography>
-              <Typography className="text-2xl font-semibold ">
+              <Typography
+                sx={{ color: "#FFFFFF", fontWeight: "400", fontSize: 28 }}
+              >
                 {data?.totalCount.toLocaleString() || "0"}
               </Typography>
             </div>
             <div className="flex justify-end">
               <IconButton size="small">
-                <ChevronRight />
+                <ChevronRight sx={{ color: "#FFFFFF" }} />
               </IconButton>
             </div>
           </Box>
