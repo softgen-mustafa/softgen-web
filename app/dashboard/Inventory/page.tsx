@@ -18,7 +18,7 @@ import { postAsync } from "@/app/services/rest_services";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { numericToString } from "@/app/services/Local/helper";
 import { DataTable } from "@/app/ui/data_grid";
-import FeatureControl from "@/app/components/featurepermission/page";
+import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 
 const InventoryOverviewScreen = () => {
   const router = useRouter();

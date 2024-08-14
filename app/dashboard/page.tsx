@@ -134,7 +134,7 @@ import { inspiredPalette } from "../ui/theme";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { numericToString } from "../services/Local/helper";
 import { useRouter } from "next/navigation";
-import FeatureControl from "../components/featurepermission/page";
+import { FeatureControl } from "../components/featurepermission/permission_helper";
 import RankedPartyOutstandingCard from "./cards/ranked_party";
 import { AgingView } from "./cards/aging_card";
 
@@ -217,7 +217,7 @@ const DashboardPage = () => {
   const theme = useTheme();
   const router = useRouter();
 
-  const selectedCompanyId = Cookies.get("companyId");
+  const selectedCompanyId = Cookies.get("companyId") ?? null;
   // useEffect(() => {
   //   if (selectedCompanyId) {
   //     // Logic when the company ID changes

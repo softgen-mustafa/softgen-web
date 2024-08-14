@@ -19,7 +19,7 @@ import {
 } from "@/app/services/rest_services";
 import { DataTable } from "@/app/ui/data_grid";
 import { GridColDef } from "@mui/x-data-grid";
-import FeatureControl from "@/app/components/featurepermission/page";
+import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 
 interface UserProps {
   id: number;

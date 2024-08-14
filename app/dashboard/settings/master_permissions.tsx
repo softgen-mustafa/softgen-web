@@ -19,7 +19,7 @@ import {
 import { DropDown } from "@/app/ui/drop_down";
 import { DataTable } from "@/app/ui/data_grid";
 import { GridColDef } from "@mui/x-data-grid";
-import FeatureControl from "@/app/components/featurepermission/page";
+import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 
 interface UserProps {
   id: number;
@@ -202,8 +202,8 @@ const MasterPermissions = () => {
     );
     let namesResponse = await namesResponseTask;
 
-    if (mappedResponse === null || namesResponse == null) { 
-        return [];
+    if (mappedResponse === null || namesResponse == null) {
+      return [];
     }
 
     let isUserMasterSelected = selection.title == "User";

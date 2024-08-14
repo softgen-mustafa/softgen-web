@@ -6,7 +6,7 @@ import { CircularProgress, Grid, Typography } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import FeatureControl from "@/app/components/featurepermission/page";
+import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 const CustomerPartySearch = () => {
   const router = useRouter();
   const [rows, setRows] = useState([]);

@@ -8,7 +8,7 @@ import {
   getBmrmBaseUrl,
   postAsync,
 } from "@/app/services/rest_services";
-import FeatureControl from "@/app/components/featurepermission/page";
+import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 
 const MovementConfig = () => {
   const [data, setData] = useState({
@@ -72,7 +72,6 @@ const MovementConfig = () => {
       </Typography>
     );
   }
-
 
   return (
     <Stack flexDirection={"column"} gap={1.5}>

@@ -12,7 +12,7 @@ import {
 import { ChevronRight, Dashboard } from "@mui/icons-material";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { useRouter } from "next/navigation";
-import FeatureControl from "@/app/components/featurepermission/page";
+import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 
 interface CustomerDetailsCardProps {
   companyId: string | null;

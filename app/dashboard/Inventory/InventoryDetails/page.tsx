@@ -2,7 +2,13 @@
 
 import { getBmrmBaseUrl } from "@/app/services/rest_services";
 import { useEffect, useRef, useState } from "react";
-import { Container, Typography, IconButton, Grid, CircularProgress } from "@mui/material";
+import {
+  Container,
+  Typography,
+  IconButton,
+  Grid,
+  CircularProgress,
+} from "@mui/material";
 import { useRouter } from "next/navigation";
 import { GridColDef } from "@mui/x-data-grid";
 import { ChevronLeftRounded } from "@mui/icons-material";
@@ -10,7 +16,7 @@ import { postAsync } from "@/app/services/rest_services";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { numericToString } from "@/app/services/Local/helper";
 import { DataTable } from "@/app/ui/data_grid";
-import FeatureControl from "@/app/components/featurepermission/page";
+import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 const InventoryDetailScreen = () => {
   const router = useRouter();
   const [item, setItem] = useState<any>(null);
@@ -29,7 +35,7 @@ const InventoryDetailScreen = () => {
   useEffect(() => {
     checkPermissionAndInitialize();
   }, []);
- const checkPermissionAndInitialize = async () => {
+  const checkPermissionAndInitialize = async () => {
     const permission = await FeatureControl("InventoryDetailScreen");
     setHasPermission(permission);
     if (permission) {
@@ -50,8 +56,11 @@ const InventoryDetailScreen = () => {
       onApi(1, 10);
     }
   };
-  
-  const onApi = async (page: number, pageSize: number, searchValue?: string,
+
+  const onApi = async (
+    page: number,
+    pageSize: number,
+    searchValue?: string
   ) => {
     if (!viewType || !item) return;
 
@@ -159,7 +168,9 @@ const InventoryDetailScreen = () => {
             refresh={refresh}
             useSearch={true}
             columns={columns}
-            onApi={async (page, pageSize, searchText) => await onApi(page, pageSize,searchText)}
+            onApi={async (page, pageSize, searchText) =>
+              await onApi(page, pageSize, searchText)
+            }
             onRowClick={(params) => {
               if (viewType === "item") {
                 localStorage.setItem("item", JSON.stringify(params.row));
@@ -177,14 +188,10 @@ const InventoryDetailScreen = () => {
     },
   ];
 
-
- 
-
-
   return (
     <Container sx={{ overflowX: "hidden" }}>
       <Grid container sx={{ flexGrow: 1, height: "100vh" }}>
-      {hasPermission === null ? (
+        {hasPermission === null ? (
           <CircularProgress />
         ) : hasPermission ? (
           RenderGrid(gridConfig)

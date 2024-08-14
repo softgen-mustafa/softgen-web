@@ -14,7 +14,7 @@ import {
 import { PieChart } from "@mui/x-charts";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import FeatureControl from "@/app/components/featurepermission/page";
+import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 import { SingleChartView } from "@/app/ui/graph_util";
 interface AgingData {
   title: string;

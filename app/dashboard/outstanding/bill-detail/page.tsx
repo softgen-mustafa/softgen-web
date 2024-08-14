@@ -15,7 +15,7 @@ import { PieChart } from "@mui/x-charts";
 import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import FeatureControl from "@/app/components/featurepermission/page";
+import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 
 const Page = ({}) => {
   let partyName = useRef("");

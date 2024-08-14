@@ -2,7 +2,13 @@
 
 import { getBmrmBaseUrl } from "@/app/services/rest_services";
 import { useEffect, useRef, useState } from "react";
-import { Container, Typography, IconButton, Grid, CircularProgress } from "@mui/material";
+import {
+  Container,
+  Typography,
+  IconButton,
+  Grid,
+  CircularProgress,
+} from "@mui/material";
 import { useRouter } from "next/navigation";
 import { GridColDef } from "@mui/x-data-grid";
 import { DropDown } from "@/app/ui/drop_down";
@@ -12,7 +18,7 @@ import { postAsync } from "@/app/services/rest_services";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { numericToString } from "@/app/services/Local/helper";
 import { DataTable } from "@/app/ui/data_grid";
-import FeatureControl from "@/app/components/featurepermission/page";
+import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 
 const ItemDetailScreen = () => {
   const router = useRouter();
@@ -288,7 +294,7 @@ const ItemDetailScreen = () => {
           height: "100vh",
         }}
       >
-         {hasPermission === null ? (
+        {hasPermission === null ? (
           <CircularProgress />
         ) : hasPermission ? (
           RenderGrid(gridConfig)

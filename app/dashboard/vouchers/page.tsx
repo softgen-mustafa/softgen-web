@@ -22,7 +22,7 @@ import {
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import FeatureControl from "@/app/components/featurepermission/page";
+import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
 
 const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
@@ -68,7 +68,6 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
       flex: 1,
     },
   ];
-
 
   const { showSnackbar } = useSnackbar();
   const loadData = async () => {
@@ -300,7 +299,7 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
         })
       );
     } catch {
-        showSnackbar("Could not Load Monthly Sales");
+      showSnackbar("Could not Load Monthly Sales");
     } finally {
       setLoading(false);
     }
@@ -348,7 +347,7 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
   const [loading, setLoading] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
-  const { showSnackbar }  = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     FeatureControl("CustomerPartySearch").then((permission) => {
@@ -404,7 +403,7 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
         })
       );
     } catch {
-        showSnackbar("Could not load Monthly Party Sales");
+      showSnackbar("Could not load Monthly Party Sales");
     } finally {
       setLoading(false);
     }
@@ -499,7 +498,7 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
         })
       );
     } catch {
-        showSnackbar("Could not load customer sales");
+      showSnackbar("Could not load customer sales");
     } finally {
       setLoading(false);
     }

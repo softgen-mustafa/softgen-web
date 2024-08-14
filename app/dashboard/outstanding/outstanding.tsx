@@ -21,7 +21,7 @@ import { AgingView } from "./aging_card";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { numericToString } from "@/app/services/Local/helper";
 import { TextInput } from "@/app/ui/text_inputs";
-import FeatureControl from "@/app/components/featurepermission/page";
+import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 
 const RankedPartyOutstandingCard = ({ billType }: { billType: string }) => {
   let rank = useRef(5);

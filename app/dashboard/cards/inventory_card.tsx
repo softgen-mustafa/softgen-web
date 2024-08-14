@@ -14,7 +14,7 @@ import { Inventory2TwoTone as Icon } from "@mui/icons-material";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { convertToDecimal } from "@/app/services/Local/helper";
 import { useRouter } from "next/navigation";
-import FeatureControl from "@/app/components/featurepermission/page";
+import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 interface InventoryDetails {
   fastMoving?: { name: string; value: number; amount: number };
   slowMoving?: { name: string; value: number; amount: number };

@@ -4,20 +4,18 @@ import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Box, CircularProgress, IconButton, Typography } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import FeatureControl from "@/app/components/featurepermission/page";
+import { Box, CircularProgress, IconButton, Typography } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 
 const AgingSettings = () => {
   const [data, setData] = useState([]);
   const router = useRouter();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
-
   // useEffect(() => {
   //   loadData();
   // }, []);
-
 
   useEffect(() => {
     FeatureControl("MasterConfigButton").then((permission) => {
@@ -52,21 +50,21 @@ const AgingSettings = () => {
       headerName: "Title",
       editable: false,
       sortable: true,
-     flex:1
+      flex: 1,
     },
     {
       field: "minDays",
       headerName: "Minimum Days",
       editable: false,
       sortable: true,
-      flex:1,
+      flex: 1,
     },
     {
       field: "tagName",
       headerName: "Tag Name",
       editable: false,
       sortable: true,
-      flex:1
+      flex: 1,
     },
   ];
 
@@ -88,24 +86,22 @@ const AgingSettings = () => {
     );
   }
 
-
-
   return (
     <div>
-       <Box 
-        sx={{ 
-          display: 'flex', 
-          justifyContent: 'flex-end', 
-          alignItems: 'center', 
-          marginBottom: '10px' 
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          marginBottom: "10px",
         }}
       >
-        <Typography variant="button" sx={{ marginRight: '10px' }}>
+        <Typography variant="button" sx={{ marginRight: "10px" }}>
           Create New Aging
         </Typography>
-        <IconButton 
-          onClick={handleAddClick} 
-          color="primary" 
+        <IconButton
+          onClick={handleAddClick}
+          color="primary"
           aria-label="add aging setting"
         >
           <AddIcon />

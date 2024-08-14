@@ -6,7 +6,7 @@ import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { handleCall, handleEmail, handleMapPress } from "./helper";
 import { inspiredPalette } from "@/app/ui/theme";
 import { useRouter } from "next/navigation";
-import FeatureControl from "@/app/components/featurepermission/page";
+import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 
 const CustomerDetailsScreen = ({}) => {
   const router = useRouter();
@@ -56,7 +56,6 @@ const CustomerDetailsScreen = ({}) => {
     }
   };
 
-  
   if (hasPermission === false) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
@@ -66,7 +65,6 @@ const CustomerDetailsScreen = ({}) => {
       </div>
     );
   }
-
 
   return (
     <div className="bg-white min-h-screen">
