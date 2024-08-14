@@ -208,14 +208,14 @@ const MasterPermissions = () => {
     namesResponse.map((entry: any, index: number) => {
       let nameKey = isUserMasterSelected ? "name" : "title";
       let compareKey = isUserMasterSelected ? "id" : "title";
-      let existing = mappedResponse.some(
+      let existing = mappedResponse.find(
         (element: any) => element.entry_name === entry[compareKey].toString()
       );
 
       let newEntry: any | null = {
         id: index + 1,
         name: entry[nameKey],
-        selected: existing,
+        selected: existing !== null,
         userId: isUserMasterSelected ? entry["id"].toString() : "0",
       };
 

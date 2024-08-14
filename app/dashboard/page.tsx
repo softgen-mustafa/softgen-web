@@ -138,61 +138,61 @@ import FeatureControl from "../components/featurepermission/page";
 import RankedPartyOutstandingCard from "./cards/ranked_party";
 import { AgingView } from "./cards/aging_card";
 
-const CompanyCard = ({
-  onCompanyChange,
-}: {
-  onCompanyChange: (companyId: string) => void;
-}) => {
-  const [data, setData] = useState([]);
+// const CompanyCard = ({
+//   onCompanyChange,
+// }: {
+//   onCompanyChange: (companyId: string) => void;
+// }) => {
+//   const [data, setData] = useState([]);
 
-  useEffect(() => {
-    loadData();
-  }, []);
+//   // useEffect(() => {
+//   //   loadData();
+//   // }, []);
 
-  const loadData = async () => {
-    try {
-      let url = `${getBmrmBaseUrl()}/info/user-tenant/get/companies`;
-      let response = await getAsync(url);
-      let values = response.map((entry: any) => {
-        return {
-          id: entry["company_id"],
-          name: entry["company_name"],
-          user_id: entry.user_id,
-        };
-      });
-      setData(values);
-      if (values && values.length > 0) {
-        const firstCompanyId = values[0].id;
-        Cookies.set("companyId", firstCompanyId);
-        onCompanyChange(firstCompanyId);
-      }
-    } catch (error) {
-      console.error("Failed to load companies", error);
-    }
-  };
+//   // const loadData = async () => {
+//   //   try {
+//   //     let url = `${getBmrmBaseUrl()}/info/user-tenant/get/companies`;
+//   //     let response = await getAsync(url);
+//   //     let values = response.map((entry: any) => {
+//   //       return {
+//   //         id: entry["company_id"],
+//   //         name: entry["company_name"],
+//   //         user_id: entry.user_id,
+//   //       };
+//   //     });
+//   //     setData(values);
+//   //     if (values && values.length > 0) {
+//   //       const firstCompanyId = values[0].id;
+//   //       Cookies.set("companyId", firstCompanyId);
+//   //       onCompanyChange(firstCompanyId);
+//   //     }
+//   //   } catch (error) {
+//   //     console.error("Failed to load companies", error);
+//   //   }
+//   // };
 
-  return (
-    <div>
-      <DropDown
-        label={"Select Company"}
-        displayFieldKey={"name"}
-        valueFieldKey={null}
-        selectionValues={data}
-        helperText={""}
-        onSelection={(selection) => {
-          const companyId = selection.id;
-          Cookies.set("companyId", companyId);
-          onCompanyChange(companyId);
-        }}
-      />
-    </div>
-  );
-};
+//   return (
+//     <div>
+//       {/* <DropDown
+//         label={"Select Company"}
+//         displayFieldKey={"name"}
+//         valueFieldKey={null}
+//         selectionValues={data}
+//         helperText={""}
+//         onSelection={(selection) => {
+//           const companyId = selection.id;
+//           Cookies.set("companyId", companyId);
+//           onCompanyChange(companyId);
+//         }}
+//       /> */}
+//     </div>
+//   );
+// };
 
 const DashboardPage = () => {
-  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(
-    null
-  );
+  // const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(
+  //   null
+  // );
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [filters, updateFilters] = useState([
     { id: 1, label: "Daily", value: "daily", isSelected: true },
@@ -217,16 +217,17 @@ const DashboardPage = () => {
   const theme = useTheme();
   const router = useRouter();
 
-  useEffect(() => {
-    if (selectedCompanyId) {
-      // Logic when the company ID changes
-      console.log(`Company ID changed to: ${selectedCompanyId}`);
-    }
-  }, [selectedCompanyId]);
+  const selectedCompanyId = Cookies.get("companyId");
+  // useEffect(() => {
+  //   if (selectedCompanyId) {
+  //     // Logic when the company ID changes
+  //     console.log(`Company ID changed to: ${selectedCompanyId}`);
+  //   }
+  // }, [selectedCompanyId]);
 
-  const handleCompanyChange = (companyId: string) => {
-    setSelectedCompanyId(companyId);
-  };
+  // const handleCompanyChange = (companyId: string) => {
+  //   setSelectedCompanyId(companyId);
+  // };
 
   useEffect(() => {
     checkPermission();
@@ -301,7 +302,7 @@ const DashboardPage = () => {
       type: "item",
       view: (
         <CardView title="Overview">
-          <CompanyCard onCompanyChange={handleCompanyChange} />
+          {/* <CompanyCard onCompanyChange={handleCompanyChange} /> */}
           <CustomerDetailsCard companyId={selectedCompanyId} />
         </CardView>
       ),

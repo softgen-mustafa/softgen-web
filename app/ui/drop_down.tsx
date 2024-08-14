@@ -17,12 +17,14 @@ const DropDown = ({
   selectionValues,
   helperText,
   onSelection,
+  defaultSelectionIndex = 0,
 }: {
   label: string;
   displayFieldKey: string;
   valueFieldKey: string | null;
   selectionValues: any[];
   helperText: string | null;
+  defaultSelectionIndex?: number;
   onSelection: (selected: any) => void;
 }) => {
   const [value, setValue] = useState({});
@@ -41,7 +43,7 @@ const DropDown = ({
       );
     });
     if (selectionValues && selectionValues.length > 0) {
-      setValue(selectionValues[0]);
+      setValue(selectionValues[defaultSelectionIndex]);
     }
     setDropDownValues(entries);
   }, [selectionValues]);

@@ -14,12 +14,13 @@ import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { useRouter } from "next/navigation";
 import FeatureControl from "@/app/components/featurepermission/page";
 
-
 interface CustomerDetailsCardProps {
   companyId: string | null;
 }
 
-const CustomerDetailsCard: React.FC<CustomerDetailsCardProps> = ({ companyId }) => {
+const CustomerDetailsCard: React.FC<CustomerDetailsCardProps> = ({
+  companyId,
+}) => {
   const router = useRouter();
   const [data, setData] = useState<{ totalCount: number } | null>(null);
   const [isLoading, setIsLoading] = useState(true);

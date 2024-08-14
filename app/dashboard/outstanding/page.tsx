@@ -1,37 +1,103 @@
 "use client";
-
-import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
-import { useEffect, useRef, useState } from "react";
-import {
-  Container,
-  Typography,
-  Box,
-  IconButton,
-  Grid,
-  CircularProgress,
-  Stack,
-  useTheme,
-} from "@mui/material";
-import { useRouter } from "next/navigation";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { DropDown } from "@/app/ui/drop_down";
-import { inspiredPalette } from "@/app/ui/theme";
-import { ChevronLeftRounded, ChevronRightRounded } from "@mui/icons-material";
-import { AgingView } from "./aging_card";
-import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { numericToString } from "@/app/services/Local/helper";
-import { TextInput } from "@/app/ui/text_inputs";
+import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
+import { DataTable } from "@/app/ui/data_grid";
+import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
+import { SearchInput } from "@/app/ui/text_inputs";
+import { ChevronLeftRounded } from "@mui/icons-material";
+import {
+  CircularProgress,
+  Container,
+  Grid,
+  IconButton,
+  Typography,
+} from "@mui/material";
+import { PieChart } from "@mui/x-charts";
+import { GridColDef } from "@mui/x-data-grid";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import FeatureControl from "@/app/components/featurepermission/page";
+import OutstandingOverview from "./party-search/outstanding_overview";
 
-const RankedPartyOutstandingCard = ({ billType }: { billType: string }) => {
-  let rank = useRef(5);
+const Page = () => {
+  const router = useRouter();
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+
+  let filterValue = useRef("");
+  let viewType = useRef("");
+  let billType = useRef("");
+  let filterType = useRef("");
+
+  const [refresh, triggerRefresh] = useState(false);
   const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(false);
 
-  const columns: GridColDef[] = [
+  useEffect(() => {
+    checkPermissionAndInitialize();
+  }, []);
+
+  const checkPermissionAndInitialize = async () => {
+    const permission = await FeatureControl("PartySearchScreen");
+    setHasPermission(permission);
+    if (permission) {
+      filterValue.current = localStorage.getItem("party_filter_value") || "";
+      viewType.current = localStorage.getItem("party_view_type") || "";
+      billType.current = localStorage.getItem("party_bill_type") || "";
+      filterType.current = localStorage.getItem("party_filter_type") || "";
+      triggerRefresh(!refresh);
+    }
+  };
+
+  // useEffect(() => {
+  //   filterValue.current = localStorage.getItem("party_filter_value") || "";
+  //   viewType.current = localStorage.getItem("party_view_type") || "";
+  //   billType.current = localStorage.getItem("party_bill_type") || "";
+  //   filterType.current = localStorage.getItem("party_filter_type") || "";
+  //   triggerRefresh(!refresh);
+  // }, []);
+
+  const onApi = async (
+    page: number,
+    pageSize: number,
+    searchValue?: string
+  ) => {
+    let groupType = localStorage.getItem("os_bill_type");
+    let agingType = localStorage.getItem("os_aging_type");
+
+    let agingUrl = `${getBmrmBaseUrl()}/bill/get/aging-bills?agingCode=${agingType}&groupType=${groupType}`;
+    let totalOutstandingUrl = `${getBmrmBaseUrl()}/bill/get/all-party-bills?groupType=${groupType}`;
+
+    let url = totalOutstandingUrl;
+    if (agingType !== null && agingType !== "all") {
+      url = agingUrl;
+    }
+
+    let requestBody = {
+      page_number: page,
+      page_size: pageSize,
+      search_text: searchValue ?? "",
+      sort_by: "name",
+      sort_order: "asc",
+    };
+    try {
+      let response = await postAsync(url, requestBody);
+      let entries = response.map((entry: any, index: number) => {
+        return {
+          id: index + 1,
+          partyName: entry.name,
+          amount: entry.totalAmount,
+          billCount: entry.billCount,
+          currency: entry.currency ?? "₹",
+        };
+      });
+      setRows(entries);
+
+      return entries;
+    } catch {}
+  };
+  const columns: GridColDef<any[number]>[] = [
     {
-      field: "name",
-      headerName: "Party",
+      field: "partyName",
+      headerName: "Name",
       editable: false,
       sortable: true,
       flex: 1,
@@ -39,177 +105,99 @@ const RankedPartyOutstandingCard = ({ billType }: { billType: string }) => {
     {
       field: "amount",
       headerName: "Value",
-      type: "number",
       editable: false,
       sortable: true,
+      type: "number",
       flex: 1,
       valueGetter: (value, row) =>
         `${row.currency || ""} ${
           row.amount != null ? numericToString(row.amount) : "0"
         }`,
     },
-  ];
-
-  useEffect(() => {
-    loadData();
-  }, [billType]);
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      let url = `${getBmrmBaseUrl()}/bill/get/party-os/overview?groupType=${billType}&rank=${
-        rank.current
-      }`;
-      let response = await getAsync(url);
-      let values = response.map((entry: any) => {
-        return {
-          id: entry.name,
-          name: entry.name,
-          amount: entry.totalAmount,
-          currency: entry.currency ?? "₹",
-        };
-      });
-      setRows(values);
-    } catch {
-    } finally {
-      setLoading(false);
-    }
-  };
-  return (
-    <div>
-      <TextInput
-        mode={"number"}
-        placeHolder="Enter Rank"
-        onTextChange={(value) => {
-          rank.current = value && value.length > 0 ? parseInt(value) : 5;
-          loadData();
-        }}
-      />
-      <br />
-      {loading && (
-        <div className="flex justify-center">
-          <CircularProgress />
-        </div>
-      )}
-
-      <DataGrid
-        columns={columns}
-        rows={rows}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 5,
-            },
-          },
-        }}
-        onRowClick={(params) => {}}
-        pageSizeOptions={[5, 10, 25, 50, 75, 100]}
-        disableRowSelectionOnClick
-        onPaginationModelChange={(value) => {}}
-      />
-    </div>
-  );
-};
-
-const Page = () => {
-  const router = useRouter();
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-  const theme = useTheme();
-
-  let incomingBillType = "Receivable"; // populate later
-  const [types, updateTypes] = useState([
-    { id: 1, label: "Receivable", code: "receivable" },
-    { id: 2, label: "Payable", code: "payable" },
-  ]);
-
-  const [filters, updateFilters] = useState([
-    { id: 1, label: "Daily", value: "daily", isSelected: true },
-    { id: 2, label: "Weekly", value: "weekly", isSelected: false },
-    { id: 3, label: "Montly", value: "monthly", isSelected: false },
-    { id: 4, label: "Quarterly", value: "quarterly", isSelected: false },
-    { id: 5, label: "Yearly", value: "yearly", isSelected: false },
-  ]);
-
-  let selectedType = useRef(types[incomingBillType === "Payable" ? 1 : 0]);
-  let selectedFilter = useRef(filters[0]);
-
-  const [totalAmount, setAmount] = useState("0");
-
-  const [rows, setRows] = useState([]);
-  useEffect(() => {
-    checkPermission();
-  }, []);
-
-  const checkPermission = async () => {
-    const permission = await FeatureControl("OutstandingDashboardScreen");
-    setHasPermission(permission);
-    if (permission) {
-      loadAmount();
-      loadUpcoming();
-    }
-  };
-
-  // useEffect(() => {
-  //   loadAmount();
-  //   loadUpcoming();
-  // }, []);
-
-  const loadAmount = async () => {
-    try {
-      let url = `${getBmrmBaseUrl()}/bill/get/outstanding-amount?groupType=${
-        selectedType.current.code
-      }`;
-      let response = await getAsync(url);
-      let amount = `${"₹"} ${numericToString(response)}`;
-      setAmount(amount);
-    } catch {
-      alert("Coult not load amount");
-    }
-  };
-
-  const loadUpcoming = async () => {
-    try {
-      let url = `${getBmrmBaseUrl()}/bill/get/upcoming-overview?groupType=${
-        selectedType.current.code
-      }&durationType=${selectedFilter.current.value}`;
-      let response = await getAsync(url);
-      let entries = response.map((entry: any) => {
-        return {
-          id: entry.id,
-          name: entry.title,
-          amount: entry.amount,
-          billCount: entry.billCount,
-          currency: entry.currency ?? "₹",
-        };
-      });
-      setRows(entries);
-    } catch {
-      alert("Could not load upcoming outstanding");
-    }
-  };
-
-  const columns: GridColDef<any[number]>[] = [
     {
-      field: "name",
-      headerName: "Duration Name",
+      field: "billCount",
+      headerName: "Total Bills",
       editable: false,
-      sortable: true,
-      flex: 1,
-    },
-    {
-      field: "amount",
-      headerName: "Value",
-      editable: false,
-      sortable: true,
       flex: 1,
       type: "number",
-      // valueGetter: (value, row) => `${row.currency || ""} ${row.amount || "0"}`,
-      valueGetter: (value, row) =>
-        `${row.currency || ""} ${numericToString(row.amount) || "0"}`,
+      sortable: true,
     },
   ];
 
   const gridConfig: GridConfig[] = [
+    // {
+    //   type: "item",
+    //   view: (
+    //     <CardView
+    //       className="max-h-fit h-fit"
+    //       title="Party Search"
+    //       actions={[
+    //         <IconButton
+    //           key={1}
+    //           onClick={() => {
+    //             router.back();
+    //           }}
+    //         >
+    //           <ChevronLeftRounded />
+    //           <Typography>Go Back</Typography>
+    //         </IconButton>,
+    //       ]}
+    //     >
+    //       <Typography className="text-2xl">
+    //         {viewType.current === "upcoming"
+    //           ? `View based on filter:  ${filterType}`
+    //           : viewType.current == "aging"
+    //           ? `Aging-wise outstanding values`
+    //           : `All parties outstanding values`}
+    //       </Typography>
+    //       <br />
+    //       <Container className="overflow-x-auto flex">
+    //         <PieChart
+    //           width={300}
+    //           height={300}
+    //           margin={{ top: 100, left: 100, bottom: 100, right: 100 }}
+    //           sx={{
+    //             flex: 1,
+    //             borderWidth: 2,
+    //             borderRadius: 4,
+    //             marginBottom: 2,
+    //             justifyContent: "center",
+    //             alignItems: "center",
+    //           }}
+    //           slotProps={{
+    //             legend: {
+    //               hidden: true,
+    //               position: {
+    //                 horizontal: "right",
+    //                 vertical: "bottom",
+    //               },
+    //             },
+    //           }}
+    //           series={[
+    //             {
+    //               data: rows.map((entry: any) => {
+    //                 return {
+    //                   label: entry.partyName,
+    //                   value: entry.amount,
+    //                 };
+    //               }),
+    //               innerRadius: 120,
+    //               outerRadius: 100,
+    //               paddingAngle: 1,
+    //               cornerRadius: 1,
+    //               startAngle: 0,
+    //               endAngle: 360,
+    //               // cx: 150,
+    //               // cy: 150,
+    //             },
+    //           ]}
+    //         />
+    //       </Container>
+    //     </CardView>
+    //   ),
+    //   className: "",
+    //   children: [],
+    // },
     {
       type: "container",
       view: null,
@@ -218,54 +206,12 @@ const Page = () => {
         {
           type: "item",
           view: (
-            <CardView
-              title="Overview"
-              actions={[
-                <IconButton
-                  key={1}
-                  onClick={() => {
-                    router.back();
-                  }}
-                >
-                  <ChevronLeftRounded />
-                  <Typography>Go Back</Typography>
-                </IconButton>,
-                <IconButton
-                  key={2}
-                  onClick={() => {
-                    localStorage.setItem("party_filter_value", "");
-                    localStorage.setItem("party_view_type", "all");
-                    localStorage.setItem(
-                      "party_bill_type",
-                      selectedType.current.code
-                    );
-                    localStorage.setItem("party_filter_type", "");
-                    router.push("/dashboard/outstanding/party-search");
-                  }}
-                >
-                  <Typography>View All</Typography>
-                  <ChevronRightRounded />
-                </IconButton>,
-              ]}
-            >
-              <DropDown
-                label="Select Type"
-                displayFieldKey={"label"}
-                valueFieldKey={null}
-                selectionValues={types}
-                helperText={"Select Outstanding Type"}
-                onSelection={(selection) => {
-                  selectedType.current = selection;
-                  loadAmount();
-                  loadUpcoming();
+            <CardView title="Outstanding Overview">
+              <OutstandingOverview
+                onChange={() => {
+                  triggerRefresh(!refresh);
                 }}
               />
-              <br />
-              <br />
-              <Typography className="text-xl flex">Total Pending</Typography>
-              <Typography className="text-2xl md:text-3xl mt-2 flex">
-                {totalAmount}
-              </Typography>
             </CardView>
           ),
           className: "",
@@ -276,94 +222,27 @@ const Page = () => {
     {
       type: "item",
       view: (
-        <CardView title="Ranked Parties">
-          <RankedPartyOutstandingCard billType={selectedType.current.code} />
-        </CardView>
-      ),
-      className: "",
-      children: [],
-    },
-    {
-      type: "item",
-      view: (
-        <CardView title="Aging-Wise O/S">
-          <AgingView billType={selectedType.current.code} />
-        </CardView>
-      ),
-      className: "",
-      children: [],
-    },
-    {
-      type: "item",
-      view: (
-        <CardView title="Upcoming Collections">
-          {/* <Container className="flex overflow-x-auto"> */}
-          <Stack flexDirection="row">
-            {filters.map((card, index) => (
-              <Box
-                key={index}
-                className=" mr-4 rounded-3xl"
-                sx={{
-                  minWidth: 100,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: 40,
-                  background: card.isSelected
-                    ? theme.palette.primary.main
-                    : inspiredPalette.lightTextGrey,
-                  color: card.isSelected ? "white" : inspiredPalette.dark,
-                  cursor: "pointer",
-                }}
-                onClick={(event) => {
-                  let values: any[] = filters;
-                  values = values.map((entry: any) => {
-                    let isSelected = card.value === entry.value;
-                    entry.isSelected = isSelected;
-                    return entry;
-                  });
-                  updateFilters(values);
-                  selectedFilter.current = card;
-                  loadUpcoming();
-                }}
-              >
-                <Typography
-                  component="div"
-                  className="flex h-full w-full flex-row justify-center items-center"
-                >
-                  {card.label}
-                </Typography>
-              </Box>
-            ))}
-          </Stack>
-          {/* </Container> */}
-          <br />
-          <DataGrid
+        <CardView title="Parties">
+          <DataTable
             columns={columns}
-            rows={rows}
-            initialState={{
-              pagination: {
-                paginationModel: {
-                  pageSize: 10,
-                },
-              },
+            refresh={refresh}
+            useSearch={true}
+            onApi={async (page, pageSize, searchText) => {
+              return await onApi(page, pageSize, searchText);
             }}
             onRowClick={(params) => {
-              localStorage.setItem("party_filter_value", params.row.id);
-              localStorage.setItem("party_view_type", "upcoming");
               localStorage.setItem(
-                "party_bill_type",
-                selectedType.current.code
+                "party_filter_value",
+                filterValue.current || ""
               );
+              localStorage.setItem("party_view_type", viewType.current || "");
+              localStorage.setItem("party_bill_type", billType.current || "");
               localStorage.setItem(
                 "party_filter_type",
-                selectedFilter.current.value
+                filterType.current || ""
               );
-              router.push("/dashboard/outstanding/party-search");
-            }}
-            pageSizeOptions={[5, 10, 25, 50, 75, 100]}
-            disableRowSelectionOnClick
-            onPaginationModelChange={(value) => {
-              alert(`page model:  ${JSON.stringify(value)}`);
+              localStorage.setItem("bill_party_name", params.row.partyName);
+              router.push("/dashboard/outstanding/bill-detail");
             }}
           />
         </CardView>
@@ -374,11 +253,9 @@ const Page = () => {
   ];
 
   return (
-    // <Container sx={{ overflowX: "hidden" }}>
-    <Box>
+    <div className="w-full" style={{}}>
       <Grid
         container
-        className=""
         sx={{
           flexGrow: 1,
           height: "100vh",
@@ -394,15 +271,7 @@ const Page = () => {
           </Typography>
         )}
       </Grid>
-    </Box>
-    // </Container>
-    // <div
-    //   className="overflow-x-hidden"
-    //   style={{
-    //     width: "100%",
-    //   }}
-    // >
-    // </div>
+    </div>
   );
 };
 

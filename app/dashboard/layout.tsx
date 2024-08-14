@@ -22,7 +22,7 @@ import {
   Button,
   useTheme,
 } from "@mui/material";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState, useRef, cache } from "react";
 import { inspiredPalette } from "../ui/theme";
 import { useRouter } from "next/navigation";
 import { GridConfig } from "../ui/responsive_grid";
@@ -33,6 +33,7 @@ import {
   getBmrmBaseUrl,
   getUmsBaseUrl,
 } from "../services/rest_services";
+import { DropDown } from "../ui/drop_down";
 
 const drawerWidth = 300;
 
@@ -186,7 +187,7 @@ const DrawerContent = () => {
         {paths.map((path, index) => (
           <ButtonBase
             key={index}
-            className="w-11/12 m-2 mb-3 flex flex-row align-middle justify-center"
+            className="w-11/12 m-3 mb-3 flex flex-row align-middle justify-center"
             onClick={() => {
               let values = paths.map((entry: any) => {
                 let selected = path.title == entry.title;
@@ -226,7 +227,7 @@ const DrawerContent = () => {
         ))}
       </List>
       <ButtonBase
-        className="w-11/12 m-2 mb-3 rounded-md flex flex-row align-middle justify-center bg-white"
+        className="w-11/12 m-3 mb-3 rounded-md flex flex-row align-middle justify-center bg-white"
         onClick={() => {
           setOpenLogoutModal(true);
         }}
@@ -242,7 +243,7 @@ const DrawerContent = () => {
   );
 };
 
-const SideNav: React.FC = () => {
+const SideNav = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleDrawerToggle = () => {
