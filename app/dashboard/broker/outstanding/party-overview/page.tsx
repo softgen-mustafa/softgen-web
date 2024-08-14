@@ -46,7 +46,7 @@ const Page = () => {
 
   const onApi = async () => {
     try {
-      let url = `${getBmrmBaseUrl()}/broker-outstanding/broker/overview`;
+      let url = `${getBmrmBaseUrl()}/broker-outstanding/party/overview`;
       let requestBody = {
         aging_code: selection.current,
       };
@@ -54,7 +54,7 @@ const Page = () => {
       if (response && response.length > 0) {
         let entries = response.map((_data: any, index: number) => ({
           id: index + 1,
-          brokerName: _data.brokerName,
+          partyName: _data.partyName,
           amount: _data.amount,
         }));
         return entries;
@@ -67,7 +67,7 @@ const Page = () => {
 
   const columns: GridColDef[] = [
     {
-      field: "brokerName",
+      field: "partyName",
       headerName: "Party",
       editable: false,
       sortable: true,
@@ -123,7 +123,7 @@ const Page = () => {
             }}
             onRowClick={(params) => {
               localStorage.setItem("partyName", params.row.partyName);
-              router.push("/dashboard/broker/outstanding/party-overview");
+              router.push("/dashboard/broker/outstanding/bill-overview");
             }}
           />
         </CardView>
