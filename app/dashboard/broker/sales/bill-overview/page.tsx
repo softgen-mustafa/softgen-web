@@ -1,6 +1,6 @@
 "use client";
 import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Typography, IconButton, Grid } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { GridColDef } from "@mui/x-data-grid";
@@ -14,9 +14,11 @@ const Page = () => {
   const router = useRouter();
   const [refresh, triggerRefresh] = useState(false);
 
-  const partyName: any = localStorage.getItem("partyName");
+  let partyName = useRef("");
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    partyName.current = localStorage.getItem("partyName") ?? "";
+  }, []);
 
   const loadData = async () => {
     try {
@@ -85,7 +87,7 @@ const Page = () => {
       className: "",
       view: (
         <CardView
-          title={partyName}
+          title={partyName.current}
           className="h-fit"
           actions={[
             <IconButton

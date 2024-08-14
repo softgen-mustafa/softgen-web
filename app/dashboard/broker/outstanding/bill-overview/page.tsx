@@ -26,9 +26,10 @@ const Page = () => {
   const [filterData, setFilterData] = useState([]);
 
   let selectedFilter = useRef("all");
-  let partyName: any = localStorage.getItem("partyName");
+  let partyName = useRef("");
 
   useEffect(() => {
+    partyName.current = localStorage.getItem("partyName") ?? "";
     loadData();
   }, []);
 
@@ -113,7 +114,7 @@ const Page = () => {
       className: "",
       view: (
         <CardView
-          title={partyName}
+          title={partyName.current}
           className="h-fit"
           actions={[
             <IconButton
