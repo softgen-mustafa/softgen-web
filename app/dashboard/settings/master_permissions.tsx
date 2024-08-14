@@ -202,6 +202,10 @@ const MasterPermissions = () => {
     );
     let namesResponse = await namesResponseTask;
 
+    if (mappedResponse === null || namesResponse == null) { 
+        return [];
+    }
+
     let isUserMasterSelected = selection.title == "User";
 
     let entries: any[] = [];

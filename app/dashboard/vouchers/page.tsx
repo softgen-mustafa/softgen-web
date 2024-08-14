@@ -23,6 +23,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import FeatureControl from "@/app/components/featurepermission/page";
+import { useSnackbar } from "@/app/ui/snack_bar_provider";
 
 const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
   const [loading, setLoading] = useState(false);
@@ -68,6 +69,8 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
     },
   ];
 
+
+  const { showSnackbar } = useSnackbar();
   const loadData = async () => {
     try {
       setLoading(true);
@@ -83,7 +86,7 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
         })
       );
     } catch {
-      alert("Could not load data");
+      showSnackbar("Could not Item Group Sales");
     } finally {
       setLoading(false);
     }
@@ -177,6 +180,8 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
     },
   ];
 
+  const { showSnackbar } = useSnackbar();
+
   const loadData = async (
     page: number,
     pageSize: number,
@@ -205,7 +210,7 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
       console.log(`Voucher Details Response : ${JSON.stringify(response)}`);
       return entries;
     } catch {
-      alert("Could not load data");
+      showSnackbar("Could not load Transactions");
     }
   };
 
@@ -257,7 +262,9 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
   // useEffect(() => {
   //   loadData();
   // }, [voucherType]);
+  //
 
+  const { showSnackbar } = useSnackbar();
   const columns: GridColDef[] = [
     {
       field: "monthStr",
@@ -293,7 +300,7 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
         })
       );
     } catch {
-      alert("Could not load data");
+        showSnackbar("Could not Load Monthly Sales");
     } finally {
       setLoading(false);
     }
@@ -340,6 +347,8 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+
+  const { showSnackbar }  = useSnackbar();
 
   useEffect(() => {
     FeatureControl("CustomerPartySearch").then((permission) => {
@@ -395,7 +404,7 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
         })
       );
     } catch {
-      alert("Could not load data");
+        showSnackbar("Could not load Monthly Party Sales");
     } finally {
       setLoading(false);
     }
@@ -474,6 +483,7 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
     },
   ];
 
+  const { showSnackbar } = useSnackbar();
   const loadData = async () => {
     try {
       setLoading(true);
@@ -489,7 +499,7 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
         })
       );
     } catch {
-      alert("Could not load data");
+        showSnackbar("Could not load customer sales");
     } finally {
       setLoading(false);
     }
@@ -542,6 +552,7 @@ const Page = () => {
     loadVoucherTypes();
   }, []);
 
+  const { showSnackbar } = useSnackbar();
   const loadVoucherTypes = async () => {
     try {
       let url = `${getBmrmBaseUrl()}/meta-voucher/get/voucher-types`;
@@ -555,7 +566,7 @@ const Page = () => {
         })
       );
     } catch {
-      alert("Could not load voucher types");
+      showSnackbar("Could not load voucher types");
     }
   };
 
@@ -601,8 +612,8 @@ const Page = () => {
       type: "item",
       className: "",
       view: (
-        <CardView title="Party Wise Sales">
-          <CustomerSalesCard voucherType={selectedVoucherType} />
+        <CardView title="Monthly Party Sales">
+          <MonthlyCustomerSalesCard voucherType={selectedVoucherType} />
         </CardView>
       ),
       children: [],
@@ -611,8 +622,8 @@ const Page = () => {
       type: "item",
       className: "",
       view: (
-        <CardView title="Monthly Party Sales">
-          <MonthlyCustomerSalesCard voucherType={selectedVoucherType} />
+        <CardView title="Party Wise Sales">
+          <CustomerSalesCard voucherType={selectedVoucherType} />
         </CardView>
       ),
       children: [],
