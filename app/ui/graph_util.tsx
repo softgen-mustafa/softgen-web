@@ -2,75 +2,107 @@
 import { PieChart, BarChart } from "@mui/x-charts";
 import { useState } from "react";
 import { DropDown } from "./drop_down";
+import { Box, Typography } from "@mui/material";
 
-const Pie = (values: any[]) => {
+const Pie = (values: any[], title: string) => {
   return (
-    <PieChart
-      width={500}
-      height={300}
-      margin={{ top: 100, left: 100, bottom: 100, right: 100 }}
-      sx={{
-        flex: 1,
-        borderWidth: 2,
-        borderRadius: 2,
-        marginBottom: 2,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-      slotProps={{
-        legend: {
-          hidden: true,
-          position: {
-            horizontal: "right",
-            vertical: "bottom",
+    <Box position="relative">
+      <PieChart
+        width={300}
+        height={300}
+        margin={{ top: 100, left: 100, bottom: 100, right: 100 }}
+        sx={{
+          flex: 1,
+          // borderWidth: 2,
+          borderRadius: 2,
+          marginBottom: 2,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+        slotProps={{
+          legend: {
+            hidden: true,
+            position: {
+              horizontal: "right",
+              vertical: "bottom",
+            },
           },
-        },
-      }}
-      series={[
-        {
-          data: values,
-          innerRadius: 120,
-          outerRadius: 100,
-          paddingAngle: 1,
-          cornerRadius: 1,
-          startAngle: 0,
-          endAngle: 360,
-          // cx: 150,
-          // cy: 150,
-        },
-      ]}
-    />
+        }}
+        series={[
+          {
+            data: values,
+            innerRadius: 120,
+            outerRadius: 100,
+            paddingAngle: 1,
+            cornerRadius: 1,
+            startAngle: 0,
+            endAngle: 360,
+            // cx: 150,
+            // cy: 150,
+          },
+        ]}
+      />
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          textAlign: "center",
+        }}
+      >
+        <Typography className="text-md font-semibold">{title}</Typography>
+      </Box>
+    </Box>
   );
 };
 
-const Bar = (values: any[]) => {
+const Bar = (values: any[], title: string) => {
   return (
-    <BarChart
-      dataset={values}
-      xAxis={[{ scaleType: "band", dataKey: "label" }]}
-      series={[{ dataKey: "value" }]}
-      width={500}
-      height={350}
-    />
+    <Box>
+      <Typography className="text-md font-semibold text-center">
+        {title}
+      </Typography>
+      <BarChart
+        dataset={values}
+        xAxis={[{ scaleType: "band", dataKey: "label" }]}
+        series={[{ dataKey: "value" }]}
+        width={300}
+        height={350}
+      />
+    </Box>
   );
 };
 
-const HorizontalBar = (values: any[]) => {
+const HorizontalBar = (values: any[], title: string) => {
   return (
-    <BarChart
-      dataset={values}
-      yAxis={[{ scaleType: "band", dataKey: "label" }]}
-      series={[{ dataKey: "value" }]}
-      layout="horizontal"
-      grid={{ vertical: true }}
-      width={500}
-      height={350}
-    />
+    <Box>
+      <Typography className="text-md font-semibold text-center">
+        {title}
+      </Typography>
+      <BarChart
+        dataset={values}
+        yAxis={[{ scaleType: "band", dataKey: "label" }]}
+        series={[{ dataKey: "value" }]}
+        layout="horizontal"
+        grid={{ vertical: true }}
+        width={300}
+        height={350}
+      />
+    </Box>
   );
 };
 
-const SingleChartView = ({ values }: { values: any[] }) => {
-  const [chartType, setChartType] = useState("pie");
+const SingleChartView = ({
+  values,
+  defaultChart,
+  title,
+}: {
+  values: any[];
+  defaultChart: string;
+  title: string;
+}) => {
+  const [chartType, setChartType] = useState(defaultChart);
   const [charts, setCharts] = useState([
     { id: 1, type: "pie", label: "Pie" },
     { id: 2, type: "bar", label: "Bar" },
@@ -79,24 +111,32 @@ const SingleChartView = ({ values }: { values: any[] }) => {
 
   const renderChart = () => {
     if (chartType == "bar") {
-      return Bar(values);
+      return Bar(values, title);
     } else if (chartType == "hbar") {
-      return HorizontalBar(values);
+      return HorizontalBar(values, title);
     }
-    return Pie(values);
+    return Pie(values, title);
   };
+
+  const chartIndex = (data: any) => {
+    return data.type === defaultChart;
+  };
+
   return (
-    <div>
-      <DropDown
-        label="Select Chart"
-        displayFieldKey="label"
-        valueFieldKey={null}
-        selectionValues={charts}
-        helperText={""}
-        onSelection={(_selection) => {
-          setChartType(_selection.type);
-        }}
-      />
+    <div className="overflow-x-auto">
+      <Box my={2}>
+        <DropDown
+          label="Select Chart"
+          displayFieldKey="label"
+          valueFieldKey={null}
+          defaultSelectionIndex={charts.findIndex(chartIndex)}
+          selectionValues={charts}
+          helperText={""}
+          onSelection={(_selection) => {
+            setChartType(_selection.type);
+          }}
+        />
+      </Box>
       {renderChart()}
     </div>
   );

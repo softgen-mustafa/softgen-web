@@ -115,7 +115,7 @@ const AgingView = ({ billType }: { billType: string }) => {
   }
 
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col">
       <PieChart
         height={300}
         width={320}

@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Snackbar, Alert, AlertColor } from '@mui/material';
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import { Snackbar, Alert, AlertColor } from "@mui/material";
 
 interface SnackbarMessage {
   key: number;
@@ -11,12 +11,14 @@ interface SnackbarContextType {
   showSnackbar: (message: string, severity?: AlertColor) => void;
 }
 
-const SnackbarContext = createContext<SnackbarContextType | undefined>(undefined);
+const SnackbarContext = createContext<SnackbarContextType | undefined>(
+  undefined
+);
 
 export const useSnackbar = (): SnackbarContextType => {
   const context = useContext(SnackbarContext);
   if (!context) {
-    throw new Error('useSnackbar must be used within a SnackbarProvider');
+    throw new Error("useSnackbar must be used within a SnackbarProvider");
   }
   return context;
 };
@@ -25,10 +27,12 @@ interface SnackbarProviderProps {
   children: ReactNode;
 }
 
-export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({ children }) => {
+export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
+  children,
+}) => {
   const [snackbars, setSnackbars] = useState<SnackbarMessage[]>([]);
 
-  const showSnackbar = (message: string, severity: AlertColor = 'error') => {
+  const showSnackbar = (message: string, severity: AlertColor = "error") => {
     const newSnackbar = {
       key: new Date().getTime(),
       message,
@@ -50,12 +54,12 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({ children }) 
           open={true}
           autoHideDuration={3000}
           onClose={() => handleClose(snackbar.key)}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
           <Alert
             onClose={() => handleClose(snackbar.key)}
             severity={snackbar.severity}
-            sx={{ width: '100%'}}
+            sx={{ width: "100%" }}
           >
             {snackbar.message}
           </Alert>
@@ -64,4 +68,3 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({ children }) 
     </SnackbarContext.Provider>
   );
 };
-

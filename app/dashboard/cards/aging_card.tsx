@@ -56,7 +56,13 @@ const AgingCard: React.FC<AgingCardProps> = ({ data, onPress }) => {
   );
 };
 
-const AgingView = ({ billType }: { billType: string }) => {
+const AgingView = ({
+  billType,
+  title,
+}: {
+  billType: string;
+  title: string;
+}) => {
   const router = useRouter();
   const [data, setData] = useState<AgingData[]>([]);
   const [open, setOpen] = useState(false);
@@ -116,44 +122,7 @@ const AgingView = ({ billType }: { billType: string }) => {
   }
 
   return (
-    <div className="flex flex-row justify-center">
-      {/* <PieChart
-        height={300}
-        width={320}
-        margin={{ top: 100, left: 100, bottom: 100, right: 100 }}
-        sx={{
-          flex: 1,
-          borderWidth: 2,
-          borderRadius: 4,
-          marginBottom: 2,
-          justifyContent: "center",
-          alignItems: "center",
-          alignSelf: "center",
-        }}
-        slotProps={{
-          legend: {
-            hidden: true,
-          },
-        }}
-        series={[
-          {
-            data: data.map((entry: AgingData) => {
-              return {
-                label: entry.title,
-                value: entry.amount,
-              };
-            }),
-            innerRadius: 120,
-            outerRadius: 100,
-            paddingAngle: 1,
-            cornerRadius: 1,
-            startAngle: 0,
-            endAngle: 360,
-            // cx: 150,
-            // cy: 150,
-          },
-        ]}
-      /> */}
+    <Box className="p-0">
       <SingleChartView
         values={data.map((entry: AgingData) => {
           return {
@@ -161,27 +130,10 @@ const AgingView = ({ billType }: { billType: string }) => {
             value: entry.amount,
           };
         })}
+        defaultChart="pie"
+        title={title}
       />
-      {/* <div
-        style={{ overflowX: "scroll", maxHeight: "250px" }}
-        className="flex flex-row"
-      >
-        {data.map((entry, index) => {
-          return (
-            <AgingCard
-              key={index}
-              data={entry}
-              onPress={() => {
-                localStorage.setItem("party_filter_value", entry.code);
-                localStorage.setItem("party_view_type", "aging");
-                localStorage.setItem("party_bill_type", billType);
-                router.push("/dashboard/outstanding/party-search");
-              }}
-            />
-          );
-        })}
-      </div> */}
-    </div>
+    </Box>
   );
 };
 
