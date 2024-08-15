@@ -1,7 +1,9 @@
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import permission_config from "@/app/assets/FeaturePermissionConfig/permission_config";
 
-type PermissionKeys = keyof typeof permission_config;
+export type PermissionKeys = keyof typeof permission_config;
+
+const Permission = permission_config;
 
 const FeatureControl = async (ScreenCode: PermissionKeys): Promise<boolean> => {
   try {
@@ -29,4 +31,4 @@ const FeatureControl = async (ScreenCode: PermissionKeys): Promise<boolean> => {
   }
 };
 
-export { FeatureControl };
+export { FeatureControl, Permission };

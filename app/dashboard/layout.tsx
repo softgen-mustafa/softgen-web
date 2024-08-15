@@ -35,58 +35,14 @@ import {
 } from "../services/rest_services";
 import { DropDown } from "../ui/drop_down";
 import { SnackbarProvider } from "../ui/snack_bar_provider";
+import { DrawerList } from "./drawer";
+
 
 const drawerWidth = 300;
-
-const drawerNavigations = [
-    {
-        title: "Home",
-        destination: "/dashboard",
-        icon: <Home />,
-        selected: true,
-    },
-    {
-        title: "Outstanding",
-        destination: "/dashboard/outstanding",
-        icon: <PendingActions />,
-        selected: false,
-    },
-    {
-        title: "Transactions",
-        destination: "/dashboard/vouchers",
-        icon: <Receipt />,
-        selected: false,
-    },
-    {
-        title: "Inventory",
-        destination: "/dashboard/Inventory",
-        icon: <Inventory />,
-        selected: false,
-    },
-    {
-        title: "Settings",
-        destination: "/dashboard/settings",
-        icon: <Settings />,
-        selected: false,
-    },
-    {
-        title: "Broker Sales",
-        destination: "/dashboard/broker/sales",
-        icon: <Receipt />,
-        selected: false,
-    },
-    {
-        title: "Broker Outstanding",
-        destination: "/dashboard/broker/outstanding",
-        icon: <Receipt />,
-        selected: false,
-    },
-];
 
 const DrawerContent = () => {
     const router = useRouter();
 
-    const [paths, setPaths] = useState(drawerNavigations);
     const [openLogoutModal, setOpenLogoutModal] = useState(false);
     const [userName, setUserName] = useState("");
 
@@ -123,21 +79,6 @@ const DrawerContent = () => {
 
     return (
         <div className="flex flex-col w-full h-full overflow-x-hidden" style={{}}>
-        {/* <div
-            className="flex flex-row justify-center md:justify-start items-center pt-1 pl-3 z-50"
-            style={{
-                background: inspiredPalette.dark,
-            }}
-            >
-            <Typography style={{ color: "white" }}>Log-out</Typography>
-            <IconButton
-            size="medium"
-            style={{ color: "white" }}
-            onClick={() => setOpenLogoutModal(true)}
-            >
-            <Logout fontSize="inherit" />
-            </IconButton>
-            </div> */}
         <Modal
         open={openLogoutModal}
         onClose={() => setOpenLogoutModal(false)}
@@ -184,49 +125,7 @@ const DrawerContent = () => {
         Hello, {userName} 👋🏻
         </Typography>
         </Box>
-        <List className="h-full justify-center">
-        {paths.map((path, index) => (
-            <ButtonBase
-            key={index}
-            className="w-11/12 m-3 mb-3 flex flex-row align-middle justify-center"
-            onClick={() => {
-                let values = paths.map((entry: any) => {
-                    let selected = path.title == entry.title;
-                    return {
-                        ...entry,
-                        selected: selected,
-                    };
-                });
-                setPaths(values);
-                router.push(path.destination);
-            }}
-            >
-            <ListItem
-            className={path.selected ? "rounded-md" : ""}
-            style={{
-                // borderWidth: path.selected ? 1 : 0,
-                // borderRadius: 8,
-                // borderColor: path.selected ? "white" : inspiredPalette.dark,
-                backgroundColor: path.selected ? "#FFFFFF" : "",
-            }}
-            >
-            <ListItemIcon
-            style={{
-                color: path.selected ? inspiredPalette.darker : "white",
-            }}
-            >
-            {path.icon}
-            </ListItemIcon>
-            <ListItemText
-            style={{
-                color: path.selected ? inspiredPalette.darker : "white",
-            }}
-            primary={path.title}
-            />
-            </ListItem>
-            </ButtonBase>
-        ))}
-        </List>
+        <DrawerList />
         <ButtonBase
         className="w-11/12 m-3 mb-3 rounded-md flex flex-row align-middle justify-center bg-white"
         onClick={() => {
