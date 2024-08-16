@@ -83,7 +83,7 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
         return {
           id: index + 1,
           partyName: entry.name,
-          amount: entry.totalAmount,
+          amount: `\u20B9 ${numericToString(entry.totalAmount)}`,
           // currency: entry.currency ?? "₹",
         };
       });

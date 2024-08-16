@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
+import { numericToString } from "@/app/services/Local/helper";
 
 const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
   const [loading, setLoading] = useState(false);
@@ -354,14 +355,17 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
       headerName: "Party",
       editable: false,
       sortable: true,
-      flex: 1,
+      // flex: 1,
+      // maxWidth: 300,
+      minWidth: 300,
     },
     {
       field: "monthStr",
       headerName: "Month",
       editable: false,
       sortable: true,
-      flex: 1,
+      // flex: 1,
+      minWidth: 200,
     },
     {
       field: "preGstAmount",
@@ -369,7 +373,8 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
       editable: false,
       type: "number",
       sortable: true,
-      flex: 1,
+      minWidth: 200,
+      // flex: 1,
     },
   ];
 
@@ -384,7 +389,7 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
             id: index + 1,
             partyName: entry.partyName,
             monthStr: entry.monthStr,
-            preGstAmount: entry.preGstAmount,
+            preGstAmount: `\u20B9 ${numericToString(entry.preGstAmount)}`,
           };
         })
       );
