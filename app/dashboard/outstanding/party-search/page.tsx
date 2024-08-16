@@ -267,7 +267,9 @@ const Page = () => {
           RenderGrid(gridConfig)
         ) : (
           <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-            Get the Premium For this Service Or Contact Admin - 7977662924
+            Check Your Internet Access Or This Feature is not included in your
+            Subscription package. Kindly get the Premium package to utilize this
+            feature.
           </Typography>
         )}
       </Grid>

@@ -11,19 +11,19 @@ import { FeatureControl } from "@/app/components/featurepermission/permission_he
 const AgingSettings = () => {
   const [data, setData] = useState([]);
   const router = useRouter();
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   // useEffect(() => {
   //   loadData();
   // }, []);
 
   useEffect(() => {
-    FeatureControl("MasterConfigButton").then((permission) => {
-      setHasPermission(permission);
-      if (permission) {
-        loadData();
-      }
-    });
+    // FeatureControl("MasterConfigButton").then((permission) => {
+    //   setHasPermission(permission);
+    //   if (permission) {
+    loadData();
+    //   }
+    // });
   }, []);
 
   const loadData = async () => {
@@ -74,17 +74,17 @@ const AgingSettings = () => {
     router.push("/dashboard/settings/aging-edit");
   };
 
-  if (hasPermission === null) {
-    return <CircularProgress />;
-  }
+  // if (hasPermission === null) {
+  //   return <CircularProgress />;
+  // }
 
-  if (hasPermission === false) {
-    return (
-      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-        Get the Premium For this Service Or Contact Admin - 7977662924
-      </Typography>
-    );
-  }
+  // if (hasPermission === false) {
+  //   return (
+  //     <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+  //       Get the Premium For this Service Or Contact Admin - 7977662924
+  //     </Typography>
+  //   );
+  // }
 
   return (
     <div>

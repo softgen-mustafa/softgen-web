@@ -28,19 +28,19 @@ import { useSnackbar } from "@/app/ui/snack_bar_provider";
 const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   // useEffect(() => {
   //   loadData();
   // }, [voucherType]);
 
   useEffect(() => {
-    FeatureControl("CustomerPartySearch").then((permission) => {
-      setHasPermission(permission);
-      if (permission) {
-        loadData();
-      }
-    });
+    // FeatureControl("CustomerPartySearch").then((permission) => {
+    //   setHasPermission(permission);
+    //   if (permission) {
+    loadData();
+    //   }
+    // });
   }, [voucherType]);
 
   const columns: GridColDef[] = [
@@ -90,17 +90,17 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
       setLoading(false);
     }
   };
-  if (hasPermission === null) {
-    return <CircularProgress />;
-  }
+  // if (hasPermission === null) {
+  //   return <CircularProgress />;
+  // }
 
-  if (hasPermission === false) {
-    return (
-      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-        Get the Premium For this Service Or Contact Admin - 7977662924
-      </Typography>
-    );
-  }
+  // if (hasPermission === false) {
+  //   return (
+  //     <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+  //       Get the Premium For this Service Or Contact Admin - 7977662924
+  //     </Typography>
+  //   );
+  // }
 
   return (
     <div className="flex flex-col">
@@ -131,16 +131,16 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
 const BillsCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
   const [refresh, triggerRefresh] = useState(false);
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   const router = useRouter();
   useEffect(() => {
-    FeatureControl("CustomerPartySearch").then((permission) => {
-      setHasPermission(permission);
-      if (permission) {
-        triggerRefresh(!refresh);
-      }
-    });
+    // FeatureControl("CustomerPartySearch").then((permission) => {
+    //   setHasPermission(permission);
+    //   if (permission) {
+    triggerRefresh(!refresh);
+    //   }
+    // });
   }, [voucherType]);
   // useEffect(() => {
   //   triggerRefresh(!refresh);
@@ -213,17 +213,19 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
     }
   };
 
-  if (hasPermission === null) {
-    return <CircularProgress />;
-  }
+  // if (hasPermission === null) {
+  //   return <CircularProgress />;
+  // }
 
-  if (hasPermission === false) {
-    return (
-      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-        Get the Premium For this Service Or Contact Admin - 7977662924
-      </Typography>
-    );
-  }
+  // if (hasPermission === false) {
+  //   return (
+  //     <Typography className="text-2xl text-center font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+  //       Check Your Internet Access Or This Feature is not included in your
+  //       Subscription package. Kindly get the Premium package to utilize this
+  //       feature.
+  //     </Typography>
+  //   );
+  // }
 
   return (
     <div className="flex flex-col">
@@ -247,15 +249,10 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
 const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   useEffect(() => {
-    FeatureControl("CustomerPartySearch").then((permission) => {
-      setHasPermission(permission);
-      if (permission) {
-        loadData();
-      }
-    });
+    loadData();
   }, [voucherType]);
 
   // useEffect(() => {
@@ -304,17 +301,6 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
       setLoading(false);
     }
   };
-  if (hasPermission === null) {
-    return <CircularProgress />;
-  }
-
-  if (hasPermission === false) {
-    return (
-      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-        Get the Premium For this Service Or Contact Admin - 7977662924
-      </Typography>
-    );
-  }
 
   return (
     <div className="flex flex-col">
@@ -345,17 +331,17 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
 const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
-    FeatureControl("CustomerPartySearch").then((permission) => {
-      setHasPermission(permission);
-      if (permission) {
-        loadData();
-      }
-    });
+    // FeatureControl("CustomerPartySearch").then((permission) => {
+    //   setHasPermission(permission);
+    //   if (permission) {
+    loadData();
+    //   }
+    // });
   }, [voucherType]);
 
   // useEffect(() => {
@@ -409,17 +395,17 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
     }
   };
 
-  if (hasPermission === null) {
-    return <CircularProgress />;
-  }
+  // if (hasPermission === null) {
+  //   return <CircularProgress />;
+  // }
 
-  if (hasPermission === false) {
-    return (
-      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-        Get the Premium For this Service Or Contact Admin - 7977662924
-      </Typography>
-    );
-  }
+  // if (hasPermission === false) {
+  //   return (
+  //     <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+  //       Get the Premium For this Service Or Contact Admin - 7977662924
+  //     </Typography>
+  //   );
+  // }
   return (
     <div className="flex flex-col">
       {loading && (
@@ -449,15 +435,15 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
 const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   useEffect(() => {
-    FeatureControl("CustomerPartySearch").then((permission) => {
-      setHasPermission(permission);
-      if (permission) {
-        loadData();
-      }
-    });
+    // FeatureControl("CustomerPartySearch").then((permission) => {
+    //   setHasPermission(permission);
+    //   if (permission) {
+    loadData();
+    //   }
+    // });
   }, [voucherType]);
 
   // useEffect(() => {
@@ -504,17 +490,17 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
     }
   };
 
-  if (hasPermission === null) {
-    return <CircularProgress />;
-  }
+  // if (hasPermission === null) {
+  //   return <CircularProgress />;
+  // }
 
-  if (hasPermission === false) {
-    return (
-      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-        Get the Premium For this Service Or Contact Admin - 7977662924
-      </Typography>
-    );
-  }
+  // if (hasPermission === false) {
+  //   return (
+  //     <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+  //       Get the Premium For this Service Or Contact Admin - 7977662924
+  //     </Typography>
+  //   );
+  // }
   return (
     <div className="flex flex-col">
       {loading && (
@@ -576,6 +562,7 @@ const Page = () => {
       view: (
         <CardView
           title={"Overview"}
+          permissionCode="CustomerPartySearch"
           className="h-fit"
           actions={[
             <IconButton
@@ -611,7 +598,10 @@ const Page = () => {
       type: "item",
       className: "",
       view: (
-        <CardView title="Monthly Party Sales">
+        <CardView
+          title="Monthly Party Sales"
+          permissionCode="CustomerPartySearch"
+        >
           <MonthlyCustomerSalesCard voucherType={selectedVoucherType} />
         </CardView>
       ),
@@ -621,7 +611,7 @@ const Page = () => {
       type: "item",
       className: "",
       view: (
-        <CardView title="Party Wise Sales">
+        <CardView title="Party Wise Sales" permissionCode="CustomerPartySearch">
           <CustomerSalesCard voucherType={selectedVoucherType} />
         </CardView>
       ),
@@ -631,7 +621,7 @@ const Page = () => {
       type: "item",
       className: "",
       view: (
-        <CardView title="Item Group Sales">
+        <CardView title="Item Group Sales" permissionCode="CustomerPartySearch">
           <ItemGroupCard voucherType={selectedVoucherType} />
         </CardView>
       ),
@@ -641,7 +631,7 @@ const Page = () => {
       type: "item",
       className: "",
       view: (
-        <CardView title="Bill Wise Review">
+        <CardView title="Bill Wise Review" permissionCode="CustomerPartySearch">
           <BillsCard voucherType={selectedVoucherType} />
         </CardView>
       ),

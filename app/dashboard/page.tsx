@@ -234,12 +234,12 @@ const DashboardPage = () => {
   }, []);
 
   const checkPermission = async () => {
-    const permission = await FeatureControl("OutstandingDashboardScreen");
-    setHasPermission(permission);
-    if (permission) {
-      loadAmount();
-      loadUpcoming();
-    }
+    // const permission = await FeatureControl("OutstandingDashboardScreen");
+    // setHasPermission(permission);
+    // if (permission) {
+    loadAmount();
+    loadUpcoming();
+    // }
   };
 
   const loadAmount = async () => {
@@ -316,7 +316,7 @@ const DashboardPage = () => {
         {
           type: "item",
           view: (
-            <CardView>
+            <CardView permissionCode="OutstandingCard">
               <OutstandingCard
                 companyId={selectedCompanyId}
                 title="Outstanding Overview"
@@ -329,7 +329,7 @@ const DashboardPage = () => {
         {
           type: "item",
           view: (
-            <CardView>
+            <CardView permissionCode="AgingOutstandingCard">
               <AgingView
                 billType={selectedType.current.code}
                 title="Aging-Wise O/S"
@@ -342,7 +342,7 @@ const DashboardPage = () => {
         {
           type: "item",
           view: (
-            <CardView className="bg-red-500">
+            <CardView className="bg-red-500" permissionCode="CustomerCard">
               <CustomerDetailsCard companyId={selectedCompanyId} />
             </CardView>
           ),

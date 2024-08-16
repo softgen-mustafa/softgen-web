@@ -90,7 +90,11 @@ const Page = () => {
       type: "item",
       children: [],
       view: (
-        <CardView className="max-h-fit h-fit" title="Company Configuration">
+        <CardView
+          className="max-h-fit h-fit"
+          title="Company Configuration"
+          permissionCode="MasterConfigButton"
+        >
           <MovementConfig />
         </CardView>
       ),
@@ -99,7 +103,11 @@ const Page = () => {
       type: "item",
       children: [],
       view: (
-        <CardView className="max-h-fit h-fit" title="User Permissions">
+        <CardView
+          className="max-h-fit h-fit"
+          title="User Permissions"
+          permissionCode="MasterConfigButton"
+        >
           <UserPermissions />
         </CardView>
       ),
@@ -108,7 +116,11 @@ const Page = () => {
       type: "item",
       children: [],
       view: (
-        <CardView className="max-h-fit h-fit" title="Master Permissions">
+        <CardView
+          className="max-h-fit h-fit"
+          title="Master Permissions"
+          permissionCode="MasterConfigButton"
+        >
           <MasterPermissions />
         </CardView>
       ),
@@ -118,7 +130,11 @@ const Page = () => {
       type: "item",
       children: [],
       view: (
-        <CardView className="h-fit" title="Aging Settings">
+        <CardView
+          className="h-fit"
+          title="Aging Settings"
+          permissionCode="MasterConfigButton"
+        >
           <AgingSettings />
         </CardView>
       ),

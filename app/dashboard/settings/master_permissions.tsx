@@ -112,7 +112,7 @@ const filterData = [
 const MasterPermissions = () => {
   const [data, setData] = useState([]);
   const [refresh, triggerRefresh] = useState(false);
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   let selectedMasterType = useRef(masterTypes[0]);
   let selectedUser = useRef(null);
@@ -124,14 +124,14 @@ const MasterPermissions = () => {
   //   });
   // }, []);
   useEffect(() => {
-    FeatureControl("MasterConfigButton").then((permission) => {
-      setHasPermission(permission);
-      if (permission) {
-        loadUser().then((_) => {
-          triggerRefresh(!refresh);
-        });
-      }
+    // FeatureControl("MasterConfigButton").then((permission) => {
+    //   setHasPermission(permission);
+    //   if (permission) {
+    loadUser().then((_) => {
+      triggerRefresh(!refresh);
     });
+    //   }
+    // });
   }, []);
 
   const columns: GridColDef<any[number]>[] = [
@@ -289,17 +289,17 @@ const MasterPermissions = () => {
     }
   };
 
-  if (hasPermission === null) {
-    return <CircularProgress />;
-  }
+  // if (hasPermission === null) {
+  //   return <CircularProgress />;
+  // }
 
-  if (hasPermission === false) {
-    return (
-      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-        Get the Premium For this Service Or Contact Admin - 7977662924
-      </Typography>
-    );
-  }
+  // if (hasPermission === false) {
+  //   return (
+  //     <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+  //       Get the Premium For this Service Or Contact Admin - 7977662924
+  //     </Typography>
+  //   );
+  // }
 
   return (
     <Stack flexDirection={"column"} gap={1.5}>

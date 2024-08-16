@@ -286,7 +286,7 @@ const OutstandingPage = () => {
     {
       type: "item",
       view: (
-        <CardView title="Aging-Wise O/S">
+        <CardView title="Aging-Wise O/S" permissionCode="AgingOutstandingCard">
           <AgingView billType={selectedType.current.code} />
         </CardView>
       ),

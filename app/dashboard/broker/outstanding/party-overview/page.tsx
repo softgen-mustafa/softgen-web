@@ -12,6 +12,7 @@ import { ChevronLeftRounded } from "@mui/icons-material";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { DataTable } from "@/app/ui/data_grid";
 import { DropDown } from "@/app/ui/drop_down";
+import { numericToString } from "@/app/services/Local/helper";
 
 const Page = () => {
   const router = useRouter();
@@ -55,7 +56,7 @@ const Page = () => {
         let entries = response.map((_data: any, index: number) => ({
           id: index + 1,
           partyName: _data.partyName,
-          amount: _data.amount,
+          amount: `\u20B9 ${numericToString(_data.amount)}`,
         }));
         return entries;
       }

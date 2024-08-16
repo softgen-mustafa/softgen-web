@@ -47,7 +47,7 @@ const filterData = [
 const UserPermissions = () => {
   const [data, setData] = useState([]);
   const [refresh, triggerRefresh] = useState(false);
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   let selectedUser = useRef(null);
   let selectedFilter = useRef(null);
@@ -55,14 +55,14 @@ const UserPermissions = () => {
   const compId = Cookies.get("companyId");
 
   useEffect(() => {
-    FeatureControl("MasterConfigButton").then((permission) => {
-      setHasPermission(permission);
-      if (permission) {
-        loadUser().then((_) => {
-          triggerRefresh(!refresh);
-        });
-      }
+    // FeatureControl("MasterConfigButton").then((permission) => {
+    //   setHasPermission(permission);
+    //   if (permission) {
+    loadUser().then((_) => {
+      triggerRefresh(!refresh);
     });
+    //   }
+    // });
   }, []);
 
   // useEffect(() => {
@@ -165,17 +165,17 @@ const UserPermissions = () => {
     }
   };
 
-  if (hasPermission === null) {
-    return <CircularProgress />;
-  }
+  // if (hasPermission === null) {
+  //   return <CircularProgress />;
+  // }
 
-  if (hasPermission === false) {
-    return (
-      <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-        Get the Premium For this Service Or Contact Admin - 7977662924
-      </Typography>
-    );
-  }
+  // if (hasPermission === false) {
+  //   return (
+  //     <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+  //       Get the Premium For this Service Or Contact Admin - 7977662924
+  //     </Typography>
+  //   );
+  // }
 
   return (
     <Box>
