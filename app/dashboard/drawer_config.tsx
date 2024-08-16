@@ -7,7 +7,7 @@ import {
     Inventory,
 } from "@mui/icons-material";
 
-const customReportPaths = [
+const customReportPaths: any[] = [
     /*{
         title: "Broker Sales",
         destination: "/dashboard/broker/sales",
@@ -15,7 +15,7 @@ const customReportPaths = [
         selected: false,
     },*/
 ];
-const memberReportPaths = [
+const memberReportPaths: any[] = [
     {
         title: "Broker Sales",
         destination: "/dashboard/broker/sales",
@@ -30,7 +30,7 @@ const memberReportPaths = [
     },
 ];
 
-const adminReportPaths = [
+const adminReportPaths: any[] = [
     {
         title: "Home",
         destination: "/dashboard",
