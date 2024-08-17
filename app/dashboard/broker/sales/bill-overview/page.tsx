@@ -20,13 +20,17 @@ const Page = () => {
     partyName.current = localStorage.getItem("partyName") ?? "";
   }, []);
 
+  console.log(partyName);
+
   const loadData = async () => {
     try {
       const fromDate = Cookies.get("fromDate");
       const toDate = Cookies.get("toDate");
 
       let brokerName = localStorage.getItem("brokerName");
-      let url = `${getBmrmBaseUrl()}/broker-sales/bill/overview?brokerName=${brokerName}&partyName=${partyName}`;
+      let url = `${getBmrmBaseUrl()}/broker-sales/bill/overview?brokerName=${brokerName}&partyName=${
+        partyName.current
+      }`;
       let requestBody = {
         startDate: fromDate ? fromDate : "",
         endDate: toDate ? toDate : "",

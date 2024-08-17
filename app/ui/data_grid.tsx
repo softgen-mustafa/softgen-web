@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, CircularProgress, Container } from "@mui/material";
+import { Box, CircularProgress, Container, Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import { SearchInput } from "./text_inputs";
@@ -70,7 +70,7 @@ const DataTable: React.FC<TableViewProps> = ({
       )}
       <DataGrid
         columns={columns}
-        rows={rows}
+        rows={!rows ? [] : rows}
         // className="h-fit max-h-fit"
         rowCount={useServerPagination ? 10000 : rows?.length}
         pagination
@@ -85,6 +85,7 @@ const DataTable: React.FC<TableViewProps> = ({
         onRowClick={(params) => {
           onRowClick(params);
         }}
+        loading={loading}
         onPaginationModelChange={(value) => {
           setPaginationModel(value);
           setLoading(true);
@@ -103,6 +104,9 @@ const DataTable: React.FC<TableViewProps> = ({
           "& .MuiDataGrid-cell": {
             wordBreak: "break-word",
           },
+        }}
+        slots={{
+          noRowsOverlay: () => <Typography>No result found</Typography>,
         }}
       />
     </Box>

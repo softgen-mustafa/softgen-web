@@ -1,6 +1,13 @@
 "use client";
 import { TextInput } from "@/app/ui/text_inputs";
-import { Button, Grid, Snackbar, Typography, useTheme } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  Grid,
+  Snackbar,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { getAsync, getUmsBaseUrl } from "../services/rest_services";
@@ -12,6 +19,7 @@ const Page = () => {
   const mobileNumber = useRef("");
   const error = useRef("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const theme = useTheme();
 
@@ -37,7 +45,7 @@ const Page = () => {
       setSnackbarOpen(true);
       return;
     }
-
+    setLoading(true);
     try {
       const url = `${getUmsBaseUrl()}/auth/check-registration?MobileNumber=${
         mobileNumber.current
@@ -56,6 +64,8 @@ const Page = () => {
       console.error("Error checking registration:", err);
       error.current = "An error occurred. Please try again.";
       setSnackbarOpen(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -83,12 +93,17 @@ const Page = () => {
             <Button
               variant="contained"
               sx={{
+                width: 150,
                 height: 45,
                 background: theme.palette.primary.main,
               }}
               onClick={onNext}
             >
-              <Typography textTransform="capitalize">Send OTP</Typography>
+              {loading ? (
+                <CircularProgress size={16} sx={{ color: "#FFFFFF" }} />
+              ) : (
+                <Typography textTransform="capitalize">Send OTP</Typography>
+              )}
             </Button>
           </div>
         </CardView>

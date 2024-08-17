@@ -3,7 +3,14 @@ import { getUmsBaseUrl, postAsync } from "@/app/services/rest_services";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { TextInput } from "@/app/ui/text_inputs";
 import { inspiredPalette } from "@/app/ui/theme";
-import { Button, Grid, Snackbar, Typography, useTheme } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  Grid,
+  Snackbar,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
@@ -18,6 +25,7 @@ const Page = ({ params }: { params: any }) => {
   });
   const [snackbar, setSnackbar] = useState({ open: false, message: "" });
   const [hasReloaded, setHasReloaded] = useState(false);
+  const [loading, setLoading] = useState(false);
   const theme = useTheme();
 
   useEffect(() => {
@@ -112,9 +120,13 @@ const Page = ({ params }: { params: any }) => {
                 onSubmit();
               }}
             >
-              <Typography textTransform={"capitalize"} letterSpacing={0.8}>
-                Login
-              </Typography>
+              {loading ? (
+                <CircularProgress size={16} sx={{ color: "#FFFFFF" }} />
+              ) : (
+                <Typography textTransform={"capitalize"} letterSpacing={0.8}>
+                  Login
+                </Typography>
+              )}
             </Button>
           </div>
         </CardView>
@@ -136,6 +148,7 @@ const Page = ({ params }: { params: any }) => {
     }
   };
   const verifyOtp = async () => {
+    setLoading(true);
     try {
       let url = `${getUmsBaseUrl()}/auth/otp/verify`;
       let body = {
@@ -147,10 +160,13 @@ const Page = ({ params }: { params: any }) => {
       return response["is_success"];
     } catch {
       return false;
+    } finally {
+      setLoading(false);
     }
   };
 
   const login = async () => {
+    setLoading(true);
     try {
       let url = `${getUmsBaseUrl()}/auth/login`;
       let encoded = Buffer.from(userDetail.current.password).toString("base64");
@@ -168,6 +184,8 @@ const Page = ({ params }: { params: any }) => {
       return true;
     } catch {
       return false;
+    } finally {
+      setLoading(false);
     }
   };
 

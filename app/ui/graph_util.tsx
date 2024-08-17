@@ -2,7 +2,8 @@
 import { PieChart, BarChart } from "@mui/x-charts";
 import { useState } from "react";
 import { DropDown } from "./drop_down";
-import { Box, Typography } from "@mui/material";
+import { Box, Chip, Stack, Typography } from "@mui/material";
+import DoneIcon from "@mui/icons-material/Done";
 
 const Pie = (values: any[], title: string) => {
   return (
@@ -125,7 +126,7 @@ const SingleChartView = ({
   return (
     <div className="overflow-x-auto">
       <Box my={2}>
-        <DropDown
+        {/* <DropDown
           label="Select Chart"
           displayFieldKey="label"
           valueFieldKey={null}
@@ -135,7 +136,23 @@ const SingleChartView = ({
           onSelection={(_selection) => {
             setChartType(_selection.type);
           }}
-        />
+        /> */}
+        <Typography className="font-medium text-lg mb-1">
+          Select Chart
+        </Typography>
+        <Stack flexDirection="row" gap={1}>
+          {charts.map((_chart) => (
+            <Chip
+              key={_chart.id}
+              size="medium"
+              label={_chart.label}
+              variant={chartType === _chart.type ? "filled" : "outlined"}
+              color={chartType === _chart.type ? "primary" : "default"}
+              onClick={() => setChartType(_chart.type)}
+              sx={{ px: 2 }}
+            />
+          ))}
+        </Stack>
       </Box>
       {renderChart()}
     </div>

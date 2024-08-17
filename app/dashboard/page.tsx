@@ -385,11 +385,16 @@ const DashboardPage = () => {
       view: (
         <CardView title="Upcoming Collections">
           {/* <Container className="flex overflow-x-auto"> */}
-          <Stack flexDirection="row">
+          <Stack
+            flexDirection="row"
+            gap={1}
+            pb={1}
+            sx={{ overflowX: "scroll" }}
+          >
             {filters.map((card, index) => (
               <Box
                 key={index}
-                className=" mr-4 rounded-3xl"
+                className="rounded-3xl"
                 sx={{
                   minWidth: 100,
                   justifyContent: "center",
