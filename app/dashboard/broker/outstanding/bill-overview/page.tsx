@@ -84,6 +84,7 @@ const Page = () => {
       editable: false,
       sortable: true,
       flex: 1,
+      minWidth: 200,
     },
     {
       field: "billDateStr",
@@ -91,6 +92,7 @@ const Page = () => {
       editable: false,
       sortable: true,
       flex: 1,
+      minWidth: 150,
     },
     {
       field: "dueDateStr",
@@ -98,6 +100,7 @@ const Page = () => {
       editable: false,
       sortable: true,
       flex: 1,
+      minWidth: 180,
     },
     {
       field: "amount",
@@ -105,6 +108,7 @@ const Page = () => {
       editable: false,
       sortable: true,
       flex: 1,
+      minWidth: 150,
     },
   ];
 

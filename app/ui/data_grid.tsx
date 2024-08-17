@@ -71,7 +71,7 @@ const DataTable: React.FC<TableViewProps> = ({
       <DataGrid
         columns={columns}
         rows={rows}
-        className="h-fit max-h-fit"
+        // className="h-fit max-h-fit"
         rowCount={useServerPagination ? 10000 : rows?.length}
         pagination
         paginationMode={useServerPagination ? "server" : "client"}
@@ -96,6 +96,13 @@ const DataTable: React.FC<TableViewProps> = ({
           } else {
             setLoading(false);
           }
+        }}
+        sx={{
+          height: "100%",
+          width: "100%",
+          "& .MuiDataGrid-cell": {
+            wordBreak: "break-word",
+          },
         }}
       />
     </Box>

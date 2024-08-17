@@ -51,6 +51,7 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
       editable: false,
       sortable: true,
       flex: 1,
+      minWidth: 250,
     },
     {
       field: "amount",
@@ -59,6 +60,7 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
       editable: false,
       sortable: true,
       flex: 1,
+      minWidth: 200,
     },
     {
       field: "quantity",
@@ -67,6 +69,7 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
       editable: false,
       sortable: true,
       flex: 1,
+      minWidth: 150,
     },
   ];
 
@@ -154,6 +157,7 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
       editable: false,
       sortable: true,
       flex: 1,
+      minWidth: 150,
     },
     {
       field: "partyName",
@@ -161,6 +165,7 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
       editable: false,
       sortable: true,
       flex: 1,
+      minWidth: 200,
     },
     {
       field: "preGstAmount",
@@ -168,6 +173,7 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
       editable: false,
       sortable: true,
       flex: 1,
+      minWidth: 200,
       type: "number",
     },
     {
@@ -177,6 +183,7 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
       type: "number",
       sortable: true,
       flex: 1,
+      minWidth: 200,
     },
   ];
 
@@ -355,17 +362,17 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
       headerName: "Party",
       editable: false,
       sortable: true,
-      // flex: 1,
-      // maxWidth: 300,
-      minWidth: 300,
+      flex: 1,
+      minWidth: 250,
     },
     {
       field: "monthStr",
       headerName: "Month",
       editable: false,
       sortable: true,
-      // flex: 1,
-      minWidth: 200,
+      type: "number",
+      flex: 1,
+      minWidth: 180,
     },
     {
       field: "preGstAmount",
@@ -373,8 +380,8 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
       editable: false,
       type: "number",
       sortable: true,
-      minWidth: 200,
-      // flex: 1,
+      flex: 1,
+      minWidth: 180,
     },
   ];
 

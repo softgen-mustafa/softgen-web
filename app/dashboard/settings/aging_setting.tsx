@@ -51,6 +51,7 @@ const AgingSettings = () => {
       editable: false,
       sortable: true,
       flex: 1,
+      minWidth: 250,
     },
     {
       field: "minDays",
@@ -58,6 +59,7 @@ const AgingSettings = () => {
       editable: false,
       sortable: true,
       flex: 1,
+      minWidth: 200,
     },
     {
       field: "tagName",
@@ -65,6 +67,7 @@ const AgingSettings = () => {
       editable: false,
       sortable: true,
       flex: 1,
+      minWidth: 200,
     },
   ];
 

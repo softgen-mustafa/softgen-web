@@ -100,8 +100,8 @@ const Page = () => {
       headerName: "Name",
       editable: false,
       sortable: true,
-      // flex: 1,
-      width: 300,
+      flex: 1,
+      minWidth: 200,
     },
     {
       field: "amount",
@@ -109,8 +109,8 @@ const Page = () => {
       editable: false,
       sortable: true,
       type: "number",
-      // flex: 1,
-      width: 150,
+      flex: 1,
+      minWidth: 150,
       valueGetter: (value, row) =>
         `${row.currency || ""} ${
           row.amount != null ? numericToString(row.amount) : "0"
@@ -120,10 +120,10 @@ const Page = () => {
       field: "billCount",
       headerName: "Total Bills",
       editable: false,
-      // flex: 1,
+      flex: 1,
+      minWidth: 180,
       type: "number",
       sortable: true,
-      width: 200,
     },
   ];
 

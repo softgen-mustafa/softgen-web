@@ -73,6 +73,7 @@ const Page = () => {
       editable: false,
       sortable: true,
       flex: 1,
+      minWidth: 200,
     },
     {
       field: "amount",
@@ -80,6 +81,7 @@ const Page = () => {
       editable: false,
       sortable: true,
       flex: 1,
+      minWidth: 150,
     },
   ];
 

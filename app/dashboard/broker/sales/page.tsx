@@ -49,6 +49,7 @@ const Page = () => {
       editable: false,
       sortable: true,
       flex: 1,
+      minWidth: 200,
     },
     {
       field: "preGstAmount",
@@ -56,6 +57,7 @@ const Page = () => {
       editable: false,
       sortable: true,
       flex: 1,
+      minWidth: 200,
     },
     {
       field: "postGstAmount",
@@ -63,6 +65,7 @@ const Page = () => {
       editable: false,
       sortable: true,
       flex: 1,
+      minWidth: 200,
     },
   ];
 
