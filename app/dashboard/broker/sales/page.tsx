@@ -1,5 +1,5 @@
 "use client";
-import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
+import { getAsync, getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
 import { useEffect, useState } from "react";
 import { Typography, IconButton, Grid } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -20,12 +20,12 @@ const Page = () => {
       const fromDate: any = Cookies.get("fromDate");
       const toDate: any = Cookies.get("toDate");
 
-      let url = `${getBmrmBaseUrl()}/broker-sales/broker/overview`;
-      let requestBody = {
+      let url = `${getBmrmBaseUrl()}/broker-sales/get/broker/sales`;
+      /*let requestBody = {
         startDate: fromDate ? fromDate : "",
         endDate: toDate ? toDate : "",
-      };
-      let response = await await postAsync(url, requestBody);
+      };*/
+      let response = await getAsync(url);
       if (response && response.length > 0) {
         let entries = response.map((_data: any, index: number) => {
           return {

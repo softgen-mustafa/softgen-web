@@ -46,6 +46,8 @@ const DrawerContent = () => {
     const [openLogoutModal, setOpenLogoutModal] = useState(false);
     const [userName, setUserName] = useState("");
 
+    let userType = useRef("");
+
     useEffect(() => {
         let token = Cookies.get("authToken") ?? null;
         if (token === null || token!.length < 1) {
@@ -53,6 +55,7 @@ const DrawerContent = () => {
             return;
         }
         fetchUserName();
+        fetchUserType();
     }, []);
 
     const handleLogout = () => {
@@ -75,6 +78,17 @@ const DrawerContent = () => {
                 }
             }
         } catch {}
+    };
+    const fetchUserType = async () => {
+        try {
+            let url = `${getBmrmBaseUrl()}/user-info/get/user-details`;
+            let response = await getAsync(url);
+            let userTypeResponse = response["user_type"];
+            Cookies.set("userType", userTypeResponse ?? "");
+            userType.current = userTypeResponse ?? "";
+        } catch (e) {
+        } finally {
+        }
     };
 
     return (
@@ -125,7 +139,7 @@ const DrawerContent = () => {
         Hello, {userName} 👋🏻
         </Typography>
         </Box>
-        <DrawerList />
+        <DrawerList userType={userType.current} />
         <ButtonBase
         className="w-11/12 m-3 mb-3 rounded-md flex flex-row align-middle justify-center bg-white"
         onClick={() => {

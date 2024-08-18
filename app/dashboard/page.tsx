@@ -1,124 +1,3 @@
-// "use client";
-// import { CustomerDetailsCard } from "./cards/customer_card";
-// import { Grid, Typography } from "@mui/material";
-// import { OutstandingCard } from "./cards/outstanding_card";
-// import { SalesReportCard } from "./cards/sales_report_card";
-// import { InventoryCard } from "./cards/inventory_card";
-// import { OutstandingTask } from "./cards/outstanding_task_card";
-// import { CardView, GridConfig, RenderGrid } from "../ui/responsive_grid";
-// import { DropDown } from "../ui/drop_down";
-// import { getAsync, getBmrmBaseUrl } from "../services/rest_services";
-// import { useEffect, useRef, useState } from "react";
-// import Cookies from "js-cookie";
-// import { inspiredPalette } from "../ui/theme";
-
-// const CompanyCard = () => {
-//   const [data, setData] = useState([]);
-
-//   useEffect(() => {
-//     loadData();
-//   }, []);
-
-//   const loadData = async () => {
-//     try {
-//       let url = `${getBmrmBaseUrl()}/info/user-tenant/get/companies`;
-//       let response = await getAsync(url);
-//       let values = response.map((entry: any) => {
-//         return {
-//           id: entry["company_id"],
-//           name: entry["company_name"],
-//           user_id: entry.user_id,
-//         };
-//       });
-//       setData(values);
-//       if (values && values.length > 0) {
-//         Cookies.set("companyId", values[0].id);
-//       }
-//     } catch {}
-//   };
-
-//   return (
-//     <div>
-//       <DropDown
-//         label={"Select Company"}
-//         displayFieldKey={"name"}
-//         valueFieldKey={null}
-//         selectionValues={data}
-//         helperText={""}
-//         onSelection={(selection) => {
-//           Cookies.set("companyId", selection.id);
-//         }}
-//       />
-//     </div>
-//   );
-// };
-
-// const DashboardPage = () => {
-//   const gridConfig: GridConfig[] = [
-//     {
-//       type: "item",
-//       view: (
-//         <CardView title="Overview">
-//           <CompanyCard />
-//           <CustomerDetailsCard></CustomerDetailsCard>
-//         </CardView>
-//       ),
-//       className: "",
-//       children: [],
-//     },
-//     {
-//       type: "item",
-//       view: (
-//         <CardView title="Outstanding Overview">
-//           <OutstandingCard  />
-//         </CardView>
-//       ),
-//       className: "",
-//       children: [],
-//     },
-//     {
-//       type: "item",
-//       view: (
-//         <CardView title="Inventory">
-//           <InventoryCard />
-//         </CardView>
-//       ),
-//       className: "",
-//       children: [],
-//     },
-//     {
-//       type: "item",
-//       view: (
-//         <CardView title="Today's O/S">
-//           <OutstandingTask />
-//         </CardView>
-//       ),
-//       className: "",
-//       children: [],
-//     },
-//   ];
-//   return (
-//     <div className="">
-//       <Typography
-//         className="mt-14 ml-2 text-3xl mb-2 font-medium"
-//         style={{ color: inspiredPalette.dark }}
-//       >
-//         Dashboard
-//       </Typography>
-//       <Grid
-//         container
-//         sx={{
-//           flexGrow: 1,
-//           height: "100vh",
-//         }}
-//       >
-//         {RenderGrid(gridConfig)}
-//       </Grid>
-//     </div>
-//   );
-// };
-// export default DashboardPage;
-
 "use client";
 import { CustomerDetailsCard } from "./cards/customer_card";
 import { Box, Grid, Stack, Typography, useTheme } from "@mui/material";
@@ -137,62 +16,89 @@ import { useRouter } from "next/navigation";
 import { FeatureControl } from "../components/featurepermission/permission_helper";
 import RankedPartyOutstandingCard from "./cards/ranked_party";
 import { AgingView } from "./cards/aging_card";
+import { DataTable } from "@/app/ui/data_grid";
+import { SingleChartView } from "@/app/ui/graph_util";
 
-// const CompanyCard = ({
-//   onCompanyChange,
-// }: {
-//   onCompanyChange: (companyId: string) => void;
-// }) => {
-//   const [data, setData] = useState([]);
+const BrokerMonthlyOverview = () => {
 
-//   // useEffect(() => {
-//   //   loadData();
-//   // }, []);
+    const columns: GridColDef<any[number]>[] = [
+        {
+            field: "dateStr",
+            headerName: "Month",
+            editable: false,
+            sortable: true,
+            flex: 1,
+        },
+        {
+            field: "preGstAmount",
+            headerName: "Value",
+            editable: false,
+            sortable: true,
+            flex: 1,
+            type: "number",
+            // valueGetter: (value, row) => `${row.currency || ""} ${row.amount || "0"}`,
+            valueGetter: (value, row) =>
+            `${numericToString(row.preGstAmount) || "0"}`,
+        },
+        {
+            field: "postGstAmount",
+            headerName: "Post Tax",
+            editable: false,
+            sortable: true,
+            flex: 1,
+            type: "number",
+            // valueGetter: (value, row) => `${row.currency || ""} ${row.amount || "0"}`,
+            valueGetter: (value, row) =>
+            `${numericToString(row.postGstAmount) || "0"}`,
+        },
+        {
+            field: "commission",
+            headerName: "Commission",
+            editable: false,
+            sortable: true,
+            flex: 1,
+            type: "number",
+            // valueGetter: (value, row) => `${row.currency || ""} ${row.amount || "0"}`,
+            valueGetter: (value, row) =>
+            `${numericToString(row.commission) || "0"}`,
+        },
+    ];
 
-//   // const loadData = async () => {
-//   //   try {
-//   //     let url = `${getBmrmBaseUrl()}/info/user-tenant/get/companies`;
-//   //     let response = await getAsync(url);
-//   //     let values = response.map((entry: any) => {
-//   //       return {
-//   //         id: entry["company_id"],
-//   //         name: entry["company_name"],
-//   //         user_id: entry.user_id,
-//   //       };
-//   //     });
-//   //     setData(values);
-//   //     if (values && values.length > 0) {
-//   //       const firstCompanyId = values[0].id;
-//   //       Cookies.set("companyId", firstCompanyId);
-//   //       onCompanyChange(firstCompanyId);
-//   //     }
-//   //   } catch (error) {
-//   //     console.error("Failed to load companies", error);
-//   //   }
-//   // };
+    const onApi = async () => {
+        try {
+            let url = `${getBmrmBaseUrl()}/broker-sales/get/broker/monthly-sales?monthYear=all`;
+            let response = await getAsync(url);
+            let entries = response.map((entry: any, index: number) => {
+                return {
+                    id: index + 1,
+                    ...entry
+                };
+            })
+            return entries ?? [];
 
-//   return (
-//     <div>
-//       {/* <DropDown
-//         label={"Select Company"}
-//         displayFieldKey={"name"}
-//         valueFieldKey={null}
-//         selectionValues={data}
-//         helperText={""}
-//         onSelection={(selection) => {
-//           const companyId = selection.id;
-//           Cookies.set("companyId", companyId);
-//           onCompanyChange(companyId);
-//         }}
-//       /> */}
-//     </div>
-//   );
-// };
+        } catch {
+            return [];
+        }
+    }
+
+    return ( 
+        <Box>
+            <DataTable
+            columns={columns}
+            refresh={true}
+            useSearch={true}
+            useServerPagination={false}
+            onApi={async (page, pageSize, searchText) => {
+                return await onApi();
+            }}
+            onRowClick={(params) => {
+            }}
+            />
+        </Box>
+    );
+}
 
 const DashboardPage = () => {
-  // const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(
-  //   null
-  // );
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [filters, updateFilters] = useState([
     { id: 1, label: "Daily", value: "daily", isSelected: true },
@@ -201,6 +107,8 @@ const DashboardPage = () => {
     { id: 4, label: "Quarterly", value: "quarterly", isSelected: false },
     { id: 5, label: "Yearly", value: "yearly", isSelected: false },
   ]);
+
+  let companyId = useRef<string | null>(null);
 
   let incomingBillType = "Receivable"; // populate later
   const [types, updateTypes] = useState([
@@ -217,26 +125,44 @@ const DashboardPage = () => {
   const theme = useTheme();
   const router = useRouter();
 
-  const selectedCompanyId = Cookies.get("companyId") ?? null;
-  // useEffect(() => {
-  //   if (selectedCompanyId) {
-  //     // Logic when the company ID changes
-  //     console.log(`Company ID changed to: ${selectedCompanyId}`);
-  //   }
-  // }, [selectedCompanyId]);
+  const loadData = async () => {
+      try {
+          let url = `${getBmrmBaseUrl()}/info/user-tenant/get/companies`;
+          let response = await getAsync(url);
+          let values = response.map((entry: any) => {
+              return {
+                  id: entry["company_id"],
+                  name: entry["company_name"],
+                  user_id: entry.user_id,
+              };
+          });
+          if (values && values.length > 0) {
+              let cookieCompany = Cookies.get("companyId") ?? null;
+              if (cookieCompany === null || cookieCompany.length < 1) {
+                cookieCompany = values[0].id;
+              }
+              companyId.current = cookieCompany;
+              Cookies.set("companyId", cookieCompany!);
+          }
+      } catch (error) {
+          console.error("Failed to load companies", error);
+      }
+  };
 
-  // const handleCompanyChange = (companyId: string) => {
-  //   setSelectedCompanyId(companyId);
-  // };
+  const selectedCompanyId = Cookies.get("companyId") ?? null;
+
+  const [userType, setUserType] = useState("");
 
   useEffect(() => {
+      setUserType(Cookies.get("userType")??"");
+      if (companyId.current === null || companyId.current.length < 1) 
+      {
+          loadData();
+      }
     checkPermission();
   }, []);
 
   const checkPermission = async () => {
-    // const permission = await FeatureControl("OutstandingDashboardScreen");
-    // setHasPermission(permission);
-    // if (permission) {
     loadAmount();
     loadUpcoming();
     // }
@@ -294,6 +220,19 @@ const DashboardPage = () => {
       // valueGetter: (value, row) => `${row.currency || ""} ${row.amount || "0"}`,
       valueGetter: (value, row) =>
         `${row.currency || ""} ${numericToString(row.amount) || "0"}`,
+    },
+  ];
+
+  const brokerGridConfig: GridConfig[] = [
+    {
+      type: "item",
+      view: (
+        <CardView title="Montly Overview">
+            <BrokerMonthlyOverview />
+        </CardView>
+      ),
+      className: "",
+      children: [],
     },
   ];
 
@@ -480,7 +419,7 @@ const DashboardPage = () => {
           height: "100vh",
         }}
       >
-        {RenderGrid(gridConfig)}
+        {RenderGrid(userType === "Vendor" ?gridConfig : brokerGridConfig)}
       </Grid>
     </div>
   );

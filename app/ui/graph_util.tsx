@@ -60,7 +60,7 @@ const Pie = (values: any[], title: string) => {
 
 const Bar = (values: any[], title: string) => {
   return (
-    <Box>
+    <Box component="div" className={`flex w-full`}>
       <Typography className="text-md font-semibold text-center">
         {title}
       </Typography>
@@ -105,18 +105,17 @@ const SingleChartView = ({
 }) => {
   const [chartType, setChartType] = useState(defaultChart);
   const [charts, setCharts] = useState([
-    { id: 1, type: "pie", label: "Pie" },
+    /*{ id: 1, type: "pie", label: "Pie" },*/
     { id: 2, type: "bar", label: "Bar" },
     { id: 3, type: "hbar", label: "HBar" },
   ]);
 
   const renderChart = () => {
-    if (chartType == "bar") {
-      return Bar(values, title);
-    } else if (chartType == "hbar") {
+    if (chartType == "hbar") {
       return HorizontalBar(values, title);
     }
-    return Pie(values, title);
+    return Bar(values, title);
+    //return Pie(values, title);
   };
 
   const chartIndex = (data: any) => {

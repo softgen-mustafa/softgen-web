@@ -8,7 +8,7 @@ import {
     ListItemText,
     Typography
 } from "@mui/material";
-import React, {useState } from "react";
+import React, {useEffect, useState } from "react";
 import { inspiredPalette } from "../ui/theme";
 import { useRouter } from "next/navigation";
 
@@ -63,15 +63,24 @@ interface PathState {
     customPaths: DrawerItem[];
 }
 
-const DrawerList = () => {
+const DrawerList = ({userType}: {userType: string}) => {
 
     const router = useRouter();
 
     const [paths, setPaths] = useState<PathState>({
-        adminPaths : adminReportPaths ?? [],
+        adminPaths : userType === "Broker" ?  [adminReportPaths[0]] : adminReportPaths ?? [],
         memberPaths : memberReportPaths ?? [],
         customPaths : customReportPaths ?? [],
     });
+
+    useEffect(() => {
+        setPaths({
+            adminPaths : userType === "Broker" ?  [adminReportPaths[0]] : adminReportPaths ?? [],
+            memberPaths : memberReportPaths ?? [],
+            customPaths : customReportPaths ?? [],
+        })
+    }, [userType]);
+
 
 
     const onClick = (entry: DrawerItem) => {
