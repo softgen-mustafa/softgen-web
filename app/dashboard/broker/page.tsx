@@ -54,7 +54,7 @@ const views: any[] = [
     },
     {
         weight: Weight.Low,
-        view: (<CardView className="w-400 min-h-400 bg-blue-100"><h1>Card 11</h1></CardView>),
+        view: (<CardView className="w-400 min-h-400 bg-blue-100"><h1 style={{height: 600}}>Card 11</h1></CardView>),
     },
     {
         weight: Weight.Low,
@@ -102,6 +102,7 @@ const Page = () => {
             if (currentCol.current - gridCol < 0) {
                 currentCol.current = 12;
             }
+            let nextCol = col * nextWeight;
             if ((col * nextWeight) + gridCol > currentCol.current) {
                 gridCol = currentCol.current;
             } else {
@@ -110,7 +111,8 @@ const Page = () => {
             return (
                 <Grid
                 item
-                
+                minHeight={300}
+                maxHeight={400}
                 justifyContent={"center"}
                 xs={12}
                 sm={gridCol}
@@ -120,8 +122,8 @@ const Page = () => {
                 key={index}
                 >
                 {
-                    <div>
-                        <h6>gridCol: {gridCol} | nextCol: {col * nextWeight}</h6>
+                    <div className="h-full">
+                        <h6>gridCol: {gridCol} | nextCol: {nextCol} | next + grid : {nextCol + gridCol}</h6>
                         {
                             entry.view 
                         }
