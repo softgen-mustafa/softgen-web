@@ -154,12 +154,10 @@ const DashboardPage = () => {
   const [userType, setUserType] = useState("");
 
   useEffect(() => {
-      setUserType(Cookies.get("userType")??"");
-      if (companyId.current === null || companyId.current.length < 1) 
-      {
-          loadData();
-      }
-    checkPermission();
+      loadData().then((_) =>{
+         setUserType(Cookies.get("userType")??"");
+        checkPermission();
+      })
   }, []);
 
   const checkPermission = async () => {
@@ -239,7 +237,7 @@ const DashboardPage = () => {
       {
           weight: Weight.Medium,
           view: (
-              <CardView permissionCode="OutstandingCard">
+              <CardView title={"Payable vs Receivable"} permissionCode="OutstandingCard">
               <OutstandingCard
               companyId={selectedCompanyId}
               title="Outstanding Overview"
@@ -250,7 +248,7 @@ const DashboardPage = () => {
       {
           weight: Weight.Medium,
           view: (
-              <CardView permissionCode="AgingOutstandingCard">
+              <CardView title={"Aging Wise"} permissionCode="AgingOutstandingCard">
               <AgingView
               billType={selectedType.current.code}
               title="Aging-Wise O/S"

@@ -171,16 +171,18 @@ const SideNav = () => {
         }}
         >
         <div
-        className="fixed top-0 left-0 m-2 shadow-md rounded-lg justify-center items-center lg:hidden"
+        className={`fixed top-0 left-0 m-2 shadow-md rounded-lg justify-center items-center`}
         style={{
             background: inspiredPalette.dark,
+            zIndex: 230 
         }}
         >
         <IconButton
         aria-label="open drawer"
         onClick={handleDrawerToggle}
         size="large"
-        sx={{ color: "white" }}
+        sx={{ color: "white",
+        }}
         >
         <MenuRounded />
         </IconButton>
@@ -188,7 +190,7 @@ const SideNav = () => {
         <Box sx={{ display: { md: "none", xs: "block", sm: "block" } }}>
         <Drawer
         variant="temporary"
-        open={mobileOpen}
+        open= {mobileOpen}
         onClose={handleDrawerToggle}
         ModalProps={{
             keepMounted: true, // Better open performance on mobile.
@@ -203,20 +205,6 @@ const SideNav = () => {
             >
             <DrawerContent />
             </Drawer>
-            </Box>
-            <Box
-            height={"100%"}
-            sx={{
-                display: {
-                    md: "block",
-                    xs: "none",
-                    sm: "none",
-                    minWidth: drawerWidth,
-                    maxWidth: drawerWidth,
-                },
-            }}
-            >
-            <DrawerContent />
             </Box>
             </div>
     );
