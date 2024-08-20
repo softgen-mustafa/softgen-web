@@ -239,14 +239,6 @@ const DashboardPage = () => {
       {
           weight: Weight.Medium,
           view: (
-              <CardView title="Today's O/S">
-              <OutstandingTask companyId={selectedCompanyId} />
-              </CardView>
-          ),
-      },
-      {
-          weight: Weight.Medium,
-          view: (
               <CardView permissionCode="OutstandingCard">
               <OutstandingCard
               companyId={selectedCompanyId}
@@ -271,6 +263,14 @@ const DashboardPage = () => {
           view: (
               <CardView className="bg-red-500" permissionCode="CustomerCard">
               <CustomerDetailsCard companyId={selectedCompanyId} />
+              </CardView>
+          ),
+      },
+      {
+          weight: Weight.Medium,
+          view: (
+              <CardView title="Today's O/S">
+              <OutstandingTask companyId={selectedCompanyId} />
               </CardView>
           ),
       },
@@ -370,12 +370,6 @@ const DashboardPage = () => {
 
   return (
     <div className="">
-      {/* <Typography
-        className="mt-14 ml-2 text-3xl mb-2 font-medium"
-        style={{ color: inspiredPalette.dark }}
-      >
-        Dashboard
-      </Typography> */}
       <DynGrid views={views}/>
     </div>
   );

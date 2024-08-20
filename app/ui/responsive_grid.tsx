@@ -122,25 +122,31 @@ const RenderGrid = (gridItems: GridConfig[]) => {
 };
 
 const Weight = {
-    Metal: 4,
     High: 3,
     Medium: 2,
     Low: 1,
+    None: 0,
 }
 
 const DynGrid = ({views}: {views: any[]}) => {
     const minWidth = 360;
     return (
+    <div>
     <div className="p-2 w-full flex flex-row flex-wrap gap-4 justify-stretch" >
     {
         views.map((entry: any, index: number) => {
-            return (
-                <div className={"flex-grow"} key={index} style={{
-                    minWidth: minWidth,
+            let styles:any = {
+                    minWidth: entry.minWidth ? entry.minWidth : minWidth,
                     minHeight: 200,
                     maxHeight: 600,
                     flexGrow: entry.weight
-                }}>
+                };
+
+            if (entry.maxWidth) {
+                styles.maxWidth = entry.maxWidth;
+            }
+            return (
+                <div className={"flex-grow"} key={index} style={styles}>
                 {
                     entry.view
                 }
@@ -148,6 +154,7 @@ const DynGrid = ({views}: {views: any[]}) => {
             )
         })
     }
+    </div>
     </div>
     );
 };
