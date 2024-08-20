@@ -2,6 +2,7 @@
 import {
     Home,
     Logout,
+    Dashboard,
     MenuRounded,
     PendingActions,
     Receipt,
@@ -36,6 +37,7 @@ import {
 import { DropDown } from "../ui/drop_down";
 import { SnackbarProvider } from "../ui/snack_bar_provider";
 import { DrawerList } from "./drawer";
+import theme from "../ui/mui_theme";
 
 
 const drawerWidth = 300;
@@ -171,7 +173,7 @@ const SideNav = () => {
         }}
         >
         <div
-        className={`fixed top-0 left-0 m-2 shadow-md rounded-lg justify-center items-center`}
+        className={`fixed top-0 left-0 m-2 shadow-xl rounded-xl justify-center items-center`}
         style={{
             background: inspiredPalette.dark,
             zIndex: 230 
@@ -184,7 +186,7 @@ const SideNav = () => {
         sx={{ color: "white",
         }}
         >
-        <MenuRounded />
+        <Dashboard/>
         </IconButton>
         </div>
         <Box sx={{ display: { md: "none", xs: "block", sm: "block" } }}>
@@ -223,7 +225,7 @@ export default function DashboardLayout({
         >
         <SideNav />
         <Suspense fallback={<Loading />}>
-        <Box component={"div"} className="ml-1 w-full overflow-x-hidden">
+        <Box component={"div"} className="ml-1 w-full overflow-x-hidden mt-12">
         <div className="w-full h-full overflow-x-hidden ">{children}</div>
         </Box>
         </Suspense>
