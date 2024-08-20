@@ -1,7 +1,7 @@
 "use client";
 
 import { DateRangePicker } from "@/app/ui/date_ui";
-import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
+import { CardView, GridConfig, DynGrid, Weight, GridDirection } from "@/app/ui/responsive_grid";
 import { Grid, Typography } from "@mui/material";
 import Cookies from "js-cookie";
 import { AgingSettings } from "./aging_setting";
@@ -51,10 +51,9 @@ const Page = () => {
     }
   };
 
-  const gridConfig: GridConfig[] = [
+  const gridConfig = [
     {
-      type: "item",
-      children: [],
+    weight: Weight.Low,
       view: (
         <CardView className="max-h-fit h-fit" title="Switch Company">
           <DropDown
@@ -73,8 +72,7 @@ const Page = () => {
       ),
     },
     {
-      type: "item",
-      children: [],
+    weight: Weight.Low,
       view: (
         <CardView className="max-h-fit h-fit" title="Date Range Setting">
           <DateRangePicker
@@ -87,8 +85,7 @@ const Page = () => {
       ),
     },
     {
-      type: "item",
-      children: [],
+    weight: Weight.Low,
       view: (
         <CardView
           className="max-h-fit h-fit"
@@ -100,8 +97,7 @@ const Page = () => {
       ),
     },
     {
-      type: "item",
-      children: [],
+    weight: Weight.Low,
       view: (
         <CardView
           className="max-h-fit h-fit"
@@ -113,8 +109,7 @@ const Page = () => {
       ),
     },
     {
-      type: "item",
-      children: [],
+    weight: Weight.Low,
       view: (
         <CardView
           className="max-h-fit h-fit"
@@ -127,8 +122,7 @@ const Page = () => {
     },
 
     {
-      type: "item",
-      children: [],
+    weight: Weight.Medium,
       view: (
         <CardView
           className="h-fit"
@@ -142,16 +136,7 @@ const Page = () => {
   ];
   return (
     <div className="w-full" style={{}}>
-      <Grid
-        container
-        className="bg-gray-200"
-        sx={{
-          flexGrow: 1,
-          height: "100vh",
-        }}
-      >
-        {RenderGrid(gridConfig)}
-      </Grid>
+        <DynGrid views={gridConfig} direction={GridDirection.Row}/>
     </div>
   );
 };

@@ -2,7 +2,7 @@
 import { numericToString } from "@/app/services/Local/helper";
 import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
 import { DataTable } from "@/app/ui/data_grid";
-import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
+import { CardView, GridConfig, DynGrid, Weight, GridDirection } from "@/app/ui/responsive_grid";
 import { SearchInput } from "@/app/ui/text_inputs";
 import { ChevronLeftRounded } from "@mui/icons-material";
 import {
@@ -127,87 +127,9 @@ const Page = () => {
     },
   ];
 
-  const gridConfig: GridConfig[] = [
-    // {
-    //   type: "item",
-    //   view: (
-    //     <CardView
-    //       className="max-h-fit h-fit"
-    //       title="Party Search"
-    //       actions={[
-    //         <IconButton
-    //           key={1}
-    //           onClick={() => {
-    //             router.back();
-    //           }}
-    //         >
-    //           <ChevronLeftRounded />
-    //           <Typography>Go Back</Typography>
-    //         </IconButton>,
-    //       ]}
-    //     >
-    //       <Typography className="text-2xl">
-    //         {viewType.current === "upcoming"
-    //           ? `View based on filter:  ${filterType}`
-    //           : viewType.current == "aging"
-    //           ? `Aging-wise outstanding values`
-    //           : `All parties outstanding values`}
-    //       </Typography>
-    //       <br />
-    //       <Container className="overflow-x-auto flex">
-    //         <PieChart
-    //           width={300}
-    //           height={300}
-    //           margin={{ top: 100, left: 100, bottom: 100, right: 100 }}
-    //           sx={{
-    //             flex: 1,
-    //             borderWidth: 2,
-    //             borderRadius: 4,
-    //             marginBottom: 2,
-    //             justifyContent: "center",
-    //             alignItems: "center",
-    //           }}
-    //           slotProps={{
-    //             legend: {
-    //               hidden: true,
-    //               position: {
-    //                 horizontal: "right",
-    //                 vertical: "bottom",
-    //               },
-    //             },
-    //           }}
-    //           series={[
-    //             {
-    //               data: rows.map((entry: any) => {
-    //                 return {
-    //                   label: entry.partyName,
-    //                   value: entry.amount,
-    //                 };
-    //               }),
-    //               innerRadius: 120,
-    //               outerRadius: 100,
-    //               paddingAngle: 1,
-    //               cornerRadius: 1,
-    //               startAngle: 0,
-    //               endAngle: 360,
-    //               // cx: 150,
-    //               // cy: 150,
-    //             },
-    //           ]}
-    //         />
-    //       </Container>
-    //     </CardView>
-    //   ),
-    //   className: "",
-    //   children: [],
-    // },
+  const gridConfig= [
     {
-      type: "container",
-      view: null,
-      className: "",
-      children: [
-        {
-          type: "item",
+        weight: Weight.Low,
           view: (
             <CardView title="Outstanding Overview">
               <OutstandingOverview
@@ -217,13 +139,9 @@ const Page = () => {
               />
             </CardView>
           ),
-          className: "",
-          children: [],
-        },
-      ],
     },
     {
-      type: "item",
+        weight: Weight.High,
       view: (
         <CardView title="Parties">
           <DataTable
@@ -250,24 +168,15 @@ const Page = () => {
           />
         </CardView>
       ),
-      className: "",
-      children: [],
     },
   ];
 
   return (
     <div className="w-full" style={{}}>
-      <Grid
-        container
-        sx={{
-          flexGrow: 1,
-          height: "100vh",
-        }}
-      >
         {hasPermission === null ? (
           <CircularProgress />
         ) : hasPermission ? (
-          RenderGrid(gridConfig)
+            <DynGrid views={gridConfig} direction={GridDirection.Column}/>
         ) : (
           <Typography className="text-2xl text-center font-bold flex items-center justify-center flex-1 pl-2 pr-2">
             Check Your Internet Access Or This Feature is not included in your
@@ -275,7 +184,6 @@ const Page = () => {
             feature.
           </Typography>
         )}
-      </Grid>
     </div>
   );
 };

@@ -128,18 +128,23 @@ const Weight = {
     None: 0,
 }
 
-const DynGrid = ({views}: {views: any[]}) => {
+const GridDirection = {
+    Row: "flex-row",
+    Column: "flex-col"
+}
+
+const DynGrid = ({views, direction = GridDirection.Row}: {views: any[], direction?: string}) => {
     const minWidth = 360;
     return (
     <div>
-    <div className="p-2 w-full flex flex-row flex-wrap gap-4 justify-stretch" >
+    <div className={`p-2 w-full flex ${direction} flex-wrap gap-4 justify-stretch`} >
     {
         views.map((entry: any, index: number) => {
             let styles:any = {
                     minWidth: entry.minWidth ? entry.minWidth : minWidth,
                     minHeight: 200,
                     maxHeight: 600,
-                    flexGrow: entry.weight
+                    flexGrow: entry.weight ?? 0,
                 };
 
             if (entry.maxWidth) {
@@ -160,5 +165,5 @@ const DynGrid = ({views}: {views: any[]}) => {
 };
 
 
-export { RenderGrid, CardView, Weight, DynGrid };
+export { RenderGrid, CardView, Weight, DynGrid, GridDirection };
 export type { GridConfig };
