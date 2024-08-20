@@ -233,6 +233,7 @@ const DashboardPage = () => {
           children: [],
       },
   ];
+
   const views = [
       {
           weight: Weight.Medium,

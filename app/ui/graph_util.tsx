@@ -50,7 +50,7 @@ const Pie = (values: any[], title: string) => {
   return (
     <Box position="relative">
       <PieChart
-        width={300}
+        width={360}
         height={300}
         margin={{ top: 100, left: 100, bottom: 100, right: 100 }}
         sx={{
@@ -73,10 +73,10 @@ const Pie = (values: any[], title: string) => {
         series={[
           {
             data: values,
-            innerRadius: 120,
-            outerRadius: 100,
+            innerRadius: 30,
+            outerRadius: 120,
             paddingAngle: 1,
-            cornerRadius: 1,
+            cornerRadius: 3,
             startAngle: 0,
             endAngle: 360,
             // cx: 150,
@@ -84,17 +84,6 @@ const Pie = (values: any[], title: string) => {
           },
         ]}
       />
-      <Box
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          textAlign: "center",
-        }}
-      >
-        <Typography className="text-md font-semibold">{title}</Typography>
-      </Box>
     </Box>
   );
 };
@@ -111,7 +100,8 @@ const Bar = (values: any[], title: string) => {
             colorMap: {
                 type: "ordinal",
                 colors: graphColors
-            }
+            },
+
         }]}
         series={[{ dataKey: "value",  }]}
         width={360}
@@ -153,17 +143,19 @@ const SingleChartView = ({
 }) => {
   const [chartType, setChartType] = useState(defaultChart);
   const [charts, setCharts] = useState([
-    /*{ id: 1, type: "pie", label: "Pie" },*/
+    { id: 1, type: "pie", label: "Pie" },
     { id: 2, type: "bar", label: "Bar" },
     { id: 3, type: "hbar", label: "HBar" },
   ]);
 
   const renderChart = () => {
+    if (chartType == "bar") {
+      return Bar(values, title);
+    } 
     if (chartType == "hbar") {
       return HorizontalBar(values, title);
     }
-    return Bar(values, title);
-    //return Pie(values, title);
+    return Pie(values, title);
   };
 
   const chartIndex = (data: any) => {
@@ -173,21 +165,12 @@ const SingleChartView = ({
   return (
     <div className="overflow-x-auto">
       <Box my={2}>
-        {/* <DropDown
-          label="Select Chart"
-          displayFieldKey="label"
-          valueFieldKey={null}
-          defaultSelectionIndex={charts.findIndex(chartIndex)}
-          selectionValues={charts}
-          helperText={""}
-          onSelection={(_selection) => {
-            setChartType(_selection.type);
-          }}
-        /> */}
-        <Typography className="font-medium text-lg mb-1">
+      {renderChart()}
+        <Typography className="font-medium text-sm text-center mb-1">
           Select Chart
         </Typography>
-        <Stack flexDirection="row" gap={1}>
+        <Stack flexDirection="row" justifyContent={"center"}
+        gap={1}>
           {charts.map((_chart) => (
             <Chip
               key={_chart.id}
@@ -201,7 +184,6 @@ const SingleChartView = ({
           ))}
         </Stack>
       </Box>
-      {renderChart()}
     </div>
   );
 };
