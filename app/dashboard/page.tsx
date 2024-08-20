@@ -4,7 +4,7 @@ import { Box, Grid, Stack, Typography, useTheme } from "@mui/material";
 import { OutstandingCard } from "./cards/outstanding_card";
 import { InventoryCard } from "./cards/inventory_card";
 import { OutstandingTask } from "./cards/outstanding_task_card";
-import { CardView, GridConfig, RenderGrid } from "../ui/responsive_grid";
+import { CardView, GridConfig, RenderGrid, Weight, DynGrid } from "../ui/responsive_grid";
 import { DropDown } from "../ui/drop_down";
 import { getAsync, getBmrmBaseUrl } from "../services/rest_services";
 import { useEffect, useRef, useState } from "react";
@@ -224,185 +224,149 @@ const DashboardPage = () => {
   ];
 
   const brokerGridConfig: GridConfig[] = [
-    {
-      type: "item",
-      view: (
-        <CardView title="Montly Overview">
-            <BrokerMonthlyOverview />
-        </CardView>
-      ),
-      className: "",
-      children: [],
-    },
+      {
+          type: "item",
+          view: (
+              <CardView title="Montly Overview">
+              <BrokerMonthlyOverview />
+              </CardView>
+          ),
+          className: "",
+          children: [],
+      },
   ];
-
-  const gridConfig: GridConfig[] = [
-    {
-      type: "item",
-      view: (
-        <CardView title="Today's O/S">
-          <OutstandingTask companyId={selectedCompanyId} />
-        </CardView>
-      ),
-      className: "",
-      children: [],
-    },
-    {
-      type: "container",
-      view: null,
-      className: "",
-      children: [
-        {
-          type: "item",
+  const views = [
+      {
+          weight: Weight.Medium,
           view: (
-            <CardView permissionCode="OutstandingCard">
+              <CardView title="Today's O/S">
+              <OutstandingTask companyId={selectedCompanyId} />
+              </CardView>
+          ),
+      },
+      {
+          weight: Weight.Medium,
+          view: (
+              <CardView permissionCode="OutstandingCard">
               <OutstandingCard
-                companyId={selectedCompanyId}
-                title="Outstanding Overview"
+              companyId={selectedCompanyId}
+              title="Outstanding Overview"
               />
-            </CardView>
+              </CardView>
           ),
-          className: "",
-          children: [],
-        },
-        {
-          type: "item",
+      },
+      {
+          weight: Weight.Medium,
           view: (
-            <CardView permissionCode="AgingOutstandingCard">
+              <CardView permissionCode="AgingOutstandingCard">
               <AgingView
-                billType={selectedType.current.code}
-                title="Aging-Wise O/S"
+              billType={selectedType.current.code}
+              title="Aging-Wise O/S"
               />
-            </CardView>
+              </CardView>
           ),
-          className: "",
-          children: [],
-        },
-        {
-          type: "item",
+      },
+      {
+          weight: Weight.Low,
           view: (
-            <CardView className="bg-red-500" permissionCode="CustomerCard">
+              <CardView className="bg-red-500" permissionCode="CustomerCard">
               <CustomerDetailsCard companyId={selectedCompanyId} />
-            </CardView>
+              </CardView>
           ),
-          className: "",
-          children: [],
-        },
-      ],
-    },
-    // {
-    //   type: "item",
-    //   view: (
-    //     <CardView title="Inventory">
-    //       <InventoryCard companyId={selectedCompanyId} />
-    //     </CardView>
-    //   ),
-    //   className: "",
-    //   children: [],
-    // },
-    {
-      type: "container",
-      view: null,
-      className: "",
-      children: [
-        {
-          type: "item",
+      },
+      {
+          weight: Weight.High,
           view: (
-            <CardView title="Ranked Parties">
+              <CardView title="Ranked Parties">
               <RankedPartyOutstandingCard
-                billType={selectedType.current.code}
+              billType={selectedType.current.code}
               />
-            </CardView>
+              </CardView>
           ),
-          className: "",
-          children: [],
-        },
-      ],
-    },
-    {
-      type: "item",
-      view: (
-        <CardView title="Upcoming Collections">
-          {/* <Container className="flex overflow-x-auto"> */}
-          <Stack
-            flexDirection="row"
-            gap={1}
-            pb={1}
-            sx={{ overflowX: "scroll" }}
-          >
-            {filters.map((card, index) => (
-              <Box
-                key={index}
-                className="rounded-3xl"
-                sx={{
-                  minWidth: 100,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: 40,
-                  background: card.isSelected
-                    ? theme.palette.primary.main
-                    : inspiredPalette.lightTextGrey,
-                  color: card.isSelected ? "white" : inspiredPalette.dark,
-                  cursor: "pointer",
-                }}
-                onClick={(event) => {
-                  let values: any[] = filters;
-                  values = values.map((entry: any) => {
-                    let isSelected = card.value === entry.value;
-                    entry.isSelected = isSelected;
-                    return entry;
-                  });
-                  updateFilters(values);
-                  selectedFilter.current = card;
-                  loadUpcoming();
-                }}
+      },
+      {
+          weight: Weight.High,
+          view: (
+              <CardView title="Upcoming Collections">
+              {/* <Container className="flex overflow-x-auto"> */}
+              <Stack
+              flexDirection="row"
+              gap={1}
+              pb={1}
+              sx={{ overflowX: "scroll" }}
               >
-                <Typography
+              {filters.map((card, index) => (
+                  <Box
+                  key={index}
+                  className="rounded-3xl"
+                  sx={{
+                      minWidth: 100,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: 40,
+                      background: card.isSelected
+                          ? theme.palette.primary.main
+                          : inspiredPalette.lightTextGrey,
+                          color: card.isSelected ? "white" : inspiredPalette.dark,
+                          cursor: "pointer",
+                  }}
+                  onClick={(event) => {
+                      let values: any[] = filters;
+                      values = values.map((entry: any) => {
+                          let isSelected = card.value === entry.value;
+                          entry.isSelected = isSelected;
+                          return entry;
+                      });
+                      updateFilters(values);
+                      selectedFilter.current = card;
+                      loadUpcoming();
+                  }}
+                  >
+                  <Typography
                   component="div"
                   className="flex h-full w-full flex-row justify-center items-center"
-                >
+                  >
                   {card.label}
-                </Typography>
-              </Box>
-            ))}
-          </Stack>
-          {/* </Container> */}
-          <br />
-          <DataGrid
-            columns={columns}
-            rows={rows}
-            initialState={{
-              pagination: {
-                paginationModel: {
-                  pageSize: 10,
-                },
-              },
-            }}
-            onRowClick={(params) => {
-              localStorage.setItem("party_filter_value", params.row.id);
-              localStorage.setItem("party_view_type", "upcoming");
-              localStorage.setItem(
-                "party_bill_type",
-                selectedType.current.code
-              );
-              localStorage.setItem(
-                "party_filter_type",
-                selectedFilter.current.value
-              );
-              router.push("/dashboard/outstanding/party-search");
-            }}
-            pageSizeOptions={[5, 10, 25, 50, 75, 100]}
-            disableRowSelectionOnClick
-            onPaginationModelChange={(value) => {
-              alert(`page model:  ${JSON.stringify(value)}`);
-            }}
-          />
-        </CardView>
-      ),
-      className: "",
-      children: [],
-    },
+                  </Typography>
+                  </Box>
+              ))}
+              </Stack>
+              {/* </Container> */}
+              <br />
+              <DataGrid
+              columns={columns}
+              rows={rows}
+              initialState={{
+                  pagination: {
+                      paginationModel: {
+                          pageSize: 10,
+                      },
+                  },
+              }}
+              onRowClick={(params) => {
+                  localStorage.setItem("party_filter_value", params.row.id);
+                  localStorage.setItem("party_view_type", "upcoming");
+                  localStorage.setItem(
+                      "party_bill_type",
+                      selectedType.current.code
+                  );
+                  localStorage.setItem(
+                      "party_filter_type",
+                      selectedFilter.current.value
+                  );
+                  router.push("/dashboard/outstanding/party-search");
+              }}
+              pageSizeOptions={[5, 10, 25, 50, 75, 100]}
+              disableRowSelectionOnClick
+              onPaginationModelChange={(value) => {
+                  alert(`page model:  ${JSON.stringify(value)}`);
+              }}
+              />
+              </CardView>
+          ),
+      },
   ];
+
 
   return (
     <div className="">
@@ -412,15 +376,7 @@ const DashboardPage = () => {
       >
         Dashboard
       </Typography> */}
-      <Grid
-        container
-        sx={{
-          flexGrow: 1,
-          height: "100vh",
-        }}
-      >
-        {RenderGrid(userType === "Vendor" ?gridConfig : brokerGridConfig)}
-      </Grid>
+      <DynGrid views={views}/>
     </div>
   );
 };

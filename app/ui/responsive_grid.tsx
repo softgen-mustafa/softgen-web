@@ -14,6 +14,7 @@ import {
   PermissionKeys,
   Permission,
 } from "@/app/components/featurepermission/permission_helper";
+import { useRef } from "react";
 
 interface GridConfig {
   type: string;
@@ -120,5 +121,37 @@ const RenderGrid = (gridItems: GridConfig[]) => {
   });
 };
 
-export { RenderGrid, CardView };
+const Weight = {
+    Metal: 4,
+    High: 3,
+    Medium: 2,
+    Low: 1,
+}
+
+const DynGrid = ({views}: {views: any[]}) => {
+    const minWidth = 360;
+    return (
+    <div className="p-2 w-full flex flex-row flex-wrap gap-4 justify-stretch" >
+    {
+        views.map((entry: any, index: number) => {
+            return (
+                <div className={"flex-grow"} key={index} style={{
+                    minWidth: minWidth,
+                    minHeight: 200,
+                    maxHeight: 600,
+                    flexGrow: entry.weight
+                }}>
+                {
+                    entry.view
+                }
+                </div>
+            )
+        })
+    }
+    </div>
+    );
+};
+
+
+export { RenderGrid, CardView, Weight, DynGrid };
 export type { GridConfig };
