@@ -1,8 +1,8 @@
 const Page = () => {
     return (
-    <div>
-    <h1>Portal</h1>
-    </div>
+        <div>
+            <h2>Auth</h2>
+        </div>
     );
 }
 
