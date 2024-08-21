@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { GridColDef } from "@mui/x-data-grid";
 import { ChevronLeftRounded } from "@mui/icons-material";
 import { postAsync } from "@/app/services/rest_services";
-import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
+import { CardView, GridConfig, DynGrid, Weight, GridDirection } from "@/app/ui/responsive_grid";
 import { numericToString } from "@/app/services/Local/helper";
 import { DataTable } from "@/app/ui/data_grid";
 import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
@@ -127,9 +127,9 @@ const InventoryDetailScreen = () => {
     },
   ];
 
-  const gridConfig: GridConfig[] = [
+  const gridConfig= [
     {
-      type: "item",
+        weight: Weight.High,
       view: (
         <CardView>
           <div className="flex flex-row items-center">
@@ -138,30 +138,27 @@ const InventoryDetailScreen = () => {
             </IconButton>
             <Typography>Go Back</Typography>
           </div>
-          <br />
-          <Typography className="text-xl">{viewType?.toUpperCase()}</Typography>
-          <Typography className="text-2xl md:text-3xl mt-2">
+          <Typography className="mt-4 text-md">{viewType?.toUpperCase()}</Typography>
+          <Typography className="text-xl md:text-2xl mt-2">
             {item?.name}
           </Typography>
           <br />
-          <Typography className="text-xl">Total Items</Typography>
-          <Typography className="text-2xl md:text-3xl mt-2">
+          <Typography className="text-md mt-4">Total Items</Typography>
+          <Typography className="text-xl md:text-2xl mt-2">
             {numericToString(item?.itemCount)}
           </Typography>
 
           <br />
-          <Typography className="text-xl">Closing Value</Typography>
-          <Typography className="text-2xl md:text-3xl mt-2">
+          <Typography className="text-md mt-4">Closing Value</Typography>
+          <Typography className="text-xl md:text-2xl mt-2">
             {item?.currency} {numericToString(item?.amount)}
           </Typography>
         </CardView>
       ),
-      className: "",
-      children: [],
     },
 
     {
-      type: "item",
+        weight: Weight.Medium,
       view: (
         <CardView>
           <DataTable
@@ -183,25 +180,21 @@ const InventoryDetailScreen = () => {
           />
         </CardView>
       ),
-      className: "",
-      children: [],
     },
   ];
 
   return (
-    <Container sx={{ overflowX: "hidden" }}>
-      <Grid container sx={{ flexGrow: 1, height: "100vh" }}>
+    <div>
         {hasPermission === null ? (
           <CircularProgress />
         ) : hasPermission ? (
-          RenderGrid(gridConfig)
+        <DynGrid views={gridConfig} direction={GridDirection.Column} />
         ) : (
           <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
             Get the Premium For this Service Or Contact Admin - 7977662924
           </Typography>
         )}
-      </Grid>
-    </Container>
+    </div>
   );
 };
 
