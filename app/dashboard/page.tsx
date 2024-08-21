@@ -221,16 +221,14 @@ const DashboardPage = () => {
     },
   ];
 
-  const brokerGridConfig: GridConfig[] = [
+  const brokerGridConfig= [
       {
-          type: "item",
+          weight: Weight.Medium,
           view: (
               <CardView title="Montly Overview">
               <BrokerMonthlyOverview />
               </CardView>
           ),
-          className: "",
-          children: [],
       },
   ];
 
@@ -369,7 +367,7 @@ const DashboardPage = () => {
 
   return (
     <div className="">
-      <DynGrid views={views}/>
+      <DynGrid views={userType == "Vendor" ? views: brokerGridConfig}/>
     </div>
   );
 };
