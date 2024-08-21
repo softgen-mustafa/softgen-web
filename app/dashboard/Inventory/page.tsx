@@ -15,7 +15,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import { DropDown } from "@/app/ui/drop_down";
 import { ChevronLeftRounded } from "@mui/icons-material";
 import { postAsync } from "@/app/services/rest_services";
-import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
+import { CardView, GridConfig, DynGrid, Weight } from "@/app/ui/responsive_grid";
 import { numericToString } from "@/app/services/Local/helper";
 import { DataTable } from "@/app/ui/data_grid";
 import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
@@ -216,9 +216,9 @@ const InventoryOverviewScreen = () => {
     },
   ];
 
-  const gridConfig: GridConfig[] = [
+  const gridConfig = [
     {
-      type: "item",
+        weight: Weight.Low,
       view: (
         <CardView
           className="h-fit"
@@ -235,27 +235,20 @@ const InventoryOverviewScreen = () => {
             </IconButton>,
           ]}
         >
-          <Typography className="text-xl flex">Total Amount</Typography>
-          <Typography className="text-2xl md:text-3xl mt-2 flex">
+          <Typography className="mt-4 text-md flex">Total Amount</Typography>
+          <Typography className="text-lg md:text-xl mt-2 flex">
             {details?.currency} {numericToString(details?.totalAmount)}
           </Typography>
           <br />
-          <Typography className="text-xl flex">Total Items,</Typography>
-          <Typography className="text-2xl md:text-3xl mt-2 flex">
+          <Typography className="mt-4 text-md flex">Total Items,</Typography>
+          <Typography className="text-lg md:text-xl mt-2 flex">
             {details?.totalItem}
           </Typography>
         </CardView>
       ),
-      className: "",
-      children: [],
-    },
-    {
-      type: "container",
-      view: null,
-      className: "",
-      children: [
+   },
         {
-          type: "item",
+            weight: Weight.Low,
           view: (
             <CardView title="Filters">
               <br />
@@ -271,7 +264,7 @@ const InventoryOverviewScreen = () => {
                   setRefresh(!refresh);
                 }}
               />
-              <br />
+              <div className="mt-4"/>
               {selectedListType.current.code === "item" && (
                 <>
                   <br />
@@ -289,6 +282,7 @@ const InventoryOverviewScreen = () => {
                   />
                   <br />
                   <br />
+              <div className="mt-4"/>
                   <DropDown
                     label="Select Rate Calculation"
                     displayFieldKey={"label"}
@@ -306,13 +300,9 @@ const InventoryOverviewScreen = () => {
               )}
             </CardView>
           ),
-          className: "",
-          children: [],
         },
-      ],
-    },
     {
-      type: "item",
+        weight: Weight.High,
       view: (
         <CardView title={selectedListType.current.label}>
           <DataTable
@@ -338,26 +328,16 @@ const InventoryOverviewScreen = () => {
           />
         </CardView>
       ),
-      className: "",
-      children: [],
     },
   ];
 
   return (
     // <Container sx={{ overflowX: "hidden" }}>
     <Box>
-      <Grid
-        container
-        className=""
-        sx={{
-          flexGrow: 1,
-          height: "100vh",
-        }}
-      >
         {hasPermission === null ? (
           <CircularProgress />
         ) : hasPermission ? (
-          RenderGrid(gridConfig)
+            <DynGrid views={gridConfig}/>
         ) : (
           <Typography className="text-2xl text-center font-bold flex items-center justify-center flex-1 pl-2 pr-2">
             Check Your Internet Access Or This Feature is not included in your
@@ -365,7 +345,6 @@ const InventoryOverviewScreen = () => {
             feature.
           </Typography>
         )}
-      </Grid>
     </Box>
     // </Container>
   );
