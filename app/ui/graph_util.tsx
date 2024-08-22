@@ -102,7 +102,7 @@ const Bar = (values: any[], title: string) => {
       justifyContent={"center"}
     >
       <BarChart
-        borderRadius={15}
+        borderRadius={20}
         dataset={values}
         xAxis={[
           {
