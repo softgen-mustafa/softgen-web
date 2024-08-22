@@ -1,6 +1,22 @@
+"use client";
 import Image from "next/image";
+import { useEffect} from "react";
+import { useRouter}  from "next/navigation";
+import Cookies from "js-cookie";
 
 export default function Home() {
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = Cookies.get("authToken") ?? null;
+    if (token !== null && token.length > 0) {
+      router.push("/dashboard");
+    } else {
+      router.push("/auth");
+    }
+  }, [router]);
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">

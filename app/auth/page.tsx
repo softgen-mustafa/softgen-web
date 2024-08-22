@@ -20,8 +20,8 @@ const Page = () => {
   const error = useRef("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
   const theme = useTheme();
+  const router = useRouter();
 
   useEffect(() => {
     const token = Cookies.get("authToken") ?? null;
