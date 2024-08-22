@@ -1,13 +1,7 @@
 "use client";
 import {
-    Home,
     Logout,
     Dashboard,
-    MenuRounded,
-    PendingActions,
-    Receipt,
-    Settings,
-    Inventory,
 } from "@mui/icons-material";
 import {
     Box,
@@ -21,9 +15,9 @@ import {
     Typography,
     Modal,
     Button,
-    useTheme,
 } from "@mui/material";
-import React, { Suspense, useEffect, useState, useRef, cache } from "react";
+import { useTheme, Theme } from "@mui/material/styles";
+import React, { Suspense, useMemo, useEffect, useState, useRef, cache } from "react";
 import { inspiredPalette } from "../ui/theme";
 import { useRouter } from "next/navigation";
 import { GridConfig } from "../ui/responsive_grid";
@@ -34,15 +28,19 @@ import {
     getBmrmBaseUrl,
     getUmsBaseUrl,
 } from "../services/rest_services";
-import { DropDown } from "../ui/drop_down";
 import { SnackbarProvider } from "../ui/snack_bar_provider";
 import { DrawerList } from "./drawer";
-import theme from "../ui/mui_theme";
+import { DropDown } from "@/app/ui/drop_down";
+
+import { PaletteMode } from "@mui/material";
+import CssBaseline from "@mui/material/CssBaseline";
+import  {ThemeProvider } from "@mui/material/styles";
+import { getTheme, appThemes } from "../theme";
 
 
 const drawerWidth = 300;
 
-const DrawerContent = () => {
+const DrawerContent = ({onThemeChange}: {onThemeChange: (themeName: any) => void}) => {
     const router = useRouter();
 
     const [openLogoutModal, setOpenLogoutModal] = useState(false);
@@ -142,6 +140,20 @@ const DrawerContent = () => {
         </Typography>
         </Box>
         <DrawerList userType={userType.current} />
+
+        <div className="mx-3 p-2 bg-white rounded-md">
+          <DropDown
+            label={"Change theme"}
+            displayFieldKey={"name"}
+            valueFieldKey={null}
+            selectionValues={appThemes}
+            helperText={""}
+                onSelection={(selection) => {
+                    onThemeChange(selection.theme);
+                }}
+            />
+        </div>
+
         <ButtonBase
         className="w-11/12 m-3 mb-3 rounded-md flex flex-row align-middle justify-center bg-white"
         onClick={() => {
@@ -150,17 +162,19 @@ const DrawerContent = () => {
         >
         <ListItem>
         <ListItemIcon>
-        <Logout style={{ color: inspiredPalette.darker }} />
-        </ListItemIcon>
-        <ListItemText color={inspiredPalette.darker} primary={"Logout"} />
-        </ListItem>
+            <Logout style={{ color: inspiredPalette.darker }} />
+            </ListItemIcon>
+            <ListItemText color={inspiredPalette.darker} primary={"Logout"} />
+            </ListItem>
         </ButtonBase>
         </div>
     );
 };
 
-const SideNav = () => {
+const SideNav = ({onThemeChange}: {onThemeChange: (themeName: any) => void}) => {
     const [mobileOpen, setMobileOpen] = useState(false);
+
+    const theme = useTheme();
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -169,7 +183,6 @@ const SideNav = () => {
     return (
         <div
         style={{
-            background: "#303f9f",
         }}
         >
         <div
@@ -201,14 +214,14 @@ const SideNav = () => {
                 "& .MuiDrawer-paper": {
                     boxSizing: "border-box",
                     width: drawerWidth,
-                    background: "#303f9f",
+                    background: theme.palette.primary.main
                 },
             }}
             >
-            <DrawerContent />
-            </Drawer>
-            </Box>
-            </div>
+            <DrawerContent onThemeChange={onThemeChange}/>
+        </Drawer>
+        </Box>
+        </div>
     );
 };
 
@@ -218,19 +231,32 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }>) {
 
+    const [palette, changePalette]= useState<any>(appThemes[0].theme);
+    const theme = useMemo(() => {
+        return getTheme(palette)
+    }, [palette]) 
+
+    const changeTheme = (themeName: Theme) =>  {
+        changePalette(themeName);
+    }
+
+
     return (
-        <SnackbarProvider>
-        <div
-        className="w-full h-[100vh] flex flex-col md:flex-row "
-        style={{ background: "rgb(247, 249, 252)" }}
-        >
-        <SideNav />
-        <Suspense fallback={<Loading />}>
-        <Box component={"div"} className="ml-1 w-full overflow-x-hidden mt-12">
-        <div className="w-full h-full overflow-x-hidden ">{children}</div>
-        </Box>
-        </Suspense>
-        </div>
-        </SnackbarProvider>
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <SnackbarProvider>
+                <div
+                    className="w-full h-[100vh] flex flex-col md:flex-row "
+                    style={{ background: "rgb(247, 249, 252)" }}
+                    >
+                    <SideNav onThemeChange={changeTheme}/>
+                    <Suspense fallback={<Loading />}>
+                        <Box component={"div"} className="ml-1 w-full overflow-x-hidden mt-12">
+                            <div className="w-full h-full overflow-x-hidden ">{children}</div>
+                        </Box>
+                    </Suspense>
+                </div>
+            </SnackbarProvider>
+        </ThemeProvider>
     );
 }

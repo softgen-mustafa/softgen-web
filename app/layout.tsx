@@ -20,7 +20,7 @@ export default function RootLayout({
       <body
         className={`w-full pr-2 bg-gray-100 ${inter.className} overflow-x-hidden`}
       >
-        <ThemeProvider theme={theme}>{children}</ThemeProvider>
+      {children}
       </body>
     </html>
   );
