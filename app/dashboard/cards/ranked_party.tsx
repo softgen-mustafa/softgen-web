@@ -7,7 +7,7 @@ import { CircularProgress } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useRef, useState } from "react";
 
-const RankedPartyOutstandingCard = ({ billType }: { billType: string }) => {
+const RankedPartyOutstandingCard = ({ billType, companyId }: { billType: string, companyId: string }) => {
   let rank = useRef(5);
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);

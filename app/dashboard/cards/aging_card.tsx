@@ -59,9 +59,11 @@ const AgingCard: React.FC<AgingCardProps> = ({ data, onPress }) => {
 const AgingView = ({
   billType,
   title,
+  companyId
 }: {
   billType: string;
   title: string;
+    companyId: string;
 }) => {
   const router = useRouter();
   const [data, setData] = useState<AgingData[]>([]);
@@ -70,7 +72,7 @@ const AgingView = ({
 
   useEffect(() => {
     checkPermissionAndLoadData();
-  }, [billType]);
+  }, [billType, companyId]);
 
   const checkPermissionAndLoadData = async () => {
     // const permission = await FeatureControl("AgingOutstandingCard");

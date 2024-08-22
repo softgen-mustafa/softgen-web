@@ -19,7 +19,10 @@ import { AgingView } from "./cards/aging_card";
 import { DataTable } from "@/app/ui/data_grid";
 import { SingleChartView } from "@/app/ui/graph_util";
 
-const BrokerMonthlyOverview = () => {
+const BrokerMonthlyOverview = ({companyId} : { companyId: string}) => {
+
+    useEffect(() => {
+    }, [companyId]);
 
     const columns: GridColDef<any[number]>[] = [
         {
@@ -232,7 +235,9 @@ const DashboardPage = () => {
           weight: Weight.Medium,
           view: (
               <CardView title="Montly Overview">
-              <BrokerMonthlyOverview />
+              <BrokerMonthlyOverview
+                  companyId={data[cachedCompanyIndex]}
+              />
               </CardView>
           ),
       },
@@ -253,9 +258,17 @@ const DashboardPage = () => {
                 defaultSelectionIndex={cachedCompanyIndex}
                 onSelection={(selection) => {
                   const companyId = selection.id;
-                  Cookies.set("companyId", companyId);
+                  let exisitngIndex = data.findIndex(
+                      (entry: any) => entry.id === companyId
+                  );
+                  if (exisitngIndex != -1) {
+                      setCompanyId(exisitngIndex);
+                      Cookies.set("companyId", companyId);
+                  }
                 }}
-              />
+                />
+
+                  setCompanyId();
             </CardView>
               <CardView className="mt-2 bg-red-500" permissionCode="CustomerCard">
               <CustomerDetailsCard companyId={data[cachedCompanyIndex]} />
@@ -280,6 +293,7 @@ const DashboardPage = () => {
               <CardView title={"Aging Wise"} permissionCode="AgingOutstandingCard">
               <AgingView
               billType={selectedType.current.code}
+              companyId={data[cachedCompanyIndex]}
               title="Aging-Wise O/S"
               />
               </CardView>
@@ -298,6 +312,7 @@ const DashboardPage = () => {
           view: (
               <CardView title="Ranked Parties">
               <RankedPartyOutstandingCard
+              companyId={data[cachedCompanyIndex]}
               billType={selectedType.current.code}
               />
               </CardView>
