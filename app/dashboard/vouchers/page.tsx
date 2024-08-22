@@ -343,11 +343,11 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
   const [refresh, triggerRefresh] = useState(false);
   return (
     <div className="flex flex-col">
-      {loading && (
+      {/* {loading && (
         <div className="flex justify-center">
           <CircularProgress />
         </div>
-      )}
+      )} */}
       <DataTable
         columns={columns}
         refresh={refresh}
@@ -364,6 +364,9 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
           <div className=" mb-3">
             <Button
               variant="contained"
+              sx={{
+                textTransform: "capitalize",
+              }}
               onClick={() => {
                 sortBy.current = sortBy.current == "asc" ? "desc" : "asc";
                 triggerRefresh(!refresh);
@@ -381,6 +384,7 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
 const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [refresh, triggerRefresh] = useState(false);
   // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   const { showSnackbar } = useSnackbar();
@@ -397,6 +401,23 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
   // useEffect(() => {
   //   loadData();
   // }, [voucherType]);
+
+  let sortBy = useRef("asc");
+
+  let months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
 
   const columns: GridColDef[] = [
     {
@@ -432,16 +453,28 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
       setLoading(true);
       let url = `${getBmrmBaseUrl()}/meta-voucher/monthly/customer/overview?voucherType=${voucherType}`;
       let response = await postAsync(url, {});
-      setData(
-        response.map((entry: any, index: number) => {
-          return {
-            id: index + 1,
-            partyName: entry.partyName,
-            monthStr: entry.monthStr,
-            preGstAmount: `\u20B9 ${numericToString(entry.preGstAmount)}`,
-          };
-        })
-      );
+      let values = response.map((entry: any, index: number) => {
+        return {
+          id: index + 1,
+          partyName: entry.partyName,
+          monthStr: entry.monthStr,
+          monthNumber: months.indexOf(entry.monthStr.substring(0, 3)),
+          year: entry.monthStr.substring(4),
+          preGstAmount: `\u20B9 ${numericToString(entry.preGstAmount)}`,
+        };
+      });
+
+      let sortedValues = values.sort((a: any, b: any) => {
+        if (a.year !== b.year) {
+          return sortBy.current === "asc" ? a.year - b.year : b.year - a.year; // Sort by Year
+        } else {
+          return sortBy.current === "asc"
+            ? a.monthNumber - b.monthNumber
+            : b.monthNumber - a.monthNumber; // If years are equal, sort by MonthNumber
+        }
+      });
+
+      return sortedValues;
     } catch {
       showSnackbar("Could not load Monthly Party Sales");
     } finally {
@@ -462,25 +495,39 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
   // }
   return (
     <div className="flex flex-col">
-      {loading && (
+      {/* {loading && (
         <div className="flex justify-center">
           <CircularProgress />
         </div>
-      )}
-      <DataGrid
+      )} */}
+      <DataTable
         columns={columns}
-        rows={data}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 5,
-            },
-          },
+        refresh={refresh}
+        onApi={async (page, pageSize, searchText) => {
+          return await loadData();
         }}
-        onRowClick={(params) => {}}
-        pageSizeOptions={[5, 10, 25, 50, 75, 100]}
-        disableRowSelectionOnClick
-        onPaginationModelChange={(value) => {}}
+        onRowClick={(params) => {
+          const row = params.row;
+        }}
+        useSearch={false}
+        useServerPagination={false}
+        useCustomSorting={true}
+        SortingView={() => (
+          <div className=" mb-3">
+            <Button
+              variant="contained"
+              sx={{
+                textTransform: "capitalize",
+              }}
+              onClick={() => {
+                sortBy.current = sortBy.current == "asc" ? "desc" : "asc";
+                triggerRefresh(!refresh);
+              }}
+            >
+              Sort Month By {sortBy.current == "asc" ? "desc" : "asc"}
+            </Button>
+          </div>
+        )}
       />
     </div>
   );
@@ -639,6 +686,7 @@ const Page = () => {
             onSelection={(selection) => {
               setVoucherType(selection.name);
             }}
+            useSearch={true}
           />
           <br />
           <Typography>Monthly Review</Typography>
