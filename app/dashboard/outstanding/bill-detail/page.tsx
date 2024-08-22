@@ -2,7 +2,7 @@
 import { numericToString } from "@/app/services/Local/helper";
 import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
 import { DataTable } from "@/app/ui/data_grid";
-import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
+import { CardView, DynGrid, GridDirection, RenderGrid, Weight } from "@/app/ui/responsive_grid";
 import { ChevronLeftRounded } from "@mui/icons-material";
 import {
   Grid,
@@ -19,38 +19,19 @@ import { FeatureControl } from "@/app/components/featurepermission/permission_he
 
 const Page = ({}) => {
   let partyName = useRef("");
-  let filterValue = useRef("");
-  let viewType = useRef("");
-  let billType = useRef("");
-  let filterType = useRef("");
+  let amount = useRef("");
+  let groupType = useRef("");
+  let agingCode = useRef("");
 
   const router = useRouter();
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   useEffect(() => {
-    checkPermissionAndInitialize();
+      partyName.current = localStorage.getItem("os_partyName") || "";
+      amount.current = localStorage.getItem("os_amount") || "";
+      groupType.current = localStorage.getItem("os_groupType") || "";
+      agingCode.current = localStorage.getItem("os_agingCode") || "";
   }, []);
 
-  const checkPermissionAndInitialize = async () => {
-    const permission = await FeatureControl("PartyBillDetailScreen");
-    setHasPermission(permission);
-    if (permission) {
-      partyName.current = localStorage.getItem("bill_party_name") || "";
-      filterValue.current = localStorage.getItem("party_filter_value") || "";
-      viewType.current = localStorage.getItem("party_view_type") || "";
-      billType.current = localStorage.getItem("party_bill_type") || "";
-      filterType.current = localStorage.getItem("party_filter_type") || "";
-      onApi(1, 10);
-    }
-  };
-  // useEffect(() => {
-  //   partyName.current = localStorage.getItem("bill_party_name") || "";
-  //   filterValue.current = localStorage.getItem("party_filter_value") || "";
-  //   viewType.current = localStorage.getItem("party_view_type") || "";
-  //   billType.current = localStorage.getItem("party_bill_type") || "";
-  //   filterType.current = localStorage.getItem("party_filter_type") || "";
-  //   onApi(1, 10);
-  // }, []);
 
   const [rows, setRows] = useState([]);
 
@@ -96,9 +77,9 @@ const Page = ({}) => {
     },
   ];
 
-  const gridConfig: GridConfig[] = [
+  const gridConfig= [
     {
-      type: "item",
+        weight: Weight.Low,
       view: (
         <CardView
           className="h-fit max-h-fit"
@@ -115,10 +96,11 @@ const Page = ({}) => {
             </IconButton>,
           ]}
         >
-          <Typography className="text-lg">Party Name,</Typography>
-          <Typography className="text-2xl">{partyName.current}</Typography>
-          <br />
-          <Container className="overflow-x-auto flex">
+          <Typography className="text-md">Party Name,</Typography>
+          <Typography className="text-xl mt-2">{partyName.current}</Typography>
+          <Typography className="text-md">Amount,</Typography>
+          <Typography className="text-xl mt-2">{amount.current}</Typography>
+          <Container className="overflow-x-auto flex mt-4">
             <PieChart
               width={300}
               height={300}
@@ -162,11 +144,9 @@ const Page = ({}) => {
           </Container>
         </CardView>
       ),
-      className: "",
-      children: [],
     },
     {
-      type: "item",
+        weight: Weight.High,
       view: (
         <CardView title="Bills">
           <DataTable
@@ -183,8 +163,6 @@ const Page = ({}) => {
           />
         </CardView>
       ),
-      className: "",
-      children: [],
     },
   ];
 
@@ -194,44 +172,27 @@ const Page = ({}) => {
     searchValue?: string
   ) => {
     let party = partyName.current.replace("&", "%26");
-    let collectionUrl = `${getBmrmBaseUrl()}/bill/get/upcoming-bill-detail`;
     let agingUrl = `${getBmrmBaseUrl()}/bill/get/aging-bill-detail?agingCode=${
-      filterValue.current
-    }&groupType=${billType.current}&partyName=${party}`;
+      agingCode.current
+    }&groupType=${groupType.current}&partyName=${party}`;
     let totalOutstandingUrl = `${getBmrmBaseUrl()}/bill/get/party-bill-detail?groupType=${
-      billType.current
+      groupType.current
     }&partyName=${party}`;
 
+
     let url = totalOutstandingUrl;
-    if (viewType.current === "upcoming") {
-      url = collectionUrl;
-    } else if (viewType.current === "aging") {
+    if (agingCode.current !== null && agingCode.current !== "all") {
       url = agingUrl;
     }
+
     let requestBody = {};
-    if (viewType.current === "upcoming") {
-      requestBody = {
-        groupType: billType.current,
-        durationType: filterType.current,
-        durationKey: filterValue.current,
-        partyName: partyName.current,
-        filter: {
-          page_number: page,
-          page_size: pageSize,
-          search_text: searchValue ?? "",
-          sort_by: "billNumber",
-          sort_order: "asc",
-        },
-      };
-    } else {
       requestBody = {
         page_number: page,
         page_size: pageSize,
         search_text: searchValue ?? "",
         sort_by: "billNumber",
-        sort_order: "",
+        sort_order: "asc",
       };
-    }
     try {
       let response = await postAsync(url, requestBody);
       let entries = response.map((entry: any, index: number) => {
@@ -252,31 +213,11 @@ const Page = ({}) => {
       );
       return entries;
     } catch {}
-    //  console.log(`requestBody Party bill Detail : ${JSON.stringify(entries,  0 , index =2 )}`)
   };
 
   return (
     <div className="w-full" style={{}}>
-      <Grid
-        container
-        className="bg-gray-200"
-        sx={{
-          flexGrow: 1,
-          height: "100vh",
-        }}
-      >
-        {hasPermission === null ? (
-          <CircularProgress />
-        ) : hasPermission ? (
-          RenderGrid(gridConfig)
-        ) : (
-          <Typography className="text-2xl text-center font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-            Check Your Internet Access Or This Feature is not included in your
-            Subscription package. Kindly get the Premium package to utilize this
-            feature.
-          </Typography>
-        )}
-      </Grid>
+    <DynGrid views={gridConfig} direction={GridDirection.Column}/>
     </div>
   );
 };

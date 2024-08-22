@@ -1,6 +1,6 @@
 "use client";
 import { numericToString } from "@/app/services/Local/helper";
-import { getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
+import { getAsync, getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
 import { DataTable } from "@/app/ui/data_grid";
 import { CardView, GridConfig, DynGrid, Weight, GridDirection } from "@/app/ui/responsive_grid";
 import { SearchInput } from "@/app/ui/text_inputs";
@@ -18,50 +18,54 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 import OutstandingOverview from "./party-search/outstanding_overview";
+import { DropDown } from "@/app/ui/drop_down";
 
 const Page = () => {
   const router = useRouter();
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
-  let filterValue = useRef("");
-  let viewType = useRef("");
-  let billType = useRef("");
-  let filterType = useRef("");
+  const [types, updateTypes] = useState([
+    { id: 1, label: "Receivable", code: "receivable" },
+    { id: 2, label: "Payable", code: "payable" },
+  ]);
+  const [agingData, setAgingData] = useState([]);
+  let selectedAging = useRef("all");
+  let selectedGroup = useRef(types[0].code);
 
   const [refresh, triggerRefresh] = useState(false);
   const [rows, setRows] = useState([]);
 
-  useEffect(() => {
-    checkPermissionAndInitialize();
-  }, []);
+  const loadAgingData = async () => {
+    try {
+      let url = `${getBmrmBaseUrl()}/aging-settings`;
+      let response = await getAsync(url);
 
-  const checkPermissionAndInitialize = async () => {
-    const permission = await FeatureControl("PartySearchScreen");
-    setHasPermission(permission);
-    if (permission) {
-      filterValue.current = localStorage.getItem("party_filter_value") || "";
-      viewType.current = localStorage.getItem("party_view_type") || "";
-      billType.current = localStorage.getItem("party_bill_type") || "";
-      filterType.current = localStorage.getItem("party_filter_type") || "";
-      triggerRefresh(!refresh);
+      if (response && response.length > 0) {
+        let values: any = [{ title: "All", code: "all" }];
+        response.map((_data: any) => {
+          values.push({
+            title: _data.title,
+            code: _data.agingCode,
+          });
+        });
+        setAgingData(values);
+      }
+    } catch (error) {
+      console.log("Something went wrong...");
     }
   };
 
-  // useEffect(() => {
-  //   filterValue.current = localStorage.getItem("party_filter_value") || "";
-  //   viewType.current = localStorage.getItem("party_view_type") || "";
-  //   billType.current = localStorage.getItem("party_bill_type") || "";
-  //   filterType.current = localStorage.getItem("party_filter_type") || "";
-  //   triggerRefresh(!refresh);
-  // }, []);
+  useEffect(() => {
+      loadAgingData();
+  }, []);
+
 
   const onApi = async (
     page: number,
     pageSize: number,
     searchValue?: string
   ) => {
-    let groupType = localStorage.getItem("os_bill_type");
-    let agingType = localStorage.getItem("os_aging_type");
+    let groupType = selectedGroup.current;
+    let agingType = selectedAging.current;
 
     let agingUrl = `${getBmrmBaseUrl()}/bill/get/aging-bills?agingCode=${agingType}&groupType=${groupType}`;
     let totalOutstandingUrl = `${getBmrmBaseUrl()}/bill/get/all-party-bills?groupType=${groupType}`;
@@ -130,15 +134,33 @@ const Page = () => {
   const gridConfig= [
     {
         weight: Weight.Low,
-          view: (
+        view: (
             <CardView title="Outstanding Overview">
-              <OutstandingOverview
-                onChange={() => {
-                  triggerRefresh(!refresh);
-                }}
-              />
+            <DropDown
+            label="Select Type"
+            displayFieldKey={"label"}
+            valueFieldKey={null}
+            selectionValues={types}
+            helperText={""}
+            onSelection={(selection) => {
+                selectedGroup.current = selection.code;
+              triggerRefresh(!refresh);
+            }}
+            />
+            <div className="mt-4"/>
+            <DropDown
+            label={"Aging Code"}
+            displayFieldKey={"title"}
+            valueFieldKey={null}
+            selectionValues={agingData}
+            helperText={""}
+            onSelection={(_data) => {
+                selectedAging.current = _data?.code;
+              triggerRefresh(!refresh);
+            }}
+            />
             </CardView>
-          ),
+        )
     },
     {
         weight: Weight.High,
@@ -152,17 +174,10 @@ const Page = () => {
               return await onApi(page, pageSize, searchText);
             }}
             onRowClick={(params) => {
-              localStorage.setItem(
-                "party_filter_value",
-                filterValue.current || ""
-              );
-              localStorage.setItem("party_view_type", viewType.current || "");
-              localStorage.setItem("party_bill_type", billType.current || "");
-              localStorage.setItem(
-                "party_filter_type",
-                filterType.current || ""
-              );
-              localStorage.setItem("bill_party_name", params.row.partyName);
+              localStorage.setItem("os_partyName", params.row.partyName);
+              localStorage.setItem("os_amount", params.row.amount);
+              localStorage.setItem("os_groupType", selectedGroup.current);
+              localStorage.setItem("os_agingCode", selectedAging.current);
               router.push("/dashboard/outstanding/bill-detail");
             }}
           />
@@ -173,17 +188,7 @@ const Page = () => {
 
   return (
     <div className="w-full" style={{}}>
-        {hasPermission === null ? (
-          <CircularProgress />
-        ) : hasPermission ? (
-            <DynGrid views={gridConfig} direction={GridDirection.Column}/>
-        ) : (
-          <Typography className="text-2xl text-center font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-            Check Your Internet Access Or This Feature is not included in your
-            Subscription package. Kindly get the Premium package to utilize this
-            feature.
-          </Typography>
-        )}
+        <DynGrid views={gridConfig} direction={GridDirection.Column}/>
     </div>
   );
 };

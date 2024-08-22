@@ -40,15 +40,6 @@ const OutstandingOverview = ({ onChange }: { onChange: () => void }) => {
     }
   };
 
-  const onApi = async () => {
-    let agingUrl = `${getBmrmBaseUrl()}/bill/get/aging-bills?agingCode=${
-      selectedAging.current
-    }&groupType=${selectedType.current}`;
-    let totalOutstandingUrl = `${getBmrmBaseUrl()}/bill/get/all-party-bills?groupType=${
-      selectedType.current
-    }`;
-  };
-
   return (
     <Stack flexDirection="column" gap={1.8}>
       <DropDown
