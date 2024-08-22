@@ -5,50 +5,55 @@ import { DropDown } from "./drop_down";
 import { Box, Chip, Stack, Typography } from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 
-const graphColors: string[]= [
-    '#a6cee3',
-    '#1f78b4',
-    '#b2df8a',
-    '#33a02c',
-    '#fb9a99',
-    '#e31a1c',
-    '#fdbf6f',
-    '#ff7f00',
-    '#cab2d6',
-    '#6a3d9a',
-    '#ffff99',
-    '#b15928',
-     '#fbb4ae',
-    '#b3cde3',
-    '#ccebc5',
-    '#decbe4',
-    '#fed9a6',
-    '#ffffcc',
-    '#e5d8bd',
-    '#fddaec',
-    '#f2f2f2',
-    '#b3e2cd',
-    '#fdcdac',
-    '#cbd5e8',
-    '#f4cae4',
-    '#e6f5c9',
-    '#fff2ae',
-    '#f1e2cc',
-    '#cccccc',
-       '#e41a1c',
-    '#377eb8',
-    '#4daf4a',
-    '#984ea3',
-    '#ff7f00',
-    '#ffff33',
-    '#a65628',
-    '#f781bf',
-    '#999999',
-  ];
+const graphColors: string[] = [
+  "#a6cee3",
+  "#1f78b4",
+  "#b2df8a",
+  "#33a02c",
+  "#fb9a99",
+  "#e31a1c",
+  "#fdbf6f",
+  "#ff7f00",
+  "#cab2d6",
+  "#6a3d9a",
+  "#ffff99",
+  "#b15928",
+  "#fbb4ae",
+  "#b3cde3",
+  "#ccebc5",
+  "#decbe4",
+  "#fed9a6",
+  "#ffffcc",
+  "#e5d8bd",
+  "#fddaec",
+  "#f2f2f2",
+  "#b3e2cd",
+  "#fdcdac",
+  "#cbd5e8",
+  "#f4cae4",
+  "#e6f5c9",
+  "#fff2ae",
+  "#f1e2cc",
+  "#cccccc",
+  "#e41a1c",
+  "#377eb8",
+  "#4daf4a",
+  "#984ea3",
+  "#ff7f00",
+  "#ffff33",
+  "#a65628",
+  "#f781bf",
+  "#999999",
+];
 
 const Pie = (values: any[], title: string) => {
   return (
-    <Box position="relative">
+    <Box
+      display={"flex"}
+      flexDirection={"row"}
+      alignItems={"center"}
+      justifyContent={"center"}
+    >
       <PieChart
         width={360}
         height={300}
@@ -90,20 +95,26 @@ const Pie = (values: any[], title: string) => {
 
 const Bar = (values: any[], title: string) => {
   return (
-    <Box component="div" className={`flex w-full`}>
+    <Box
+      display={"flex"}
+      flexDirection={"row"}
+      alignItems={"center"}
+      justifyContent={"center"}
+    >
       <BarChart
-      borderRadius={24}
+        borderRadius={15}
         dataset={values}
-        xAxis={[{ 
-            scaleType: "band", 
-            dataKey: "label" ,
+        xAxis={[
+          {
+            scaleType: "band",
+            dataKey: "label",
             colorMap: {
-                type: "ordinal",
-                colors: graphColors
+              type: "ordinal",
+              colors: graphColors,
             },
-
-        }]}
-        series={[{ dataKey: "value",  }]}
+          },
+        ]}
+        series={[{ dataKey: "value" }]}
         width={360}
         height={350}
       />
@@ -113,20 +124,30 @@ const Bar = (values: any[], title: string) => {
 
 const HorizontalBar = (values: any[], title: string) => {
   return (
-    <Box>
+    <Box
+      display={"flex"}
+      flexDirection={"row"}
+      alignItems={"center"}
+      justifyContent={"center"}
+    >
       <BarChart
         dataset={values}
-        yAxis={[{ scaleType: "band", dataKey: "label",
+        yAxis={[
+          {
+            scaleType: "band",
+            dataKey: "label",
             colorMap: {
-                type: "ordinal",
-                colors: graphColors
-            }
-        }]}
+              type: "ordinal",
+              colors: graphColors,
+            },
+          },
+        ]}
         series={[{ dataKey: "value" }]}
         layout="horizontal"
         grid={{ vertical: true }}
         width={360}
         height={350}
+        borderRadius={15}
       />
     </Box>
   );
@@ -151,7 +172,7 @@ const SingleChartView = ({
   const renderChart = () => {
     if (chartType == "bar") {
       return Bar(values, title);
-    } 
+    }
     if (chartType == "hbar") {
       return HorizontalBar(values, title);
     }
@@ -165,12 +186,11 @@ const SingleChartView = ({
   return (
     <div className="overflow-x-auto">
       <Box my={2}>
-      {renderChart()}
+        {renderChart()}
         <Typography className="font-medium text-sm text-center mb-1">
           Select Chart
         </Typography>
-        <Stack flexDirection="row" justifyContent={"center"}
-        gap={1}>
+        <Stack flexDirection="row" justifyContent={"center"} gap={1}>
           {charts.map((_chart) => (
             <Chip
               key={_chart.id}

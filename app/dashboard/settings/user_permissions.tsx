@@ -191,6 +191,7 @@ const UserPermissions = () => {
             selectedUser.current = _data?.id;
             triggerRefresh(!refresh);
           }}
+          useSearch={true}
         />
         <Box sx={{ width: "20%" }}>
           <DropDown
