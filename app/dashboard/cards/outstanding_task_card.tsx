@@ -34,6 +34,10 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
   const [hasPermission, setHasPermission] = useState(false);
   const [refresh, triggerRefresh] = useState(false);
 
+  useEffect(() => {
+      triggerRefresh(!refresh);
+  },[companyId])
+
   const columns: GridColDef[] = [
     {
       field: "partyName",

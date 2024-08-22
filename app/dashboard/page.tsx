@@ -268,7 +268,6 @@ const DashboardPage = () => {
                 }}
                 />
 
-                  setCompanyId();
             </CardView>
               <CardView className="mt-2 bg-red-500" permissionCode="CustomerCard">
               <CustomerDetailsCard companyId={data[cachedCompanyIndex]} />
