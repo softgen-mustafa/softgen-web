@@ -1,9 +1,15 @@
 "use client";
 
-import { Box, CircularProgress, Container, Typography } from "@mui/material";
+import { Box, Checkbox, IconButton, Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import React, { useEffect, useState } from "react";
+import React, { useEffect,useRef, useState } from "react";
 import { SearchInput } from "./text_inputs";
+import { useTheme} from "@mui/material/styles";
+import { inspiredPalette } from "./theme";
+
+import { 
+    FilterAlt
+} from "@mui/icons-material";
 
 interface TableViewProps {
   columns: GridColDef<any>[];
@@ -37,8 +43,19 @@ const DataTable: React.FC<TableViewProps> = ({
   });
   const [loading, setLoading] = useState(false);
 
+  const [openFilter, toggleFilter] = useState(false);
+
+  const [filterColumns, setFilterColumns] = useState(columns ?? []);
+  let columnVisibility = useRef<any>({});
+
+  const theme = useTheme();
+
   useEffect(() => {
     setLoading(true);
+    columns.map((entry: any) => {
+        columnVisibility.current[entry.headerName] = true;
+    });
+    setFilterColumns(columns);
     onApi(paginationModel.page + 1, paginationModel.pageSize).then(
       (entries) => {
         setRows(entries);
@@ -47,13 +64,11 @@ const DataTable: React.FC<TableViewProps> = ({
     );
   }, [refresh]);
 
+  useEffect(() => {
+  }, [columnVisibility])
+
   return (
     <Box className="h-fit">
-      {loading && (
-        <div className="flex justify-center">
-          <CircularProgress />
-        </div>
-      )}
       {useSearch && (
         <div className="w-full flex flex-row justify-end mb-4">
           <SearchInput
@@ -72,50 +87,151 @@ const DataTable: React.FC<TableViewProps> = ({
           />
         </div>
       )}
+
+
       {useCustomSorting && SortingView && <SortingView />}
-      <DataGrid
-        columns={columns}
-        rows={!rows ? [] : rows}
-        // className="h-fit max-h-fit"
-        rowCount={useServerPagination ? 10000 : rows?.length}
-        pagination
-        paginationMode={useServerPagination ? "server" : "client"}
-        paginationModel={paginationModel}
-        disableColumnSelector={useCustomSorting}
-        disableColumnMenu={useCustomSorting}
-        initialState={{
-          pagination: {
-            paginationModel: paginationModel,
-          },
-        }}
-        pageSizeOptions={[10, 25, 50, 75, 100]}
-        onRowClick={(params) => {
-          onRowClick(params);
-        }}
-        loading={loading}
-        onPaginationModelChange={(value) => {
-          setPaginationModel(value);
-          setLoading(true);
-          if (useServerPagination) {
-            onApi(value.page + 1, value.pageSize).then((entries) => {
-              setRows(entries);
-              setLoading(false);
-            });
-          } else {
-            setLoading(false);
-          }
-        }}
-        sx={{
-          height: "100%",
-          width: "100%",
-          "& .MuiDataGrid-cell": {
-            wordBreak: "break-word",
-          },
-        }}
-        slots={{
-          noRowsOverlay: () => <Typography>No result found</Typography>,
-        }}
-      />
+
+      <div className="w-full flex justify-between">
+
+        <div style={{
+            marginRight: 8,
+            display: "flex",
+            flexDirection: "column",
+        }}>
+            <Box style={{
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    borderColor: inspiredPalette.lightTextGrey,
+            }}>
+                <IconButton 
+                    className="w-full justify-between"
+                    onClick={() => {
+                        toggleFilter(!openFilter);
+                    }}>
+                    {
+                        openFilter
+                        &&
+                        <Typography>
+                            Filter
+                        </Typography>
+                    }
+                    <FilterAlt />
+                </IconButton>
+            </Box>
+
+            {
+                openFilter
+                &&
+                <Box className="w-auto h-full"
+                style={{
+                    minWidth: 200,
+                    fontSize: 14,
+                    borderWidth: 1,
+                    borderRadius: 2,
+                    borderColor: inspiredPalette.lightTextGrey,
+                }}>
+                {
+                    filterColumns.map((entry: any, index: number) => {
+                        return (
+                            <Box key={index} className="flex flex-row justify-start items-center px-2">
+                                <Checkbox checked={!entry.hidable} defaultChecked={!entry.hidable}
+                                    onChange={() => {
+                                        try {
+                                            setLoading(true);
+                                            let values = filterColumns.map((column: any) => {
+                                                let value = column;
+                                                if (entry.headerName == value.headerName) {
+                                                    value.hidable = !column.hidable;
+                                                    value.hide = !column.hide;
+                                                }
+                                                return value;
+                                            });
+                                            setFilterColumns(values);
+                                            columnVisibility.current[entry.headerName] = !columnVisibility.current[entry.headerName];
+                                        } catch {
+
+                                        } finally {
+                                            setLoading(false);
+                                        }
+                                    }}
+                                />
+                                <Typography>{entry.headerName}</Typography>
+                            </Box>
+                        );
+                    })
+                }
+                </Box>
+            }
+        </div>
+          <DataGrid
+            columns={filterColumns}
+            rows={!rows ? [] : rows}
+            autoHeight={true}
+            rowCount={useServerPagination ? 10000 : rows?.length}
+            pagination
+            paginationMode={useServerPagination ? "server" : "client"}
+            paginationModel={paginationModel}
+            disableColumnSelector={useCustomSorting}
+            disableColumnMenu={useCustomSorting}
+            initialState={{
+              pagination: {
+                paginationModel: paginationModel,
+              },
+              columns: {
+                  columnVisibilityModel: columnVisibility.current ?? {}
+              }
+            }}
+            pageSizeOptions={[10, 25, 50, 75, 100]}
+            onRowClick={(params) => {
+              onRowClick(params);
+            }}
+            loading={loading}
+            onPaginationModelChange={(value) => {
+              setPaginationModel(value);
+              setLoading(true);
+              if (useServerPagination) {
+                onApi(value.page + 1, value.pageSize).then((entries) => {
+                  setRows(entries);
+                  setLoading(false);
+                });
+              } else {
+                setLoading(false);
+              }
+            }}
+            columnHeaderHeight={40}
+            sx={{
+                borderRadius: 2,
+                overflow: 'hidden',
+                fontSize: 14,
+                  width: "100%",
+
+                  '& .MuiDataGrid-main': {
+                      borderRadius: 2,
+                  },
+                  "& .MuiDataGrid-cell": {
+                    wordBreak: "break-word",
+                  },
+                  "& .MuiDataGrid-columnHeaders": {
+                      borderTopLeftRadius: 8,
+                      borderTopRightRadius: 8,
+                      borderBottomWidth: 2,
+                      borderBottomColor: theme.palette.primary.main
+                  },
+                  "& .MuiDataGrid-columnHeaderTitle": {
+                      textTransform: "uppercase",
+                      fontSize: 14,
+                      fontWeight: "bold",
+                      color: inspiredPalette.dark,
+                  }
+            }}
+            columnVisibilityModel={columnVisibility.current}
+            slots={{
+              noRowsOverlay: () => <Typography>No result found</Typography>,
+            }}
+          />
+
+      </div>
+
     </Box>
   );
 };
