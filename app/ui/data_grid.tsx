@@ -16,6 +16,8 @@ interface TableViewProps {
   ) => Promise<any[]>;
   onRowClick: (params: any) => void;
   useSearch?: boolean;
+  useCustomSorting?: boolean;
+  SortingView?: React.FC | null;
 }
 
 const DataTable: React.FC<TableViewProps> = ({
@@ -25,6 +27,8 @@ const DataTable: React.FC<TableViewProps> = ({
   onRowClick,
   useSearch,
   useServerPagination = true,
+  useCustomSorting = false,
+  SortingView = null,
 }) => {
   const [rows, setRows] = useState<any[]>([]);
   const [paginationModel, setPaginationModel] = useState({
@@ -68,6 +72,7 @@ const DataTable: React.FC<TableViewProps> = ({
           />
         </div>
       )}
+      {useCustomSorting && SortingView && <SortingView />}
       <DataGrid
         columns={columns}
         rows={!rows ? [] : rows}
@@ -76,6 +81,8 @@ const DataTable: React.FC<TableViewProps> = ({
         pagination
         paginationMode={useServerPagination ? "server" : "client"}
         paginationModel={paginationModel}
+        disableColumnSelector={useCustomSorting}
+        disableColumnMenu={useCustomSorting}
         initialState={{
           pagination: {
             paginationModel: paginationModel,

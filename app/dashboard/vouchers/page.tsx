@@ -13,6 +13,7 @@ import {
   Refresh,
 } from "@mui/icons-material";
 import {
+  Button,
   CircularProgress,
   Grid,
   Icon,
@@ -267,7 +268,20 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
   //   loadData();
   // }, [voucherType]);
   //
-
+  let months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   const { showSnackbar } = useSnackbar();
   const columns: GridColDef[] = [
     {
@@ -277,6 +291,7 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
       sortable: true,
       flex: 1,
     },
+
     {
       field: "preGstAmount",
       headerName: "Value",
@@ -294,22 +309,38 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
       let url = `${getBmrmBaseUrl()}/meta-voucher/monthly/overview?voucherType=${voucherType}`;
       let response = await postAsync(url, {});
       console.log(`response: ${JSON.stringify(response)}`);
-      setData(
-        response.map((entry: any, index: number) => {
-          return {
-            id: index + 1,
-            monthStr: entry.monthStr,
-            preGstAmount: entry.preGstAmount,
-          };
-        })
-      );
+
+      let values = response.map((entry: any, index: number) => {
+        return {
+          id: index + 1,
+          monthStr: entry.monthStr,
+          monthNumber: months.indexOf(entry.monthStr.substring(0, 3)),
+          year: entry.monthStr.substring(4),
+          preGstAmount: entry.preGstAmount,
+        };
+      });
+
+      let sortedValues = values.sort((a: any, b: any) => {
+        if (a.year !== b.year) {
+          return sortBy.current === "asc" ? a.year - b.year : b.year - a.year; // Sort by Year
+        } else {
+          return sortBy.current === "asc"
+            ? a.monthNumber - b.monthNumber
+            : b.monthNumber - a.monthNumber; // If years are equal, sort by MonthNumber
+        }
+      });
+
+      return sortedValues;
     } catch {
       showSnackbar("Could not Load Monthly Sales");
+      return [];
     } finally {
       setLoading(false);
     }
   };
 
+  let sortBy = useRef("asc");
+  const [refresh, triggerRefresh] = useState(false);
   return (
     <div className="flex flex-col">
       {loading && (
@@ -317,20 +348,31 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
           <CircularProgress />
         </div>
       )}
-      <DataGrid
+      <DataTable
         columns={columns}
-        rows={data}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 5,
-            },
-          },
+        refresh={refresh}
+        onApi={async (page, pageSize, searchText) => {
+          return await loadData();
         }}
-        onRowClick={(params) => {}}
-        pageSizeOptions={[5, 10, 25, 50, 75, 100]}
-        disableRowSelectionOnClick
-        onPaginationModelChange={(value) => {}}
+        onRowClick={(params) => {
+          const row = params.row;
+        }}
+        useSearch={false}
+        useServerPagination={false}
+        useCustomSorting={true}
+        SortingView={() => (
+          <div className=" mb-3">
+            <Button
+              variant="contained"
+              onClick={() => {
+                sortBy.current = sortBy.current == "asc" ? "desc" : "asc";
+                triggerRefresh(!refresh);
+              }}
+            >
+              Sort Month By {sortBy.current == "asc" ? "desc" : "asc"}
+            </Button>
+          </div>
+        )}
       />
     </div>
   );
