@@ -99,7 +99,8 @@ const BrokerMonthlyOverview = () => {
 }
 
 const DashboardPage = () => {
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+
+  const [data, setData] = useState([]);
   const [filters, updateFilters] = useState([
     { id: 1, label: "Daily", value: "daily", isSelected: true },
     { id: 2, label: "Weekly", value: "weekly", isSelected: false },
@@ -107,8 +108,6 @@ const DashboardPage = () => {
     { id: 4, label: "Quarterly", value: "quarterly", isSelected: false },
     { id: 5, label: "Yearly", value: "yearly", isSelected: false },
   ]);
-
-  let companyId = useRef<string | null>(null);
 
   let incomingBillType = "Receivable"; // populate later
   const [types, updateTypes] = useState([
@@ -119,6 +118,8 @@ const DashboardPage = () => {
   let selectedType = useRef(types[incomingBillType === "Payable" ? 1 : 0]);
   let selectedFilter = useRef(filters[0]);
 
+  const [cachedCompanyIndex, setCompanyId] = useState(0);
+
   const [totalAmount, setAmount] = useState("0");
   const [rows, setRows] = useState([]);
 
@@ -126,30 +127,35 @@ const DashboardPage = () => {
   const router = useRouter();
 
   const loadData = async () => {
-      try {
-          let url = `${getBmrmBaseUrl()}/info/user-tenant/get/companies`;
-          let response = await getAsync(url);
-          let values = response.map((entry: any) => {
-              return {
-                  id: entry["company_id"],
-                  name: entry["company_name"],
-                  user_id: entry.user_id,
-              };
-          });
-          if (values && values.length > 0) {
-              let cookieCompany = Cookies.get("companyId") ?? null;
-              if (cookieCompany === null || cookieCompany.length < 1) {
-                cookieCompany = values[0].id;
-              }
-              companyId.current = cookieCompany;
-              Cookies.set("companyId", cookieCompany!);
-          }
-      } catch (error) {
-          console.error("Failed to load companies", error);
+    try {
+      let url = `${getBmrmBaseUrl()}/info/user-tenant/get/companies`;
+      let response = await getAsync(url);
+      let values = response.map((entry: any) => {
+        return {
+          id: entry["company_id"],
+          name: entry["company_name"],
+          user_id: entry.user_id,
+        };
+      });
+      setData(values);
+      if (values && values.length > 0) {
+        let existingCompany = Cookies.get("companyId");
+        let exisitngIndex = values.findIndex(
+          (entry: any) => entry.id === existingCompany
+        );
+        setCompanyId(0);
+        let guid = values[0].id;
+        if (exisitngIndex !== -1) {
+          guid = values[exisitngIndex].id;
+          setCompanyId(exisitngIndex);
+        }
+        Cookies.set("companyId", guid);
       }
+    } catch (error) {
+      console.error("Failed to load companies", error);
+    }
   };
 
-  const selectedCompanyId = Cookies.get("companyId") ?? null;
 
   const [userType, setUserType] = useState("");
 
@@ -233,12 +239,36 @@ const DashboardPage = () => {
   ];
 
   const views = [
+    {
+    weight: Weight.Low,
+      view: (
+        <div className={`flex flex-col h-full`}>
+            <CardView className="mb-2" title="Switch Company">
+              <DropDown
+                label={"Select Company"}
+                displayFieldKey={"name"}
+                valueFieldKey={null}
+                selectionValues={data}
+                helperText={""}
+                defaultSelectionIndex={cachedCompanyIndex}
+                onSelection={(selection) => {
+                  const companyId = selection.id;
+                  Cookies.set("companyId", companyId);
+                }}
+              />
+            </CardView>
+              <CardView className="mt-2 bg-red-500" permissionCode="CustomerCard">
+              <CustomerDetailsCard companyId={data[cachedCompanyIndex]} />
+              </CardView>
+        </div>
+      ),
+    },
       {
           weight: Weight.Medium,
           view: (
               <CardView title={"Payable vs Receivable"} permissionCode="OutstandingCard">
               <OutstandingCard
-              companyId={selectedCompanyId}
+              companyId={data[cachedCompanyIndex]}
               title="Outstanding Overview"
               />
               </CardView>
@@ -256,18 +286,10 @@ const DashboardPage = () => {
           ),
       },
       {
-          weight: Weight.Low,
-          view: (
-              <CardView className="bg-red-500" permissionCode="CustomerCard">
-              <CustomerDetailsCard companyId={selectedCompanyId} />
-              </CardView>
-          ),
-      },
-      {
           weight: Weight.Medium,
           view: (
               <CardView title="Today's O/S">
-              <OutstandingTask companyId={selectedCompanyId} />
+              <OutstandingTask companyId={data[cachedCompanyIndex]} />
               </CardView>
           ),
       },
