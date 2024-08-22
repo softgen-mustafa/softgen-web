@@ -40,7 +40,7 @@ import { getTheme, appThemes } from "../theme";
 
 const drawerWidth = 300;
 
-const DrawerContent = ({onThemeChange}: {onThemeChange: (themeName: any) => void}) => {
+const DrawerContent = ({onThemeChange, onRoute}: {onThemeChange: (themeName: any) => void, onRoute: () => void}) => {
     const router = useRouter();
 
     const [openLogoutModal, setOpenLogoutModal] = useState(false);
@@ -139,7 +139,7 @@ const DrawerContent = ({onThemeChange}: {onThemeChange: (themeName: any) => void
         Hello, {userName} 👋🏻
         </Typography>
         </Box>
-        <DrawerList userType={userType.current} />
+        <DrawerList userType={userType.current} onRoute={onRoute}/>
 
         <div className="mx-3 p-2 bg-white rounded-md">
           <DropDown
@@ -218,7 +218,9 @@ const SideNav = ({onThemeChange}: {onThemeChange: (themeName: any) => void}) => 
                 },
             }}
             >
-            <DrawerContent onThemeChange={onThemeChange}/>
+            <DrawerContent onThemeChange={onThemeChange} onRoute={() => {
+                setMobileOpen(false);
+            }}/>
         </Drawer>
         </Box>
         </div>

@@ -63,7 +63,7 @@ interface PathState {
     customPaths: DrawerItem[];
 }
 
-const DrawerList = ({userType}: {userType: string}) => {
+const DrawerList = ({userType, onRoute}: {userType: string, onRoute: () => void}) => {
 
     const router = useRouter();
 
@@ -113,6 +113,7 @@ const DrawerList = ({userType}: {userType: string}) => {
         });
 
         router.push(entry.destination);
+        onRoute();
     }
     return (
         <List className="h-full justify-center">
