@@ -134,7 +134,7 @@ const GridDirection = {
 }
 
 const DynGrid = ({views, direction = GridDirection.Row}: {views: any[], direction?: string}) => {
-    const minWidth = 360;
+    const minWidth = 290;
     return (
     <div>
     <div className={`p-2 w-full flex ${direction} flex-wrap gap-4 justify-stretch`} >
