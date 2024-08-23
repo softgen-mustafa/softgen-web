@@ -133,7 +133,6 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
         localStorage.setItem("party_view_type", "upcoming");
         localStorage.setItem("party_bill_type", "receivable");
         localStorage.setItem("party_filter_type", "daily");
-        router.push("/dashboard/outstanding/party-search");
       }}
     >
       {/* {isLoading ? (

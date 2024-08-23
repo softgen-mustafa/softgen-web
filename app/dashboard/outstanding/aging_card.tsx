@@ -166,7 +166,6 @@ const AgingView = ({ billType }: { billType: string }) => {
                 localStorage.setItem("party_filter_value", entry.code);
                 localStorage.setItem("party_view_type", "aging");
                 localStorage.setItem("party_bill_type", billType);
-                router.push("/dashboard/outstanding/party-search");
               }}
             />
           );

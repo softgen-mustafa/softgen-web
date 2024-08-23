@@ -17,7 +17,6 @@ import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
-import OutstandingOverview from "./party-search/outstanding_overview";
 import { DropDown } from "@/app/ui/drop_down";
 
 const Page = () => {

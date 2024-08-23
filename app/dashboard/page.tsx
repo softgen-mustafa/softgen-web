@@ -388,7 +388,6 @@ const DashboardPage = () => {
                 "party_filter_type",
                 selectedFilter.current.value
               );
-              router.push("/dashboard/outstanding/party-search");
             }}
             pageSizeOptions={[5, 10, 25, 50, 75, 100]}
             disableRowSelectionOnClick

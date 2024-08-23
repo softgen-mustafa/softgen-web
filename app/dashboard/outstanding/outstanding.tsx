@@ -240,7 +240,6 @@ const OutstandingPage = () => {
                       selectedType.current.code
                     );
                     localStorage.setItem("party_filter_type", "");
-                    router.push("/dashboard/outstanding/party-search");
                   }}
                 >
                   <Typography>View All</Typography>
@@ -358,9 +357,8 @@ const OutstandingPage = () => {
                 "party_filter_type",
                 selectedFilter.current.value
               );
-              router.push("/dashboard/outstanding/party-search");
             }}
-            pageSizeOptions={[5, 10, 25, 50, 75, 100]}
+           pageSizeOptions={[5, 10, 25, 50, 75, 100]}
             disableRowSelectionOnClick
             onPaginationModelChange={(value) => {
               alert(`page model:  ${JSON.stringify(value)}`);
