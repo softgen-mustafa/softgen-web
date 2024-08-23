@@ -15,7 +15,12 @@ import { GridColDef } from "@mui/x-data-grid";
 import { DropDown } from "@/app/ui/drop_down";
 import { ChevronLeftRounded } from "@mui/icons-material";
 import { postAsync } from "@/app/services/rest_services";
-import { CardView, GridConfig, DynGrid, Weight } from "@/app/ui/responsive_grid";
+import {
+  CardView,
+  GridConfig,
+  DynGrid,
+  Weight,
+} from "@/app/ui/responsive_grid";
 import { numericToString } from "@/app/services/Local/helper";
 import { DataTable } from "@/app/ui/data_grid";
 import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
@@ -218,7 +223,7 @@ const InventoryOverviewScreen = () => {
 
   const gridConfig = [
     {
-        weight: Weight.Low,
+      weight: Weight.Low,
       view: (
         <CardView
           className="h-fit"
@@ -246,69 +251,70 @@ const InventoryOverviewScreen = () => {
           </Typography>
         </CardView>
       ),
-   },
-        {
-            weight: Weight.Low,
-          view: (
-            <CardView title="Filters">
+    },
+    {
+      weight: Weight.Low,
+      view: (
+        <CardView title="Filters">
+          <br />
+          <DropDown
+            label="Select Master"
+            displayFieldKey={"label"}
+            valueFieldKey={null}
+            selectionValues={listTypes}
+            helperText={"Select  Type"}
+            onSelection={(selection) => {
+              selectedListType.current = selection;
+              fetchDetails();
+              setRefresh(!refresh);
+            }}
+          />
+          <div className="mt-4" />
+          {selectedListType.current.code === "item" && (
+            <>
               <br />
               <DropDown
-                label="Select Master"
+                label="Select Item Movement"
                 displayFieldKey={"label"}
                 valueFieldKey={null}
-                selectionValues={listTypes}
+                selectionValues={movementTypes}
                 helperText={"Select  Type"}
                 onSelection={(selection) => {
-                  selectedListType.current = selection;
+                  selectedMovementType.current = selection;
                   fetchDetails();
                   setRefresh(!refresh);
                 }}
               />
-              <div className="mt-4"/>
-              {selectedListType.current.code === "item" && (
-                <>
-                  <br />
-                  <DropDown
-                    label="Select Item Movement"
-                    displayFieldKey={"label"}
-                    valueFieldKey={null}
-                    selectionValues={movementTypes}
-                    helperText={"Select  Type"}
-                    onSelection={(selection) => {
-                      selectedMovementType.current = selection;
-                      fetchDetails();
-                      setRefresh(!refresh);
-                    }}
-                  />
-                  <br />
-                  <br />
-              <div className="mt-4"/>
-                  <DropDown
-                    label="Select Rate Calculation"
-                    displayFieldKey={"label"}
-                    valueFieldKey={null}
-                    selectionValues={rateByTypes}
-                    helperText={"Select Rate Type"}
-                    onSelection={(selection) => {
-                      selectedRateByType.current = selection;
-                      fetchDetails();
-                      setRefresh(!refresh);
-                    }}
-                  />
-                  <br />
-                </>
-              )}
-            </CardView>
-          ),
-        },
+              <br />
+              <br />
+              <div className="mt-4" />
+              <DropDown
+                label="Select Rate Calculation"
+                displayFieldKey={"label"}
+                valueFieldKey={null}
+                selectionValues={rateByTypes}
+                helperText={"Select Rate Type"}
+                onSelection={(selection) => {
+                  selectedRateByType.current = selection;
+                  fetchDetails();
+                  setRefresh(!refresh);
+                }}
+              />
+              <br />
+            </>
+          )}
+        </CardView>
+      ),
+    },
     {
-        weight: Weight.High,
+      weight: Weight.High,
       view: (
         <CardView title={selectedListType.current.label}>
           <DataTable
             refresh={refresh}
             columns={columns}
             useSearch={true}
+            useServerPagination={false}
             onApi={async (page, pageSize, searchText) => {
               return await fetchInventoryItems(page, pageSize, searchText);
             }}
@@ -334,17 +340,17 @@ const InventoryOverviewScreen = () => {
   return (
     // <Container sx={{ overflowX: "hidden" }}>
     <Box>
-        {hasPermission === null ? (
-          <CircularProgress />
-        ) : hasPermission ? (
-            <DynGrid views={gridConfig}/>
-        ) : (
-          <Typography className="text-2xl text-center font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-            Check Your Internet Access Or This Feature is not included in your
-            Subscription package. Kindly get the Premium package to utilize this
-            feature.
-          </Typography>
-        )}
+      {hasPermission === null ? (
+        <CircularProgress />
+      ) : hasPermission ? (
+        <DynGrid views={gridConfig} />
+      ) : (
+        <Typography className="text-2xl text-center font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+          Check Your Internet Access Or This Feature is not included in your
+          Subscription package. Kindly get the Premium package to utilize this
+          feature.
+        </Typography>
+      )}
     </Box>
     // </Container>
   );

@@ -18,6 +18,7 @@ import { PieChart } from "@mui/x-charts";
 import { numericToString } from "@/app/services/Local/helper";
 import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 import { SingleChartView } from "@/app/ui/graph_util";
+import MenuIcon from "@mui/icons-material/MoreVertOutlined";
 
 interface OutstandingData {
   payableTitle: string;

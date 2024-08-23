@@ -2,15 +2,22 @@
 
 import { numericToString } from "@/app/services/Local/helper";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
+import { DataTable } from "@/app/ui/data_grid";
 import { TextInput } from "@/app/ui/text_inputs";
 import { CircularProgress } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useRef, useState } from "react";
 
-const RankedPartyOutstandingCard = ({ billType, companyId }: { billType: string, companyId: string }) => {
+const RankedPartyOutstandingCard = ({
+  billType,
+  companyId,
+}: {
+  billType: string;
+  companyId: string;
+}) => {
   let rank = useRef(5);
   const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [refresh, triggerRefresh] = useState(false);
 
   const columns: GridColDef[] = [
     {
@@ -38,12 +45,9 @@ const RankedPartyOutstandingCard = ({ billType, companyId }: { billType: string,
     loadData();
   }, [billType]);
 
-  const loadData = async () => {
+  const loadData = async (searchText?: string | number) => {
     try {
-      setLoading(true);
-      let url = `${getBmrmBaseUrl()}/bill/get/party-os/overview?groupType=${billType}&rank=${
-        rank.current
-      }`;
+      let url = `${getBmrmBaseUrl()}/bill/get/party-os/overview?groupType=${billType}&rank=${searchText}`;
       let response = await getAsync(url);
       let values = response.map((entry: any) => {
         return {
@@ -53,15 +57,15 @@ const RankedPartyOutstandingCard = ({ billType, companyId }: { billType: string,
           currency: entry.currency ?? "₹",
         };
       });
-      setRows(values);
+      return values;
+      // setRows(values);
     } catch {
     } finally {
-      setLoading(false);
     }
   };
   return (
     <div>
-      <TextInput
+      {/* <TextInput
         mode={"number"}
         placeHolder="Enter Rank"
         onTextChange={(value) => {
@@ -69,27 +73,21 @@ const RankedPartyOutstandingCard = ({ billType, companyId }: { billType: string,
           loadData();
         }}
       />
-      <br />
-      {loading && (
+      <br /> */}
+      {/* {loading && (
         <div className="flex justify-center">
           <CircularProgress />
         </div>
-      )}
-
-      <DataGrid
+      )} */}
+      <DataTable
         columns={columns}
-        rows={rows}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 10,
-            },
-          },
+        refresh={refresh}
+        useSearch={true}
+        useServerPagination={false}
+        onApi={async (page, pageSize, searchText) => {
+          return await loadData(searchText?.length ? searchText : rank.current);
         }}
-        onRowClick={(params) => {}}
-        pageSizeOptions={[5, 10, 25, 50, 75, 100]}
-        disableRowSelectionOnClick
-        onPaginationModelChange={(value) => {}}
+        onRowClick={() => {}}
       />
     </div>
   );

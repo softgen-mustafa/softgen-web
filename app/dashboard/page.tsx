@@ -126,6 +126,8 @@ const DashboardPage = () => {
   const [totalAmount, setAmount] = useState("0");
   const [rows, setRows] = useState([]);
 
+  const [refresh, triggerRefresh] = useState(false);
+
   const theme = useTheme();
   const router = useRouter();
 
@@ -203,6 +205,7 @@ const DashboardPage = () => {
         };
       });
       setRows(entries);
+      return entries;
     } catch {
       alert("Could not load upcoming outstanding");
     }
@@ -354,6 +357,7 @@ const DashboardPage = () => {
                   updateFilters(values);
                   selectedFilter.current = card;
                   loadUpcoming();
+                  triggerRefresh(!refresh);
                 }}
               >
                 <Typography
@@ -367,7 +371,28 @@ const DashboardPage = () => {
           </Stack>
           {/* </Container> */}
           <br />
-          <DataGrid
+          <DataTable
+            columns={columns}
+            refresh={refresh}
+            useSearch={false}
+            useServerPagination={false}
+            onApi={async (page, pageSize, searchText) => {
+              return loadUpcoming();
+            }}
+            onRowClick={(params) => {
+              localStorage.setItem("party_filter_value", params.row.id);
+              localStorage.setItem("party_view_type", "upcoming");
+              localStorage.setItem(
+                "party_bill_type",
+                selectedType.current.code
+              );
+              localStorage.setItem(
+                "party_filter_type",
+                selectedFilter.current.value
+              );
+            }}
+          />
+          {/* <DataGrid
             columns={columns}
             rows={rows}
             initialState={{
@@ -394,7 +419,7 @@ const DashboardPage = () => {
             onPaginationModelChange={(value) => {
               alert(`page model:  ${JSON.stringify(value)}`);
             }}
-          />
+          /> */}
         </CardView>
       ),
     },

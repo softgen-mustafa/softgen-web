@@ -2,8 +2,18 @@
 import { PieChart, BarChart } from "@mui/x-charts";
 import { useState } from "react";
 import { DropDown } from "./drop_down";
-import { Box, Chip, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  IconButton,
+  Menu,
+  MenuItem,
+  Stack,
+  Typography,
+} from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
+import MenuIcon from "@mui/icons-material/MoreVertOutlined";
 
 const graphColors: string[] = [
   "#a6cee3",
@@ -56,7 +66,7 @@ const Pie = (values: any[], title: string) => {
     >
       <PieChart
         width={360}
-        height={300}
+        height={400}
         margin={{ top: 100, left: 100, bottom: 100, right: 100 }}
         sx={{
           flex: 1,
@@ -68,10 +78,11 @@ const Pie = (values: any[], title: string) => {
         }}
         slotProps={{
           legend: {
-            hidden: true,
+            // hidden: true,
+            direction: "row",
             position: {
-              horizontal: "right",
               vertical: "bottom",
+              horizontal: "middle",
             },
           },
         }}
@@ -102,7 +113,7 @@ const Bar = (values: any[], title: string) => {
       justifyContent={"center"}
     >
       <BarChart
-        borderRadius={20}
+        borderRadius={10}
         dataset={values}
         xAxis={[
           {
@@ -147,7 +158,7 @@ const HorizontalBar = (values: any[], title: string) => {
         grid={{ vertical: true }}
         width={360}
         height={350}
-        borderRadius={15}
+        borderRadius={10}
       />
     </Box>
   );
@@ -163,6 +174,18 @@ const SingleChartView = ({
   title: string;
 }) => {
   const [chartType, setChartType] = useState(defaultChart);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const [charts, setCharts] = useState([
     { id: 1, type: "pie", label: "Pie" },
     { id: 2, type: "bar", label: "Bar" },
@@ -185,9 +208,55 @@ const SingleChartView = ({
 
   return (
     <div className="overflow-x-auto">
+      <Stack flexDirection={"row"} justifyContent={"flex-end"}>
+        {/* <Button
+          id="menu-item"
+          variant="contained"
+          aria-controls={open ? "demo-customized-menu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : undefined}
+          onClick={handleClick}
+          endIcon={<KeyboardArrowDownIcon />}
+          sx={{
+            textTransform: "capitalize",
+          }}
+        >
+          Select Chart
+        </Button> */}
+        <IconButton
+          id="menu-item"
+          aria-controls={open ? "demo-customized-menu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : undefined}
+          onClick={handleClick}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Menu
+          id="menu"
+          anchorEl={anchorEl}
+          MenuListProps={{
+            "aria-labelledby": "menu-item",
+          }}
+          open={open}
+          onClose={handleClose}
+        >
+          {charts.map((_chart) => (
+            <MenuItem
+              key={_chart.id}
+              onClick={() => {
+                setChartType(_chart.type);
+                handleClose();
+              }}
+            >
+              {_chart.label}
+            </MenuItem>
+          ))}
+        </Menu>
+      </Stack>
       <Box my={2}>
         {renderChart()}
-        <Typography className="font-medium text-sm text-center mb-1">
+        {/* <Typography className="font-medium text-sm text-center mb-1">
           Select Chart
         </Typography>
         <Stack flexDirection="row" justifyContent={"center"} gap={1}>
@@ -202,7 +271,7 @@ const SingleChartView = ({
               sx={{ px: 2 }}
             />
           ))}
-        </Stack>
+        </Stack> */}
       </Box>
     </div>
   );

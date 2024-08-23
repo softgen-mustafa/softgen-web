@@ -30,6 +30,7 @@ import { numericToString } from "@/app/services/Local/helper";
 const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
+  const [refresh, triggerRefresh] = useState(false);
   // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   // useEffect(() => {
@@ -77,22 +78,21 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
   const { showSnackbar } = useSnackbar();
   const loadData = async () => {
     try {
-      setLoading(true);
+      triggerRefresh(true);
       let url = `${getBmrmBaseUrl()}/meta-voucher/item-group/overview?voucherType=${voucherType}`;
       let response = await postAsync(url, {});
-      setData(
-        response.map((entry: any, index: number) => {
-          return {
-            id: index + 1,
-            itemGroup: entry.itemGroup,
-            ...entry,
-          };
-        })
-      );
+      let entries = response.map((entry: any, index: number) => {
+        return {
+          id: index + 1,
+          itemGroup: entry.itemGroup,
+          ...entry,
+        };
+      });
+      return entries;
     } catch {
       showSnackbar("Could not Item Group Sales");
     } finally {
-      setLoading(false);
+      triggerRefresh(false);
     }
   };
   // if (hasPermission === null) {
@@ -109,12 +109,12 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
 
   return (
     <div className="flex flex-col">
-      {loading && (
+      {/* {loading && (
         <div className="flex justify-center">
           <CircularProgress />
         </div>
-      )}
-      <DataGrid
+      )} */}
+      {/* <DataGrid
         columns={columns}
         rows={data}
         initialState={{
@@ -128,6 +128,16 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
         pageSizeOptions={[5, 10, 25, 50, 75, 100]}
         disableRowSelectionOnClick
         onPaginationModelChange={(value) => {}}
+      /> */}
+      <DataTable
+        columns={columns}
+        refresh={refresh}
+        onApi={async (page, pageSize, searchText) => {
+          return await loadData();
+        }}
+        useSearch={false}
+        useServerPagination={false}
+        onRowClick={() => {}}
       />
     </div>
   );
@@ -536,6 +546,7 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
 const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [refresh, triggerRefresh] = useState(false);
   // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -572,22 +583,21 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
   const { showSnackbar } = useSnackbar();
   const loadData = async () => {
     try {
-      setLoading(true);
+      triggerRefresh(true);
       let url = `${getBmrmBaseUrl()}/meta-voucher/customer/overview?voucherType=${voucherType}`;
       let response = await postAsync(url, {});
-      setData(
-        response.map((entry: any, index: number) => {
-          return {
-            id: index + 1,
-            partyName: entry.partyName,
-            preGstAmount: entry.preGstAmount,
-          };
-        })
-      );
+      let entries = response.map((entry: any, index: number) => {
+        return {
+          id: index + 1,
+          partyName: entry.partyName,
+          preGstAmount: entry.preGstAmount,
+        };
+      });
+      return entries;
     } catch {
       showSnackbar("Could not load customer sales");
     } finally {
-      setLoading(false);
+      triggerRefresh(false);
     }
   };
 
@@ -604,12 +614,12 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
   // }
   return (
     <div className="flex flex-col">
-      {loading && (
+      {/* {loading && (
         <div className="flex justify-center">
           <CircularProgress />
         </div>
-      )}
-      <DataGrid
+      )} */}
+      {/* <DataGrid
         columns={columns}
         rows={data}
         initialState={{
@@ -623,6 +633,16 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
         pageSizeOptions={[5, 10, 25, 50, 75, 100]}
         disableRowSelectionOnClick
         onPaginationModelChange={(value) => {}}
+      /> */}
+      <DataTable
+        columns={columns}
+        refresh={refresh}
+        onApi={async (page, pageSize, searchText) => {
+          return await loadData();
+        }}
+        useSearch={false}
+        useServerPagination={false}
+        onRowClick={() => {}}
       />
     </div>
   );
