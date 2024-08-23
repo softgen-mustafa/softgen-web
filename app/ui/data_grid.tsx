@@ -1,7 +1,7 @@
 "use client";
 
-import { Box, Checkbox, IconButton, Typography } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { Box, Button, Checkbox, IconButton, Typography } from "@mui/material";
+import { DataGrid, GridColDef, GridColumnVisibilityModel} from "@mui/x-data-grid";
 import React, { useEffect,useRef, useState } from "react";
 import { SearchInput } from "./text_inputs";
 import { useTheme} from "@mui/material/styles";
@@ -36,26 +36,31 @@ const DataTable: React.FC<TableViewProps> = ({
   useCustomSorting = false,
   SortingView = null,
 }) => {
+
+  const theme = useTheme();
+
   const [rows, setRows] = useState<any[]>([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
   });
+
   const [loading, setLoading] = useState(false);
 
   const [openFilter, toggleFilter] = useState(false);
-
   const [filterColumns, setFilterColumns] = useState(columns ?? []);
-  let columnVisibility = useRef<any>({});
 
-  const theme = useTheme();
+  const [columnVisibility, changeColumnVisibility] = useState<any>({});
 
   useEffect(() => {
     setLoading(true);
-    columns.map((entry: any) => {
-        columnVisibility.current[entry.headerName] = true;
-    });
     setFilterColumns(columns);
+    let visibility: any = {};
+    columns.map((entry:any) => {
+        visibility[entry.field] = true;
+    })
+    changeColumnVisibility(visibility);
+
     onApi(paginationModel.page + 1, paginationModel.pageSize).then(
       (entries) => {
         setRows(entries);
@@ -63,9 +68,6 @@ const DataTable: React.FC<TableViewProps> = ({
       }
     );
   }, [refresh]);
-
-  useEffect(() => {
-  }, [columnVisibility])
 
   return (
     <Box className="h-fit">
@@ -105,6 +107,9 @@ const DataTable: React.FC<TableViewProps> = ({
             }}>
                 <IconButton 
                     className="w-full justify-between"
+                    sx={{
+                        color: theme.palette.primary.main
+                    }}
                     onClick={() => {
                         toggleFilter(!openFilter);
                     }}>
@@ -134,20 +139,23 @@ const DataTable: React.FC<TableViewProps> = ({
                     filterColumns.map((entry: any, index: number) => {
                         return (
                             <Box key={index} className="flex flex-row justify-start items-center px-2">
-                                <Checkbox checked={!entry.hidable} defaultChecked={!entry.hidable}
+                                <Checkbox checked={columnVisibility[entry.field]} defaultChecked={!entry.hidable}
                                     onChange={() => {
                                         try {
-                                            setLoading(true);
-                                            let values = filterColumns.map((column: any) => {
-                                                let value = column;
-                                                if (entry.headerName == value.headerName) {
-                                                    value.hidable = !column.hidable;
-                                                    value.hide = !column.hide;
+                                            const newFilterColumns = filterColumns.map((column: any) => {
+                                                if (entry.field === column.field) {
+                                                    return { ...column, hidable: !column.hidable };
                                                 }
-                                                return value;
+                                                return column;
                                             });
-                                            setFilterColumns(values);
-                                            columnVisibility.current[entry.headerName] = !columnVisibility.current[entry.headerName];
+
+                                            const newColumnVisibility = {
+                                                ...columnVisibility,
+                                                [entry.field]: !columnVisibility[entry.field],
+                                            };
+
+                                            changeColumnVisibility(newColumnVisibility);
+                                            setFilterColumns(newFilterColumns);
                                         } catch {
 
                                         } finally {
@@ -178,7 +186,7 @@ const DataTable: React.FC<TableViewProps> = ({
                 paginationModel: paginationModel,
               },
               columns: {
-                  columnVisibilityModel: columnVisibility.current ?? {}
+                  columnVisibilityModel: columnVisibility
               }
             }}
             pageSizeOptions={[10, 25, 50, 75, 100]}
@@ -224,7 +232,9 @@ const DataTable: React.FC<TableViewProps> = ({
                       color: inspiredPalette.dark,
                   }
             }}
-            columnVisibilityModel={columnVisibility.current}
+            columnVisibilityModel={columnVisibility}
+            onColumnVisibilityModelChange={(newModel) => {
+            }}
             slots={{
               noRowsOverlay: () => <Typography>No result found</Typography>,
             }}
