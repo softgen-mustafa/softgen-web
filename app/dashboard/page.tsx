@@ -24,6 +24,8 @@ import RankedPartyOutstandingCard from "./cards/ranked_party";
 import { AgingView } from "./cards/aging_card";
 import { DataTable } from "@/app/ui/data_grid";
 import { SingleChartView } from "@/app/ui/graph_util";
+import Column from "../ui/periodic_table/column";
+import PeriodicTable from "../ui/periodic_table/column";
 
 const BrokerMonthlyOverview = ({ companyId }: { companyId: string }) => {
   useEffect(() => {}, [companyId]);
@@ -101,6 +103,12 @@ const BrokerMonthlyOverview = ({ companyId }: { companyId: string }) => {
     </Box>
   );
 };
+
+interface ColumProps {
+  header: string;
+  field: string;
+  type: string;
+}
 
 const DashboardPage = () => {
   const [data, setData] = useState([]);
@@ -241,6 +249,26 @@ const DashboardPage = () => {
         </CardView>
       ),
     },
+  ];
+
+  const CC = [
+    {
+      header: "Name",
+      field: "name",
+      type: "string",
+    },
+    {
+      header: "Age",
+      field: "age",
+      type: "number",
+    },
+  ];
+
+  const dummyData = [
+    { id: 1, name: "John", age: 16 },
+    { id: 2, name: "Tom", age: 18 },
+    { id: 3, name: "Thor", age: 16 },
+    { id: 4, name: "Man", age: 16 },
   ];
 
   const views = [
@@ -420,6 +448,14 @@ const DashboardPage = () => {
               alert(`page model:  ${JSON.stringify(value)}`);
             }}
           /> */}
+        </CardView>
+      ),
+    },
+    {
+      weight: Weight.High,
+      view: (
+        <CardView title="Data Grid">
+          <PeriodicTable cColumn={CC} data={dummyData} />
         </CardView>
       ),
     },
