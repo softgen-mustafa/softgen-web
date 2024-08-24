@@ -61,7 +61,7 @@ const PeriodicTable = ({ cColumn, data }: { cColumn: any; data: any }) => {
   };
 
   return (
-    <div className="flex items-center flex-row">
+    <div className="flex items-center flex-row overflow-scroll">
       {columns.map((col: any, key: number) => {
         return (
           <Box

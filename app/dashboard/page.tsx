@@ -290,10 +290,9 @@ const DashboardPage = () => {
     {
       header: "Hobbies",
       field: "hobbies",
-      type: "string", 
+      type: "string",
     },
   ];
-  
 
   const dummyData = [
     {
@@ -385,188 +384,187 @@ const DashboardPage = () => {
       hobbies: ["Reading", "Yoga"],
     },
   ];
-  
 
   const views = [
-    // {
-    //   weight: Weight.Low,
-    //   view: (
-    //     <div className={`flex flex-col h-full`}>
-    //       <CardView className="mb-2" title="Switch Company">
-    //         <DropDown
-    //           label={"Select Company"}
-    //           displayFieldKey={"name"}
-    //           valueFieldKey={null}
-    //           selectionValues={data}
-    //           helperText={""}
-    //           defaultSelectionIndex={cachedCompanyIndex}
-    //           onSelection={(selection) => {
-    //             const companyId = selection.id;
-    //             let exisitngIndex = data.findIndex(
-    //               (entry: any) => entry.id === companyId
-    //             );
-    //             if (exisitngIndex != -1) {
-    //               setCompanyId(exisitngIndex);
-    //               Cookies.set("companyId", companyId);
-    //             }
-    //           }}
-    //         />
-    //       </CardView>
-    //       <CardView className="mt-2 bg-red-500" permissionCode="CustomerCard">
-    //         <CustomerDetailsCard companyId={data[cachedCompanyIndex]} />
-    //       </CardView>
-    //     </div>
-    //   ),
-    // },
-    // {
-    //   weight: Weight.Medium,
-    //   view: (
-    //     <CardView
-    //       title={"Payable vs Receivable"}
-    //       permissionCode="OutstandingCard"
-    //     >
-    //       <OutstandingCard
-    //         companyId={data[cachedCompanyIndex]}
-    //         title="Outstanding Overview"
-    //       />
-    //     </CardView>
-    //   ),
-    // },
-    // {
-    //   weight: Weight.Medium,
-    //   view: (
-    //     <CardView title={"Aging Wise"} permissionCode="AgingOutstandingCard">
-    //       <AgingView
-    //         billType={selectedType.current.code}
-    //         companyId={data[cachedCompanyIndex]}
-    //         title="Aging-Wise O/S"
-    //       />
-    //     </CardView>
-    //   ),
-    // },
-    // {
-    //   weight: Weight.Medium,
-    //   view: (
-    //     <CardView title="Today's O/S">
-    //       <OutstandingTask companyId={data[cachedCompanyIndex]} />
-    //     </CardView>
-    //   ),
-    // },
-    // {
-    //   weight: Weight.High,
-    //   view: (
-    //     <CardView title="Ranked Parties">
-    //       <RankedPartyOutstandingCard
-    //         companyId={data[cachedCompanyIndex]}
-    //         billType={selectedType.current.code}
-    //       />
-    //     </CardView>
-    //   ),
-    // },
-    // {
-    //   weight: Weight.High,
-    //   view: (
-    //     <CardView title="Upcoming Collections">
-    //       {/* <Container className="flex overflow-x-auto"> */}
-    //       <Stack
-    //         flexDirection="row"
-    //         gap={1}
-    //         pb={1}
-    //         sx={{ overflowX: "scroll" }}
-    //       >
-    //         {filters.map((card, index) => (
-    //           <Box
-    //             key={index}
-    //             className="rounded-3xl"
-    //             sx={{
-    //               minWidth: 100,
-    //               justifyContent: "center",
-    //               alignItems: "center",
-    //               height: 40,
-    //               background: card.isSelected
-    //                 ? theme.palette.primary.main
-    //                 : inspiredPalette.lightTextGrey,
-    //               color: card.isSelected
-    //                 ? theme.palette.primary.contrastText
-    //                 : inspiredPalette.dark,
-    //               cursor: "pointer",
-    //             }}
-    //             onClick={(event) => {
-    //               let values: any[] = filters;
-    //               values = values.map((entry: any) => {
-    //                 let isSelected = card.value === entry.value;
-    //                 entry.isSelected = isSelected;
-    //                 return entry;
-    //               });
-    //               updateFilters(values);
-    //               selectedFilter.current = card;
-    //               loadUpcoming();
-    //               triggerRefresh(!refresh);
-    //             }}
-    //           >
-    //             <Typography
-    //               component="div"
-    //               className="flex h-full w-full flex-row justify-center items-center"
-    //             >
-    //               {card.label}
-    //             </Typography>
-    //           </Box>
-    //         ))}
-    //       </Stack>
-    //       {/* </Container> */}
-    //       <br />
-    //       <DataTable
-    //         columns={columns}
-    //         refresh={refresh}
-    //         useSearch={false}
-    //         useServerPagination={false}
-    //         onApi={async (page, pageSize, searchText) => {
-    //           return loadUpcoming();
-    //         }}
-    //         onRowClick={(params) => {
-    //           localStorage.setItem("party_filter_value", params.row.id);
-    //           localStorage.setItem("party_view_type", "upcoming");
-    //           localStorage.setItem(
-    //             "party_bill_type",
-    //             selectedType.current.code
-    //           );
-    //           localStorage.setItem(
-    //             "party_filter_type",
-    //             selectedFilter.current.value
-    //           );
-    //         }}
-    //       />
-    //       {/* <DataGrid
-    //         columns={columns}
-    //         rows={rows}
-    //         initialState={{
-    //           pagination: {
-    //             paginationModel: {
-    //               pageSize: 10,
-    //             },
-    //           },
-    //         }}
-    //         onRowClick={(params) => {
-    //           localStorage.setItem("party_filter_value", params.row.id);
-    //           localStorage.setItem("party_view_type", "upcoming");
-    //           localStorage.setItem(
-    //             "party_bill_type",
-    //             selectedType.current.code
-    //           );
-    //           localStorage.setItem(
-    //             "party_filter_type",
-    //             selectedFilter.current.value
-    //           );
-    //         }}
-    //         pageSizeOptions={[5, 10, 25, 50, 75, 100]}
-    //         disableRowSelectionOnClick
-    //         onPaginationModelChange={(value) => {
-    //           alert(`page model:  ${JSON.stringify(value)}`);
-    //         }}
-    //       /> */}
-    //     </CardView>
-    //   ),
-    // },
+    {
+      weight: Weight.Low,
+      view: (
+        <div className={`flex flex-col h-full`}>
+          <CardView className="mb-2" title="Switch Company">
+            <DropDown
+              label={"Select Company"}
+              displayFieldKey={"name"}
+              valueFieldKey={null}
+              selectionValues={data}
+              helperText={""}
+              defaultSelectionIndex={cachedCompanyIndex}
+              onSelection={(selection) => {
+                const companyId = selection.id;
+                let exisitngIndex = data.findIndex(
+                  (entry: any) => entry.id === companyId
+                );
+                if (exisitngIndex != -1) {
+                  setCompanyId(exisitngIndex);
+                  Cookies.set("companyId", companyId);
+                }
+              }}
+            />
+          </CardView>
+          <CardView className="mt-2 bg-red-500" permissionCode="CustomerCard">
+            <CustomerDetailsCard companyId={data[cachedCompanyIndex]} />
+          </CardView>
+        </div>
+      ),
+    },
+    {
+      weight: Weight.Medium,
+      view: (
+        <CardView
+          title={"Payable vs Receivable"}
+          permissionCode="OutstandingCard"
+        >
+          <OutstandingCard
+            companyId={data[cachedCompanyIndex]}
+            title="Outstanding Overview"
+          />
+        </CardView>
+      ),
+    },
+    {
+      weight: Weight.Medium,
+      view: (
+        <CardView title={"Aging Wise"} permissionCode="AgingOutstandingCard">
+          <AgingView
+            billType={selectedType.current.code}
+            companyId={data[cachedCompanyIndex]}
+            title="Aging-Wise O/S"
+          />
+        </CardView>
+      ),
+    },
+    {
+      weight: Weight.Medium,
+      view: (
+        <CardView title="Today's O/S">
+          <OutstandingTask companyId={data[cachedCompanyIndex]} />
+        </CardView>
+      ),
+    },
+    {
+      weight: Weight.High,
+      view: (
+        <CardView title="Ranked Parties">
+          <RankedPartyOutstandingCard
+            companyId={data[cachedCompanyIndex]}
+            billType={selectedType.current.code}
+          />
+        </CardView>
+      ),
+    },
+    {
+      weight: Weight.High,
+      view: (
+        <CardView title="Upcoming Collections">
+          {/* <Container className="flex overflow-x-auto"> */}
+          <Stack
+            flexDirection="row"
+            gap={1}
+            pb={1}
+            sx={{ overflowX: "scroll" }}
+          >
+            {filters.map((card, index) => (
+              <Box
+                key={index}
+                className="rounded-3xl"
+                sx={{
+                  minWidth: 100,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: 40,
+                  background: card.isSelected
+                    ? theme.palette.primary.main
+                    : inspiredPalette.lightTextGrey,
+                  color: card.isSelected
+                    ? theme.palette.primary.contrastText
+                    : inspiredPalette.dark,
+                  cursor: "pointer",
+                }}
+                onClick={(event) => {
+                  let values: any[] = filters;
+                  values = values.map((entry: any) => {
+                    let isSelected = card.value === entry.value;
+                    entry.isSelected = isSelected;
+                    return entry;
+                  });
+                  updateFilters(values);
+                  selectedFilter.current = card;
+                  loadUpcoming();
+                  triggerRefresh(!refresh);
+                }}
+              >
+                <Typography
+                  component="div"
+                  className="flex h-full w-full flex-row justify-center items-center"
+                >
+                  {card.label}
+                </Typography>
+              </Box>
+            ))}
+          </Stack>
+          {/* </Container> */}
+          <br />
+          <DataTable
+            columns={columns}
+            refresh={refresh}
+            useSearch={false}
+            useServerPagination={false}
+            onApi={async (page, pageSize, searchText) => {
+              return loadUpcoming();
+            }}
+            onRowClick={(params) => {
+              localStorage.setItem("party_filter_value", params.row.id);
+              localStorage.setItem("party_view_type", "upcoming");
+              localStorage.setItem(
+                "party_bill_type",
+                selectedType.current.code
+              );
+              localStorage.setItem(
+                "party_filter_type",
+                selectedFilter.current.value
+              );
+            }}
+          />
+          {/* <DataGrid
+            columns={columns}
+            rows={rows}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 10,
+                },
+              },
+            }}
+            onRowClick={(params) => {
+              localStorage.setItem("party_filter_value", params.row.id);
+              localStorage.setItem("party_view_type", "upcoming");
+              localStorage.setItem(
+                "party_bill_type",
+                selectedType.current.code
+              );
+              localStorage.setItem(
+                "party_filter_type",
+                selectedFilter.current.value
+              );
+            }}
+            pageSizeOptions={[5, 10, 25, 50, 75, 100]}
+            disableRowSelectionOnClick
+            onPaginationModelChange={(value) => {
+              alert(`page model:  ${JSON.stringify(value)}`);
+            }}
+          /> */}
+        </CardView>
+      ),
+    },
     {
       weight: Weight.High,
       view: (
