@@ -262,195 +262,311 @@ const DashboardPage = () => {
       field: "age",
       type: "number",
     },
+    {
+      header: "Location",
+      field: "location",
+      type: "string",
+    },
+    {
+      header: "Email",
+      field: "email",
+      type: "string",
+    },
+    {
+      header: "Phone Number",
+      field: "phoneNumber",
+      type: "string",
+    },
+    {
+      header: "Gender",
+      field: "gender",
+      type: "string",
+    },
+    {
+      header: "Occupation",
+      field: "occupation",
+      type: "string",
+    },
+    {
+      header: "Hobbies",
+      field: "hobbies",
+      type: "string", 
+    },
   ];
+  
 
   const dummyData = [
-    { id: 1, name: "John", age: 16 },
-    { id: 2, name: "Tom", age: 18 },
-    { id: 3, name: "Thor", age: 16 },
-    { id: 4, name: "Man", age: 16 },
+    {
+      id: 1,
+      name: "John",
+      age: 16,
+      location: "Pune",
+      email: "john@example.com",
+      phoneNumber: "123-456-7890",
+      gender: "Male",
+      occupation: "Student",
+      hobbies: ["Reading", "Cycling"],
+    },
+    {
+      id: 2,
+      name: "Tom",
+      age: 18,
+      location: "Pune",
+      email: "tom@example.com",
+      phoneNumber: "987-654-3210",
+      gender: "Male",
+      occupation: "Intern",
+      hobbies: ["Gaming", "Music"],
+    },
+    {
+      id: 3,
+      name: "Thor",
+      age: 20,
+      location: "Mumbai",
+      email: "thor@example.com",
+      phoneNumber: "555-555-5555",
+      gender: "Male",
+      occupation: "Athlete",
+      hobbies: ["Sports", "Movies"],
+    },
+    {
+      id: 4,
+      name: "Mia",
+      age: 22,
+      location: "Delhi",
+      email: "mia@example.com",
+      phoneNumber: "111-222-3333",
+      gender: "Female",
+      occupation: "Graphic Designer",
+      hobbies: ["Art", "Photography"],
+    },
+    {
+      id: 5,
+      name: "Emma",
+      age: 30,
+      location: "Bangalore",
+      email: "emma@example.com",
+      phoneNumber: "222-333-4444",
+      gender: "Female",
+      occupation: "Software Engineer",
+      hobbies: ["Coding", "Hiking"],
+    },
+    {
+      id: 6,
+      name: "Alex",
+      age: 28,
+      location: "Chennai",
+      email: "alex@example.com",
+      phoneNumber: "444-555-6666",
+      gender: "Non-binary",
+      occupation: "Data Scientist",
+      hobbies: ["Research", "Cooking"],
+    },
+    {
+      id: 7,
+      name: "Liam",
+      age: 35,
+      location: "Hyderabad",
+      email: "liam@example.com",
+      phoneNumber: "333-444-5555",
+      gender: "Male",
+      occupation: "Marketing Manager",
+      hobbies: ["Writing", "Traveling"],
+    },
+    {
+      id: 8,
+      name: "Sophia",
+      age: 27,
+      location: "Kolkata",
+      email: "sophia@example.com",
+      phoneNumber: "666-777-8888",
+      gender: "Female",
+      occupation: "Doctor",
+      hobbies: ["Reading", "Yoga"],
+    },
   ];
+  
 
   const views = [
-    {
-      weight: Weight.Low,
-      view: (
-        <div className={`flex flex-col h-full`}>
-          <CardView className="mb-2" title="Switch Company">
-            <DropDown
-              label={"Select Company"}
-              displayFieldKey={"name"}
-              valueFieldKey={null}
-              selectionValues={data}
-              helperText={""}
-              defaultSelectionIndex={cachedCompanyIndex}
-              onSelection={(selection) => {
-                const companyId = selection.id;
-                let exisitngIndex = data.findIndex(
-                  (entry: any) => entry.id === companyId
-                );
-                if (exisitngIndex != -1) {
-                  setCompanyId(exisitngIndex);
-                  Cookies.set("companyId", companyId);
-                }
-              }}
-            />
-          </CardView>
-          <CardView className="mt-2 bg-red-500" permissionCode="CustomerCard">
-            <CustomerDetailsCard companyId={data[cachedCompanyIndex]} />
-          </CardView>
-        </div>
-      ),
-    },
-    {
-      weight: Weight.Medium,
-      view: (
-        <CardView
-          title={"Payable vs Receivable"}
-          permissionCode="OutstandingCard"
-        >
-          <OutstandingCard
-            companyId={data[cachedCompanyIndex]}
-            title="Outstanding Overview"
-          />
-        </CardView>
-      ),
-    },
-    {
-      weight: Weight.Medium,
-      view: (
-        <CardView title={"Aging Wise"} permissionCode="AgingOutstandingCard">
-          <AgingView
-            billType={selectedType.current.code}
-            companyId={data[cachedCompanyIndex]}
-            title="Aging-Wise O/S"
-          />
-        </CardView>
-      ),
-    },
-    {
-      weight: Weight.Medium,
-      view: (
-        <CardView title="Today's O/S">
-          <OutstandingTask companyId={data[cachedCompanyIndex]} />
-        </CardView>
-      ),
-    },
-    {
-      weight: Weight.High,
-      view: (
-        <CardView title="Ranked Parties">
-          <RankedPartyOutstandingCard
-            companyId={data[cachedCompanyIndex]}
-            billType={selectedType.current.code}
-          />
-        </CardView>
-      ),
-    },
-    {
-      weight: Weight.High,
-      view: (
-        <CardView title="Upcoming Collections">
-          {/* <Container className="flex overflow-x-auto"> */}
-          <Stack
-            flexDirection="row"
-            gap={1}
-            pb={1}
-            sx={{ overflowX: "scroll" }}
-          >
-            {filters.map((card, index) => (
-              <Box
-                key={index}
-                className="rounded-3xl"
-                sx={{
-                  minWidth: 100,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: 40,
-                  background: card.isSelected
-                    ? theme.palette.primary.main
-                    : inspiredPalette.lightTextGrey,
-                  color: card.isSelected
-                    ? theme.palette.primary.contrastText
-                    : inspiredPalette.dark,
-                  cursor: "pointer",
-                }}
-                onClick={(event) => {
-                  let values: any[] = filters;
-                  values = values.map((entry: any) => {
-                    let isSelected = card.value === entry.value;
-                    entry.isSelected = isSelected;
-                    return entry;
-                  });
-                  updateFilters(values);
-                  selectedFilter.current = card;
-                  loadUpcoming();
-                  triggerRefresh(!refresh);
-                }}
-              >
-                <Typography
-                  component="div"
-                  className="flex h-full w-full flex-row justify-center items-center"
-                >
-                  {card.label}
-                </Typography>
-              </Box>
-            ))}
-          </Stack>
-          {/* </Container> */}
-          <br />
-          <DataTable
-            columns={columns}
-            refresh={refresh}
-            useSearch={false}
-            useServerPagination={false}
-            onApi={async (page, pageSize, searchText) => {
-              return loadUpcoming();
-            }}
-            onRowClick={(params) => {
-              localStorage.setItem("party_filter_value", params.row.id);
-              localStorage.setItem("party_view_type", "upcoming");
-              localStorage.setItem(
-                "party_bill_type",
-                selectedType.current.code
-              );
-              localStorage.setItem(
-                "party_filter_type",
-                selectedFilter.current.value
-              );
-            }}
-          />
-          {/* <DataGrid
-            columns={columns}
-            rows={rows}
-            initialState={{
-              pagination: {
-                paginationModel: {
-                  pageSize: 10,
-                },
-              },
-            }}
-            onRowClick={(params) => {
-              localStorage.setItem("party_filter_value", params.row.id);
-              localStorage.setItem("party_view_type", "upcoming");
-              localStorage.setItem(
-                "party_bill_type",
-                selectedType.current.code
-              );
-              localStorage.setItem(
-                "party_filter_type",
-                selectedFilter.current.value
-              );
-            }}
-            pageSizeOptions={[5, 10, 25, 50, 75, 100]}
-            disableRowSelectionOnClick
-            onPaginationModelChange={(value) => {
-              alert(`page model:  ${JSON.stringify(value)}`);
-            }}
-          /> */}
-        </CardView>
-      ),
-    },
+    // {
+    //   weight: Weight.Low,
+    //   view: (
+    //     <div className={`flex flex-col h-full`}>
+    //       <CardView className="mb-2" title="Switch Company">
+    //         <DropDown
+    //           label={"Select Company"}
+    //           displayFieldKey={"name"}
+    //           valueFieldKey={null}
+    //           selectionValues={data}
+    //           helperText={""}
+    //           defaultSelectionIndex={cachedCompanyIndex}
+    //           onSelection={(selection) => {
+    //             const companyId = selection.id;
+    //             let exisitngIndex = data.findIndex(
+    //               (entry: any) => entry.id === companyId
+    //             );
+    //             if (exisitngIndex != -1) {
+    //               setCompanyId(exisitngIndex);
+    //               Cookies.set("companyId", companyId);
+    //             }
+    //           }}
+    //         />
+    //       </CardView>
+    //       <CardView className="mt-2 bg-red-500" permissionCode="CustomerCard">
+    //         <CustomerDetailsCard companyId={data[cachedCompanyIndex]} />
+    //       </CardView>
+    //     </div>
+    //   ),
+    // },
+    // {
+    //   weight: Weight.Medium,
+    //   view: (
+    //     <CardView
+    //       title={"Payable vs Receivable"}
+    //       permissionCode="OutstandingCard"
+    //     >
+    //       <OutstandingCard
+    //         companyId={data[cachedCompanyIndex]}
+    //         title="Outstanding Overview"
+    //       />
+    //     </CardView>
+    //   ),
+    // },
+    // {
+    //   weight: Weight.Medium,
+    //   view: (
+    //     <CardView title={"Aging Wise"} permissionCode="AgingOutstandingCard">
+    //       <AgingView
+    //         billType={selectedType.current.code}
+    //         companyId={data[cachedCompanyIndex]}
+    //         title="Aging-Wise O/S"
+    //       />
+    //     </CardView>
+    //   ),
+    // },
+    // {
+    //   weight: Weight.Medium,
+    //   view: (
+    //     <CardView title="Today's O/S">
+    //       <OutstandingTask companyId={data[cachedCompanyIndex]} />
+    //     </CardView>
+    //   ),
+    // },
+    // {
+    //   weight: Weight.High,
+    //   view: (
+    //     <CardView title="Ranked Parties">
+    //       <RankedPartyOutstandingCard
+    //         companyId={data[cachedCompanyIndex]}
+    //         billType={selectedType.current.code}
+    //       />
+    //     </CardView>
+    //   ),
+    // },
+    // {
+    //   weight: Weight.High,
+    //   view: (
+    //     <CardView title="Upcoming Collections">
+    //       {/* <Container className="flex overflow-x-auto"> */}
+    //       <Stack
+    //         flexDirection="row"
+    //         gap={1}
+    //         pb={1}
+    //         sx={{ overflowX: "scroll" }}
+    //       >
+    //         {filters.map((card, index) => (
+    //           <Box
+    //             key={index}
+    //             className="rounded-3xl"
+    //             sx={{
+    //               minWidth: 100,
+    //               justifyContent: "center",
+    //               alignItems: "center",
+    //               height: 40,
+    //               background: card.isSelected
+    //                 ? theme.palette.primary.main
+    //                 : inspiredPalette.lightTextGrey,
+    //               color: card.isSelected
+    //                 ? theme.palette.primary.contrastText
+    //                 : inspiredPalette.dark,
+    //               cursor: "pointer",
+    //             }}
+    //             onClick={(event) => {
+    //               let values: any[] = filters;
+    //               values = values.map((entry: any) => {
+    //                 let isSelected = card.value === entry.value;
+    //                 entry.isSelected = isSelected;
+    //                 return entry;
+    //               });
+    //               updateFilters(values);
+    //               selectedFilter.current = card;
+    //               loadUpcoming();
+    //               triggerRefresh(!refresh);
+    //             }}
+    //           >
+    //             <Typography
+    //               component="div"
+    //               className="flex h-full w-full flex-row justify-center items-center"
+    //             >
+    //               {card.label}
+    //             </Typography>
+    //           </Box>
+    //         ))}
+    //       </Stack>
+    //       {/* </Container> */}
+    //       <br />
+    //       <DataTable
+    //         columns={columns}
+    //         refresh={refresh}
+    //         useSearch={false}
+    //         useServerPagination={false}
+    //         onApi={async (page, pageSize, searchText) => {
+    //           return loadUpcoming();
+    //         }}
+    //         onRowClick={(params) => {
+    //           localStorage.setItem("party_filter_value", params.row.id);
+    //           localStorage.setItem("party_view_type", "upcoming");
+    //           localStorage.setItem(
+    //             "party_bill_type",
+    //             selectedType.current.code
+    //           );
+    //           localStorage.setItem(
+    //             "party_filter_type",
+    //             selectedFilter.current.value
+    //           );
+    //         }}
+    //       />
+    //       {/* <DataGrid
+    //         columns={columns}
+    //         rows={rows}
+    //         initialState={{
+    //           pagination: {
+    //             paginationModel: {
+    //               pageSize: 10,
+    //             },
+    //           },
+    //         }}
+    //         onRowClick={(params) => {
+    //           localStorage.setItem("party_filter_value", params.row.id);
+    //           localStorage.setItem("party_view_type", "upcoming");
+    //           localStorage.setItem(
+    //             "party_bill_type",
+    //             selectedType.current.code
+    //           );
+    //           localStorage.setItem(
+    //             "party_filter_type",
+    //             selectedFilter.current.value
+    //           );
+    //         }}
+    //         pageSizeOptions={[5, 10, 25, 50, 75, 100]}
+    //         disableRowSelectionOnClick
+    //         onPaginationModelChange={(value) => {
+    //           alert(`page model:  ${JSON.stringify(value)}`);
+    //         }}
+    //       /> */}
+    //     </CardView>
+    //   ),
+    // },
     {
       weight: Weight.High,
       view: (
