@@ -3,14 +3,35 @@
 import { numericToString } from "@/app/services/Local/helper";
 import { DataTable } from "@/app/ui/data_grid";
 import { CardView, DynGrid, Weight, GridDirection } from "@/app/ui/responsive_grid";
-import { GridColDef } from "@mui/x-data-grid";
-import { useState } from "react";
+import { GridColDef, GridSortDirection } from "@mui/x-data-grid";
+import { useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
+import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
+import { DropDown } from "@/app/ui/drop_down";
+
 
 const Page = () => {
 
     const [refresh, setRefresh] = useState(false);
+    const [groups, setGroups] = useState<any>([]);
+
+    let selectedGroup = useRef<any>(null)
+
+
+    useEffect(() => {
+        loadGroups().then(_ => setRefresh(!refresh))
+    }, [])
+
+    const loadGroups = async () => {
+        let url = `${getBmrmBaseUrl()}/stock-group/get/names`;
+        let response = await getAsync(url)
+        let values = [{id: "none", title: "All"}]
+        response.map((entry: any) => {
+            values.push(entry)
+        })
+        setGroups(values)
+    }
 
     const loadData = async (offset: number, limit: number, search?: string) => {
         let url = "http://118.139.167.125:45700/stock-items/get/report";
@@ -18,7 +39,7 @@ const Page = () => {
             "Limit": limit,
             "Offset": offset,
             "SearchText": search,
-            "StockGroups": [],
+            "StockGroups": selectedGroup.current != null ? [selectedGroup.current]: [],
         }
         let appHeaders = {
             "Content-Type": "application/json; charset=utf-8",
@@ -44,7 +65,7 @@ const Page = () => {
             field: "Name",
             headerName: "Item",
             editable: false,
-            sortable: true,
+            sortable: false,
             flex: 1,
             minWidth: 200,
         },
@@ -82,6 +103,24 @@ const Page = () => {
     ];
 
     const gridConfig = [
+        {
+            weight: Weight.Low,
+            view: (
+                <CardView>
+                <DropDown
+                label="Select Type"
+                displayFieldKey={"title"}
+                valueFieldKey={null}
+                selectionValues={groups}
+                helperText={""}
+                onSelection={(selection) => {
+                    selectedGroup.current = (selection.title === "All") ? null : selection.title;
+                  setRefresh(!refresh);
+                }}
+                />
+                </CardView>
+             )
+        },
         {
             weight: Weight.High,
             view: (
