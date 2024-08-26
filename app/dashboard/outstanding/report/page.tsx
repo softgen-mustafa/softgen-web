@@ -7,6 +7,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState, useRef } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
+import { PeriodicTable } from "@/app/ui/periodic_table/period_table";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 
 const searchKeys = [
@@ -268,6 +269,7 @@ const Page = () => {
 
     return (
         <div className="">
+        <PeriodicTable/>
         <DynGrid views={gridConfig} direction={GridDirection.Column}/>
         </div>
     );
