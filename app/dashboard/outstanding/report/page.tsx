@@ -1,6 +1,5 @@
 "use client";
 
-import { numericToString } from "@/app/services/Local/helper";
 import { DropDown } from "@/app/ui/drop_down";
 import { DataTable } from "@/app/ui/data_grid";
 import { CardView, DynGrid, Weight, GridDirection } from "@/app/ui/responsive_grid";
@@ -8,25 +7,71 @@ import { GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState, useRef } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
+import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
+
+const searchKeys = [
+    {
+        "name": "Party Name",
+        "code": "Party"
+    },
+    {
+        "name": "Ledger Group",
+        "code": "Group"
+    },
+    {
+        "name": "Bill Number",
+        "code": "Bill"
+    },
+]
 
 const Page = () => {
 
     const [refresh, setRefresh] = useState(false);
     const [groups, setGroups] = useState([]);
+    const [parties, setParties] = useState<any[]>([]);
 
+    let searchedParty = useRef("");
     let selectedGroups = useRef<string[]>([])
+    let selectedParty = useRef<string>("")
+    let selectedSearchKey = useRef("Party")
 
     useEffect(() => {
-        loadGroups().then(_ => setRefresh(!refresh))
+         loadParties().then(_ => loadGroups())
+        
     }, [])
 
+    const loadParties = async () => {
+        try {
+            let searchedValue = searchedParty.current != null && searchedParty.current.length > 0 ? `?searchKey=${searchedParty.current}` : "";
+            let url = `http://localhost:35001/os/search/ledgers${searchedValue}`
+            let appHeaders = {
+                "Content-Type": "application/json; charset=utf-8",
+                "CompanyId": Cookies.get("companyId") ?? 1,
+            };
+            let res = await axios.get(url, { headers: appHeaders })
+            let values: any[] = [{ Name: "None"}]
+            if (res.data !== null) {
+                res.data.Data.map((entry: any) => {
+                    values.push(entry)
+                })
+            }
+            setParties(values);
+        } catch {
+
+        } finally {
+            setRefresh(!refresh)
+        }
+    }
+
     const loadGroups = async () => {
-        let url = "http://118.139.167.125:45700/os/get/groups?isDebit=true";
+        try {
+        //let url = "http://localhost:35001/os/get/groups?isDebit=true"
+        let url = "http://118.139.167.125:45700/os/get/groups?isDebit=true"
         let appHeaders = {
             "Content-Type": "application/json; charset=utf-8",
             "CompanyId": Cookies.get("companyId") ?? 1,
         };
-        let res = await axios.get(url,{ headers: appHeaders })
+        let res = await axios.post(url, {}, { headers: appHeaders })
         let values = res.data.map((entry: string) => {
             return {
                 name: entry,
@@ -34,32 +79,42 @@ const Page = () => {
             }
         })
         setGroups(values);
+        } catch {
+
+        } finally{ 
+            setRefresh(!refresh)
+        }
 
     }
 
     const loadData = async (offset: number, limit: number, search?: string) => {
-        let url = "http://118.139.167.125:45700/os/get/report?isDebit=true";
+        let url = "http://localhost:35001/os/get/report?isDebit=true";
+        //let url = "http://118.139.167.125:45700/os/get/report?isDebit=true"
             let requestBody = {
-            "Limit": limit,
-            "Offset": offset,
-            "PartyName": "",
+            "Limit": 0,limit,
+            "Offset": 0,offset,
+            "PartyName": selectedParty.current === "None" ? "" : selectedParty.current,
             "SearchText": search,
             "Groups": selectedGroups.current ?? [],
             "DueDays": 30,
-            "OverDueDays": 90
+            "OverDueDays": 90,
+            "SearchKey": selectedSearchKey.current ?? "Party"
         }
         let appHeaders = {
             "Content-Type": "application/json; charset=utf-8",
             "CompanyId": Cookies.get("companyId") ?? 1,
         };
         let res = await axios.post(url, requestBody, { headers: appHeaders })
+        if (res.data == null || res.data.Data == null)  {
+            return []
+        }
         let values = res.data.Data.map((entry: any, index: number) => {
             return {
                 id: index + 1,
                 ...entry
             };
         });
-        return values
+        return values;
     }
 
 
@@ -67,6 +122,14 @@ const Page = () => {
         {
             field: "LedgerName",
             headerName: "Party",
+            editable: false,
+            sortable: true,
+            flex: 1,
+            minWidth: 200,
+        },
+        {
+            field: "BillName",
+            headerName: "Bill No",
             editable: false,
             sortable: true,
             flex: 1,
@@ -138,7 +201,24 @@ const Page = () => {
         view: (
             <CardView title="Outstanding Overview">
             <DropDown
-            label="Select Type"
+            label="Select Party"
+            useSearch={true}
+            displayFieldKey={"Name"}
+            valueFieldKey={null}
+            selectionValues={parties}
+            helperText={""}
+            onSearchUpdate={(search: string) => {
+                searchedParty.current = search;
+                loadParties()
+            }}
+            onSelection={(selection: any) => {
+                selectedParty.current = selection.Name;
+                setRefresh(!refresh);
+            }}
+            />
+            <div className="mt-4"/>
+            <DropDown
+            label="Select Group"
             displayFieldKey={"name"}
             valueFieldKey={null}
             selectionValues={groups}
@@ -149,6 +229,18 @@ const Page = () => {
                     selectedGroups.current.push(selection.name)
                 }*/
                 selectedGroups.current = [selection.name];
+                setRefresh(!refresh);
+            }}
+            />
+            <div className="mt-4"/>
+            <DropDown
+            label="Search By "
+            displayFieldKey={"name"}
+            valueFieldKey={null}
+            selectionValues={searchKeys}
+            helperText={""}
+            onSelection={(selection: any) => {
+                selectedSearchKey.current = selection.code;
                 setRefresh(!refresh);
             }}
             />
@@ -165,7 +257,7 @@ const Page = () => {
                 useSearch={true}
                 onApi={async (page, pageSize, searchText) => {
                     return await loadData(page, pageSize, searchText);
-                }}
+               }}
                 onRowClick={(params) => {
                 }}
                 />
@@ -175,7 +267,7 @@ const Page = () => {
     ]
 
     return (
-        <div className="w-full">
+        <div className="">
         <DynGrid views={gridConfig} direction={GridDirection.Column}/>
         </div>
     );

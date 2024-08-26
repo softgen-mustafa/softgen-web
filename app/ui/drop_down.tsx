@@ -21,6 +21,7 @@ const DropDown = ({
   onSelection,
   defaultSelectionIndex = 0,
   useSearch,
+  onSearchUpdate
 }: {
   label: string;
   displayFieldKey: string;
@@ -29,6 +30,7 @@ const DropDown = ({
   helperText: string | null;
   defaultSelectionIndex?: number;
   onSelection: (selected: any) => void;
+  onSearchUpdate?: (value: string) => void;
   useSearch?: boolean;
 }) => {
   const [value, setValue] = useState({});
@@ -57,10 +59,15 @@ const DropDown = ({
   };
 
   const onSearch = () => {
+     if (onSearchUpdate) {
+        onSearchUpdate(searchText.current);
+        return;
+     }
     if (!searchText.current || searchText.current.length < 1) {
       loadData();
       return;
     }
+
     const searchedValues = selectionValues.filter((entry, index) =>
       entry[displayFieldKey]
         .toLowerCase()
