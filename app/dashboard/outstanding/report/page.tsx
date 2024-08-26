@@ -7,7 +7,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState, useRef } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { PeriodicTable, TableColumn} from "@/app/ui/periodic_table/period_table";
+import { PeriodicTable, TableColumn, TableSearchKey} from "@/app/ui/periodic_table/period_table";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 
 const searchKeys = [
@@ -89,7 +89,7 @@ const Page = () => {
 
     }
 
-    const loadData = async (offset: number, limit: number, search?: string) => {
+    const loadData = async (offset: number, limit: number, search?: string, searchKey?: string) => {
         let url = "http://localhost:35001/os/get/report?isDebit=true";
         //let url = "http://118.139.167.125:45700/os/get/report?isDebit=true"
             let requestBody = {
@@ -100,7 +100,7 @@ const Page = () => {
             "Groups": selectedGroups.current ?? [],
             "DueDays": 30,
             "OverDueDays": 90,
-            "SearchKey": selectedSearchKey.current ?? "Party"
+            "SearchKey": searchKey//;selectedSearchKey.current ?? "Party"
         }
         let appHeaders = {
             "Content-Type": "application/json; charset=utf-8",
@@ -269,14 +269,35 @@ const Page = () => {
         },
     ]
 
+const osSearchKeys: TableSearchKey[] = [
+    {
+        "title": "Party Name",
+        "value": "Party"
+    },
+    {
+        "title": "Ledger Group",
+        "value": "Group"
+    },
+    {
+        "title": "Bill Number",
+        "value": "Bill"
+    },
+]
+
 
 
     return (
         <div className="">
-        <PeriodicTable columns={columns.map((col: any) => {
+        <PeriodicTable 
+        useSearch={true}
+        searchKeys={osSearchKeys}
+        columns={columns.map((col: any) => {
             let column: TableColumn = {
                 header: col.headerName,
                 field: col.field,
+                type: "text",
+                pinned: false,
+                rows: [],
             }
             return column;
         })} onApi={loadData}/>

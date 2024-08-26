@@ -1,6 +1,6 @@
 "use client";
-import { Box, IconButton, Typography } from "@mui/material";
-import { ChevronRight, ChevronLeft, Sync, FilterAlt, FilterAltOff } from "@mui/icons-material";
+import {CircularProgress, InputAdornment, TextField, Box, IconButton, Typography } from "@mui/material";
+import { Search, ChevronRight, ChevronLeft, Sync, FilterAlt, FilterAltOff } from "@mui/icons-material";
 import React, { useState, useRef, useEffect } from "react";
 import {
     FormControl,
@@ -11,15 +11,30 @@ import {
 interface PeriodicTableProps {
     columns: TableColumn[];
     rows?: any[];
-    onApi?: (offset: number, limit: number, searchText: string) => Promise<any[]>
+    useSearch: boolean;
+    searchKeys?: TableSearchKey[];
+    onApi?: (offset: number, limit: number, searchText: string, searchKey?: string) => Promise<any[]>
 }
 
 interface TableActionProps {
     onFilterToggle: () => void;
+    onSync: () => void;
 }
 
 interface TablePaginationProps {
+    refresh: boolean;
     onChange: (offset: number, limit: number) => void;
+}
+
+interface TableSearchKey {
+    title: string;
+    value: string;
+}
+
+
+interface TableSearchProps {
+    onChange: (searchValue: string, searchKey?: string) => void;
+    searchKeys?: TableSearchKey[];
 }
 
 
@@ -44,51 +59,57 @@ interface TableProps {
 const Table = ({columns}: TableProps) => {
     return (
         <Box className="w-full flex flex-row">
-            <Box className="w-full flex flex-row">
-                {
-                    columns.map((column: TableColumn, colIndex: number) => {
-                        return (
-                            <Box key={colIndex}>
-                                <Box className="flex flex-row">
-                                    <Typography>{column.header}</Typography>
-                                </Box>
-                                {
-                                   column.rows.map((row: TableRow, rowIndex: number) => {
-                                       return (
-                                            <Box key={rowIndex}>{row.value}</Box>
-                                       );
-                                   })
-                                }
-                            </Box>
-                        );
-                    }) 
-                }
-            </Box>
+        <Box className="w-full flex flex-row">
+        {
+            columns.map((column: TableColumn, colIndex: number) => {
+                return (
+                    <Box key={colIndex}>
+                    <Box className="flex flex-row">
+                    <Typography>{column.header}</Typography>
+                    </Box>
+                    {
+                        column.rows.map((row: TableRow, rowIndex: number) => {
+                            return (
+                                <Box key={rowIndex}>{row.value}</Box>
+                            );
+                        })
+                    }
+                    </Box>
+                );
+            }) 
+        }
+        </Box>
         </Box>
     );
 }
 
 
-const TableActions = ({ onFilterToggle }: TableActionProps) => {
+const TableActions = ({ onFilterToggle, onSync }: TableActionProps) => {
     const [openFilter, toggleFilter] = useState(false)
     return (
         <Box className="flex flex-row">
-            <IconButton onClick={() => {
-                toggleFilter(!openFilter)
-                onFilterToggle()
-            }}>{
-                !openFilter ? <FilterAlt/> : <FilterAltOff/>
-            }</IconButton>
+        <IconButton onClick={() => {
+            toggleFilter(!openFilter)
+            onFilterToggle()
+        }}>{
+            !openFilter ? <FilterAlt/> : <FilterAltOff/>
+        }</IconButton>
 
-            <IconButton onClick={() => {
-            }}><Sync/></IconButton>
+        <IconButton onClick={() => {
+            onSync();
+        }}><Sync/></IconButton>
 
         </Box>
     );
 }
 
 
-const TablePagination = ({onChange}: TablePaginationProps) => {
+const TablePagination = ({refresh, onChange}: TablePaginationProps) => {
+
+    useEffect(() => {
+        setOffSet(0);
+        setLimit("5");
+    }, [refresh])
 
     const limits = [5, 10, 15, 20, 25, 50, 75, 100, 500];
 
@@ -141,19 +162,89 @@ const TablePagination = ({onChange}: TablePaginationProps) => {
     );
 }
 
+const TableSearch = ({onChange, searchKeys = []}: TableSearchProps) => {
+    const [searchKey, setSearchKey] = useState("");
+    return (
+        <Box className="flex flex-row">
+        {
+            searchKeys != null
+            &&
+                searchKeys.length > 0
+            &&
+                <FormControl className="mr-5">
+            <Select
+            className="w-full"
+            value={searchKey}
+            onChange={(event) => {
+                let selectedValue = event.target.value ?? ""
+                setSearchKey(selectedValue)
+            }}
+            >
+            {
+                searchKeys.map((entry: TableSearchKey, index:number) => {
+                    return (
+                        <MenuItem
+                        key={index}
+                        value={entry.value}
+                        >
+                        {entry.title}
+                        </MenuItem>
+                    )
+                })}
+                </Select>
+
+                </FormControl>
+        }
+
+        <TextField
+        label={"Search"}
+        variant="outlined"
+        type={"text"}
+        sx={{
+            flex: 1,
+        }}
+        InputProps={{
+            endAdornment: (
+                <InputAdornment position="end">
+                <Search />
+                </InputAdornment>
+            ),
+        }}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            let updatedValue = event.target.value;
+            onChange(updatedValue, searchKey);
+        }}
+        />
+
+        </Box>
+    );
+}
+
 const PeriodicTable = (props: PeriodicTableProps) => {
+
+
+    const [loading, setLoading] = useState(false);
+    const [refresh, toggleRefresh] = useState(false);
 
     useEffect(() => {
         refreshColumns(0, 5, "");
     }, [])
 
 
-    const refreshColumns = (offset: number, limit: number, searchText: string) => {
+    const refreshColumns = (offset: number, limit: number, searchText: string, searchKey?: string) => {
         if (props.onApi != null) {
-            props.onApi(offset, limit, searchText)
+            try {
+                setLoading(true)
+                props.onApi(offset, limit, searchText, searchKey)
                 .then((rows: any[]) => {
                     loadColumns(rows)
+                    setLoading(false)
                 })
+            } catch {
+
+            } finally {
+                setLoading(false)
+            }
         } else if (props.rows != null) {
             let rows = props.rows.slice(offset * limit, (offset * limit) + limit)
             loadColumns(rows)
@@ -183,23 +274,42 @@ const PeriodicTable = (props: PeriodicTableProps) => {
 
     return (
         <div className="flex flex-col w-full h-auto">
-            <Box className="flex flex-row w-full justify-between ">
-                <TableActions onFilterToggle={() => toggleFilter(!filterOpen)}/>
-                <TablePagination onChange={(offset: number, limit: number) => {
-                    refreshColumns(offset, limit, "");
-                }}/>
+        <Box className="flex flex-row w-full justify-between ">
+        <TableActions onFilterToggle={() => toggleFilter(!filterOpen)} onSync={() => {
+            refreshColumns(0, 5, "")
+            toggleRefresh(!refresh);
+        }}/>
+        {
+            props.useSearch
+            &&
+                <TableSearch 
+            searchKeys={props.searchKeys}
+            onChange={(searchValue: string, searchKey?: string) => {
+                refreshColumns(0, 5, searchValue, searchKey);
+            }}
+            />
+        }
+        <TablePagination refresh={refresh} onChange={(offset: number, limit: number) => {
+            refreshColumns(offset, limit, "");
+        }}/>
+        </Box>
+        {
+            loading
+            &&
+                <CircularProgress/>
+        }
+        <Box className="flex flex-row">
+        {
+            filterOpen &&
+                <Box className="flex flex-col">
+            <Typography>Filters</Typography>
             </Box>
-            <Box className="flex flex-row">
-            {
-                filterOpen &&
-                    <Box className="flex flex-col">
-                        <Typography>Filters</Typography>
-                    </Box>
-            }
-            <Table columns={tableColumns}/>
-            </Box>
+        }
+        <Table columns={tableColumns}/>
+        </Box>
         </div>
     );
 }
 
-export { PeriodicTable }
+export { PeriodicTable };
+export type {TableColumn, TableSearchKey};
