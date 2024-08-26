@@ -1,5 +1,5 @@
 "use client";
-import {CircularProgress, InputAdornment, TextField, Box, IconButton, Typography } from "@mui/material";
+import {CircularProgress, InputAdornment, TextField, Box, IconButton, Typography, useTheme } from "@mui/material";
 import { Search, ChevronRight, ChevronLeft, Sync, FilterAlt, FilterAltOff } from "@mui/icons-material";
 import React, { useState, useRef, useEffect } from "react";
 import {
@@ -7,6 +7,7 @@ import {
     MenuItem,
     Select,
 } from "@mui/material";
+import { inspiredPalette } from "../theme";
 
 interface PeriodicTableProps {
     columns: TableColumn[];
@@ -57,24 +58,69 @@ interface TableProps {
 }
 
 const Table = ({columns}: TableProps) => {
+
+    const theme = useTheme();
+
+    const [tableColumns, updateColumns] = useState<TableColumn[]>([]);
+    const [draggedColumnIndex, setDraggedColumnIndex] = useState<number | null>(
+        null
+    );
+
+    useEffect(() => {
+        updateColumns(columns);
+    }, [columns])
+
+    const handleDragStart = (index: number) => {
+        setDraggedColumnIndex(index);
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+    };
+
+    const handleDrop = (targetIndex: number) => {
+        if (draggedColumnIndex === null || draggedColumnIndex === targetIndex)
+            return;
+
+        const newColumns = [...columns];
+        const [draggedColumn] = newColumns.splice(draggedColumnIndex, 1);
+        newColumns.splice(targetIndex, 0, draggedColumn);
+
+        updateColumns(newColumns);
+        setDraggedColumnIndex(null);
+    };
+
+
     return (
         <Box className="w-full flex flex-row">
-        <Box className="w-full flex flex-row">
+        <Box className="w-full flex flex-row p-2" style={{
+            borderWidth: 1,
+            borderRadius: 2
+        }}>
         {
-            columns.map((column: TableColumn, colIndex: number) => {
+            tableColumns.map((column: TableColumn, colIndex: number) => {
                 return (
-                    <Box key={colIndex}>
-                    <Box className="flex flex-row">
-                    <Typography>{column.header}</Typography>
+                    <div key={colIndex} className="flex-grow"                     
+                    draggable
+                    onDragStart={() => handleDragStart(colIndex)}
+                    onDragOver={handleDragOver}
+                    onDrop={() => handleDrop(colIndex)}
+                    >
+                    <Box className="flex flex-row items-center" sx={{
+                        minHeight: 40,
+                        borderBottomWidth: 2,
+                        borderBottomColor: theme.palette.primary.main,
+                    }}>
+                    <Typography className="pl-2">{column.header}</Typography>
                     </Box>
                     {
                         column.rows.map((row: TableRow, rowIndex: number) => {
                             return (
-                                <Box key={rowIndex}>{row.value}</Box>
+                                <Box key={rowIndex} className="pl-2">{row.value}</Box>
                             );
                         })
                     }
-                    </Box>
+                    </div>
                 );
             }) 
         }
