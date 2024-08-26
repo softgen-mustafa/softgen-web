@@ -8,6 +8,8 @@ import {
     Select,
 } from "@mui/material";
 import { inspiredPalette } from "../theme";
+import  {GithubPicker, SketchPicker } from "react-color";
+
 
 interface PeriodicTableProps {
     columns: TableColumn[];
@@ -45,6 +47,7 @@ interface TableColumn {
     field: string;
     pinned: boolean;
     rows: TableRow[];
+    color?: any;
 }
 
 interface TableRow {
@@ -57,7 +60,75 @@ interface TableProps {
     columns: TableColumn[];
 }
 
+
+const ColumnColorPicker = ({onColorChange}: {onColorChange: (color: any) => void}) => {
+    const [state, setState] = useState<any>({
+    displayColorPicker: false,
+    color: {
+      r: '241',
+      g: '112',
+      b: '19',
+      a: '1',
+    },
+  });
+
+  const handleClick = () => {
+    setState({ ...state, displayColorPicker: !state.displayColorPicker })
+  };
+
+  const handleClose = () => {
+    setState({ ...state, displayColorPicker: false })
+  };
+
+  const handleChange = (color: any) => {
+    onColorChange(color.rgb);
+    setState({ ...state, color: color.rgb})
+  };
+  let styles: any= {
+          color: {
+              height: '14px',
+              width: '14px',
+              borderRadius: '8px',
+              background: `rgba(${state.color.r ?? 255 }, ${state.color.g ?? 255}, ${state.color.b ?? 255}, ${state.color.a ?? 255})`,
+          },
+          swatch: {
+              padding: '2px',
+              background: '#fff',
+              borderRadius: '10px',
+              boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
+              cursor: 'pointer',
+          },
+          popover: {
+              position: 'absolute',
+              zIndex: '2',
+          },
+          cover: {
+              position: 'fixed',
+              top: '0px',
+              right: '0px',
+              bottom: '0px',
+              left: '0px',
+          },
+  };
+
+
+    return (
+      <div>
+        <div style={ styles.swatch } onClick={ handleClick }>
+          <div style={ styles.color } />
+        </div>
+        { state.displayColorPicker ? 
+            <div style={ styles.popover }>
+          <div style={ styles.cover } onClick={ handleClose }/>
+          <GithubPicker color={ state.color} onChange={handleChange}/>
+        </div> : null }
+
+      </div>
+    )
+}
+
 const Table = ({columns}: TableProps) => {
+
 
     const theme = useTheme();
 
@@ -99,19 +170,36 @@ const Table = ({columns}: TableProps) => {
         }}>
         {
             tableColumns.map((column: TableColumn, colIndex: number) => {
+
+                let columnColor = `white`;
+                if (column.color != null) {
+                    columnColor = `rgba(${column.color.r ?? 255 }, ${column.color.g ?? 255}, ${column.color.b ?? 255}, ${column.color.a ?? 255})`
+                }
                 return (
                     <div key={colIndex} className="flex-grow"                     
                     draggable
                     onDragStart={() => handleDragStart(colIndex)}
                     onDragOver={handleDragOver}
                     onDrop={() => handleDrop(colIndex)}
+                    style={{
+                        background: columnColor,
+                    }}
                     >
-                    <Box className="flex flex-row items-center" sx={{
+                    <Box className="pr-2 flex flex-row items-center justify-between" sx={{
                         minHeight: 40,
                         borderBottomWidth: 2,
                         borderBottomColor: theme.palette.primary.main,
                     }}>
                     <Typography className="pl-2">{column.header}</Typography>
+                    <ColumnColorPicker onColorChange={(color) => {
+                        let values = tableColumns.map((entry: any)=> {
+                            if (entry.field === column.field) {
+                                entry.color = color;
+                            }
+                            return entry;
+                        })
+                        updateColumns(values);
+                    }}/>
                     </Box>
                     {
                         column.rows.map((row: TableRow, rowIndex: number) => {
