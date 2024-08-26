@@ -256,6 +256,7 @@ const DashboardPage = () => {
       header: "Name",
       field: "name",
       type: "string",
+      pinned: true,
     },
     {
       header: "Age",
@@ -271,6 +272,7 @@ const DashboardPage = () => {
       header: "Email",
       field: "email",
       type: "string",
+      pinned: true,
     },
     {
       header: "Phone Number",

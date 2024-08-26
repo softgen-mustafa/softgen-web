@@ -2,14 +2,38 @@
 
 import { useEffect, useState } from "react";
 import TextInput from "./textfield";
-import { Box, Typography } from "@mui/material";
+import {
+  Box,
+  Checkbox,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { inspiredPalette } from "../theme";
+import { Pin, PushPin } from "@mui/icons-material";
+import MenuIcon from "@mui/icons-material/MoreVertOutlined";
 
 const PeriodicTable = ({ cColumn, data }: { cColumn: any; data: any }) => {
-  const [columns, updateColumns] = useState([]);
+  const [columns, updateColumns] = useState<any[]>([]);
   const [selectedRow, setSelectedRow] = useState<any[]>([]);
   const [draggedColumnIndex, setDraggedColumnIndex] = useState<number | null>(
     null
   );
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const appTheme = useTheme();
 
   useEffect(() => {
     populateColumns();
@@ -19,6 +43,7 @@ const PeriodicTable = ({ cColumn, data }: { cColumn: any; data: any }) => {
     let updatedColumns = cColumn.map((_item: any) => {
       let item = _item;
       item.rows = [];
+      item.pinned = _item.pinned != null ? _item.pinned : false;
       data.map((ele: any, index: number) =>
         item.rows.push({
           index: index,
@@ -60,41 +85,122 @@ const PeriodicTable = ({ cColumn, data }: { cColumn: any; data: any }) => {
     setDraggedColumnIndex(null);
   };
 
-  return (
-    <div className="flex items-center flex-row overflow-scroll">
-      {columns.map((col: any, key: number) => {
-        return (
-          <Box
-            key={key}
-            className="flex-1 border-2"
-            draggable
-            onDragStart={() => handleDragStart(key)}
-            onDragOver={handleDragOver}
-            onDrop={() => handleDrop(key)}
+  // const menu = () => {
+  //   return (
+  //     <Box>
+  //     <IconButton
+  //         id="menu-item"
+  //         aria-controls={open ? "demo-customized-menu" : undefined}
+  //         aria-haspopup="true"
+  //         aria-expanded={open ? "true" : undefined}
+  //         onClick={handleClick}
+  //       >
+  //         <MenuIcon />
+  //       </IconButton>
+  //       <Menu
+  //         id="menu"
+  //         anchorEl={anchorEl}
+  //         MenuListProps={{
+  //           "aria-labelledby": "menu-item",
+  //         }}
+  //         open={open}
+  //         onClose={handleClose}
+  //       >
+  //         {menuItems.map((_chart) => (
+  //           <MenuItem
+  //             key={_chart.id}
+  //             onClick={() => {
+
+  //               handleClose();
+  //             }}
+  //           >
+  //             {_chart.label}
+  //           </MenuItem>
+  //         ))}
+  //       </Menu>
+  //       </Box>
+  //   )
+  // }
+
+  const handleUnpinColumns = (col: any, key: number) => {
+    return (
+      <Box
+        key={key}
+        className="flex-1 border-2"
+        draggable
+        onDragStart={() => handleDragStart(key)}
+        onDragOver={handleDragOver}
+        onDrop={() => handleDrop(key)}
+      >
+        <Box
+          display={"flex"}
+          flexDirection={"row"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          gap={2}
+          className="py-2 border-b-2 bg-slate-50"
+        >
+          <Typography>{col.header}</Typography>
+          <IconButton
+            onClick={() => {
+              let values = columns.map((entry: any) => {
+                return {
+                  ...entry,
+                  pinned:
+                    col.field === entry.field ? !entry.pinned : entry.pinned,
+                };
+              });
+              updateColumns(values);
+            }}
           >
-            <Box className="py-2 border-b-2 flex align-middle justify-center bg-slate-50">
-              <Typography>{col.header}</Typography>
-            </Box>
-            {col.rows.map((row: any, index: any) => {
-              return (
-                <div
-                  key={index}
-                  onClick={() => {
-                    selectedRow.includes(index)
-                      ? setSelectedRow(selectedRow.filter((i) => i !== index))
-                      : setSelectedRow([...selectedRow, index]);
-                  }}
-                  className={`py-2 border-b-2 flex align-middle justify-center ${
-                    selectedRow.includes(index) ? "bg-slate-100" : "bg-white"
-                  }`}
-                >
-                  {row.view}
-                </div>
-              );
-            })}
-          </Box>
-        );
-      })}
+            <PushPin
+              sx={{ transform: col.pinned ? "rotate(0deg)" : "rotate(45deg)" }}
+            />
+          </IconButton>
+        </Box>
+        {col.rows.map((row: any, index: any) => {
+          return (
+            <div
+              key={index}
+              onClick={() => {
+                selectedRow.includes(index)
+                  ? setSelectedRow(selectedRow.filter((i) => i !== index))
+                  : setSelectedRow([...selectedRow, index]);
+              }}
+              className={`py-2 border-b-2 flex align-middle justify-center ${
+                selectedRow.includes(index) ? "bg-slate-100" : "bg-white"
+              }`}
+            >
+              {row.view}
+            </div>
+          );
+        })}
+      </Box>
+    );
+  };
+
+  return (
+    <div className="flex items-center flex-row ">
+      <div
+        className="flex items-center flex-row"
+        style={{
+          borderRightWidth: 3,
+          borderRightColor: appTheme.palette.primary.main,
+        }}
+      >
+        {columns
+          .filter((_item: any) => _item.pinned)
+          .map((col, key) => {
+            return handleUnpinColumns(col, key);
+          })}
+      </div>
+      <div className="flex items-center flex-row overflow-scroll">
+        {columns
+          .filter((_item: any) => !_item.pinned)
+          .map((col, key) => {
+            return handleUnpinColumns(col, key);
+          })}
+      </div>
     </div>
   );
 };
