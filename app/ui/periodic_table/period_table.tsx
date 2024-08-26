@@ -1,16 +1,73 @@
 "use client";
 import { Box, IconButton, Typography } from "@mui/material";
 import { ChevronRight, ChevronLeft, Sync, FilterAlt, FilterAltOff } from "@mui/icons-material";
-import { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
     FormControl,
     MenuItem,
     Select,
 } from "@mui/material";
 
+interface PeriodicTableProps {
+    columns: TableColumn[];
+    rows?: any[];
+    onApi?: (offset: number, limit: number, searchText: string) => Promise<any[]>
+}
+
 interface TableActionProps {
     onFilterToggle: () => void;
 }
+
+interface TablePaginationProps {
+    onChange: (offset: number, limit: number) => void;
+}
+
+
+interface TableColumn {
+    type: string
+    header: string;
+    field: string;
+    pinned: boolean;
+    rows: TableRow[];
+}
+
+interface TableRow {
+    type: string;
+    value: any;
+    onEdit: () => void;
+}
+
+interface TableProps {
+    columns: TableColumn[];
+}
+
+const Table = ({columns}: TableProps) => {
+    return (
+        <Box className="w-full flex flex-row">
+            <Box className="w-full flex flex-row">
+                {
+                    columns.map((column: TableColumn, colIndex: number) => {
+                        return (
+                            <Box key={colIndex}>
+                                <Box className="flex flex-row">
+                                    <Typography>{column.header}</Typography>
+                                </Box>
+                                {
+                                   column.rows.map((row: TableRow, rowIndex: number) => {
+                                       return (
+                                            <Box key={rowIndex}>{row.value}</Box>
+                                       );
+                                   })
+                                }
+                            </Box>
+                        );
+                    }) 
+                }
+            </Box>
+        </Box>
+    );
+}
+
 
 const TableActions = ({ onFilterToggle }: TableActionProps) => {
     const [openFilter, toggleFilter] = useState(false)
@@ -30,7 +87,8 @@ const TableActions = ({ onFilterToggle }: TableActionProps) => {
     );
 }
 
-const TablePagination = () => {
+
+const TablePagination = ({onChange}: TablePaginationProps) => {
 
     const limits = [5, 10, 15, 20, 25, 50, 75, 100, 500];
 
@@ -47,6 +105,7 @@ const TablePagination = () => {
         value={limit}
         onChange={(event) => {
             let selectedValue = event.target.value ?? ""
+            onChange(offSet,  parseInt(selectedValue))
             setLimit(selectedValue)
         }}
         >
@@ -68,6 +127,7 @@ const TablePagination = () => {
             <IconButton className="mr-2" onClick={() => {
                 if (offSet > 0) {
                     setOffSet(offSet - 1)
+                    onChange(offSet - 1, parseInt(limit))
                 }
             }}><ChevronLeft/></IconButton>
 
@@ -75,27 +135,69 @@ const TablePagination = () => {
 
             <IconButton className="ml-2" onClick={() => {
                 setOffSet(offSet + 1)
+                onChange(offSet + 1, parseInt(limit))
             }}><ChevronRight/></IconButton>
             </Box>
     );
 }
 
-const PeriodicTable = () => {
+const PeriodicTable = (props: PeriodicTableProps) => {
+
+    useEffect(() => {
+        refreshColumns(0, 5, "");
+    }, [])
+
+
+    const refreshColumns = (offset: number, limit: number, searchText: string) => {
+        if (props.onApi != null) {
+            props.onApi(offset, limit, searchText)
+                .then((rows: any[]) => {
+                    loadColumns(rows)
+                })
+        } else if (props.rows != null) {
+            let rows = props.rows.slice(offset * limit, (offset * limit) + limit)
+            loadColumns(rows)
+        }
+    }
+
     const [filterOpen, toggleFilter] = useState(false);
+    const [tableColumns, updateColumns] = useState<TableColumn[]>([]);
+
+    const loadColumns = (rows: any[]) => {
+        let newColumns = props.columns.map((entry: TableColumn) => {
+            let column = entry;
+            column.rows = [];
+            column.pinned = false;
+            rows.map((row: any) => {
+                let tableRow: TableRow = {
+                    type: entry.type ?? "text",
+                    value: row[column.field] ?? null,
+                    onEdit: () => {}
+                }
+                column.rows.push(tableRow)
+            }) 
+            return column;
+        })
+        updateColumns(newColumns)
+    }
+
     return (
         <div className="flex flex-col w-full h-auto">
             <Box className="flex flex-row w-full justify-between ">
                 <TableActions onFilterToggle={() => toggleFilter(!filterOpen)}/>
-                <TablePagination />
+                <TablePagination onChange={(offset: number, limit: number) => {
+                    refreshColumns(offset, limit, "");
+                }}/>
             </Box>
+            <Box className="flex flex-row">
             {
                 filterOpen &&
-                <Box className="flex flex-row">
                     <Box className="flex flex-col">
                         <Typography>Filters</Typography>
                     </Box>
-                </Box>
             }
+            <Table columns={tableColumns}/>
+            </Box>
         </div>
     );
 }

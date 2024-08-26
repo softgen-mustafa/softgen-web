@@ -7,7 +7,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState, useRef } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { PeriodicTable } from "@/app/ui/periodic_table/period_table";
+import { PeriodicTable, TableColumn} from "@/app/ui/periodic_table/period_table";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 
 const searchKeys = [
@@ -30,6 +30,7 @@ const Page = () => {
     const [refresh, setRefresh] = useState(false);
     const [groups, setGroups] = useState([]);
     const [parties, setParties] = useState<any[]>([]);
+    const [rows, setRows] = useState<any[]>([]);
 
     let searchedParty = useRef("");
     let selectedGroups = useRef<string[]>([])
@@ -92,8 +93,8 @@ const Page = () => {
         let url = "http://localhost:35001/os/get/report?isDebit=true";
         //let url = "http://118.139.167.125:45700/os/get/report?isDebit=true"
             let requestBody = {
-            "Limit": 0,limit,
-            "Offset": 0,offset,
+            "Limit": limit,
+            "Offset": offset,
             "PartyName": selectedParty.current === "None" ? "" : selectedParty.current,
             "SearchText": search,
             "Groups": selectedGroups.current ?? [],
@@ -115,6 +116,7 @@ const Page = () => {
                 ...entry
             };
         });
+        setRows(values);
         return values;
     }
 
@@ -267,10 +269,18 @@ const Page = () => {
         },
     ]
 
+
+
     return (
         <div className="">
-        <PeriodicTable/>
-        <DynGrid views={gridConfig} direction={GridDirection.Column}/>
+        <PeriodicTable columns={columns.map((col: any) => {
+            let column: TableColumn = {
+                header: col.headerName,
+                field: col.field,
+            }
+            return column;
+        })} onApi={loadData}/>
+        {/*<DynGrid views={gridConfig} direction={GridDirection.Column}/>*/}
         </div>
     );
 }
