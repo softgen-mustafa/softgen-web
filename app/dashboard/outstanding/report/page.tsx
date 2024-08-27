@@ -112,6 +112,9 @@ const Page = () => {
     }
     */
     let res = await postAsync(url, requestBody);
+    if (res === null) {
+        return [];
+    }
     let values = res.Data.map((entry: any, index: number) => {
       return {
         id: index + 1,

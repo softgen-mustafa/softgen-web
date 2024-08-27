@@ -16,6 +16,7 @@ const customReportPaths: any[] = [
     },*/
 ];
 const memberReportPaths: any[] = [
+    /*
     {
         title: "Broker Sales",
         destination: "/dashboard/broker/sales",
@@ -28,6 +29,7 @@ const memberReportPaths: any[] = [
         icon: <Receipt />,
         selected: false,
     },
+    */
 ];
 
 const adminReportPaths: any[] = [
@@ -38,9 +40,15 @@ const adminReportPaths: any[] = [
         selected: true,
     },
     {
-        title: "Outstanding",
-        destination: "/dashboard/outstanding",
+        title: "Receivables",
+        destination: "/dashboard/outstanding/report",
         icon: <PendingActions />,
+        selected: false,
+    },
+    {
+        title: "Stock Items",
+        destination: "/dashboard/Inventory/stock-items",
+        icon: <Inventory />,
         selected: false,
     },
     {
@@ -50,9 +58,15 @@ const adminReportPaths: any[] = [
         selected: false,
     },
     {
-        title: "Inventory",
+        title: "All Inventory",
         destination: "/dashboard/Inventory",
         icon: <Inventory />,
+        selected: false,
+    },
+    {
+        title: "Aging Outstanding",
+        destination: "/dashboard/outstanding",
+        icon: <PendingActions />,
         selected: false,
     },
     {
