@@ -9,6 +9,13 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { DropDown } from "@/app/ui/drop_down";
+import {
+  PeriodicTable,
+  TableColumn,
+  TableSearchKey,
+  TableSortKey,
+  ApiProps
+} from "@/app/ui/periodic_table/period_table";
 
 
 const Page = () => {
@@ -33,12 +40,16 @@ const Page = () => {
         setGroups(values)
     }
 
-    const loadData = async (offset: number, limit: number, search?: string) => {
-        let url = "http://118.139.167.125:45700/stock-items/get/report";
+    const loadData = async (apiParams: ApiProps) => {
+        //let url = "http://118.139.167.125:45700/stock-items/get/report";
+        let url = "http://localhost:35001/stock-items/get/report";
             let requestBody = {
-            "Limit": limit,
-            "Offset": offset,
-            "SearchText": search,
+            "Limit": apiParams.limit,
+            "Offset": apiParams.offset,
+            "SearchText": apiParams.searchText,
+            "SearchKey": apiParams.searchKey ?? "",
+            "SortKey": apiParams.sortKey ?? "",
+            "SortOrder": apiParams.sortOrder ?? "",
             "StockGroups": selectedGroup.current != null ? [selectedGroup.current]: [],
         }
         let appHeaders = {
@@ -46,7 +57,10 @@ const Page = () => {
             "CompanyId": Cookies.get("companyId") ?? 1,
         };
         let res = await axios.post(url, requestBody, { headers: appHeaders })
-        let values = res.data.map((entry: any, index: number) => {
+        if (res.data == null || res.data.Data ==null) {
+            return [];
+        }
+        let values = res.data.Data.map((entry: any, index: number) => {
             return {
                 id: index + 1,
                 Quantity: entry.ClosingBal != null ? entry.ClosingBal.Number : 0,
@@ -101,39 +115,60 @@ const Page = () => {
             minWidth: 150,
         },
     ];
+  const searchKeys: TableSearchKey[] = [
+    {
+      title: "Item Name",
+      value: "Item",
+    },
+    {
+      title: "Stock Group",
+      value: "Group",
+    },
+  ];
+
+  const sortKeys: TableSearchKey[] = [
+    {
+      title: "Item Name",
+      value: "Item",
+    },
+    {
+      title: "Stock Group",
+      value: "Group",
+    },
+    {
+      title: "Item Rate",
+      value: "Rate",
+    },
+    {
+      title: "Item Quantity",
+      value: "Quantity",
+    },
+    {
+      title: "Item Value",
+      value: "Amount",
+    },
+  ];
 
     const gridConfig = [
         {
-            weight: Weight.Low,
-            view: (
-                <CardView>
-                <DropDown
-                label="Select Type"
-                displayFieldKey={"title"}
-                valueFieldKey={null}
-                selectionValues={groups}
-                helperText={""}
-                onSelection={(selection) => {
-                    selectedGroup.current = (selection.title === "All") ? null : selection.title;
-                  setRefresh(!refresh);
-                }}
-                />
-                </CardView>
-             )
-        },
-        {
             weight: Weight.High,
             view: (
-                <CardView title="Parties">
-                <DataTable
-                columns={columns}
-                refresh={refresh}
+                <CardView title="Items">
+                <PeriodicTable
                 useSearch={true}
-                onApi={async (page, pageSize, searchText) => {
-                    return await loadData(page, pageSize, searchText);
-                }}
-                onRowClick={(params) => {
-                }}
+                searchKeys={searchKeys}
+                columns={columns.map((col: any) => {
+                    let column: TableColumn = {
+                        header: col.headerName,
+                        field: col.field,
+                        type: "text",
+                        pinned: false,
+                        rows: [],
+                    };
+                    return column;
+                })}
+                onApi={loadData}
+                sortKeys={sortKeys}
                 />
                 </CardView>
             ),

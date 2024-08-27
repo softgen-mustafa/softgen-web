@@ -21,20 +21,6 @@ import {
 } from "@/app/ui/periodic_table/period_table";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 
-const searchKeys = [
-  {
-    name: "Party Name",
-    code: "Party",
-  },
-  {
-    name: "Ledger Group",
-    code: "Group",
-  },
-  {
-    name: "Bill Number",
-    code: "Bill",
-  },
-];
 
 const Page = () => {
   const [refresh, setRefresh] = useState(false);
@@ -79,8 +65,8 @@ const Page = () => {
 
   const loadGroups = async () => {
     try {
-      //let url = "http://localhost:35001/os/get/groups?isDebit=true"
-      let url = "http://118.139.167.125:45700/os/get/groups?isDebit=true";
+      let url = "http://localhost:35001/os/get/groups?isDebit=true"
+     // let url = "http://118.139.167.125:45700/os/get/groups?isDebit=true";
       let appHeaders = {
         "Content-Type": "application/json; charset=utf-8",
         CompanyId: Cookies.get("companyId") ?? 1,
@@ -209,76 +195,6 @@ const Page = () => {
     },
   ];
 
-  const gridConfig = [
-    {
-      weight: Weight.Low,
-      view: (
-        <CardView title="Outstanding Overview">
-          <DropDown
-            label="Select Party"
-            useSearch={true}
-            displayFieldKey={"Name"}
-            valueFieldKey={null}
-            selectionValues={parties}
-            helperText={""}
-            onSearchUpdate={(search: string) => {
-              searchedParty.current = search;
-              loadParties();
-            }}
-            onSelection={(selection: any) => {
-              selectedParty.current = selection.Name;
-              setRefresh(!refresh);
-            }}
-          />
-          <div className="mt-4" />
-          <DropDown
-            label="Select Group"
-            displayFieldKey={"name"}
-            valueFieldKey={null}
-            selectionValues={groups}
-            helperText={""}
-            onSelection={(selection: any) => {
-              /*let exists = selectedGroups.current.indexOf(selection.name);
-                if (exists === -1) {
-                    selectedGroups.current.push(selection.name)
-                }*/
-              selectedGroups.current = [selection.name];
-              setRefresh(!refresh);
-            }}
-          />
-          <div className="mt-4" />
-          <DropDown
-            label="Search By "
-            displayFieldKey={"name"}
-            valueFieldKey={null}
-            selectionValues={searchKeys}
-            helperText={""}
-            onSelection={(selection: any) => {
-              selectedSearchKey.current = selection.code;
-              setRefresh(!refresh);
-            }}
-          />
-        </CardView>
-      ),
-    },
-    {
-      weight: Weight.High,
-      view: (
-        <CardView title="Parties">
-          <DataTable
-            columns={columns}
-            refresh={refresh}
-            useSearch={true}
-            onApi={async (page, pageSize, searchText) => {
-              return await loadData(page, pageSize, searchText);
-            }}
-            onRowClick={(params) => {}}
-          />
-        </CardView>
-      ),
-    },
-  ];
-
   const osSearchKeys: TableSearchKey[] = [
     {
       title: "Party Name",
@@ -309,8 +225,48 @@ const Page = () => {
     },
   ];
 
-  return (
-    <div className="">
+  const gridConfig = [
+      /*
+    {
+      weight: Weight.Low,
+      view: (
+        <CardView title="Outstanding Overview">
+          <DropDown
+            label="Select Party"
+            useSearch={true}
+            displayFieldKey={"Name"}
+            valueFieldKey={null}
+            selectionValues={parties}
+            helperText={""}
+            onSearchUpdate={(search: string) => {
+              searchedParty.current = search;
+              loadParties();
+            }}
+            onSelection={(selection: any) => {
+              selectedParty.current = selection.Name;
+              setRefresh(!refresh);
+            }}
+          />
+          <div className="mt-4" />
+          <DropDown
+            label="Select Group"
+            displayFieldKey={"name"}
+            valueFieldKey={null}
+            selectionValues={groups}
+            helperText={""}
+            onSelection={(selection: any) => {
+              selectedGroups.current = [selection.name];
+              setRefresh(!refresh);
+            }}
+          />
+        </CardView>
+      ),
+    },
+    */
+    {
+      weight: Weight.High,
+      view: (
+        <CardView title="Party Outstandings">
       <PeriodicTable
         useSearch={true}
         searchKeys={osSearchKeys}
@@ -327,7 +283,14 @@ const Page = () => {
         onApi={loadData}
         sortKeys={osSortKeys}
       />
-      {/*<DynGrid views={gridConfig} direction={GridDirection.Column}/>*/}
+        </CardView>
+      ),
+    },
+  ];
+
+  return (
+    <div className="">
+      <DynGrid views={gridConfig} direction={GridDirection.Column}/>
     </div>
   );
 };
