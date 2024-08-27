@@ -191,7 +191,11 @@ const TableColumnView = ({
             }}
           >
             {column.pinned ? (
-              <PushPin fontSize="small" color="primary" />
+              <PushPin
+                fontSize="small"
+                color="primary"
+                sx={{ transform: "rotate(45deg)" }}
+              />
             ) : (
               <PushPinOutlined
                 fontSize="small"
