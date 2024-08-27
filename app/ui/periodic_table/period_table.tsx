@@ -127,6 +127,38 @@ const ColumnColorPicker = ({onColorChange}: {onColorChange: (color: any) => void
     )
 }
 
+const TableColumnView = ({column, onColorPick}: {column :TableColumn, onColorPick: (color: any) => void}) => {
+
+    const theme = useTheme();
+
+
+    return (
+            <Box >
+                    <Box className="pr-2 flex flex-row items-center justify-between" sx={{
+                        minHeight: 60,
+                        maxHeight: 60,
+                        borderBottomWidth: 2,
+                        borderBottomColor: theme.palette.primary.main,
+                    }}>
+                    <Typography className="pl-2">{column.header}</Typography>
+                    <ColumnColorPicker onColorChange={(color) => {
+                        onColorPick(color);
+                    }}/>
+                    </Box>
+                    {
+                        column.rows.map((row: TableRow, rowIndex: number) => {
+                            return (
+                                <Box key={rowIndex} className="flex-row pl-2" sx={{
+                                    minHeight: 60,
+                                    maxHeight: 60,
+                                }}>{row.value}</Box>
+                            );
+                        })
+                    }
+            </Box >
+    );
+}
+
 const Table = ({columns}: TableProps) => {
 
 
@@ -185,33 +217,18 @@ const Table = ({columns}: TableProps) => {
                         background: columnColor,
                     }}
                     >
-                    <Box className="pr-2 flex flex-row items-center justify-between" sx={{
-                        minHeight: 60,
-                        maxHeight: 60,
-                        borderBottomWidth: 2,
-                        borderBottomColor: theme.palette.primary.main,
-                    }}>
-                    <Typography className="pl-2">{column.header}</Typography>
-                    <ColumnColorPicker onColorChange={(color) => {
-                        let values = tableColumns.map((entry: any)=> {
-                            if (entry.field === column.field) {
-                                entry.color = color;
-                            }
-                            return entry;
-                        })
-                        updateColumns(values);
-                    }}/>
-                    </Box>
-                    {
-                        column.rows.map((row: TableRow, rowIndex: number) => {
-                            return (
-                                <Box key={rowIndex} className="flex-row pl-2" sx={{
-                                    minHeight: 60,
-                                    maxHeight: 60,
-                                }}>{row.value}</Box>
-                            );
-                        })
-                    }
+                    <TableColumnView 
+                        column={column}
+                        onColorPick={(color: any) => {
+                            let values = tableColumns.map((entry: any)=> {
+                                if (entry.field === column.field) {
+                                    entry.color = color;
+                                }
+                                return entry;
+                            })
+                            updateColumns(values);
+                        }}
+                    />
                     </div>
                 );
             }) 
