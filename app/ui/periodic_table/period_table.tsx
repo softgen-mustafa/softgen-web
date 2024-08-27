@@ -19,7 +19,7 @@ import {
 import React, { useState, useRef, useEffect } from "react";
 import { FormControl, MenuItem, Select } from "@mui/material";
 import { inspiredPalette } from "../theme";
-import {  SketchPicker, TwitterPicker } from "react-color";
+import { SketchPicker } from "react-color";
 
 interface PeriodicTableProps {
   columns: TableColumn[];
@@ -61,6 +61,7 @@ interface TableColumn {
   pinned: boolean;
   rows: TableRow[];
   color?: any;
+  width?: number; // Added width property
 }
 
 interface TableRow {
@@ -137,7 +138,7 @@ const ColumnColorPicker = ({
       {state.displayColorPicker ? (
         <div style={styles.popover}>
           <div style={styles.cover} onClick={handleClose} />
-          <TwitterPicker color={state.color} onChange={handleChange} />
+          <SketchPicker color={state.color} onChange={handleChange} />
         </div>
       ) : null}
     </div>
@@ -192,14 +193,45 @@ const TableColumnView = ({
 const Table = ({ columns }: TableProps) => {
   const theme = useTheme();
 
-  const [tableColumns, updateColumns] = useState<TableColumn[]>([]);
+  const [tableColumns, updateColumns] = useState<TableColumn[]>(columns);
   const [draggedColumnIndex, setDraggedColumnIndex] = useState<number | null>(
     null
   );
 
+  const resizingColumnIndex = useRef<number | null>(null);
+  const startX = useRef<number>(0);
+  const startWidth = useRef<number>(0);
+
   useEffect(() => {
     updateColumns(columns);
   }, [columns]);
+
+  const handleMouseMove = (event: MouseEvent) => {
+    if (resizingColumnIndex.current !== null) {
+      const newColumns = [...tableColumns];
+      const index = resizingColumnIndex.current;
+      const newWidth = Math.max(
+        startWidth.current + (event.clientX - startX.current),
+        50
+      );
+      newColumns[index].width = newWidth;
+      updateColumns(newColumns);
+    }
+  };
+
+  const handleMouseUp = () => {
+    resizingColumnIndex.current = null;
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleMouseDown = (index: number, event: React.MouseEvent) => {
+    resizingColumnIndex.current = index;
+    startX.current = event.clientX;
+    startWidth.current = tableColumns[index].width || 100;
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
 
   const handleDragStart = (index: number) => {
     setDraggedColumnIndex(index);
@@ -245,8 +277,11 @@ const Table = ({ columns }: TableProps) => {
               onDragStart={() => handleDragStart(colIndex)}
               onDragOver={handleDragOver}
               onDrop={() => handleDrop(colIndex)}
+              onMouseDown={(event) => handleMouseDown(colIndex, event)}
               style={{
                 background: columnColor,
+                width: column.width || 100, // Use the width state
+                position: "relative",
               }}
             >
               <TableColumnView
