@@ -117,6 +117,10 @@ const getUmsBaseUrl = () => {
   return `${getBaseUrl()}/ums/api`;
 };
 
+const getSgBizBaseUrl = () => {
+  return `${getBaseUrl()}/sg-bizz/api`;
+};
+
 const getBaseUrl = () => {
   //Local
   // return "http://192.168.1.2:5000";
@@ -124,4 +128,4 @@ const getBaseUrl = () => {
   return "http://118.139.167.125:45400";
 };
 
-export { postAsync, getAsync, getBmrmBaseUrl, getUmsBaseUrl };
+export { postAsync, getAsync, getBmrmBaseUrl, getUmsBaseUrl, getSgBizBaseUrl};

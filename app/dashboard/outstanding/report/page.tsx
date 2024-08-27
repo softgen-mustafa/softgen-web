@@ -19,7 +19,7 @@ import {
   TableSortKey,
   ApiProps
 } from "@/app/ui/periodic_table/period_table";
-import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
+import { getAsync, getBmrmBaseUrl, getSgBizBaseUrl, postAsync } from "@/app/services/rest_services";
 
 
 const Page = () => {
@@ -77,7 +77,7 @@ const Page = () => {
           name: entry,
           value: entry,
         };
-      });
+     });
       setGroups(values);
     } catch {
     } finally {
@@ -87,7 +87,8 @@ const Page = () => {
 
   const loadData = async (apiProps: ApiProps) => {
      //let url = "http://localhost:35001/os/get/report?isDebit=true";
-    let url = "http://118.139.167.125:45700/os/get/report?isDebit=true";
+    //let url = "http://118.139.167.125:45700/os/get/report?isDebit=true";
+    let url = `${getSgBizBaseUrl()}/os/get/report?isDebit=true`
     let requestBody = {
       Limit: apiProps.limit,
       Offset: apiProps.offset,
@@ -100,6 +101,7 @@ const Page = () => {
       SortKey: apiProps.sortKey,
       SortOrder: apiProps.sortOrder,
     };
+    /*
     let appHeaders = {
       "Content-Type": "application/json; charset=utf-8",
       CompanyId: Cookies.get("companyId") ?? 1,
@@ -108,7 +110,9 @@ const Page = () => {
     if (res.data == null || res.data.Data == null) {
       return [];
     }
-    let values = res.data.Data.map((entry: any, index: number) => {
+    */
+    let res = await postAsync(url, requestBody);
+    let values = res.Data.map((entry: any, index: number) => {
       return {
         id: index + 1,
         ...entry,

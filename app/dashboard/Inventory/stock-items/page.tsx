@@ -7,7 +7,7 @@ import { GridColDef, GridSortDirection } from "@mui/x-data-grid";
 import { useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
+import { getAsync, getBmrmBaseUrl, getSgBizBaseUrl, postAsync } from "@/app/services/rest_services";
 import { DropDown } from "@/app/ui/drop_down";
 import {
   PeriodicTable,
@@ -42,7 +42,8 @@ const Page = () => {
 
     const loadData = async (apiParams: ApiProps) => {
         //let url = "http://118.139.167.125:45700/stock-items/get/report";
-        let url = "http://localhost:35001/stock-items/get/report";
+        //let url = "http://localhost:35001/stock-items/get/report";
+        let url = `${getSgBizBaseUrl()}/stock-items/get/report`;
             let requestBody = {
             "Limit": apiParams.limit,
             "Offset": apiParams.offset,
@@ -52,7 +53,7 @@ const Page = () => {
             "SortOrder": apiParams.sortOrder ?? "",
             "StockGroups": selectedGroup.current != null ? [selectedGroup.current]: [],
         }
-        let appHeaders = {
+        /*let appHeaders = {
             "Content-Type": "application/json; charset=utf-8",
             "CompanyId": Cookies.get("companyId") ?? 1,
         };
@@ -60,7 +61,9 @@ const Page = () => {
         if (res.data == null || res.data.Data ==null) {
             return [];
         }
-        let values = res.data.Data.map((entry: any, index: number) => {
+        */
+        let res = await postAsync(url, requestBody);
+        let values = res.Data.map((entry: any, index: number) => {
             return {
                 id: index + 1,
                 Quantity: entry.ClosingBal != null ? entry.ClosingBal.Number : 0,
