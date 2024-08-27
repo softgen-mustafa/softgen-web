@@ -7,6 +7,7 @@ import {
   IconButton,
   Typography,
   useTheme,
+  Stack,
 } from "@mui/material";
 import {
   Search,
@@ -15,11 +16,13 @@ import {
   Sync,
   FilterAlt,
   FilterAltOff,
+  PushPin,
+  PushPinOutlined,
 } from "@mui/icons-material";
 import React, { useState, useRef, useEffect } from "react";
 import { FormControl, MenuItem, Select } from "@mui/material";
 import { inspiredPalette } from "../theme";
-import {  SketchPicker, TwitterPicker } from "react-color";
+import { SketchPicker, TwitterPicker } from "react-color";
 
 interface PeriodicTableProps {
   columns: TableColumn[];
@@ -147,16 +150,20 @@ const ColumnColorPicker = ({
 const TableColumnView = ({
   column,
   onColorPick,
+  tableColumns,
+  updateColumns,
 }: {
   column: TableColumn;
   onColorPick: (color: any) => void;
+  tableColumns: TableColumn[];
+  updateColumns: (columns: TableColumn[]) => void;
 }) => {
   const theme = useTheme();
 
   return (
     <Box>
       <Box
-        className="pr-2 flex flex-row items-center justify-between"
+        className="flex flex-row items-center justify-between"
         sx={{
           minHeight: 60,
           maxHeight: 60,
@@ -165,11 +172,34 @@ const TableColumnView = ({
         }}
       >
         <Typography className="pl-2">{column.header}</Typography>
-        <ColumnColorPicker
-          onColorChange={(color) => {
-            onColorPick(color);
-          }}
-        />
+        <Stack flexDirection={"row"} alignItems={"center"}>
+          <ColumnColorPicker
+            onColorChange={(color) => {
+              onColorPick(color);
+            }}
+          />
+          <IconButton
+            onClick={() => {
+              let values = tableColumns.map((entry: any) => {
+                return {
+                  ...entry,
+                  pinned:
+                    column.field === entry.field ? !entry.pinned : entry.pinned,
+                };
+              });
+              updateColumns(values);
+            }}
+          >
+            {column.pinned ? (
+              <PushPin fontSize="small" color="primary" />
+            ) : (
+              <PushPinOutlined
+                fontSize="small"
+                sx={{ transform: "rotate(45deg)" }}
+              />
+            )}
+          </IconButton>
+        </Stack>
       </Box>
       {column.rows.map((row: TableRow, rowIndex: number) => {
         return (
@@ -260,6 +290,8 @@ const Table = ({ columns }: TableProps) => {
                   });
                   updateColumns(values);
                 }}
+                tableColumns={tableColumns}
+                updateColumns={updateColumns}
               />
             </div>
           );
