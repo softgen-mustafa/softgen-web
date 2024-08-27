@@ -7,7 +7,6 @@ import {
   IconButton,
   Typography,
   useTheme,
-  Stack,
 } from "@mui/material";
 import {
   Search,
@@ -16,8 +15,6 @@ import {
   Sync,
   FilterAlt,
   FilterAltOff,
-  PushPin,
-  PushPinOutlined,
 } from "@mui/icons-material";
 import React, { useState, useRef, useEffect } from "react";
 import { FormControl, MenuItem, Select } from "@mui/material";
@@ -151,20 +148,16 @@ const ColumnColorPicker = ({
 const TableColumnView = ({
   column,
   onColorPick,
-  tableColumns,
-  updateColumns,
 }: {
   column: TableColumn;
   onColorPick: (color: any) => void;
-  tableColumns: TableColumn[];
-  updateColumns: (columns: TableColumn[]) => void;
 }) => {
   const theme = useTheme();
 
   return (
     <Box>
       <Box
-        className="flex flex-row items-center justify-between"
+        className="pr-2 flex flex-row items-center justify-between"
         sx={{
           minHeight: 60,
           maxHeight: 60,
@@ -173,35 +166,11 @@ const TableColumnView = ({
         }}
       >
         <Typography className="pl-2">{column.header}</Typography>
-        <Stack flexDirection={"row"} alignItems={"center"}>
-          <ColumnColorPicker
-            onColorChange={(color) => {
-              onColorPick(color);
-            }}
-          />
-          <IconButton
-            disableRipple
-            onClick={() => {
-              let values = tableColumns.map((entry: any) => {
-                return {
-                  ...entry,
-                  pinned:
-                    column.field === entry.field ? !entry.pinned : entry.pinned,
-                };
-              });
-              updateColumns(values);
-            }}
-          >
-            {column.pinned ? (
-              <PushPin fontSize="small" color="primary" />
-            ) : (
-              <PushPinOutlined
-                fontSize="small"
-                sx={{ transform: "rotate(45deg)" }}
-              />
-            )}
-          </IconButton>
-        </Stack>
+        <ColumnColorPicker
+          onColorChange={(color) => {
+            onColorPick(color);
+          }}
+        />
       </Box>
       {column.rows.map((row: TableRow, rowIndex: number) => {
         return (
@@ -293,82 +262,43 @@ const Table = ({ columns }: TableProps) => {
           borderRadius: 2,
         }}
       >
-        <>
-          {tableColumns
-            .filter((_item: any) => _item.pinned)
-            .map((column: TableColumn, colIndex: number) => {
-              let columnColor = `white`;
-              if (column.color != null) {
-                columnColor = `rgba(${column.color.r ?? 255}, ${
-                  column.color.g ?? 255
-                }, ${column.color.b ?? 255}, ${column.color.a ?? 255})`;
-              }
-              return (
-                <div
-                  key={colIndex}
-                  className="flex-grow"
-                  style={{
-                    background: columnColor,
-                    borderRightWidth: 2,
-                    borderRightColor: theme.palette.primary.main,
-                  }}
-                >
-                  <TableColumnView
-                    column={column}
-                    onColorPick={(color: any) => {
-                      let values = tableColumns.map((entry: any) => {
-                        if (entry.field === column.field) {
-                          entry.color = color;
-                        }
-                        return entry;
-                      });
-                      updateColumns(values);
-                    }}
-                    tableColumns={tableColumns}
-                    updateColumns={updateColumns}
-                  />
-                </div>
-              );
-            })}
-          {tableColumns
-            .filter((_item: any) => !_item.pinned)
-            .map((column: TableColumn, colIndex: number) => {
-              let columnColor = `white`;
-              if (column.color != null) {
-                columnColor = `rgba(${column.color.r ?? 255}, ${
-                  column.color.g ?? 255
-                }, ${column.color.b ?? 255}, ${column.color.a ?? 255})`;
-              }
-              return (
-                <div
-                  key={colIndex}
-                  className="flex-grow"
-                  draggable
-                  onDragStart={() => handleDragStart(colIndex)}
-                  onDragOver={handleDragOver}
-                  onDrop={() => handleDrop(colIndex)}
-                  style={{
-                    background: columnColor,
-                  }}
-                >
-                  <TableColumnView
-                    column={column}
-                    onColorPick={(color: any) => {
-                      let values = tableColumns.map((entry: any) => {
-                        if (entry.field === column.field) {
-                          entry.color = color;
-                        }
-                        return entry;
-                      });
-                      updateColumns(values);
-                    }}
-                    tableColumns={tableColumns}
-                    updateColumns={updateColumns}
-                  />
-                </div>
-              );
-            })}
-        </>
+        {tableColumns.map((column: TableColumn, colIndex: number) => {
+          let columnColor = `white`;
+          if (column.color != null) {
+            columnColor = `rgba(${column.color.r ?? 255}, ${
+              column.color.g ?? 255
+            }, ${column.color.b ?? 255}, ${column.color.a ?? 255})`;
+          }
+          return (
+            <div
+              key={colIndex}
+              className="flex-grow"
+              draggable
+              onDragStart={() => handleDragStart(colIndex)}
+              onDragOver={handleDragOver}
+              onDrop={() => handleDrop(colIndex)}
+              onMouseDown={(event) => handleMouseDown(colIndex, event)}
+              style={{
+                background: columnColor,
+                width: column.width || 100, // Use the width state
+                position: "relative",
+              }}
+            >
+              <TableColumnView
+                column={column}
+                onColorPick={(color: any) => {
+                  let values = tableColumns.map((entry: any) => {
+                    if (entry.field === column.field) {
+                      entry.color = color;
+                    }
+                    return entry;
+                  });
+                  updateColumns(values);
+                }}
+              />
+            </div>
+          );
+        })}
       </Box>
     </Box>
   );
