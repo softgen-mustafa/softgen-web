@@ -163,7 +163,7 @@ const Table = ({columns}: TableProps) => {
 
 
     return (
-        <Box className="w-full flex flex-row">
+        <Box className="w-full flex flex-row overflow-scroll">
         <Box className="w-full flex flex-row p-2" style={{
             borderWidth: 1,
             borderRadius: 2
@@ -186,7 +186,8 @@ const Table = ({columns}: TableProps) => {
                     }}
                     >
                     <Box className="pr-2 flex flex-row items-center justify-between" sx={{
-                        minHeight: 40,
+                        minHeight: 60,
+                        maxHeight: 60,
                         borderBottomWidth: 2,
                         borderBottomColor: theme.palette.primary.main,
                     }}>
@@ -204,7 +205,10 @@ const Table = ({columns}: TableProps) => {
                     {
                         column.rows.map((row: TableRow, rowIndex: number) => {
                             return (
-                                <Box key={rowIndex} className="pl-2">{row.value}</Box>
+                                <Box key={rowIndex} className="flex-row pl-2" sx={{
+                                    minHeight: 60,
+                                    maxHeight: 60,
+                                }}>{row.value}</Box>
                             );
                         })
                     }
@@ -408,7 +412,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
 
     return (
         <div className="flex flex-col w-full h-auto">
-        <Box className="flex flex-row w-full justify-between ">
+        <Box className="flex flex-col sm:flex-row w-full justify-between ">
         <TableActions onFilterToggle={() => toggleFilter(!filterOpen)} onSync={() => {
             refreshColumns(0, 5, "")
             toggleRefresh(!refresh);
