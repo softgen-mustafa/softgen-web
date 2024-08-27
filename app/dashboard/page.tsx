@@ -579,7 +579,7 @@ const DashboardPage = () => {
 
   return (
     <div className="">
-      <DynGrid views={userType == "Vendor" ? views : brokerGridConfig} />
+      <DynGrid views={views} />
     </div>
   );
 };
