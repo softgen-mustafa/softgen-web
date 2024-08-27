@@ -16,6 +16,8 @@ import {
   PeriodicTable,
   TableColumn,
   TableSearchKey,
+  TableSortKey,
+  ApiProps
 } from "@/app/ui/periodic_table/period_table";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 
@@ -97,23 +99,20 @@ const Page = () => {
     }
   };
 
-  const loadData = async (
-    offset: number,
-    limit: number,
-    search?: string,
-    searchKey?: string
-  ) => {
+  const loadData = async (apiProps: ApiProps) => {
      //let url = "http://localhost:35001/os/get/report?isDebit=true";
     let url = "http://118.139.167.125:45700/os/get/report?isDebit=true";
     let requestBody = {
-      Limit: limit,
-      Offset: offset,
+      Limit: apiProps.limit,
+      Offset: apiProps.offset,
       PartyName: selectedParty.current === "None" ? "" : selectedParty.current,
-      SearchText: search,
+      SearchText: apiProps.searchText,
       Groups: selectedGroups.current ?? [],
       DueDays: 30,
       OverDueDays: 90,
-      SearchKey: searchKey, //;selectedSearchKey.current ?? "Party"
+      SearchKey: apiProps.searchKey, //;selectedSearchKey.current ?? "Party"
+      SortKey: apiProps.sortKey,
+      SortOrder: apiProps.sortOrder,
     };
     let appHeaders = {
       "Content-Type": "application/json; charset=utf-8",
@@ -295,6 +294,21 @@ const Page = () => {
     },
   ];
 
+  const osSortKeys: TableSearchKey[] = [
+    {
+      title: "Party Name",
+      value: "Party",
+    },
+    {
+      title: "Ledger Group",
+      value: "Group",
+    },
+    {
+      title: "Bill Number",
+      value: "Bill",
+    },
+  ];
+
   return (
     <div className="">
       <PeriodicTable
@@ -311,6 +325,7 @@ const Page = () => {
           return column;
         })}
         onApi={loadData}
+        sortKeys={osSortKeys}
       />
       {/*<DynGrid views={gridConfig} direction={GridDirection.Column}/>*/}
     </div>
