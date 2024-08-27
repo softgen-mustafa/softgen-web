@@ -56,6 +56,7 @@ const Page = () => {
           ? `?searchKey=${searchedParty.current}`
           : "";
       let url = `http://118.139.167.125:45700/os/search/ledgers${searchedValue}`;
+      //let url = `http://localhost:35001/os/search/ledgers${searchedValue}`;
       let appHeaders = {
         "Content-Type": "application/json; charset=utf-8",
         CompanyId: Cookies.get("companyId") ?? 1,
@@ -102,7 +103,7 @@ const Page = () => {
     search?: string,
     searchKey?: string
   ) => {
-    // let url = "http://localhost:35001/os/get/report?isDebit=true";
+     //let url = "http://localhost:35001/os/get/report?isDebit=true";
     let url = "http://118.139.167.125:45700/os/get/report?isDebit=true";
     let requestBody = {
       Limit: limit,
