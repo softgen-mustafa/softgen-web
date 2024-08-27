@@ -179,6 +179,7 @@ const TableColumnView = ({
             }}
           />
           <IconButton
+            disableRipple
             onClick={() => {
               let values = tableColumns.map((entry: any) => {
                 return {
@@ -191,11 +192,7 @@ const TableColumnView = ({
             }}
           >
             {column.pinned ? (
-              <PushPin
-                fontSize="small"
-                color="primary"
-                sx={{ transform: "rotate(45deg)" }}
-              />
+              <PushPin fontSize="small" color="primary" />
             ) : (
               <PushPinOutlined
                 fontSize="small"
@@ -264,42 +261,82 @@ const Table = ({ columns }: TableProps) => {
           borderRadius: 2,
         }}
       >
-        {tableColumns.map((column: TableColumn, colIndex: number) => {
-          let columnColor = `white`;
-          if (column.color != null) {
-            columnColor = `rgba(${column.color.r ?? 255}, ${
-              column.color.g ?? 255
-            }, ${column.color.b ?? 255}, ${column.color.a ?? 255})`;
-          }
-          return (
-            <div
-              key={colIndex}
-              className="flex-grow"
-              draggable
-              onDragStart={() => handleDragStart(colIndex)}
-              onDragOver={handleDragOver}
-              onDrop={() => handleDrop(colIndex)}
-              style={{
-                background: columnColor,
-              }}
-            >
-              <TableColumnView
-                column={column}
-                onColorPick={(color: any) => {
-                  let values = tableColumns.map((entry: any) => {
-                    if (entry.field === column.field) {
-                      entry.color = color;
-                    }
-                    return entry;
-                  });
-                  updateColumns(values);
-                }}
-                tableColumns={tableColumns}
-                updateColumns={updateColumns}
-              />
-            </div>
-          );
-        })}
+        <>
+          {tableColumns
+            .filter((_item: any) => _item.pinned)
+            .map((column: TableColumn, colIndex: number) => {
+              let columnColor = `white`;
+              if (column.color != null) {
+                columnColor = `rgba(${column.color.r ?? 255}, ${
+                  column.color.g ?? 255
+                }, ${column.color.b ?? 255}, ${column.color.a ?? 255})`;
+              }
+              return (
+                <div
+                  key={colIndex}
+                  className="flex-grow"
+                  style={{
+                    background: columnColor,
+                    borderRightWidth: 2,
+                    borderRightColor: theme.palette.primary.main,
+                  }}
+                >
+                  <TableColumnView
+                    column={column}
+                    onColorPick={(color: any) => {
+                      let values = tableColumns.map((entry: any) => {
+                        if (entry.field === column.field) {
+                          entry.color = color;
+                        }
+                        return entry;
+                      });
+                      updateColumns(values);
+                    }}
+                    tableColumns={tableColumns}
+                    updateColumns={updateColumns}
+                  />
+                </div>
+              );
+            })}
+          {tableColumns
+            .filter((_item: any) => !_item.pinned)
+            .map((column: TableColumn, colIndex: number) => {
+              let columnColor = `white`;
+              if (column.color != null) {
+                columnColor = `rgba(${column.color.r ?? 255}, ${
+                  column.color.g ?? 255
+                }, ${column.color.b ?? 255}, ${column.color.a ?? 255})`;
+              }
+              return (
+                <div
+                  key={colIndex}
+                  className="flex-grow"
+                  draggable
+                  onDragStart={() => handleDragStart(colIndex)}
+                  onDragOver={handleDragOver}
+                  onDrop={() => handleDrop(colIndex)}
+                  style={{
+                    background: columnColor,
+                  }}
+                >
+                  <TableColumnView
+                    column={column}
+                    onColorPick={(color: any) => {
+                      let values = tableColumns.map((entry: any) => {
+                        if (entry.field === column.field) {
+                          entry.color = color;
+                        }
+                        return entry;
+                      });
+                      updateColumns(values);
+                    }}
+                    tableColumns={tableColumns}
+                    updateColumns={updateColumns}
+                  />
+                </div>
+              );
+            })}
+        </>
       </Box>
     </Box>
   );
