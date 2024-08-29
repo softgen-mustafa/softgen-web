@@ -25,6 +25,7 @@ import {
   getSgBizBaseUrl,
   postAsync,
 } from "@/app/services/rest_services";
+import { numericToString } from "@/app/services/Local/helper";
 
 const Page = () => {
   const [refresh, setRefresh] = useState(false);
@@ -125,10 +126,17 @@ const Page = () => {
         ...entry,
         BillDate: entry.BillDate.substring(0, 10),
         DueDate: entry.DueDate.substring(0, 10),
-        LedgerGroupName: entry.LedgerGroupName,
+        Amount: `${entry.currency ?? "₹"} ${numericToString(entry.Amount)}`,
+        DueAmount: `${entry.currency ?? "₹"} ${numericToString(
+          entry.DueAmount
+        )}`,
+        OverDueAmount: `${entry.currency ?? "₹"} ${numericToString(
+          entry.OverDueAmount
+        )}`,
+        currency: entry.currency ?? "₹",
       };
     });
-    console.log(values);
+    // console.log(values);
     setRows(values);
     return values;
   };

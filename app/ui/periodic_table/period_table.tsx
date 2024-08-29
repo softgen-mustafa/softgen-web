@@ -343,6 +343,9 @@ const Table = ({ columns }: TableProps) => {
                 background: columnColor,
                 width: column.width || 100, // Use the width state
                 position: "relative",
+                cursor: "col-resize",
+                padding: "0 8px",
+                borderRight: "1px solid rgba(0, 0, 0, 0.1)",
               }}
             >
               <TableColumnView
