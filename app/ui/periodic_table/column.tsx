@@ -85,43 +85,6 @@ const PeriodicTable = ({ cColumn, data }: { cColumn: any; data: any }) => {
     setDraggedColumnIndex(null);
   };
 
-  // const menu = () => {
-  //   return (
-  //     <Box>
-  //     <IconButton
-  //         id="menu-item"
-  //         aria-controls={open ? "demo-customized-menu" : undefined}
-  //         aria-haspopup="true"
-  //         aria-expanded={open ? "true" : undefined}
-  //         onClick={handleClick}
-  //       >
-  //         <MenuIcon />
-  //       </IconButton>
-  //       <Menu
-  //         id="menu"
-  //         anchorEl={anchorEl}
-  //         MenuListProps={{
-  //           "aria-labelledby": "menu-item",
-  //         }}
-  //         open={open}
-  //         onClose={handleClose}
-  //       >
-  //         {menuItems.map((_chart) => (
-  //           <MenuItem
-  //             key={_chart.id}
-  //             onClick={() => {
-
-  //               handleClose();
-  //             }}
-  //           >
-  //             {_chart.label}
-  //           </MenuItem>
-  //         ))}
-  //       </Menu>
-  //       </Box>
-  //   )
-  // }
-
   const handleUnpinColumns = (col: any, key: number) => {
     return (
       <Box

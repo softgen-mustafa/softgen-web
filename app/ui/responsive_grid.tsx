@@ -122,48 +122,51 @@ const RenderGrid = (gridItems: GridConfig[]) => {
 };
 
 const Weight = {
-    High: 3,
-    Medium: 2,
-    Low: 1,
-    None: 0,
-}
-
-const GridDirection = {
-    Row: "flex-row",
-    Column: "flex-col"
-}
-
-const DynGrid = ({views, direction = GridDirection.Row}: {views: any[], direction?: string}) => {
-    const minWidth = 290;
-    return (
-    <div>
-    <div className={`p-2 w-full flex ${direction} flex-wrap gap-4 justify-stretch`} >
-    {
-        views.map((entry: any, index: number) => {
-            let styles:any = {
-                    minWidth: entry.minWidth ? entry.minWidth : minWidth,
-                    minHeight: 200,
-                    maxHeight: 600,
-                    flexGrow: entry.weight ?? 0,
-                };
-
-            if (entry.maxWidth) {
-                styles.maxWidth = entry.maxWidth;
-            }
-            return (
-                <div className={"flex-grow"} key={index} style={styles}>
-                {
-                    entry.view
-                }
-                </div>
-            )
-        })
-    }
-    </div>
-    </div>
-    );
+  High: 3,
+  Medium: 2,
+  Low: 1,
+  None: 0,
 };
 
+const GridDirection = {
+  Row: "flex-row",
+  Column: "flex-col",
+};
+
+const DynGrid = ({
+  views,
+  direction = GridDirection.Row,
+}: {
+  views: any[];
+  direction?: string;
+}) => {
+  const minWidth = 290;
+  return (
+    <div>
+      <div
+        className={`p-2 w-full flex ${direction} flex-wrap gap-4 justify-stretch`}
+      >
+        {views.map((entry: any, index: number) => {
+          let styles: any = {
+            minWidth: entry.minWidth ? entry.minWidth : minWidth,
+            minHeight: 200,
+            maxHeight: 800,
+            flexGrow: entry.weight ?? 0,
+          };
+
+          if (entry.maxWidth) {
+            styles.maxWidth = entry.maxWidth;
+          }
+          return (
+            <div className={"flex-grow"} key={index} style={styles}>
+              {entry.view}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 export { RenderGrid, CardView, Weight, DynGrid, GridDirection };
 export type { GridConfig };
