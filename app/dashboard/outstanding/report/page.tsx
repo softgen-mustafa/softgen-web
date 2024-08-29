@@ -17,10 +17,14 @@ import {
   TableColumn,
   TableSearchKey,
   TableSortKey,
-  ApiProps
+  ApiProps,
 } from "@/app/ui/periodic_table/period_table";
-import { getAsync, getBmrmBaseUrl, getSgBizBaseUrl, postAsync } from "@/app/services/rest_services";
-
+import {
+  getAsync,
+  getBmrmBaseUrl,
+  getSgBizBaseUrl,
+  postAsync,
+} from "@/app/services/rest_services";
 
 const Page = () => {
   const [refresh, setRefresh] = useState(false);
@@ -65,8 +69,8 @@ const Page = () => {
 
   const loadGroups = async () => {
     try {
-      let url = "http://localhost:35001/os/get/groups?isDebit=true"
-     // let url = "http://118.139.167.125:45700/os/get/groups?isDebit=true";
+      let url = "http://localhost:35001/os/get/groups?isDebit=true";
+      // let url = "http://118.139.167.125:45700/os/get/groups?isDebit=true";
       let appHeaders = {
         "Content-Type": "application/json; charset=utf-8",
         CompanyId: Cookies.get("companyId") ?? 1,
@@ -77,7 +81,7 @@ const Page = () => {
           name: entry,
           value: entry,
         };
-     });
+      });
       setGroups(values);
     } catch {
     } finally {
@@ -86,9 +90,9 @@ const Page = () => {
   };
 
   const loadData = async (apiProps: ApiProps) => {
-     //let url = "http://localhost:35001/os/get/report?isDebit=true";
+    //let url = "http://localhost:35001/os/get/report?isDebit=true";
     //let url = "http://118.139.167.125:45700/os/get/report?isDebit=true";
-    let url = `${getSgBizBaseUrl()}/os/get/report?isDebit=true`
+    let url = `${getSgBizBaseUrl()}/os/get/report?isDebit=true`;
     let requestBody = {
       Limit: apiProps.limit,
       Offset: apiProps.offset,
@@ -113,14 +117,18 @@ const Page = () => {
     */
     let res = await postAsync(url, requestBody);
     if (res === null) {
-        return [];
+      return [];
     }
     let values = res.Data.map((entry: any, index: number) => {
       return {
         id: index + 1,
         ...entry,
+        BillDate: entry.BillDate.substring(0, 10),
+        DueDate: entry.DueDate.substring(0, 10),
+        LedgerGroupName: entry.LedgerGroupName,
       };
     });
+    console.log(values);
     setRows(values);
     return values;
   };
@@ -233,7 +241,7 @@ const Page = () => {
   ];
 
   const gridConfig = [
-      /*
+    /*
     {
       weight: Weight.Low,
       view: (
@@ -274,22 +282,22 @@ const Page = () => {
       weight: Weight.High,
       view: (
         <CardView title="Party Outstandings">
-      <PeriodicTable
-        useSearch={true}
-        searchKeys={osSearchKeys}
-        columns={columns.map((col: any) => {
-          let column: TableColumn = {
-            header: col.headerName,
-            field: col.field,
-            type: "text",
-            pinned: false,
-            rows: [],
-          };
-          return column;
-        })}
-        onApi={loadData}
-        sortKeys={osSortKeys}
-      />
+          <PeriodicTable
+            useSearch={true}
+            searchKeys={osSearchKeys}
+            columns={columns.map((col: any) => {
+              let column: TableColumn = {
+                header: col.headerName,
+                field: col.field,
+                type: "text",
+                pinned: false,
+                rows: [],
+              };
+              return column;
+            })}
+            onApi={loadData}
+            sortKeys={osSortKeys}
+          />
         </CardView>
       ),
     },
@@ -297,7 +305,7 @@ const Page = () => {
 
   return (
     <div className="">
-      <DynGrid views={gridConfig} direction={GridDirection.Column}/>
+      <DynGrid views={gridConfig} direction={GridDirection.Column} />
     </div>
   );
 };
