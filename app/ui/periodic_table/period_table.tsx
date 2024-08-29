@@ -204,9 +204,9 @@ const Table = ({ columns }: TableProps) => {
     const theme = useTheme();
 
     const [tableColumns, updateColumns] = useState<TableColumn[]>(columns);
-    const [draggedColumnIndex, setDraggedColumnIndex] = useState<number | null>(
-        null
-    );
+    // const [draggedColumnIndex, setDraggedColumnIndex] = useState<number | null>(
+    //     null
+    // );
 
     const resizingColumnIndex = useRef<number | null>(null);
     const startX = useRef<number>(0);
@@ -243,25 +243,25 @@ const Table = ({ columns }: TableProps) => {
         document.addEventListener("mouseup", handleMouseUp);
     };
 
-    const handleDragStart = (index: number) => {
-        setDraggedColumnIndex(index);
-    };
+    // const handleDragStart = (index: number) => {
+    //     setDraggedColumnIndex(index);
+    // };
 
-    const handleDragOver = (e: React.DragEvent) => {
-        e.preventDefault();
-    };
+    // const handleDragOver = (e: React.DragEvent) => {
+    //     e.preventDefault();
+    // };
 
-    const handleDrop = (targetIndex: number) => {
-        if (draggedColumnIndex === null || draggedColumnIndex === targetIndex)
-            return;
+    // const handleDrop = (targetIndex: number) => {
+    //     if (draggedColumnIndex === null || draggedColumnIndex === targetIndex)
+    //         return;
 
-        const newColumns = [...columns];
-        const [draggedColumn] = newColumns.splice(draggedColumnIndex, 1);
-        newColumns.splice(targetIndex, 0, draggedColumn);
+    //     const newColumns = [...columns];
+    //     const [draggedColumn] = newColumns.splice(draggedColumnIndex, 1);
+    //     newColumns.splice(targetIndex, 0, draggedColumn);
 
-        updateColumns(newColumns);
-        setDraggedColumnIndex(null);
-    };
+    //     updateColumns(newColumns);
+    //     setDraggedColumnIndex(null);
+    // };
 
     return (
         <Box className="w-full flex flex-row overflow-scroll">
@@ -283,10 +283,10 @@ const Table = ({ columns }: TableProps) => {
                 <div
                 key={colIndex}
                 className="flex-grow"
-                draggable
-                onDragStart={() => handleDragStart(colIndex)}
-                onDragOver={handleDragOver}
-                onDrop={() => handleDrop(colIndex)}
+                // draggable
+                // onDragStart={() => handleDragStart(colIndex)}
+                // onDragOver={handleDragOver}
+                // onDrop={() => handleDrop(colIndex)}
                 onMouseDown={(event) => handleMouseDown(colIndex, event)}
                 style={{
                     background: columnColor,
