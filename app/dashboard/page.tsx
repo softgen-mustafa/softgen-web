@@ -25,7 +25,7 @@ import { AgingView } from "./cards/aging_card";
 import { DataTable } from "@/app/ui/data_grid";
 import { SingleChartView } from "@/app/ui/graph_util";
 import Column from "../ui/periodic_table/column";
-import PeriodicTable from "../ui/periodic_table/column";
+import { PeriodicTable, TableColumn } from "../ui/periodic_table/period_table";
 
 const BrokerMonthlyOverview = ({ companyId }: { companyId: string }) => {
   useEffect(() => {}, [companyId]);
@@ -445,7 +445,7 @@ const DashboardPage = () => {
       ),
     },
     {
-      weight: Weight.Medium,
+      weight: Weight.High,
       view: (
         <CardView title="Today's O/S">
           <OutstandingTask companyId={data[cachedCompanyIndex]} />
@@ -515,7 +515,7 @@ const DashboardPage = () => {
           </Stack>
           {/* </Container> */}
           <br />
-          <DataTable
+          {/* <DataTable
             columns={columns}
             refresh={refresh}
             useSearch={false}
@@ -535,6 +535,20 @@ const DashboardPage = () => {
                 selectedFilter.current.value
               );
             }}
+          /> */}
+          <PeriodicTable
+            useSearch={false}
+            columns={columns.map((col: any) => {
+              let column: TableColumn = {
+                header: col.headerName,
+                field: col.field,
+                type: "text",
+                pinned: false,
+                rows: [],
+              };
+              return column;
+            })}
+            onApi={loadUpcoming}
           />
           {/* <DataGrid
             columns={columns}
@@ -567,14 +581,14 @@ const DashboardPage = () => {
         </CardView>
       ),
     },
-    {
-      weight: Weight.High,
-      view: (
-        <CardView title="Data Grid">
-          <PeriodicTable cColumn={CC} data={dummyData} />
-        </CardView>
-      ),
-    },
+    // {
+    //   weight: Weight.High,
+    //   view: (
+    //     <CardView title="Data Grid">
+    //       <PeriodicTable cColumn={CC} data={dummyData} />
+    //     </CardView>
+    //   ),
+    // },
   ];
 
   return (
