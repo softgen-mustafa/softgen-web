@@ -3,6 +3,10 @@
 import { numericToString } from "@/app/services/Local/helper";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { DataTable } from "@/app/ui/data_grid";
+import {
+  PeriodicTable,
+  TableColumn,
+} from "@/app/ui/periodic_table/period_table";
 import { TextInput } from "@/app/ui/text_inputs";
 import { CircularProgress } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -79,7 +83,7 @@ const RankedPartyOutstandingCard = ({
           <CircularProgress />
         </div>
       )} */}
-      <DataTable
+      {/* <DataTable
         columns={columns}
         refresh={refresh}
         useSearch={true}
@@ -88,6 +92,20 @@ const RankedPartyOutstandingCard = ({
           return await loadData(searchText?.length ? searchText : rank.current);
         }}
         onRowClick={() => {}}
+      /> */}
+      <PeriodicTable
+        useSearch={false}
+        columns={columns.map((col: any) => {
+          let column: TableColumn = {
+            header: col.headerName,
+            field: col.field,
+            type: "text",
+            pinned: false,
+            rows: [],
+          };
+          return column;
+        })}
+        onApi={() => loadData(rank.current)}
       />
     </div>
   );

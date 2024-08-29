@@ -16,6 +16,10 @@ import { useRouter } from "next/navigation";
 import { inspiredPalette } from "@/app/ui/theme";
 import { DataTable } from "@/app/ui/data_grid";
 import { GridColDef } from "@mui/x-data-grid";
+import {
+  PeriodicTable,
+  TableColumn,
+} from "@/app/ui/periodic_table/period_table";
 
 interface Task {
   partyName: string;
@@ -35,10 +39,10 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
   const [refresh, triggerRefresh] = useState(false);
 
   useEffect(() => {
-      triggerRefresh(!refresh);
-  },[companyId])
+    triggerRefresh(!refresh);
+  }, [companyId]);
 
-  const columns: GridColDef[] = [
+  const columns: GridColDef<any[number]>[] = [
     {
       field: "partyName",
       headerName: "Party",
@@ -142,7 +146,7 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
         //   {tasks.map(renderTask)}
         //   <br />
         // </div> */}
-      <DataTable
+      {/* <DataTable
         columns={columns}
         refresh={refresh}
         useSearch={false}
@@ -151,6 +155,20 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
           return await fetchTasks();
         }}
         onRowClick={() => {}}
+      /> */}
+      <PeriodicTable
+        useSearch={false}
+        columns={columns.map((col: any) => {
+          let column: TableColumn = {
+            header: col.headerName,
+            field: col.field,
+            type: "text",
+            pinned: false,
+            rows: [],
+          };
+          return column;
+        })}
+        onApi={fetchTasks}
       />
       {/* )} */}
     </Box>

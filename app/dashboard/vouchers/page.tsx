@@ -26,6 +26,10 @@ import { useEffect, useRef, useState } from "react";
 import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
 import { numericToString } from "@/app/services/Local/helper";
+import {
+  PeriodicTable,
+  TableColumn,
+} from "@/app/ui/periodic_table/period_table";
 
 const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
   const [loading, setLoading] = useState(false);
@@ -46,7 +50,7 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
     // });
   }, [voucherType]);
 
-  const columns: GridColDef[] = [
+  const columns: GridColDef<any[number]>[] = [
     {
       field: "itemGroup",
       headerName: "Stock Group",
@@ -129,7 +133,7 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
         disableRowSelectionOnClick
         onPaginationModelChange={(value) => {}}
       /> */}
-      <DataTable
+      {/* <DataTable
         columns={columns}
         refresh={refresh}
         onApi={async (page, pageSize, searchText) => {
@@ -138,6 +142,21 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
         useSearch={false}
         useServerPagination={false}
         onRowClick={() => {}}
+      /> */}
+      <PeriodicTable
+        useSearch={false}
+        columns={columns.map((col: any) => {
+          console.log(col);
+          let column: TableColumn = {
+            header: col.headerName,
+            field: col.field,
+            type: "text",
+            pinned: false,
+            rows: [],
+          };
+          return column;
+        })}
+        onApi={loadData}
       />
     </div>
   );

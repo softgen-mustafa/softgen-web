@@ -24,6 +24,11 @@ import {
 import { numericToString } from "@/app/services/Local/helper";
 import { DataTable } from "@/app/ui/data_grid";
 import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
+import {
+  ApiProps,
+  PeriodicTable,
+  TableColumn,
+} from "@/app/ui/periodic_table/period_table";
 
 const InventoryOverviewScreen = () => {
   const router = useRouter();
@@ -76,7 +81,11 @@ const InventoryOverviewScreen = () => {
       setHasPermission(permission);
       if (permission) {
         fetchDetails();
-        fetchInventoryItems(1, 10);
+        fetchInventoryItems({
+          limit: 5,
+          offset: 0 + 1,
+          searchText: "",
+        });
       }
       // else {
       //   router.back();
@@ -110,11 +119,7 @@ const InventoryOverviewScreen = () => {
     }
   };
 
-  const fetchInventoryItems = async (
-    page: number,
-    pageSize: number,
-    searchValue?: string
-  ) => {
+  const fetchInventoryItems = async (apiProps: ApiProps) => {
     try {
       setIsLoading(true);
       let url = `${getBmrmBaseUrl()}/stock-${
@@ -123,9 +128,9 @@ const InventoryOverviewScreen = () => {
         selectedRateByType.current.code
       }`;
       let requestBody = {
-        page_number: page,
-        page_size: pageSize,
-        search_text: searchValue ?? "",
+        page_number: apiProps.offset,
+        page_size: apiProps.limit,
+        search_text: apiProps.searchText ?? "",
         sort_by: "name",
         sort_order: "asc",
       };
@@ -164,6 +169,7 @@ const InventoryOverviewScreen = () => {
         };
       });
       setRows(entries);
+      console.log(entries);
       return entries;
     } catch (error) {
       console.error("Could not load inventory items:", error);
@@ -310,7 +316,7 @@ const InventoryOverviewScreen = () => {
       weight: Weight.High,
       view: (
         <CardView title={selectedListType.current.label}>
-          <DataTable
+          {/* <DataTable
             refresh={refresh}
             columns={columns}
             useSearch={true}
@@ -331,6 +337,20 @@ const InventoryOverviewScreen = () => {
                 router.push("/dashboard/Inventory/InventoryDetails");
               }
             }}
+          /> */}
+          <PeriodicTable
+            useSearch={true}
+            columns={columns.map((col: any) => {
+              let column: TableColumn = {
+                header: col.headerName,
+                field: col.field,
+                type: "text",
+                pinned: false,
+                rows: [],
+              };
+              return column;
+            })}
+            onApi={fetchInventoryItems}
           />
         </CardView>
       ),
