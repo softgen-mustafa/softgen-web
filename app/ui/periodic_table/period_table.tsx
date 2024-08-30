@@ -80,6 +80,7 @@ interface TableColumn {
   rows: TableRow[];
   color?: any;
   width?: number;
+  hideable: boolean;
 }
 
 interface TableRow {
@@ -332,57 +333,59 @@ const Table = ({ columns }: TableProps) => {
           borderRadius: 2,
         }}
       >
-        {tableColumns.map((column: TableColumn, colIndex: number) => {
-          let columnColor = `white`;
-          if (column.color != null) {
-            columnColor = `rgba(${column.color.r ?? 255}, ${
-              column.color.g ?? 255
-            }, ${column.color.b ?? 255}, ${column.color.a ?? 255})`;
-          }
-          return (
-            <div
-              key={colIndex}
-              className="flex-grow"
-              // draggable
-              // onDragStart={() => handleDragStart(colIndex)}
-              // onDragOver={handleDragOver}
-              // onDrop={() => handleDrop(colIndex)}
-              style={{
-                background: columnColor,
-                width: column.width || 100,
-                position: "relative",
-              }}
-            >
+        {tableColumns
+          .filter((_item: any) => !_item.hideable)
+          .map((column: TableColumn, colIndex: number) => {
+            let columnColor = `white`;
+            if (column.color != null) {
+              columnColor = `rgba(${column.color.r ?? 255}, ${
+                column.color.g ?? 255
+              }, ${column.color.b ?? 255}, ${column.color.a ?? 255})`;
+            }
+            return (
               <div
-                className="resizer-handle"
+                key={colIndex}
+                className="flex-grow"
+                // draggable
+                // onDragStart={() => handleDragStart(colIndex)}
+                // onDragOver={handleDragOver}
+                // onDrop={() => handleDrop(colIndex)}
                 style={{
-                  position: "absolute",
-                  right: 0,
-                  top: 0,
-                  width: "2px",
-                  height: "100%",
-                  cursor: "col-resize",
-                  zIndex: 1,
-                  borderRight: "0.5px Solid #d1d5db",
+                  background: columnColor,
+                  width: column.width || 100,
+                  position: "relative",
                 }}
-                onMouseDown={(event) => handleMouseDown(colIndex, event)}
-              />
+              >
+                <div
+                  className="resizer-handle"
+                  style={{
+                    position: "absolute",
+                    right: 0,
+                    top: 0,
+                    width: "2px",
+                    height: "100%",
+                    cursor: "col-resize",
+                    zIndex: 1,
+                    borderRight: "0.5px Solid #d1d5db",
+                  }}
+                  onMouseDown={(event) => handleMouseDown(colIndex, event)}
+                />
 
-              <TableColumnView
-                column={column}
-                onColorPick={(color: any) => {
-                  let values = tableColumns.map((entry: any) => {
-                    if (entry.field === column.field) {
-                      entry.color = color;
-                    }
-                    return entry;
-                  });
-                  updateColumns(values);
-                }}
-              />
-            </div>
-          );
-        })}
+                <TableColumnView
+                  column={column}
+                  onColorPick={(color: any) => {
+                    let values = tableColumns.map((entry: any) => {
+                      if (entry.field === column.field) {
+                        entry.color = color;
+                      }
+                      return entry;
+                    });
+                    updateColumns(values);
+                  }}
+                />
+              </div>
+            );
+          })}
       </Box>
     </Box>
   );

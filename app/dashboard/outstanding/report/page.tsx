@@ -15,7 +15,7 @@ import {
   ApiProps,
 } from "@/app/ui/periodic_table/period_table";
 import { getSgBizBaseUrl, postAsync } from "@/app/services/rest_services";
-import { IconButton, Modal } from "@mui/material";
+import { IconButton, Modal, Stack } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 import { numericToString } from "@/app/services/Local/helper";
 import { OsSettingsView } from "@/app/dashboard/outstanding/report/outstanding_setings";
@@ -31,10 +31,30 @@ const reportTypes = [
   },
 ];
 
+const dueTypes = [
+  {
+    name: "All",
+    value: 0,
+  },
+  {
+    name: "Pending Due",
+    value: 1,
+  },
+  {
+    name: "Due",
+    value: 2,
+  },
+  {
+    name: "Overdue",
+    value: 3,
+  },
+];
+
 const Page = () => {
   let selectedGroups = useRef<string[]>([]);
   let selectedParty = useRef<string>("");
-  let selectedReportType = useRef<number>(0);
+  let selectedReportType = useRef<number>(0); //0 - Party Wise, 1 - Bill Wise
+  let selectedDueType = useRef<number>(0);
 
   const [showSettings, toggleSetting] = useState(false);
   const [refresh, triggerRefresh] = useState(false);
@@ -55,6 +75,7 @@ const Page = () => {
       SortKey: apiProps.sortKey,
       SortOrder: apiProps.sortOrder,
       ReportOnType: selectedReportType.current ?? 0,
+      DueFilter: selectedDueType.current ?? 0,
     };
     let res = await postAsync(url, requestBody);
     if (!res || !res.Data) {
@@ -90,6 +111,7 @@ const Page = () => {
       sortable: true,
       flex: 1,
       minWidth: 200,
+      hideable: false,
     },
     {
       field: "BillName",
@@ -98,6 +120,7 @@ const Page = () => {
       sortable: true,
       flex: 1,
       minWidth: 200,
+      hideable: selectedReportType.current === 0,
     },
     {
       field: "LedgerGroupName",
@@ -106,6 +129,7 @@ const Page = () => {
       sortable: true,
       flex: 1,
       minWidth: 200,
+      hideable: false,
     },
     {
       field: "BillDate",
@@ -113,6 +137,7 @@ const Page = () => {
       editable: false,
       sortable: true,
       flex: 1,
+      hideable: selectedReportType.current === 0,
     },
     {
       field: "DueDate",
@@ -120,6 +145,7 @@ const Page = () => {
       editable: false,
       sortable: true,
       flex: 1,
+      hideable: selectedReportType.current === 0,
     },
     {
       field: "DelayDays",
@@ -129,6 +155,7 @@ const Page = () => {
       type: "number",
       flex: 1,
       minWidth: 150,
+      hideable: false,
     },
     {
       field: "Amount",
@@ -138,6 +165,9 @@ const Page = () => {
       type: "number",
       flex: 1,
       minWidth: 150,
+      hideable: !(
+        selectedDueType.current === 0 || selectedDueType.current === 1
+      ),
     },
     {
       field: "DueAmount",
@@ -147,6 +177,9 @@ const Page = () => {
       type: "number",
       flex: 1,
       minWidth: 150,
+      hideable: !(
+        selectedDueType.current === 0 || selectedDueType.current === 2
+      ),
     },
     {
       field: "OverDueAmount",
@@ -156,6 +189,9 @@ const Page = () => {
       type: "number",
       flex: 1,
       minWidth: 150,
+      hideable: !(
+        selectedDueType.current === 0 || selectedDueType.current === 3
+      ),
     },
   ];
 
@@ -194,17 +230,30 @@ const Page = () => {
       weight: Weight.High,
       view: (
         <CardView title="Filters">
-          <DropDown
-            label="View Report By"
-            displayFieldKey={"name"}
-            valueFieldKey={null}
-            selectionValues={reportTypes}
-            helperText={""}
-            onSelection={(selection) => {
-              selectedReportType.current = selection.value;
-              triggerRefresh(!refresh);
-            }}
-          />
+          <Stack flexDirection={"column"} gap={2}>
+            <DropDown
+              label="View Report By"
+              displayFieldKey={"name"}
+              valueFieldKey={null}
+              selectionValues={reportTypes}
+              helperText={""}
+              onSelection={(selection) => {
+                selectedReportType.current = selection.value;
+                triggerRefresh(!refresh);
+              }}
+            />
+            <DropDown
+              label="Due Type"
+              displayFieldKey={"name"}
+              valueFieldKey={null}
+              selectionValues={dueTypes}
+              helperText={""}
+              onSelection={(selection) => {
+                selectedDueType.current = selection.value;
+                triggerRefresh(!refresh);
+              }}
+            />
+          </Stack>
           <div className="mt-4" />
         </CardView>
       ),
@@ -223,6 +272,7 @@ const Page = () => {
                 field: col.field,
                 type: "text",
                 pinned: false,
+                hideable: col.hideable,
                 rows: [],
               };
               return column;
