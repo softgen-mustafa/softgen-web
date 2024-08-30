@@ -28,6 +28,7 @@ import {
   ApiProps,
   PeriodicTable,
   TableColumn,
+  TableSearchKey,
 } from "@/app/ui/periodic_table/period_table";
 
 const InventoryOverviewScreen = () => {
@@ -119,6 +120,13 @@ const InventoryOverviewScreen = () => {
     }
   };
 
+  const sortKeys: TableSearchKey[] = [
+    {
+      title: "Name",
+      value: "name",
+    },
+  ];
+
   const fetchInventoryItems = async (apiProps: ApiProps) => {
     try {
       setIsLoading(true);
@@ -128,11 +136,11 @@ const InventoryOverviewScreen = () => {
         selectedRateByType.current.code
       }`;
       let requestBody = {
-        page_number: apiProps.offset,
+        page_number: apiProps.offset + 1,
         page_size: apiProps.limit,
         search_text: apiProps.searchText ?? "",
-        sort_by: "name",
-        sort_order: "asc",
+        sort_by: apiProps.sortKey ?? "",
+        sort_order: apiProps.sortOrder ?? "",
       };
       let response = await postAsync(url, requestBody);
       let entries = response.map((entry: any, index: number) => {
@@ -351,6 +359,8 @@ const InventoryOverviewScreen = () => {
               return column;
             })}
             onApi={fetchInventoryItems}
+            sortKeys={sortKeys}
+            reload={refresh}
           />
         </CardView>
       ),

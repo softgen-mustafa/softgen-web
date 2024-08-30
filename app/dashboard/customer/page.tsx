@@ -7,6 +7,12 @@ import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
+import {
+  ApiProps,
+  PeriodicTable,
+  TableColumn,
+  TableSearchKey,
+} from "@/app/ui/periodic_table/period_table";
 const CustomerPartySearch = () => {
   const router = useRouter();
   const [rows, setRows] = useState([]);
@@ -15,9 +21,9 @@ const CustomerPartySearch = () => {
   useEffect(() => {
     FeatureControl("CustomerPartySearch").then((permission) => {
       setHasPermission(permission);
-      if (permission) {
-        onApi(1, 10);
-      }
+      // if (permission) {
+      //   onApi(1, 10);
+      // }
       // else {
       //   <Typography variant="h4">Get premium for the service </Typography>;
 
@@ -58,15 +64,22 @@ const CustomerPartySearch = () => {
     },
   ];
 
-  const onApi = async (page: number, pageSize: number) => {
+  const sortKeys: TableSearchKey[] = [
+    {
+      title: "Name",
+      value: "name",
+    },
+  ];
+
+  const onApi = async (apiProps: ApiProps) => {
     let url = `${getBmrmBaseUrl()}/ledger/get/customers`;
 
     let requestBody = {
-      page_number: page,
-      page_size: pageSize,
-      search_text: "",
-      sort_by: "name",
-      sort_order: "asc",
+      page_number: apiProps.offset + 1,
+      page_size: apiProps.limit,
+      search_text: apiProps.searchText ?? "",
+      sort_by: apiProps.sortKey ?? "",
+      sort_order: apiProps.sortOrder ?? "",
     };
     let response = await postAsync(url, requestBody);
     let entries = response.map((entry: any, index: number) => {
@@ -88,7 +101,7 @@ const CustomerPartySearch = () => {
       view: (
         <CardView>
           <Typography variant="h4">Customer Search</Typography>
-          <DataTable
+          {/* <DataTable
             columns={columns}
             onApi={async (page, pageSize) => {
               return onApi(page, pageSize);
@@ -97,6 +110,21 @@ const CustomerPartySearch = () => {
               localStorage.setItem("party_filter_value", params.row.id);
               router.push("/dashboard/customer/details");
             }}
+          /> */}
+          <PeriodicTable
+            useSearch={false}
+            columns={columns.map((col: any) => {
+              let column: TableColumn = {
+                header: col.headerName,
+                field: col.field,
+                type: "text",
+                pinned: false,
+                rows: [],
+              };
+              return column;
+            })}
+            onApi={onApi}
+            sortKeys={sortKeys}
           />
         </CardView>
       ),

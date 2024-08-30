@@ -1,8 +1,18 @@
 "use client";
 import { numericToString } from "@/app/services/Local/helper";
-import { getAsync, getBmrmBaseUrl, postAsync } from "@/app/services/rest_services";
+import {
+  getAsync,
+  getBmrmBaseUrl,
+  postAsync,
+} from "@/app/services/rest_services";
 import { DataTable } from "@/app/ui/data_grid";
-import { CardView, GridConfig, DynGrid, Weight, GridDirection } from "@/app/ui/responsive_grid";
+import {
+  CardView,
+  GridConfig,
+  DynGrid,
+  Weight,
+  GridDirection,
+} from "@/app/ui/responsive_grid";
 import { SearchInput } from "@/app/ui/text_inputs";
 import { ChevronLeftRounded } from "@mui/icons-material";
 import {
@@ -18,6 +28,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 import { DropDown } from "@/app/ui/drop_down";
+import {
+  ApiProps,
+  PeriodicTable,
+  TableColumn,
+  TableSearchKey,
+} from "@/app/ui/periodic_table/period_table";
 
 const Page = () => {
   const router = useRouter();
@@ -54,15 +70,17 @@ const Page = () => {
   };
 
   useEffect(() => {
-      loadAgingData();
+    loadAgingData();
   }, []);
 
+  const sortKeys: TableSearchKey[] = [
+    {
+      title: "Name",
+      value: "name",
+    },
+  ];
 
-  const onApi = async (
-    page: number,
-    pageSize: number,
-    searchValue?: string
-  ) => {
+  const onApi = async (apiProps: ApiProps) => {
     let groupType = selectedGroup.current;
     let agingType = selectedAging.current;
 
@@ -75,11 +93,11 @@ const Page = () => {
     }
 
     let requestBody = {
-      page_number: page,
-      page_size: pageSize,
-      search_text: searchValue ?? "",
-      sort_by: "name",
-      sort_order: "asc",
+      page_number: apiProps.offset + 1,
+      page_size: apiProps.limit,
+      search_text: apiProps.searchText ?? "",
+      sort_by: apiProps.sortKey ?? "",
+      sort_order: apiProps.sortOrder ?? "",
     };
     try {
       let response = await postAsync(url, requestBody);
@@ -130,42 +148,42 @@ const Page = () => {
     },
   ];
 
-  const gridConfig= [
+  const gridConfig = [
     {
-        weight: Weight.Low,
-        view: (
-            <CardView title="Outstanding Overview">
-            <DropDown
+      weight: Weight.Low,
+      view: (
+        <CardView title="Outstanding Overview">
+          <DropDown
             label="Select Type"
             displayFieldKey={"label"}
             valueFieldKey={null}
             selectionValues={types}
             helperText={""}
             onSelection={(selection) => {
-                selectedGroup.current = selection.code;
+              selectedGroup.current = selection.code;
               triggerRefresh(!refresh);
             }}
-            />
-            <div className="mt-4"/>
-            <DropDown
+          />
+          <div className="mt-4" />
+          <DropDown
             label={"Aging Code"}
             displayFieldKey={"title"}
             valueFieldKey={null}
             selectionValues={agingData}
             helperText={""}
             onSelection={(_data) => {
-                selectedAging.current = _data?.code;
+              selectedAging.current = _data?.code;
               triggerRefresh(!refresh);
             }}
-            />
-            </CardView>
-        )
+          />
+        </CardView>
+      ),
     },
     {
-        weight: Weight.High,
+      weight: Weight.High,
       view: (
         <CardView title="Parties">
-          <DataTable
+          {/* <DataTable
             columns={columns}
             refresh={refresh}
             useSearch={true}
@@ -179,6 +197,22 @@ const Page = () => {
               localStorage.setItem("os_agingCode", selectedAging.current);
               router.push("/dashboard/outstanding/bill-detail");
             }}
+          /> */}
+          <PeriodicTable
+            useSearch={true}
+            columns={columns.map((col: any) => {
+              let column: TableColumn = {
+                header: col.headerName,
+                field: col.field,
+                type: "text",
+                pinned: false,
+                rows: [],
+              };
+              return column;
+            })}
+            onApi={onApi}
+            sortKeys={sortKeys}
+            reload={refresh}
           />
         </CardView>
       ),
@@ -187,7 +221,7 @@ const Page = () => {
 
   return (
     <div className="w-full" style={{}}>
-        <DynGrid views={gridConfig} direction={GridDirection.Column}/>
+      <DynGrid views={gridConfig} direction={GridDirection.Column} />
     </div>
   );
 };

@@ -57,7 +57,9 @@ const RankedPartyOutstandingCard = ({
         return {
           id: entry.name,
           name: entry.name,
-          amount: entry.totalAmount,
+          amount: `${entry.currency ?? "₹"} ${numericToString(
+            entry.totalAmount
+          )}`,
           currency: entry.currency ?? "₹",
         };
       });

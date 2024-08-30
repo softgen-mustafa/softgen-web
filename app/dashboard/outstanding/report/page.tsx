@@ -14,17 +14,9 @@ import {
   TableSearchKey,
   ApiProps,
 } from "@/app/ui/periodic_table/period_table";
-import {
-  getSgBizBaseUrl,
-  postAsync,
-} from "@/app/services/rest_services";
-import {
-    IconButton,
-    Modal 
-} from "@mui/material";
-import {
-    Settings
-} from "@mui/icons-material";
+import { getSgBizBaseUrl, postAsync } from "@/app/services/rest_services";
+import { IconButton, Modal } from "@mui/material";
+import { Settings } from "@mui/icons-material";
 import { numericToString } from "@/app/services/Local/helper";
 import { OsSettingsView } from "@/app/dashboard/outstanding/report/outstanding_setings";
 
@@ -48,9 +40,7 @@ const Page = () => {
   const [showSettings, toggleSetting] = useState(false);
   const [refresh, triggerRefresh] = useState(false);
 
-  useEffect(() => {
-  }, []);
-
+  useEffect(() => {}, []);
 
   const loadData = async (apiProps: ApiProps) => {
     let url = `${getSgBizBaseUrl()}/os/get/report?isDebit=true`;

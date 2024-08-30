@@ -7,6 +7,11 @@ import { useEffect, useState } from "react";
 import { Box, CircularProgress, IconButton, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
+import {
+  ApiProps,
+  PeriodicTable,
+  TableColumn,
+} from "@/app/ui/periodic_table/period_table";
 
 const AgingSettings = () => {
   const [data, setData] = useState([]);
@@ -17,16 +22,16 @@ const AgingSettings = () => {
   //   loadData();
   // }, []);
 
-  useEffect(() => {
-    // FeatureControl("MasterConfigButton").then((permission) => {
-    //   setHasPermission(permission);
-    //   if (permission) {
-    loadData();
-    //   }
-    // });
-  }, []);
+  // useEffect(() => {
+  //   // FeatureControl("MasterConfigButton").then((permission) => {
+  //   //   setHasPermission(permission);
+  //   //   if (permission) {
+  //   loadData();
+  //   //   }
+  //   // });
+  // }, []);
 
-  const loadData = async () => {
+  const loadData = async (apiProps: ApiProps) => {
     try {
       let url = `${getBmrmBaseUrl()}/aging-settings`;
       let response = await getAsync(url);
@@ -39,8 +44,10 @@ const AgingSettings = () => {
         };
       });
       setData(entries);
+      return entries;
     } catch {
       alert("could not load aging settings");
+      return [];
     }
   };
 
@@ -110,7 +117,7 @@ const AgingSettings = () => {
           <AddIcon />
         </IconButton>
       </Box>
-      <DataGrid
+      {/* <DataGrid
         columns={columns}
         rows={data}
         initialState={{
@@ -127,6 +134,20 @@ const AgingSettings = () => {
         }}
         pageSizeOptions={[5, 10, 25, 50, 75, 100]}
         onPaginationModelChange={(value) => {}}
+      /> */}
+      <PeriodicTable
+        useSearch={false}
+        columns={columns.map((col: any) => {
+          let column: TableColumn = {
+            header: col.headerName,
+            field: col.field,
+            type: "text",
+            pinned: false,
+            rows: [],
+          };
+          return column;
+        })}
+        onApi={loadData}
       />
     </div>
   );

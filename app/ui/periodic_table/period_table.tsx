@@ -257,7 +257,7 @@ const Table = ({ columns }: TableProps) => {
 
   const [tableColumns, updateColumns] = useState<TableColumn[]>(columns);
   // const [draggedColumnIndex, setDraggedColumnIndex] = useState<number | null>(
-  //     null
+  //   null
   // );
 
   const resizingColumnIndex = useRef<number | null>(null);
@@ -288,37 +288,42 @@ const Table = ({ columns }: TableProps) => {
   };
 
   const handleMouseDown = (index: number, event: React.MouseEvent) => {
+    event.stopPropagation();
+    const target = event.target as HTMLElement;
+    if (!target.classList.contains("resizer-handle")) return;
+
     resizingColumnIndex.current = index;
     startX.current = event.clientX;
     startWidth.current = tableColumns[index].width || 100;
+
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
   };
 
   // const handleDragStart = (index: number) => {
-  //     setDraggedColumnIndex(index);
+  //   setDraggedColumnIndex(index);
   // };
 
   // const handleDragOver = (e: React.DragEvent) => {
-  //     e.preventDefault();
+  //   e.preventDefault();
   // };
 
   // const handleDrop = (targetIndex: number) => {
-  //     if (draggedColumnIndex === null || draggedColumnIndex === targetIndex)
-  //         return;
+  //   if (draggedColumnIndex === null || draggedColumnIndex === targetIndex)
+  //     return;
 
-  //     const newColumns = [...columns];
-  //     const [draggedColumn] = newColumns.splice(draggedColumnIndex, 1);
-  //     newColumns.splice(targetIndex, 0, draggedColumn);
+  //   const newColumns = [...columns];
+  //   const [draggedColumn] = newColumns.splice(draggedColumnIndex, 1);
+  //   newColumns.splice(targetIndex, 0, draggedColumn);
 
-  //     updateColumns(newColumns);
-  //     setDraggedColumnIndex(null);
+  //   updateColumns(newColumns);
+  //   setDraggedColumnIndex(null);
   // };
 
   return (
     <Box className="w-full flex flex-row overflow-x-scroll overflow-y-scroll">
       <Box
-        className="w-full flex flex-row p-2"
+        className="w-full flex flex-row p-2 overflow-x-scroll"
         style={{
           borderWidth: 1,
           borderRadius: 2,
@@ -339,16 +344,27 @@ const Table = ({ columns }: TableProps) => {
               // onDragStart={() => handleDragStart(colIndex)}
               // onDragOver={handleDragOver}
               // onDrop={() => handleDrop(colIndex)}
-              onMouseDown={(event) => handleMouseDown(colIndex, event)}
               style={{
                 background: columnColor,
-                width: column.width || 100, // Use the width state
+                width: column.width || 100,
                 position: "relative",
-                cursor: "col-resize",
-                padding: "0 8px",
-                borderRight: "1px solid rgba(0, 0, 0, 0.1)",
               }}
             >
+              <div
+                className="resizer-handle"
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  top: 0,
+                  width: "5px",
+                  height: "100%",
+                  cursor: "col-resize",
+                  zIndex: 1,
+                  borderRight: "1px solid rgba(0, 0, 0, 0.8)",
+                }}
+                onMouseDown={(event) => handleMouseDown(colIndex, event)}
+              />
+
               <TableColumnView
                 column={column}
                 onColorPick={(color: any) => {
@@ -608,6 +624,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
         setLoading(false);
       }
     } else if (props.rows != null) {
+      console.log(props.rows);
       let rows = props.rows.slice(
         apiParams.offset * apiParams.limit,
         apiParams.offset * apiParams.limit + apiParams.limit
