@@ -162,18 +162,22 @@ const InventoryOverviewScreen = () => {
                 : "name"
             ],
             itemCount: entry.totalItems,
-            amount: entry.closingValue,
+            amount: `${entry.currency ?? "₹"} ${numericToString(
+              entry.closingValue
+            )}`,
             quantity: entry.closingBal,
-            currency: entry.currency ?? "₹",
           };
         }
         return {
           id: entry.id || index,
           name: entry.name,
           quantity: entry.closingBal,
-          amount: entry.closingValue,
+          // amount: entry.closingValue,
+          amount: `${entry.currency ?? "₹"} ${numericToString(
+            entry.closingValue
+          )}`,
+
           rate: entry.rate,
-          currency: entry.currency ?? "₹",
         };
       });
       setRows(entries);
