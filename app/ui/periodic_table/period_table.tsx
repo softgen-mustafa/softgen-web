@@ -608,6 +608,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
         setLoading(false);
       }
     } else if (props.rows != null) {
+      console.log(props.rows);
       let rows = props.rows.slice(
         apiParams.offset * apiParams.limit,
         apiParams.offset * apiParams.limit + apiParams.limit

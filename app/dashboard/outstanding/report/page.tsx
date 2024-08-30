@@ -13,17 +13,9 @@ import {
   TableSearchKey,
   ApiProps,
 } from "@/app/ui/periodic_table/period_table";
-import {
-  getSgBizBaseUrl,
-  postAsync,
-} from "@/app/services/rest_services";
-import {
-    IconButton,
-    Modal 
-} from "@mui/material";
-import {
-    Settings
-} from "@mui/icons-material";
+import { getSgBizBaseUrl, postAsync } from "@/app/services/rest_services";
+import { IconButton, Modal } from "@mui/material";
+import { Settings } from "@mui/icons-material";
 import { numericToString } from "@/app/services/Local/helper";
 import { OsSettingsView } from "@/app/dashboard/outstanding/report/outstanding_setings";
 
@@ -33,9 +25,7 @@ const Page = () => {
 
   const [showSettings, toggleSetting] = useState(false);
 
-  useEffect(() => {
-  }, []);
-
+  useEffect(() => {}, []);
 
   const loadData = async (apiProps: ApiProps) => {
     let url = `${getSgBizBaseUrl()}/os/get/report?isDebit=true`;
@@ -183,37 +173,41 @@ const Page = () => {
   ];
 
   const gridConfig = [
-      {
-          weight: Weight.High,
-          view: (
-              <CardView title="Party Outstandings"
-              actions={[
-                  <IconButton onClick={() => {
-                      toggleSetting(!showSettings);
-                  }}>
-                    <Settings/>
-                  </IconButton>
-              ]}
-              >
-              <PeriodicTable
-              useSearch={true}
-              searchKeys={osSearchKeys}
-              columns={columns.map((col: any) => {
-                  let column: TableColumn = {
-                      header: col.headerName,
-                      field: col.field,
-                      type: "text",
-                      pinned: false,
-                      rows: [],
-                  };
-                  return column;
-              })}
-              onApi={loadData}
-              sortKeys={osSortKeys}
-              />
-              </CardView>
-          ),
-      },
+    {
+      weight: Weight.High,
+      view: (
+        <CardView
+          title="Party Outstandings"
+          actions={[
+            <IconButton
+              key={1}
+              onClick={() => {
+                toggleSetting(!showSettings);
+              }}
+            >
+              <Settings />
+            </IconButton>,
+          ]}
+        >
+          <PeriodicTable
+            useSearch={true}
+            searchKeys={osSearchKeys}
+            columns={columns.map((col: any) => {
+              let column: TableColumn = {
+                header: col.headerName,
+                field: col.field,
+                type: "text",
+                pinned: false,
+                rows: [],
+              };
+              return column;
+            })}
+            onApi={loadData}
+            sortKeys={osSortKeys}
+          />
+        </CardView>
+      ),
+    },
   ];
 
   return (

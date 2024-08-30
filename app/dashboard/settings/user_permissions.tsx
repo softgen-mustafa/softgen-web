@@ -20,6 +20,11 @@ import {
 import { DataTable } from "@/app/ui/data_grid";
 import { GridColDef } from "@mui/x-data-grid";
 import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
+import {
+  ApiProps,
+  PeriodicTable,
+  TableColumn,
+} from "@/app/ui/periodic_table/period_table";
 
 interface UserProps {
   id: number;
@@ -123,6 +128,7 @@ const UserPermissions = () => {
     page: number,
     pageSize: number,
     searchValue?: string
+    // apiProps: ApiProps
   ) => {
     let url = `${getBmrmBaseUrl()}/user-info/get/permission?userId=${
       selectedUser.current
@@ -132,6 +138,10 @@ const UserPermissions = () => {
       page_number: page,
       page_size: pageSize,
       search_text: searchValue ?? "",
+
+      // page_number: apiProps.offset + 1,
+      // page_size: apiProps.limit,
+      // search_text: apiProps.searchText ?? "",
       filter: selectedFilter.current,
     };
     let response = await postAsync(url, requestBody);
@@ -216,6 +226,20 @@ const UserPermissions = () => {
         useSearch={true}
         onRowClick={(params) => {}}
       />
+      {/* <PeriodicTable
+        useSearch={true}
+        columns={columns.map((col: any) => {
+          let column: TableColumn = {
+            header: col.headerName,
+            field: col.field,
+            type: "text",
+            pinned: false,
+            rows: [],
+          };
+          return column;
+        })}
+        onApi={onApi}
+      /> */}
     </Box>
   );
 };

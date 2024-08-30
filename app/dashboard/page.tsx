@@ -25,7 +25,11 @@ import { AgingView } from "./cards/aging_card";
 import { DataTable } from "@/app/ui/data_grid";
 import { SingleChartView } from "@/app/ui/graph_util";
 import Column from "../ui/periodic_table/column";
-import { PeriodicTable, TableColumn } from "../ui/periodic_table/period_table";
+import {
+  ApiProps,
+  PeriodicTable,
+  TableColumn,
+} from "../ui/periodic_table/period_table";
 
 const BrokerMonthlyOverview = ({ companyId }: { companyId: string }) => {
   useEffect(() => {}, [companyId]);
@@ -180,7 +184,7 @@ const DashboardPage = () => {
 
   const checkPermission = async () => {
     loadAmount();
-    loadUpcoming();
+    // loadUpcoming();
     // }
   };
 
@@ -197,7 +201,7 @@ const DashboardPage = () => {
     }
   };
 
-  const loadUpcoming = async () => {
+  const loadUpcoming = async (apiProps: ApiProps) => {
     try {
       let url = `${getBmrmBaseUrl()}/bill/get/upcoming-overview?groupType=${
         selectedType.current.code
@@ -207,7 +211,7 @@ const DashboardPage = () => {
         return {
           id: entry.id,
           name: entry.title,
-          amount: entry.amount,
+          amount: `${entry.currency ?? "₹"} ${numericToString(entry.amount)}`,
           billCount: entry.billCount,
           currency: entry.currency ?? "₹",
         };
@@ -500,7 +504,7 @@ const DashboardPage = () => {
                   });
                   updateFilters(values);
                   selectedFilter.current = card;
-                  loadUpcoming();
+                  // loadUpcoming();
                   triggerRefresh(!refresh);
                 }}
               >
@@ -549,6 +553,7 @@ const DashboardPage = () => {
               return column;
             })}
             onApi={loadUpcoming}
+            reload={refresh}
           />
           {/* <DataGrid
             columns={columns}
