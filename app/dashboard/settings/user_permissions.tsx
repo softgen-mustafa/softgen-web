@@ -144,17 +144,22 @@ const UserPermissions = () => {
       // search_text: apiProps.searchText ?? "",
       filter: selectedFilter.current,
     };
-    let response = await postAsync(url, requestBody);
-    if (response && response.length > 0) {
-      let entries = response.map((_data: any, index: number) => {
-        return {
-          id: index,
-          name: _data?.name,
-          status: _data?.is_active,
-          code: _data?.code,
-        };
-      });
-      return entries;
+    try {
+      let response = await postAsync(url, requestBody);
+      if (response && response.length > 0) {
+        let entries = response.map((_data: any, index: number) => {
+          return {
+            id: index,
+            name: _data?.name,
+            status: _data?.is_active,
+            code: _data?.code,
+          };
+        });
+        return entries;
+      }
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+      return [];
     }
   };
 

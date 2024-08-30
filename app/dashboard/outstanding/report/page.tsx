@@ -42,9 +42,10 @@ const Page = () => {
       SortOrder: apiProps.sortOrder,
     };
     let res = await postAsync(url, requestBody);
-    if (res === null) {
-      return [];
+    if (!res || !res.Data) {
+      return []; 
     }
+  
     let values = res.Data.map((entry: any, index: number) => {
       return {
         id: index + 1,
@@ -62,7 +63,9 @@ const Page = () => {
       };
     });
     // console.log(values);
+
     return values;
+
   };
 
   const columns: GridColDef<any[number]>[] = [
