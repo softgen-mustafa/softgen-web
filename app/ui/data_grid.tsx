@@ -83,7 +83,7 @@ const DataTable: React.FC<TableViewProps> = ({
   }, [sync]);
 
   return (
-    <Box className="h-fit">
+    <Box className="h-fit" sx={{ maxHeight: 600, overflow: "auto" }}>
       {useSearch && (
         <div className="w-full flex flex-row justify-end mb-4">
           <SearchInput
@@ -118,6 +118,8 @@ const DataTable: React.FC<TableViewProps> = ({
               borderWidth: 1,
               borderRadius: 4,
               borderColor: inspiredPalette.lightTextGrey,
+           
+
             }}
           >
             <IconButton
@@ -140,9 +142,11 @@ const DataTable: React.FC<TableViewProps> = ({
               borderRadius: 4,
               borderColor: inspiredPalette.lightTextGrey,
             }}
+           
           >
             <IconButton
               className="w-full justify-between"
+          
               sx={{
                 color: theme.palette.primary.main,
               }}
@@ -156,8 +160,8 @@ const DataTable: React.FC<TableViewProps> = ({
           </Box>
 
           {openFilter && (
-            <Box
-              className="w-auto h-full"
+            <Box 
+              className="w-auto h-full  "
               style={{
                 minWidth: 200,
                 fontSize: 14,
@@ -170,7 +174,9 @@ const DataTable: React.FC<TableViewProps> = ({
                 return (
                   <Box
                     key={index}
-                    className="flex flex-row justify-start items-center px-2"
+                    className="flex flex-row justify-start items-center px-2 "
+
+                  
                   >
                     <Checkbox
                       checked={columnVisibility[entry.field]}

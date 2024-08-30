@@ -314,6 +314,7 @@ const MasterPermissions = () => {
           triggerRefresh(!refresh);
         }}
       />
+
       <DropDown
         label={"Select Master"}
         displayFieldKey={"title"}
