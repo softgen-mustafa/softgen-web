@@ -21,16 +21,15 @@ import { numericToString } from "@/app/services/Local/helper";
 import { OsSettingsView } from "@/app/dashboard/outstanding/report/outstanding_setings";
 
 const reportTypes = [
-    {
-        "name": "Party Wise",
-        "value": 0,
-    },
-    {
-        "name": "Bill Wise",
-        "value": 1,
-    },
+  {
+    name: "Party Wise",
+    value: 0,
+  },
+  {
+    name: "Bill Wise",
+    value: 1,
+  },
 ];
-
 
 const Page = () => {
   let selectedGroups = useRef<string[]>([]);
@@ -61,6 +60,7 @@ const Page = () => {
     if (!res || !res.Data) {
       return [];
     }
+
     let values = res.Data.map((entry: any, index: number) => {
       return {
         id: index + 1,
@@ -78,6 +78,7 @@ const Page = () => {
       };
     });
     // console.log(values);
+
     return values;
   };
 
@@ -189,52 +190,49 @@ const Page = () => {
   ];
 
   const gridConfig = [
-      {
-          weight: Weight.High,
-          view: (
-              <CardView title="Filters">
-              <DropDown
-              label="View Report By"
-              displayFieldKey={"name"}
-              valueFieldKey={null}
-              selectionValues={reportTypes}
-              helperText={""}
-              onSelection={(selection) => {
-                  selectedReportType.current = selection.value;
-                  triggerRefresh(!refresh);
-              }}
-              />
-              <div className="mt-4"/>
-              </CardView>
-          )
-      },
-      {
-          weight: Weight.High,
-          view: (
-              <CardView title="Party Outstandings"
-              actions={[
-              ]}
-              >
-              <PeriodicTable
-              useSearch={true}
-              searchKeys={osSearchKeys}
-              reload={refresh}
-              columns={columns.map((col: any) => {
-                  let column: TableColumn = {
-                      header: col.headerName,
-                      field: col.field,
-                      type: "text",
-                      pinned: false,
-                      rows: [],
-                  };
-                  return column;
-              })}
-              onApi={loadData}
-              sortKeys={osSortKeys}
-              />
-              </CardView>
-          ),
-      },
+    {
+      weight: Weight.High,
+      view: (
+        <CardView title="Filters">
+          <DropDown
+            label="View Report By"
+            displayFieldKey={"name"}
+            valueFieldKey={null}
+            selectionValues={reportTypes}
+            helperText={""}
+            onSelection={(selection) => {
+              selectedReportType.current = selection.value;
+              triggerRefresh(!refresh);
+            }}
+          />
+          <div className="mt-4" />
+        </CardView>
+      ),
+    },
+    {
+      weight: Weight.High,
+      view: (
+        <CardView title="Party Outstandings" actions={[]}>
+          <PeriodicTable
+            useSearch={true}
+            searchKeys={osSearchKeys}
+            reload={refresh}
+            columns={columns.map((col: any) => {
+              let column: TableColumn = {
+                header: col.headerName,
+                field: col.field,
+                type: "text",
+                pinned: false,
+                rows: [],
+              };
+              return column;
+            })}
+            onApi={loadData}
+            sortKeys={osSortKeys}
+          />
+        </CardView>
+      ),
+    },
   ];
 
   return (

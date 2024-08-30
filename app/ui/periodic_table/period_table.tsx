@@ -132,7 +132,7 @@ const ColumnColorPicker = ({
       padding: "2px",
       background: "#fff",
       borderRadius: "10px",
-      boxShadow: "0 0 0 1px rgba(0,0,0,.1)",
+      boxShadow: "0 0 0 1px rgba(0,0,0,1)",
       cursor: "pointer",
     },
     popover: {
@@ -198,6 +198,9 @@ const TableColumnView = ({
             sx={{
               minHeight: 60,
               maxHeight: 60,
+              display: "flex",
+              alignItems: "center",
+              bgcolor: rowIndex % 2 === 0 ? "#FFFFFF" : "#F8F8F8",
             }}
           >
             {row.value}
@@ -356,11 +359,11 @@ const Table = ({ columns }: TableProps) => {
                   position: "absolute",
                   right: 0,
                   top: 0,
-                  width: "5px",
+                  width: "2px",
                   height: "100%",
                   cursor: "col-resize",
                   zIndex: 1,
-                  borderRight: "1px solid rgba(0, 0, 0, 0.8)",
+                  borderRight: "0.5px Solid #d1d5db",
                 }}
                 onMouseDown={(event) => handleMouseDown(colIndex, event)}
               />
@@ -677,7 +680,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
   return (
     <div className="flex flex-col w-full h-auto">
       {/* <div>width: {dimensions.width}</div> */}
-      <Box className="flex flex-col sm:flex-row w-full justify-between ">
+      <Box className="flex flex-col sm:flex-row w-full justify-between mb-4">
         <TableActions
           onFilterToggle={() => toggleFilter(!filterOpen)}
           onSync={() => {
