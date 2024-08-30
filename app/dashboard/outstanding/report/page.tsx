@@ -6,6 +6,7 @@ import {
   GridDirection,
 } from "@/app/ui/responsive_grid";
 import { GridColDef } from "@mui/x-data-grid";
+import { DropDown } from "@/app/ui/drop_down";
 import { useEffect, useState, useRef } from "react";
 import {
   PeriodicTable,
@@ -27,11 +28,25 @@ import {
 import { numericToString } from "@/app/services/Local/helper";
 import { OsSettingsView } from "@/app/dashboard/outstanding/report/outstanding_setings";
 
+const reportTypes = [
+    {
+        "name": "Party Wise",
+        "value": 0,
+    },
+    {
+        "name": "Bill Wise",
+        "value": 1,
+    },
+];
+
+
 const Page = () => {
   let selectedGroups = useRef<string[]>([]);
   let selectedParty = useRef<string>("");
+  let selectedReportType = useRef<number>(0);
 
   const [showSettings, toggleSetting] = useState(false);
+  const [refresh, triggerRefresh] = useState(false);
 
   useEffect(() => {
   }, []);
@@ -50,6 +65,7 @@ const Page = () => {
       SearchKey: apiProps.searchKey, //;selectedSearchKey.current ?? "Party"
       SortKey: apiProps.sortKey,
       SortOrder: apiProps.sortOrder,
+      ReportOnType: selectedReportType.current ?? 0,
     };
     let res = await postAsync(url, requestBody);
     if (res === null) {
@@ -186,18 +202,33 @@ const Page = () => {
       {
           weight: Weight.High,
           view: (
+              <CardView title="Filters">
+              <DropDown
+              label="View Report By"
+              displayFieldKey={"name"}
+              valueFieldKey={null}
+              selectionValues={reportTypes}
+              helperText={""}
+              onSelection={(selection) => {
+                  selectedReportType.current = selection.value;
+                  triggerRefresh(!refresh);
+              }}
+              />
+              <div className="mt-4"/>
+              </CardView>
+          )
+      },
+      {
+          weight: Weight.High,
+          view: (
               <CardView title="Party Outstandings"
               actions={[
-                  <IconButton onClick={() => {
-                      toggleSetting(!showSettings);
-                  }}>
-                    <Settings/>
-                  </IconButton>
               ]}
               >
               <PeriodicTable
               useSearch={true}
               searchKeys={osSearchKeys}
+              reload={refresh}
               columns={columns.map((col: any) => {
                   let column: TableColumn = {
                       header: col.headerName,
