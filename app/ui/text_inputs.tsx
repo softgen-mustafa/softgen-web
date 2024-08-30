@@ -40,11 +40,13 @@ const TextInput = ({
   placeHolder,
   onTextChange,
   defaultValue,
+  multiline = false
 }: {
   mode: string;
   placeHolder: string;
   onTextChange: (value: string) => void;
   defaultValue?: string;
+  multiline?: boolean;
 }) => {
   const [value, setValue] = useState<any | null>(null);
   useEffect(() => {
@@ -55,6 +57,7 @@ const TextInput = ({
   return (
     <div>
       <TextField
+      multiline={multiline}
         value={value}
         label={placeHolder}
         variant="outlined"

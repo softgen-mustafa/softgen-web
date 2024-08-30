@@ -389,7 +389,7 @@ const DashboardPage = () => {
 
   const views = [
     {
-      weight: Weight.Low,
+      weight: Weight.None,
       view: (
         <div className={`flex flex-col h-full`}>
           <CardView className="mb-2" title="Switch Company">
@@ -419,7 +419,7 @@ const DashboardPage = () => {
       ),
     },
     {
-      weight: Weight.Medium,
+      weight: Weight.Low,
       view: (
         <CardView
           title={"Payable vs Receivable"}
@@ -433,7 +433,7 @@ const DashboardPage = () => {
       ),
     },
     {
-      weight: Weight.Medium,
+      weight: Weight.Low,
       view: (
         <CardView title={"Aging Wise"} permissionCode="AgingOutstandingCard">
           <AgingView
@@ -445,7 +445,7 @@ const DashboardPage = () => {
       ),
     },
     {
-      weight: Weight.High,
+      weight: Weight.Medium,
       view: (
         <CardView title="Today's O/S">
           <OutstandingTask companyId={data[cachedCompanyIndex]} />

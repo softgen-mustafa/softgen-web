@@ -1,7 +1,4 @@
 "use client";
-
-import { DropDown } from "@/app/ui/drop_down";
-import { DataTable } from "@/app/ui/data_grid";
 import {
   CardView,
   DynGrid,
@@ -10,89 +7,37 @@ import {
 } from "@/app/ui/responsive_grid";
 import { GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState, useRef } from "react";
-import Cookies from "js-cookie";
-import axios from "axios";
 import {
   PeriodicTable,
   TableColumn,
   TableSearchKey,
-  TableSortKey,
   ApiProps,
 } from "@/app/ui/periodic_table/period_table";
 import {
-  getAsync,
-  getBmrmBaseUrl,
   getSgBizBaseUrl,
   postAsync,
 } from "@/app/services/rest_services";
+import {
+    IconButton,
+    Modal 
+} from "@mui/material";
+import {
+    Settings
+} from "@mui/icons-material";
 import { numericToString } from "@/app/services/Local/helper";
+import { OsSettingsView } from "@/app/dashboard/outstanding/report/outstanding_setings";
 
 const Page = () => {
-  const [refresh, setRefresh] = useState(false);
-  const [groups, setGroups] = useState([]);
-  const [parties, setParties] = useState<any[]>([]);
-  const [rows, setRows] = useState<any[]>([]);
-
-  let searchedParty = useRef("");
   let selectedGroups = useRef<string[]>([]);
   let selectedParty = useRef<string>("");
-  let selectedSearchKey = useRef("Party");
+
+  const [showSettings, toggleSetting] = useState(false);
 
   useEffect(() => {
-    loadParties().then((_) => loadGroups());
   }, []);
 
-  const loadParties = async () => {
-    try {
-      let searchedValue =
-        searchedParty.current != null && searchedParty.current.length > 0
-          ? `?searchKey=${searchedParty.current}`
-          : "";
-      let url = `http://118.139.167.125:45700/os/search/ledgers${searchedValue}`;
-      //let url = `http://localhost:35001/os/search/ledgers${searchedValue}`;
-      let appHeaders = {
-        "Content-Type": "application/json; charset=utf-8",
-        CompanyId: Cookies.get("companyId") ?? 1,
-      };
-      let res = await axios.get(url, { headers: appHeaders });
-      let values: any[] = [{ Name: "None" }];
-      if (res.data !== null) {
-        res.data.Data.map((entry: any) => {
-          values.push(entry);
-        });
-      }
-      setParties(values);
-    } catch {
-    } finally {
-      setRefresh(!refresh);
-    }
-  };
-
-  const loadGroups = async () => {
-    try {
-      let url = "http://localhost:35001/os/get/groups?isDebit=true";
-      // let url = "http://118.139.167.125:45700/os/get/groups?isDebit=true";
-      let appHeaders = {
-        "Content-Type": "application/json; charset=utf-8",
-        CompanyId: Cookies.get("companyId") ?? 1,
-      };
-      let res = await axios.post(url, {}, { headers: appHeaders });
-      let values = res.data.map((entry: string) => {
-        return {
-          name: entry,
-          value: entry,
-        };
-      });
-      setGroups(values);
-    } catch {
-    } finally {
-      setRefresh(!refresh);
-    }
-  };
 
   const loadData = async (apiProps: ApiProps) => {
-    //let url = "http://localhost:35001/os/get/report?isDebit=true";
-    //let url = "http://118.139.167.125:45700/os/get/report?isDebit=true";
     let url = `${getSgBizBaseUrl()}/os/get/report?isDebit=true`;
     let requestBody = {
       Limit: apiProps.limit,
@@ -106,16 +51,6 @@ const Page = () => {
       SortKey: apiProps.sortKey,
       SortOrder: apiProps.sortOrder,
     };
-    /*
-    let appHeaders = {
-      "Content-Type": "application/json; charset=utf-8",
-      CompanyId: Cookies.get("companyId") ?? 1,
-    };
-    let res = await axios.post(url, requestBody, { headers: appHeaders });
-    if (res.data == null || res.data.Data == null) {
-      return [];
-    }
-    */
     let res = await postAsync(url, requestBody);
     if (res === null) {
       return [];
@@ -137,7 +72,6 @@ const Page = () => {
       };
     });
     // console.log(values);
-    setRows(values);
     return values;
   };
 
@@ -249,66 +183,37 @@ const Page = () => {
   ];
 
   const gridConfig = [
-    /*
-    {
-      weight: Weight.Low,
-      view: (
-        <CardView title="Outstanding Overview">
-          <DropDown
-            label="Select Party"
-            useSearch={true}
-            displayFieldKey={"Name"}
-            valueFieldKey={null}
-            selectionValues={parties}
-            helperText={""}
-            onSearchUpdate={(search: string) => {
-              searchedParty.current = search;
-              loadParties();
-            }}
-            onSelection={(selection: any) => {
-              selectedParty.current = selection.Name;
-              setRefresh(!refresh);
-            }}
-          />
-          <div className="mt-4" />
-          <DropDown
-            label="Select Group"
-            displayFieldKey={"name"}
-            valueFieldKey={null}
-            selectionValues={groups}
-            helperText={""}
-            onSelection={(selection: any) => {
-              selectedGroups.current = [selection.name];
-              setRefresh(!refresh);
-            }}
-          />
-        </CardView>
-      ),
-    },
-    */
-    {
-      weight: Weight.High,
-      view: (
-        <CardView title="Party Outstandings">
-          <PeriodicTable
-            useSearch={true}
-            searchKeys={osSearchKeys}
-            columns={columns.map((col: any) => {
-              let column: TableColumn = {
-                header: col.headerName,
-                field: col.field,
-                type: "text",
-                pinned: false,
-                rows: [],
-              };
-              return column;
-            })}
-            onApi={loadData}
-            sortKeys={osSortKeys}
-          />
-        </CardView>
-      ),
-    },
+      {
+          weight: Weight.High,
+          view: (
+              <CardView title="Party Outstandings"
+              actions={[
+                  <IconButton onClick={() => {
+                      toggleSetting(!showSettings);
+                  }}>
+                    <Settings/>
+                  </IconButton>
+              ]}
+              >
+              <PeriodicTable
+              useSearch={true}
+              searchKeys={osSearchKeys}
+              columns={columns.map((col: any) => {
+                  let column: TableColumn = {
+                      header: col.headerName,
+                      field: col.field,
+                      type: "text",
+                      pinned: false,
+                      rows: [],
+                  };
+                  return column;
+              })}
+              onApi={loadData}
+              sortKeys={osSortKeys}
+              />
+              </CardView>
+          ),
+      },
   ];
 
   return (

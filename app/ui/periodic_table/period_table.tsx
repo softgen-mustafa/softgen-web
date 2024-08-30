@@ -45,6 +45,7 @@ interface PeriodicTableProps {
   searchKeys?: TableSearchKey[];
   sortKeys?: TableSortKey[];
   onApi?: (props: ApiProps) => Promise<any[]>;
+  reload?: boolean;
 }
 
 interface TableActionProps {
@@ -583,7 +584,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
   useEffect(() => {
     setDimensions({ width: window.innerWidth, height: window.innerHeight });
     refreshColumns({ offset: 0, limit: 5, searchText: "" });
-  }, []);
+  }, [props.reload]);
 
   const refreshColumns = (apiParams: ApiProps) => {
     if (props.onApi != null) {
