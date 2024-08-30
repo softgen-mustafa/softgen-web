@@ -208,7 +208,7 @@ const UserPermissions = () => {
           }}
           useSearch={true}
         />
-        <Box sx={{ width: "20%" }}>
+        <Box sx={{ width: "20%" }} >
           <DropDown
             label={"Filter"}
             displayFieldKey={"name"}
