@@ -105,7 +105,9 @@ const Page = () => {
         return {
           id: index + 1,
           partyName: entry.name,
-          amount: entry.totalAmount,
+          amount: `${entry.currency ?? "₹"} ${numericToString(
+            entry.totalAmount
+          )}`,
           billCount: entry.billCount,
           currency: entry.currency ?? "₹",
         };

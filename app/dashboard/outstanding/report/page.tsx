@@ -33,7 +33,7 @@ const Page = () => {
       Limit: apiProps.limit,
       Offset: apiProps.offset,
       PartyName: selectedParty.current === "None" ? "" : selectedParty.current,
-      SearchText: apiProps.searchText,
+      SearchText: apiProps.searchText ?? "",
       Groups: selectedGroups.current ?? [],
       DueDays: 30,
       OverDueDays: 90,
@@ -42,7 +42,7 @@ const Page = () => {
       SortOrder: apiProps.sortOrder,
     };
     let res = await postAsync(url, requestBody);
-    if (res === null) {
+    if (!res || !res.Data) {
       return [];
     }
     let values = res.Data.map((entry: any, index: number) => {
