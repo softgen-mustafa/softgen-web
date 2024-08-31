@@ -1,5 +1,9 @@
 "use client";
-import { getUmsBaseUrl, postAsync } from "@/app/services/rest_services";
+import {
+  getAsync,
+  getUmsBaseUrl,
+  postAsync,
+} from "@/app/services/rest_services";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { TextInput } from "@/app/ui/text_inputs";
 import { inspiredPalette } from "@/app/ui/theme";
@@ -180,7 +184,14 @@ const Page = ({ params }: { params: any }) => {
         return false;
       }
       let tokenInfo = response["token"];
+      console.log(response, "183");
       Cookies.set("authToken", tokenInfo["value"], { expires: 14 });
+      try {
+        let getCompanies = `${getUmsBaseUrl()}/info/user-tenant/get/companies`;
+        let response = await getAsync(getCompanies);
+        console.log(response);
+        Cookies.set("companyId", response[0]?.company_id);
+      } catch (error) {}
       return true;
     } catch {
       return false;

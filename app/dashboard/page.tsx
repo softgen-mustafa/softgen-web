@@ -143,6 +143,12 @@ const DashboardPage = () => {
   const theme = useTheme();
   const router = useRouter();
 
+  console.log(
+    Cookies.get("authToken"),
+    Cookies.get("companyId"),
+    Cookies.get("userType")
+  );
+
   const loadData = async () => {
     try {
       let url = `${getBmrmBaseUrl()}/info/user-tenant/get/companies`;
@@ -155,6 +161,7 @@ const DashboardPage = () => {
         };
       });
       setData(values);
+      console.log(values);
       if (values && values.length > 0) {
         let existingCompany = Cookies.get("companyId");
         let exisitngIndex = values.findIndex(
