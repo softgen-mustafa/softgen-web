@@ -26,6 +26,17 @@ import { Settings } from "@mui/icons-material";
 import { numericToString } from "@/app/services/Local/helper";
 import { OsSettingsView } from "@/app/dashboard/outstanding/report/outstanding_setings";
 
+const isDebitType = [
+  {
+    name: "Payable",
+    value: false,
+  },
+  {
+    name: "Receivable",
+    value: true,
+  },
+];
+
 const reportTypes = [
   {
     name: "Party Wise",
@@ -61,6 +72,7 @@ const Page = () => {
   let selectedParty = useRef<string>("");
   let selectedReportType = useRef<number>(0); //0 - Party Wise, 1 - Bill Wise
   let selectedDueType = useRef<number>(0);
+  let selectedisDebitType = useRef<boolean>(false);
 
   const [showSettings, toggleSetting] = useState(false);
   const [refresh, triggerRefresh] = useState(false);
@@ -91,7 +103,10 @@ const Page = () => {
   };
   const loadGroups = async () => {
     try {
-      let url = `${getSgBizBaseUrl()}/os/get/groups?isDebit=true`;
+      let url = `${getSgBizBaseUrl()}/os/get/groups?isDebit=${
+        selectedisDebitType.current
+      }`;
+      console.log("loadGroups", url);
       let response = await getAsync(url);
       if (response == null || response.Data == null) {
         setGroups([]);
@@ -109,7 +124,10 @@ const Page = () => {
   };
 
   const loadData = async (apiProps: ApiProps) => {
-    let url = `${getSgBizBaseUrl()}/os/get/report?isDebit=true`;
+    let url = `${getSgBizBaseUrl()}/os/get/report?isDebit=${
+      selectedisDebitType.current
+    }`;
+    console.log("load DAta", url);
     let requestBody = {
       Limit: apiProps.limit,
       Offset: apiProps.offset,
@@ -330,9 +348,30 @@ const Page = () => {
     {
       weight: Weight.High,
       view: (
+        <CardView title="Filters">
+          <Stack flexDirection={"column"} gap={2}>
+            <DropDown
+              label="View"
+              displayFieldKey={"name"}
+              valueFieldKey={null}
+              selectionValues={isDebitType}
+              helperText={""}
+              onSelection={(selection) => {
+                selectedisDebitType.current = selection.value;
+                triggerRefresh(!refresh);
+              }}
+            />
+          </Stack>
+          <div className="mt-4" />
+        </CardView>
+      ),
+    },
+    {
+      weight: Weight.High,
+      view: (
         <CardView title="Party Outstandings" actions={[]}>
           <PeriodicTable
-          RenderAdditionalView={renderFilterView()}
+            RenderAdditionalView={renderFilterView()}
             useSearch={true}
             searchKeys={osSearchKeys}
             reload={refresh}
