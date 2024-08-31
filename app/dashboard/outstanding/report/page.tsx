@@ -219,7 +219,7 @@ const Page = () => {
       type: "number",
       flex: 1,
       minWidth: 150,
-      hideable: false,
+      hideable: selectedReportType.current === 0,
     },
     {
       field: "Amount",
