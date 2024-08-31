@@ -106,7 +106,6 @@ const Page = () => {
       let url = `${getSgBizBaseUrl()}/os/get/groups?isDebit=${
         selectedisDebitType.current
       }`;
-      console.log("loadGroups", url);
       let response = await getAsync(url);
       if (response == null || response.Data == null) {
         setGroups([]);
@@ -358,7 +357,7 @@ const Page = () => {
               helperText={""}
               onSelection={(selection) => {
                 selectedisDebitType.current = selection.value;
-                triggerRefresh(!refresh);
+                loadGroups().then((_) => triggerRefresh(!refresh));
               }}
             />
           </Stack>
@@ -371,6 +370,7 @@ const Page = () => {
       view: (
         <CardView title="Party Outstandings" actions={[]}>
           <PeriodicTable
+            refreshFilterView={refresh}
             RenderAdditionalView={renderFilterView()}
             useSearch={true}
             searchKeys={osSearchKeys}

@@ -18,7 +18,13 @@ import {
   FilterAlt,
   FilterAltOff,
 } from "@mui/icons-material";
-import React, { useState, useRef, useEffect, ReactNode, ReactElement } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  ReactNode,
+  ReactElement,
+} from "react";
 import {
   FormLabel,
   FormControlLabel,
@@ -46,7 +52,8 @@ interface PeriodicTableProps {
   sortKeys?: TableSortKey[];
   onApi?: (props: ApiProps) => Promise<any[]>;
   reload?: boolean;
-  RenderAdditionalView?: ReactElement
+  RenderAdditionalView?: ReactElement;
+  refreshFilterView?: boolean;
 }
 
 interface TableActionProps {
@@ -528,16 +535,27 @@ interface TableFilterProps {
   columns: TableColumn[];
   sortKeys?: TableSortKey[];
   onChange?: (sortKey: string, sortOrder: string) => void;
-  RenderAdditionalView?: ReactElement
+  refreshFilterView?: boolean;
+  RenderAdditionalView?: ReactElement;
 }
 
-const TableFilterView = ({ RenderAdditionalView, sortKeys = [], onChange}: TableFilterProps) => {
+const TableFilterView = ({
+  refreshFilterView,
+  RenderAdditionalView,
+  sortKeys = [],
+  onChange,
+}: TableFilterProps) => {
   const [sortKey, setSortKey] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
+  const [AddtionalView, setAddtionalView] = useState<ReactElement | null>(null);
+
+  useEffect(() => {
+    setAddtionalView(RenderAdditionalView || null);
+  }, [refreshFilterView]);
 
   const renderAdditionalView = () => {
     return RenderAdditionalView;
-  }
+  };
   return (
     <Box
       className="flex flex-col mr-1 p-2"
@@ -547,11 +565,7 @@ const TableFilterView = ({ RenderAdditionalView, sortKeys = [], onChange}: Table
       }}
     >
       <Typography className="mt-2 mb-2">Filters</Typography>
-      {
-        RenderAdditionalView != null
-        &&
-        renderAdditionalView()
-      }
+      {AddtionalView != null && AddtionalView}
 
       {sortKeys != null && sortKeys.length > 0 && (
         <Box>
@@ -727,6 +741,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
       <Box className="flex flex-row">
         {filterOpen && (
           <TableFilterView
+            refreshFilterView={props.refreshFilterView}
             RenderAdditionalView={props.RenderAdditionalView}
             columns={tableColumns}
             sortKeys={props.sortKeys}
