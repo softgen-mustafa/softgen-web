@@ -7,6 +7,7 @@ import {
 } from "@/app/ui/responsive_grid";
 import { GridColDef } from "@mui/x-data-grid";
 import { DropDown } from "@/app/ui/drop_down";
+import { ApiDropDown } from "@/app/ui/api_drop_down";
 import { useEffect, useState, useRef } from "react";
 import {
   PeriodicTable,
@@ -14,7 +15,7 @@ import {
   TableSearchKey,
   ApiProps,
 } from "@/app/ui/periodic_table/period_table";
-import { getSgBizBaseUrl, postAsync } from "@/app/services/rest_services";
+import { getAsync, getBmrmBaseUrl, getSgBizBaseUrl, postAsync } from "@/app/services/rest_services";
 import { IconButton, Modal, Stack } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 import { numericToString } from "@/app/services/Local/helper";
@@ -58,8 +59,50 @@ const Page = () => {
 
   const [showSettings, toggleSetting] = useState(false);
   const [refresh, triggerRefresh] = useState(false);
+  const [groups, setGroups] = useState<any[]>([]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+      loadParties("")
+      loadGroups()
+  }, []);
+
+
+  const loadParties = async (searchValue: string) => {
+      let values = [{ name: "None" }];
+      try {
+          let url = `${getSgBizBaseUrl()}/os/search/ledgers?searchKey=${searchValue}`;
+          let response = await getAsync(url);
+          if (response == null || response.Data == null) {
+              return [];
+          }
+          response.Data.map((entry: any) => {
+               values.push({
+                  name: entry.Name,
+              });
+          })
+          return values;
+      } catch {
+          return []
+      }
+  }
+  const loadGroups = async () => {
+      try {
+          let url = `${getSgBizBaseUrl()}/os/get/groups?isDebit=true`;
+          let response = await getAsync(url);
+          if (response == null || response.Data == null) {
+              setGroups([]);
+              return;
+          }
+          let values = response.Data.map((entry: any) => {
+              return {
+                  name: entry,
+              }
+          })
+          setGroups(values);
+      } catch {
+          setGroups([]);
+      }
+  }
 
   const loadData = async (apiProps: ApiProps) => {
     let url = `${getSgBizBaseUrl()}/os/get/report?isDebit=true`;
@@ -251,6 +294,28 @@ const Page = () => {
               onSelection={(selection) => {
                 selectedDueType.current = selection.value;
                 triggerRefresh(!refresh);
+              }}
+            />
+            <DropDown
+              label="Ledger Group"
+              displayFieldKey={"name"}
+              valueFieldKey={null}
+              selectionValues={groups}
+              helperText={""}
+              onSelection={(selection) => {
+                selectedGroups.current = [selection.name];
+                triggerRefresh(!refresh);
+              }}
+            />
+            <ApiDropDown
+              label="Party"
+              displayFieldKey={"name"}
+              valueFieldKey={null}
+              onApi={loadParties}
+              helperText={""}
+              onSelection={(selection) => {
+                  selectedParty.current = selection.name;
+                  triggerRefresh(!refresh);
               }}
             />
           </Stack>

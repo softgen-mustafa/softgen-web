@@ -81,7 +81,7 @@ interface TableColumn {
   rows: TableRow[];
   color?: any;
   width?: number;
-  hideable: boolean;
+  hideable?: boolean;
 }
 
 interface TableRow {
