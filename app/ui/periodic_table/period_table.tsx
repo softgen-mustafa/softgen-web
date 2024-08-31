@@ -18,7 +18,7 @@ import {
   FilterAlt,
   FilterAltOff,
 } from "@mui/icons-material";
-import React, { useState, useRef, useEffect, ReactNode } from "react";
+import React, { useState, useRef, useEffect, ReactNode, ReactElement } from "react";
 import {
   FormLabel,
   FormControlLabel,
@@ -46,7 +46,7 @@ interface PeriodicTableProps {
   sortKeys?: TableSortKey[];
   onApi?: (props: ApiProps) => Promise<any[]>;
   reload?: boolean;
-  RenderAdditionalView?: React.FC;
+  RenderAdditionalView?: ReactElement
 }
 
 interface TableActionProps {
@@ -528,25 +528,29 @@ interface TableFilterProps {
   columns: TableColumn[];
   sortKeys?: TableSortKey[];
   onChange?: (sortKey: string, sortOrder: string) => void;
-  RenderAdditionalView?: React.FC
+  RenderAdditionalView?: ReactElement
 }
 
 const TableFilterView = ({ RenderAdditionalView, sortKeys = [], onChange}: TableFilterProps) => {
   const [sortKey, setSortKey] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
+
+  const renderAdditionalView = () => {
+    return RenderAdditionalView;
+  }
   return (
     <Box
       className="flex flex-col mr-1 p-2"
       style={{
         borderWidth: 1,
-        minWidth: 150,
+        minWidth: 250,
       }}
     >
       <Typography className="mt-2 mb-2">Filters</Typography>
       {
         RenderAdditionalView != null
         &&
-        <RenderAdditionalView/>
+        renderAdditionalView()
       }
 
       {sortKeys != null && sortKeys.length > 0 && (

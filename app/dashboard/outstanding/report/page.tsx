@@ -15,7 +15,12 @@ import {
   TableSearchKey,
   ApiProps,
 } from "@/app/ui/periodic_table/period_table";
-import { getAsync, getBmrmBaseUrl, getSgBizBaseUrl, postAsync } from "@/app/services/rest_services";
+import {
+  getAsync,
+  getBmrmBaseUrl,
+  getSgBizBaseUrl,
+  postAsync,
+} from "@/app/services/rest_services";
 import { IconButton, Modal, Stack } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 import { numericToString } from "@/app/services/Local/helper";
@@ -62,47 +67,46 @@ const Page = () => {
   const [groups, setGroups] = useState<any[]>([]);
 
   useEffect(() => {
-      loadParties("")
-      loadGroups()
+    loadParties("");
+    loadGroups();
   }, []);
 
-
   const loadParties = async (searchValue: string) => {
-      let values = [{ name: "None" }];
-      try {
-          let url = `${getSgBizBaseUrl()}/os/search/ledgers?searchKey=${searchValue}`;
-          let response = await getAsync(url);
-          if (response == null || response.Data == null) {
-              return [];
-          }
-          response.Data.map((entry: any) => {
-               values.push({
-                  name: entry.Name,
-              });
-          })
-          return values;
-      } catch {
-          return []
+    let values = [{ name: "None" }];
+    try {
+      let url = `${getSgBizBaseUrl()}/os/search/ledgers?searchKey=${searchValue}`;
+      let response = await getAsync(url);
+      if (response == null || response.Data == null) {
+        return [];
       }
-  }
+      response.Data.map((entry: any) => {
+        values.push({
+          name: entry.Name,
+        });
+      });
+      return values;
+    } catch {
+      return [];
+    }
+  };
   const loadGroups = async () => {
-      try {
-          let url = `${getSgBizBaseUrl()}/os/get/groups?isDebit=true`;
-          let response = await getAsync(url);
-          if (response == null || response.Data == null) {
-              setGroups([]);
-              return;
-          }
-          let values = response.Data.map((entry: any) => {
-              return {
-                  name: entry,
-              }
-          })
-          setGroups(values);
-      } catch {
-          setGroups([]);
+    try {
+      let url = `${getSgBizBaseUrl()}/os/get/groups?isDebit=true`;
+      let response = await getAsync(url);
+      if (response == null || response.Data == null) {
+        setGroups([]);
+        return;
       }
-  }
+      let values = response.Data.map((entry: any) => {
+        return {
+          name: entry,
+        };
+      });
+      setGroups(values);
+    } catch {
+      setGroups([]);
+    }
+  };
 
   const loadData = async (apiProps: ApiProps) => {
     let url = `${getSgBizBaseUrl()}/os/get/report?isDebit=true`;
@@ -268,66 +272,67 @@ const Page = () => {
     },
   ];
 
+  const renderFilterView = () => {
+    return (
+      <div>
+        <Stack flexDirection={"column"} gap={2}>
+          <DropDown
+            label="View Report By"
+            displayFieldKey={"name"}
+            valueFieldKey={null}
+            selectionValues={reportTypes}
+            helperText={""}
+            onSelection={(selection) => {
+              selectedReportType.current = selection.value;
+              triggerRefresh(!refresh);
+            }}
+          />
+          <DropDown
+            label="Due Type"
+            displayFieldKey={"name"}
+            valueFieldKey={null}
+            selectionValues={dueTypes}
+            helperText={""}
+            onSelection={(selection) => {
+              selectedDueType.current = selection.value;
+              triggerRefresh(!refresh);
+            }}
+          />
+          <DropDown
+            label="Ledger Group"
+            displayFieldKey={"name"}
+            valueFieldKey={null}
+            selectionValues={groups}
+            helperText={""}
+            onSelection={(selection) => {
+              selectedGroups.current = [selection.name];
+              triggerRefresh(!refresh);
+            }}
+          />
+          <ApiDropDown
+            label="Party"
+            displayFieldKey={"name"}
+            valueFieldKey={null}
+            onApi={loadParties}
+            helperText={""}
+            onSelection={(selection) => {
+              selectedParty.current = selection.name;
+              triggerRefresh(!refresh);
+            }}
+          />
+        </Stack>
+        <div className="mt-4" />
+      </div>
+    );
+  };
+
   const gridConfig = [
-    {
-      weight: Weight.High,
-      view: (
-        <CardView title="Filters">
-          <Stack flexDirection={"column"} gap={2}>
-            <DropDown
-              label="View Report By"
-              displayFieldKey={"name"}
-              valueFieldKey={null}
-              selectionValues={reportTypes}
-              helperText={""}
-              onSelection={(selection) => {
-                selectedReportType.current = selection.value;
-                triggerRefresh(!refresh);
-              }}
-            />
-            <DropDown
-              label="Due Type"
-              displayFieldKey={"name"}
-              valueFieldKey={null}
-              selectionValues={dueTypes}
-              helperText={""}
-              onSelection={(selection) => {
-                selectedDueType.current = selection.value;
-                triggerRefresh(!refresh);
-              }}
-            />
-            <DropDown
-              label="Ledger Group"
-              displayFieldKey={"name"}
-              valueFieldKey={null}
-              selectionValues={groups}
-              helperText={""}
-              onSelection={(selection) => {
-                selectedGroups.current = [selection.name];
-                triggerRefresh(!refresh);
-              }}
-            />
-            <ApiDropDown
-              label="Party"
-              displayFieldKey={"name"}
-              valueFieldKey={null}
-              onApi={loadParties}
-              helperText={""}
-              onSelection={(selection) => {
-                  selectedParty.current = selection.name;
-                  triggerRefresh(!refresh);
-              }}
-            />
-          </Stack>
-          <div className="mt-4" />
-        </CardView>
-      ),
-    },
     {
       weight: Weight.High,
       view: (
         <CardView title="Party Outstandings" actions={[]}>
           <PeriodicTable
+          RenderAdditionalView={renderFilterView()}
             useSearch={true}
             searchKeys={osSearchKeys}
             reload={refresh}
