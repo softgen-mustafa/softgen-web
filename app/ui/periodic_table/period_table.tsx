@@ -1,5 +1,6 @@
 "use client";
 import {
+  Checkbox,
   CircularProgress,
   InputAdornment,
   TextField,
@@ -55,6 +56,7 @@ interface PeriodicTableProps {
   RenderAdditionalView?: ReactElement;
   refreshFilterView?: boolean;
   onRowClick?: () => void;
+  checkBoxSelection?: boolean;
 }
 
 interface TableActionProps {
@@ -103,6 +105,7 @@ interface TableProps {
   columns: TableColumn[];
   rows: TableRow[][];
   onRowClick?: any;
+  checkBox?: boolean;
 }
 
 const ColumnColorPicker = ({
@@ -268,11 +271,12 @@ const MobileView = ({ columns, rows }: MobileViewProps) => {
   );
 };
 
-const Table = ({ columns, rows, onRowClick }: TableProps) => {
+const Table = ({ columns, rows, onRowClick, checkBox }: TableProps) => {
   const theme = useTheme();
 
   const [fieldWidths, changeFieldWidths] = useState<any[]>([]);
   const [tableRows, updateRows] = useState<any[][]>([]);
+  const [selectedRow, setSelectedRow] = useState<any[]>([]);
   // const [draggedColumnIndex, setDraggedColumnIndex] = useState<number | null>(
   //   null
   // );
@@ -292,6 +296,10 @@ const Table = ({ columns, rows, onRowClick }: TableProps) => {
 
     updateRows(rows);
   }, [rows]);
+
+  useEffect(() => {
+    setSelectedRow([]);
+  }, [tableRows]);
 
   const handleMouseMove = (event: MouseEvent) => {
     /*
@@ -339,6 +347,24 @@ const Table = ({ columns, rows, onRowClick }: TableProps) => {
         }}
       >
         <Box className="flex flex-row justify-between">
+          {checkBox && (
+            <Box
+              className="flex p-0"
+              sx={{ borderRightWidth: 2, borderBottomWidth: 2 }}
+            >
+              <Checkbox
+                onChange={(event, checked: boolean) => {
+                  let values: any[] = [];
+                  if (checked) {
+                    tableRows.map((_items: any, index: number) => {
+                      values.push(index);
+                    });
+                  }
+                  setSelectedRow(values);
+                }}
+              />
+            </Box>
+          )}
           {columns
             .filter((entry) => !entry.hideable)
             .map((column: TableColumn, colIndex: number) => {
@@ -374,6 +400,24 @@ const Table = ({ columns, rows, onRowClick }: TableProps) => {
               }}
               onClick={() => onRowClick(row)}
             >
+              {checkBox && (
+                <Box
+                  key={rowIndex}
+                  className="flex p-0"
+                  sx={{ borderRightWidth: 2 }}
+                >
+                  <Checkbox
+                    checked={selectedRow.includes(rowIndex)}
+                    onChange={() => {
+                      selectedRow.includes(rowIndex)
+                        ? setSelectedRow(
+                            selectedRow.filter((i) => i !== rowIndex)
+                          )
+                        : setSelectedRow([...selectedRow, rowIndex]);
+                    }}
+                  />
+                </Box>
+              )}
               {row
                 .filter((entry: any) => {
                   let col = columns.find((c) => c.field === entry.field);
@@ -684,7 +728,6 @@ const PeriodicTable = (props: PeriodicTableProps) => {
     if (dimensions.width <= maxPhoneWidth) {
       setMobileRows(rows);
     }
-
     let tableRows: TableRow[][] = [];
 
     rows.map((row: any) => {
@@ -774,6 +817,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
             columns={props.columns}
             rows={dataRows}
             onRowClick={props.onRowClick}
+            checkBox={props.checkBoxSelection}
           />
         )}
         {dimensions.width <= maxPhoneWidth && (

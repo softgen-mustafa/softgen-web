@@ -127,6 +127,7 @@ const Page = () => {
       selectedisDebitType.current
     }`;
     console.log("load DAta", url);
+    alert(`limit: ${apiProps.limit} && offset: ${apiProps.offset}`);
     let requestBody = {
       Limit: apiProps.limit,
       Offset: apiProps.offset,
@@ -391,6 +392,7 @@ const Page = () => {
             onRowClick={() => {
               // (row)
             }}
+            checkBoxSelection={true}
           />
         </CardView>
       ),
