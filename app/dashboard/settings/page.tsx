@@ -1,19 +1,25 @@
 "use client";
 
 import { DateRangePicker } from "@/app/ui/date_ui";
-import { CardView, GridConfig, DynGrid, Weight, GridDirection } from "@/app/ui/responsive_grid";
+import {
+  CardView,
+  GridConfig,
+  DynGrid,
+  Weight,
+  GridDirection,
+} from "@/app/ui/responsive_grid";
 import { Grid, Typography } from "@mui/material";
 import Cookies from "js-cookie";
 import { AgingSettings } from "./aging_setting";
 import UserPermissions from "./user_permissions";
 import MasterPermissions from "./master_permissions";
 import MovementConfig from "./movement_config";
+import { OsSettingsView } from "../outstanding/report/outstanding_setings";
 
 const Page = () => {
-
   const gridConfig = [
     {
-    weight: Weight.Low,
+      weight: Weight.Low,
       view: (
         <CardView className="max-h-fit h-fit" title="Date Range Setting">
           <DateRangePicker
@@ -26,7 +32,7 @@ const Page = () => {
       ),
     },
     {
-    weight: Weight.Low,
+      weight: Weight.Low,
       view: (
         <CardView
           className="max-h-fit h-fit"
@@ -38,7 +44,7 @@ const Page = () => {
       ),
     },
     {
-    weight: Weight.Low,
+      weight: Weight.Low,
       view: (
         <CardView
           className="max-h-fit h-fit"
@@ -50,7 +56,7 @@ const Page = () => {
       ),
     },
     {
-    weight: Weight.Low,
+      weight: Weight.Low,
       view: (
         <CardView
           className="max-h-fit h-fit"
@@ -63,7 +69,7 @@ const Page = () => {
     },
 
     {
-    weight: Weight.Medium,
+      weight: Weight.Medium,
       view: (
         <CardView
           className="h-fit"
@@ -77,7 +83,7 @@ const Page = () => {
   ];
   return (
     <div className="w-full" style={{}}>
-        <DynGrid views={gridConfig} direction={GridDirection.Row}/>
+      <DynGrid views={gridConfig} direction={GridDirection.Row} />
     </div>
   );
 };

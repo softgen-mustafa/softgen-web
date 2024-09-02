@@ -34,6 +34,32 @@ const postAsync = async (url: string, requestBody: any) => {
     });
 };
 
+const putAsync = async (url: string, requestBody: any) => {
+  const encryptedBody = _wrap(requestBody);
+  let appHeaders = {
+    "Content-Type": "application/json; charset=utf-8",
+    token: Cookies.get("authToken") ?? "",
+    companyid: Cookies.get("companyId") ?? 1,
+  };
+
+  //  console.log("----------- This is my Headers Value look. ----------------",appHeaders)
+  //  console.log("----------- This is my url Value look. ----------------",url)
+
+  return axios
+    .put(url, encryptedBody, { headers: appHeaders })
+    .then((response) => {
+      // console.log(`POST ${url}`);
+
+      // console.log("received from server ", response.status);
+
+      return response.data;
+    })
+    .then((data) => {
+      // console.log("data is ", data);
+      return _unwrap(data);
+    });
+};
+
 const getAsync = async (url: string) => {
   let appHeaders = {
     "Content-Type": "application/json; charset=utf-8",
@@ -43,7 +69,7 @@ const getAsync = async (url: string) => {
   };
   console.log(
     "----------- This is my Headers Value look. ----------------",
-    appHeaders,
+    appHeaders
   );
   // console.log("----------- This is my url Value look. ----------------",url)
 
@@ -99,7 +125,7 @@ const _unwrap = (encryptedData: any) => {
     parsedKey,
     {
       iv: parsedIv,
-    },
+    }
   );
   if (!decryptedData) {
     return null;
@@ -128,4 +154,11 @@ const getBaseUrl = () => {
   return "http://118.139.167.125:45400";
 };
 
-export { postAsync, getAsync, getBmrmBaseUrl, getUmsBaseUrl, getSgBizBaseUrl};
+export {
+  postAsync,
+  getAsync,
+  getBmrmBaseUrl,
+  getUmsBaseUrl,
+  getSgBizBaseUrl,
+  putAsync,
+};

@@ -1,170 +1,299 @@
 "use client";
 
+import { Box, Typography, Button, IconButton } from "@mui/material";
+import { TextInput } from "@/app/ui/text_inputs";
+import { useState, useEffect, useRef } from "react";
+import Cookies from "js-cookie";
 import {
-    Box,
-    Typography,
-    Button
-} from "@mui/material";
-import { 
-    TextInput 
-} from "@/app/ui/text_inputs";
-import { useRef, useState } from "react";
-
+  getAsync,
+  getSgBizBaseUrl,
+  postAsync,
+  putAsync,
+} from "@/app/services/rest_services";
 
 interface EmailSettings {
-    SmtpServer: string;
-    SmtpPort: string;
-    To: string;
-    Cc: string;
-    Subject: string;
-    Body: string;
-    BodyType: string;
+  SmtpServer: string;
+  SmtpPort: string;
+  To: string[];
+  Cc: string[];
+  Bcc: string[];
+  Subject: string;
+  Body: string;
+  BodyType: number;
+  Signature: string;
 }
 
-
 interface OsSettings {
-    CutOffDate: string;
-    DueDays: number;
-    OverDueDays: number;
-    SendAllDue: boolean;
-    SendDueOnly: boolean;
-    AutoReminderInterval: string;
-    ReminderIntervalDays: number;
-    EmailSetting: EmailSettings;
+  ID: string;
+  CompanyId: string;
+  CutOffDate: string;
+  DueDays: number;
+  OverDueDays: number;
+  SendAllDue: boolean;
+  SendDueOnly: boolean;
+  AutoReminderInterval: number;
+  ReminderIntervalDays: number;
+  EmailSetting: EmailSettings;
 }
 
 const OsSettingsView = () => {
+  const initialSettings: OsSettings = {
+    ID: "",
+    CompanyId: Cookies.get("companyId") || "",
+    CutOffDate: "",
+    DueDays: 0,
+    OverDueDays: 0,
+    SendAllDue: false,
+    SendDueOnly: false,
+    AutoReminderInterval: 0,
+    ReminderIntervalDays: 10,
+    EmailSetting: {
+      SmtpServer: "",
+      SmtpPort: "",
+      To: [],
+      Cc: [],
+      Bcc: [],
+      Subject: "",
+      Body: "",
+      BodyType: 0,
+      Signature: "",
+    },
+  };
 
-    let settings = useRef<OsSettings>({
-        CutOffDate: "",
-        DueDays: 0,
-        OverDueDays: 0,
-        SendAllDue: false,
-        SendDueOnly: false,
-        AutoReminderInterval: "",
-        ReminderIntervalDays: 10,
-        EmailSetting: {
-            SmtpServer: "",
-            SmtpPort: "",
-            To: "",
-            Cc: "",
-            Subject: "",
-            Body: "",
-            BodyType: "",
-        },
-    });
+  const [settings, setSettings] = useState<OsSettings>(initialSettings);
+  const [showEmailConfig, toggleEmailConfig] = useState(false);
+  const isSettingsLoaded = useRef(false);
 
-    const [showEmailConfig, toggleEmailConfig] = useState(false);
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        let url = `${getSgBizBaseUrl()}/os-setting/get`;
+        let response = await getAsync(url);
+        if (response.Data && response.Data.length > 0) {
+          setSettings(response.Data[0]);
+          isSettingsLoaded.current = true;
+        } else {
+          isSettingsLoaded.current = false;
+        }
+      } catch (error) {
+        console.error("Error loading data:", error);
+        isSettingsLoaded.current = false;
+      }
+    };
+    loadData();
+  }, []);
 
-        //<Box className="fixed inset-0 bg-white w-[60%]  m-8 p-2 rounded-xl items-center justify-center">
-    return (
-        <Box className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 overflow-y-hidden">
-          <div className="bg-white p-8 rounded shadow-md w-1/ 3overflow-y-hidden">
-            <Typography>Outstanding Settings</Typography>
-            <TextInput 
-            mode="text"
-            placeHolder="Cut Off Date"
-            onTextChange={(value) => {
-                settings.current.CutOffDate = value;
-            }}
-            defaultValue=""
+  const handleCreate = async () => {
+    try {
+      let url = `${getSgBizBaseUrl()}/os-setting/create`;
+      console.log("Create URL hit:", url);
+
+      let requestBody = { ...settings };
+      console.log("Create request body:", requestBody);
+
+      let response = await postAsync(url, requestBody);
+      console.log("Create response:", response);
+
+      //   onClose();
+    } catch (error) {
+      console.error("Error creating data:", error);
+    }
+  };
+
+  const handleUpdate = async () => {
+    try {
+      let url = `${getSgBizBaseUrl()}/os-setting/update`;
+      console.log("Update URL hit:", url);
+
+      let requestBody = { ...settings };
+      console.log("Update request body:", requestBody);
+
+      let response = await postAsync(url, requestBody);
+      console.log("Update response:", response);
+
+      //   onClose();
+    } catch (error) {
+      console.error("Error updating data:", error);
+    }
+  };
+
+  return (
+    <Box className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 overflow-y-scroll">
+      <div className="bg-white p-8 rounded shadow-md w-1/3 overflow-y-hidden">
+        <Typography>Outstanding Settings</Typography>
+        {/* <IconButton onClick={onClose}>
+          <Close />
+        </IconButton> */}
+
+        {isSettingsLoaded.current ? (
+          <>
+            <TextInput
+              mode="text"
+              placeHolder="Cut Off Date"
+              onTextChange={(value) => {
+                setSettings((prev) => ({ ...prev, CutOffDate: value }));
+              }}
+              defaultValue={settings.CutOffDate}
             />
-            <div className="mt-2"/>
-            <TextInput 
-            mode="number"
-            placeHolder="Due Days"
-            onTextChange={(value) => {
-                settings.current.DueDays = parseInt(value ?? "0");
-            }}
-            defaultValue=""
+            <div className="mt-2" />
+            <TextInput
+              mode="number"
+              placeHolder="Due Days"
+              onTextChange={(value) => {
+                setSettings((prev) => ({
+                  ...prev,
+                  DueDays: parseInt(value ?? "0"),
+                }));
+              }}
+              defaultValue={settings.DueDays.toString()}
             />
-            <div className="mt-2"/>
-            <TextInput 
-            mode="number"
-            placeHolder="Over-Due Days"
-            onTextChange={(value) => {
-                settings.current.OverDueDays = parseInt(value ?? "0");
-            }}
-            defaultValue=""
+            <div className="mt-2" />
+            <TextInput
+              mode="number"
+              placeHolder="Over-Due Days"
+              onTextChange={(value) => {
+                setSettings((prev) => ({
+                  ...prev,
+                  OverDueDays: parseInt(value ?? "0"),
+                }));
+              }}
+              defaultValue={settings.OverDueDays.toString()}
             />
-            <div className="mt-2"/>
-            <TextInput 
-            mode="number"
-            placeHolder="Reminder Interval Days"
-            onTextChange={(value) => {
-                settings.current.ReminderIntervalDays = parseInt(value ?? "0");
-            }}
-            defaultValue=""
+            <div className="mt-2" />
+            <TextInput
+              mode="number"
+              placeHolder="Reminder Interval Days"
+              onTextChange={(value) => {
+                setSettings((prev) => ({
+                  ...prev,
+                  ReminderIntervalDays: parseInt(value ?? "0"),
+                }));
+              }}
+              defaultValue={settings.ReminderIntervalDays.toString()}
             />
 
-            <div className="mt-4"/>
-            <Button variant={"contained"} onClick={() => {
+            <div className="mt-4" />
+            <Button
+              variant={"contained"}
+              onClick={() => {
                 toggleEmailConfig(!showEmailConfig);
-            }}>{showEmailConfig ? "Hide" : "Show"} Email Config</Button>
+              }}
+            >
+              {showEmailConfig ? "Hide" : "Show"} Email Config
+            </Button>
 
-            {
+            {showEmailConfig && (
+              <Box>
+                <div className="mt-2" />
+                <TextInput
+                  mode="text"
+                  placeHolder="Mail Server"
+                  onTextChange={(value) => {
+                    setSettings((prev) => ({
+                      ...prev,
+                      EmailSetting: { ...prev.EmailSetting, SmtpServer: value },
+                    }));
+                  }}
+                  defaultValue={settings.EmailSetting.SmtpServer}
+                />
+                <div className="mt-2" />
+                <TextInput
+                  mode="text"
+                  placeHolder="Mail Port"
+                  onTextChange={(value) => {
+                    setSettings((prev) => ({
+                      ...prev,
+                      EmailSetting: { ...prev.EmailSetting, SmtpPort: value },
+                    }));
+                  }}
+                  defaultValue={settings.EmailSetting.SmtpPort}
+                />
+                <div className="mt-2" />
+                <TextInput
+                  mode="text"
+                  placeHolder="To Email(s)"
+                  onTextChange={(value) => {
+                    setSettings((prev) => ({
+                      ...prev,
+                      EmailSetting: {
+                        ...prev.EmailSetting,
+                        To: value.split(","),
+                      },
+                    }));
+                  }}
+                  defaultValue={settings.EmailSetting.To.join(",")}
+                />
+                <div className="mt-2" />
+                <TextInput
+                  mode="text"
+                  placeHolder="Cc Email(s)"
+                  onTextChange={(value) => {
+                    setSettings((prev) => ({
+                      ...prev,
+                      EmailSetting: {
+                        ...prev.EmailSetting,
+                        Cc: value.split(","),
+                      },
+                    }));
+                  }}
+                  defaultValue={settings.EmailSetting.Cc.join(",")}
+                />
+                <div className="mt-2" />
+                <TextInput
+                  mode="text"
+                  placeHolder="Bcc Email(s)"
+                  onTextChange={(value) => {
+                    setSettings((prev) => ({
+                      ...prev,
+                      EmailSetting: {
+                        ...prev.EmailSetting,
+                        Bcc: value.split(","),
+                      },
+                    }));
+                  }}
+                  defaultValue={settings.EmailSetting.Bcc.join(",")}
+                />
+                <div className="mt-2" />
+                <TextInput
+                  mode="text"
+                  placeHolder="Subject"
+                  onTextChange={(value) => {
+                    setSettings((prev) => ({
+                      ...prev,
+                      EmailSetting: { ...prev.EmailSetting, Subject: value },
+                    }));
+                  }}
+                  defaultValue={settings.EmailSetting.Subject}
+                />
+                <div className="mt-2" />
+                <TextInput
+                  mode="text"
+                  multiline={true}
+                  placeHolder="Body"
+                  onTextChange={(value) => {
+                    setSettings((prev) => ({
+                      ...prev,
+                      EmailSetting: { ...prev.EmailSetting, Body: value },
+                    }));
+                  }}
+                  defaultValue={settings.EmailSetting.Body}
+                />
+              </Box>
+            )}
 
-                showEmailConfig
-                &&
-                <Box>
-                    <div className="mt-2"/>
-                    <TextInput 
-                    mode="text"
-                    placeHolder="Mail Server"
-                    onTextChange={(value) => {
-                        settings.current.EmailSetting.SmtpServer = value
-                    }}
-                    />
-                    <div className="mt-2"/>
-                    <TextInput 
-                    mode="text"
-                    placeHolder="Mail Port"
-                    onTextChange={(value) => {
-                        settings.current.EmailSetting.SmtpPort = value
-                    }}
-                    />
-                    <div className="mt-2"/>
-                    <TextInput 
-                    mode="text"
-                    placeHolder="To Email(s)"
-                    onTextChange={(value) => {
-                        settings.current.EmailSetting.To = value
-                    }}
-                    />
-                    <div className="mt-2"/>
-                    <TextInput 
-                    mode="text"
-                    placeHolder="Cc Email(s)"
-                    onTextChange={(value) => {
-                        settings.current.EmailSetting.Cc = value
-                    }}
-                    />
-                    <div className="mt-2"/>
-                    <TextInput 
-                    mode="text"
-                    placeHolder="Subject"
-                    onTextChange={(value) => {
-                        settings.current.EmailSetting.Subject = value
-                    }}
-                    />
-                    <div className="mt-2"/>
-                    <TextInput 
-                    mode="text"
-                    multiline={true}
-                    placeHolder="body"
-                    onTextChange={(value) => {
-                        settings.current.EmailSetting.Body = value
-                    }}
-                    />
-                </Box>
-            }
-
-            <div className="mt-4"/>
-            <Button variant={"contained"} onClick={() => {
-            }}>Save</Button>
-            </div>
-        </Box>
-    );
-}
+            <div className="mt-4" />
+            <Button variant={"contained"} onClick={handleUpdate}>
+              Update
+            </Button>
+          </>
+        ) : (
+          <Button variant={"contained"} onClick={handleCreate}>
+            Create
+          </Button>
+        )}
+      </div>
+    </Box>
+  );
+};
 
 export { OsSettingsView };
