@@ -57,6 +57,7 @@ interface PeriodicTableProps {
   refreshFilterView?: boolean;
   onRowClick?: () => void;
   checkBoxSelection?: boolean;
+  renderCheckedView?: (values: any[]) => ReactElement;
 }
 
 interface TableActionProps {
@@ -106,6 +107,7 @@ interface TableProps {
   rows: TableRow[][];
   onRowClick?: any;
   checkBox?: boolean;
+  onChecked?: (values: any[]) => void;
 }
 
 const ColumnColorPicker = ({
@@ -271,7 +273,13 @@ const MobileView = ({ columns, rows }: MobileViewProps) => {
   );
 };
 
-const Table = ({ columns, rows, onRowClick, checkBox }: TableProps) => {
+const Table = ({
+  onChecked,
+  columns,
+  rows,
+  onRowClick,
+  checkBox,
+}: TableProps) => {
   const theme = useTheme();
 
   const [fieldWidths, changeFieldWidths] = useState<any[]>([]);
@@ -360,6 +368,9 @@ const Table = ({ columns, rows, onRowClick, checkBox }: TableProps) => {
                       values.push(index);
                     });
                   }
+                  if (onChecked) {
+                    onChecked(values);
+                  }
                   setSelectedRow(values);
                 }}
               />
@@ -409,11 +420,18 @@ const Table = ({ columns, rows, onRowClick, checkBox }: TableProps) => {
                   <Checkbox
                     checked={selectedRow.includes(rowIndex)}
                     onChange={() => {
-                      selectedRow.includes(rowIndex)
-                        ? setSelectedRow(
-                            selectedRow.filter((i) => i !== rowIndex)
-                          )
-                        : setSelectedRow([...selectedRow, rowIndex]);
+                      let selectedValues = selectedRow;
+                      if (selectedValues.includes(rowIndex)) {
+                        selectedValues = selectedValues.filter(
+                          (i) => i !== rowIndex
+                        );
+                      } else {
+                        selectedValues.push(rowIndex);
+                      }
+                      setSelectedRow(selectedValues);
+                      if (onChecked) {
+                        onChecked(selectedValues);
+                      }
                     }}
                   />
                 </Box>
@@ -749,6 +767,8 @@ const PeriodicTable = (props: PeriodicTableProps) => {
 
   const maxPhoneWidth = 500;
 
+  const [checkedValues, changeCheckedValues] = useState<any[]>([]);
+
   useEffect(() => {
     const handleResize = () => {
       setDimensions({ width: window.innerWidth, height: window.innerHeight });
@@ -787,6 +807,10 @@ const PeriodicTable = (props: PeriodicTableProps) => {
             }}
           />
         )}
+        {checkedValues &&
+          checkedValues.length > 0 &&
+          props.renderCheckedView !== null &&
+          props.renderCheckedView!(checkedValues)}
         <TablePagination
           refresh={refresh}
           onChange={(offset: number, limit: number) => {
@@ -818,6 +842,13 @@ const PeriodicTable = (props: PeriodicTableProps) => {
             rows={dataRows}
             onRowClick={props.onRowClick}
             checkBox={props.checkBoxSelection}
+            onChecked={(selectedIndexes: any[]) => {
+              let selectedValues: any[] = [];
+              selectedIndexes.map((selectedIndex: number) => {
+                selectedValues.push(dataRows[selectedIndex]);
+              });
+              changeCheckedValues(selectedValues);
+            }}
           />
         )}
         {dimensions.width <= maxPhoneWidth && (
