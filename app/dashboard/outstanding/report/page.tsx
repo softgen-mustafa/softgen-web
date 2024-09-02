@@ -21,7 +21,7 @@ import {
   getSgBizBaseUrl,
   postAsync,
 } from "@/app/services/rest_services";
-import { IconButton, Modal, Stack } from "@mui/material";
+import { Button, IconButton, Modal, Stack } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 import { numericToString } from "@/app/services/Local/helper";
 import { OsSettingsView } from "@/app/dashboard/outstanding/report/outstanding_setings";
@@ -388,6 +388,19 @@ const Page = () => {
             })}
             onApi={loadData}
             sortKeys={osSortKeys}
+            onRowClick={() => {
+              // (row)
+            }}
+            checkBoxSelection={true}
+            renderCheckedView={(values: any) => {
+              return (
+                <div>
+                  {values.map((entry: any, index: number) => {
+                    return <div key={index}>{entry[0].value}</div>;
+                  })}
+                </div>
+              );
+            }}
           />
 
           <IconButton> </IconButton>
