@@ -388,6 +388,9 @@ const Page = () => {
             })}
             onApi={loadData}
             sortKeys={osSortKeys}
+            onRowClick={() => {
+              // (row)
+            }}
           />
         </CardView>
       ),

@@ -54,6 +54,7 @@ interface PeriodicTableProps {
   reload?: boolean;
   RenderAdditionalView?: ReactElement;
   refreshFilterView?: boolean;
+  onRowClick?: () => void;
 }
 
 interface TableActionProps {
@@ -94,11 +95,14 @@ interface TableColumn {
 interface TableRow {
   type: string;
   value: any;
+  field?: string;
   onEdit: () => void;
 }
 
 interface TableProps {
   columns: TableColumn[];
+  rows: TableRow[][];
+  onRowClick?: any;
 }
 
 const ColumnColorPicker = ({
@@ -264,10 +268,11 @@ const MobileView = ({ columns, rows }: MobileViewProps) => {
   );
 };
 
-const Table = ({ columns }: TableProps) => {
+const Table = ({ columns, rows, onRowClick }: TableProps) => {
   const theme = useTheme();
 
-  const [tableColumns, updateColumns] = useState<TableColumn[]>(columns);
+  const [fieldWidths, changeFieldWidths] = useState<any[]>([]);
+  const [tableRows, updateRows] = useState<any[][]>([]);
   // const [draggedColumnIndex, setDraggedColumnIndex] = useState<number | null>(
   //   null
   // );
@@ -277,10 +282,19 @@ const Table = ({ columns }: TableProps) => {
   const startWidth = useRef<number>(0);
 
   useEffect(() => {
-    updateColumns(columns);
-  }, [columns]);
+    let columnWidths = columns.map((column: TableColumn) => {
+      return {
+        field: column,
+        width: 150,
+      };
+    });
+    changeFieldWidths(columnWidths);
+
+    updateRows(rows);
+  }, [rows]);
 
   const handleMouseMove = (event: MouseEvent) => {
+    /*
     if (resizingColumnIndex.current !== null) {
       const newColumns = [...tableColumns];
       const index = resizingColumnIndex.current;
@@ -291,6 +305,7 @@ const Table = ({ columns }: TableProps) => {
       newColumns[index].width = newWidth;
       updateColumns(newColumns);
     }
+      */
   };
 
   const handleMouseUp = () => {
@@ -300,6 +315,7 @@ const Table = ({ columns }: TableProps) => {
   };
 
   const handleMouseDown = (index: number, event: React.MouseEvent) => {
+    /*
     event.stopPropagation();
     const target = event.target as HTMLElement;
     if (!target.classList.contains("resizer-handle")) return;
@@ -310,90 +326,86 @@ const Table = ({ columns }: TableProps) => {
 
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
+    */
   };
-
-  // const handleDragStart = (index: number) => {
-  //   setDraggedColumnIndex(index);
-  // };
-
-  // const handleDragOver = (e: React.DragEvent) => {
-  //   e.preventDefault();
-  // };
-
-  // const handleDrop = (targetIndex: number) => {
-  //   if (draggedColumnIndex === null || draggedColumnIndex === targetIndex)
-  //     return;
-
-  //   const newColumns = [...columns];
-  //   const [draggedColumn] = newColumns.splice(draggedColumnIndex, 1);
-  //   newColumns.splice(targetIndex, 0, draggedColumn);
-
-  //   updateColumns(newColumns);
-  //   setDraggedColumnIndex(null);
-  // };
 
   return (
     <Box className="w-full flex flex-row overflow-x-scroll overflow-y-scroll">
       <Box
-        className="w-full flex flex-row p-2 overflow-x-scroll"
+        className="w-full flex flex-col p-2 overflow-x-scroll"
         style={{
           borderWidth: 1,
           borderRadius: 2,
         }}
       >
-        {tableColumns
-          .filter((_item: any) => !_item.hideable)
-          .map((column: TableColumn, colIndex: number) => {
-            let columnColor = `white`;
-            if (column.color != null) {
-              columnColor = `rgba(${column.color.r ?? 255}, ${
-                column.color.g ?? 255
-              }, ${column.color.b ?? 255}, ${column.color.a ?? 255})`;
-            }
-            return (
-              <div
-                key={colIndex}
-                className="flex-grow"
-                // draggable
-                // onDragStart={() => handleDragStart(colIndex)}
-                // onDragOver={handleDragOver}
-                // onDrop={() => handleDrop(colIndex)}
-                style={{
-                  background: columnColor,
-                  width: column.width || 100,
-                  position: "relative",
-                }}
-              >
-                <div
-                  className="resizer-handle"
-                  style={{
-                    position: "absolute",
-                    right: 0,
-                    top: 0,
-                    width: "2px",
-                    height: "100%",
-                    cursor: "col-resize",
-                    zIndex: 1,
-                    borderRight: "0.5px Solid #d1d5db",
+        <Box className="flex flex-row justify-between">
+          {columns
+            .filter((entry) => !entry.hideable)
+            .map((column: TableColumn, colIndex: number) => {
+              let cellWidth = fieldWidths.find(
+                (entry: any) => entry.field === column.field
+              );
+              if (cellWidth === null) {
+                cellWidth = 150;
+              }
+              return (
+                <Box
+                  key={colIndex}
+                  className="w-full flex p-2"
+                  sx={{
+                    minWidth: 100,
+                    maxWidth: cellWidth,
+                    borderBottomWidth: 2,
+                    borderRightWidth: colIndex === columns.length - 1 ? 0 : 2,
                   }}
-                  onMouseDown={(event) => handleMouseDown(colIndex, event)}
-                />
-
-                <TableColumnView
-                  column={column}
-                  onColorPick={(color: any) => {
-                    let values = tableColumns.map((entry: any) => {
-                      if (entry.field === column.field) {
-                        entry.color = color;
-                      }
-                      return entry;
-                    });
-                    updateColumns(values);
-                  }}
-                />
-              </div>
-            );
-          })}
+                >
+                  {column.header}
+                </Box>
+              );
+            })}
+        </Box>
+        {tableRows.map((row: any[], rowIndex: number) => {
+          return (
+            <div
+              key={rowIndex}
+              className="flex flex-row justify-between"
+              style={{
+                background: rowIndex % 2 === 0 ? "white" : "#F9F9F9",
+              }}
+              onClick={() => onRowClick(row)}
+            >
+              {row
+                .filter((entry: any) => {
+                  let col = columns.find((c) => c.field === entry.field);
+                  if (col === null) {
+                    return false;
+                  }
+                  return !col?.hideable;
+                })
+                .map((cell: any, cellIndex: number) => {
+                  let cellWidth = fieldWidths.find(
+                    (entry: any) => entry.field === cell.field
+                  );
+                  if (cellWidth === null) {
+                    cellWidth = 150;
+                  }
+                  return (
+                    <Box
+                      key={cellIndex}
+                      className={`w-full flex p-2`}
+                      sx={{
+                        minWidth: 100,
+                        maxWidth: cellWidth,
+                        borderRightWidth: 2,
+                      }}
+                    >
+                      {cell.value}
+                    </Box>
+                  );
+                })}
+            </div>
+          );
+        })}
       </Box>
     </Box>
   );
@@ -666,28 +678,30 @@ const PeriodicTable = (props: PeriodicTableProps) => {
   };
 
   const [filterOpen, toggleFilter] = useState(false);
-  const [tableColumns, updateColumns] = useState<TableColumn[]>([]);
+  const [dataRows, updateRows] = useState<TableRow[][]>([]);
 
   const loadColumns = (rows: any[]) => {
     if (dimensions.width <= maxPhoneWidth) {
       setMobileRows(rows);
     }
 
-    let newColumns = props.columns.map((entry: TableColumn) => {
-      let column = entry;
-      column.rows = [];
-      column.pinned = false;
-      rows.map((row: any) => {
-        let tableRow: TableRow = {
-          type: entry.type ?? "text",
-          value: row[column.field] ?? null,
+    let tableRows: TableRow[][] = [];
+
+    rows.map((row: any) => {
+      let cells: TableRow[] = [];
+      props.columns.map((column: TableColumn) => {
+        let cell: TableRow = {
+          type: column.type,
+          field: column.field,
+          value: row[column.field],
           onEdit: () => {},
         };
-        column.rows.push(tableRow);
+        cells.push(cell);
       });
-      return column;
+
+      tableRows.push(cells);
     });
-    updateColumns(newColumns);
+    updateRows(tableRows);
   };
 
   const maxPhoneWidth = 500;
@@ -743,7 +757,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
           <TableFilterView
             refreshFilterView={props.refreshFilterView}
             RenderAdditionalView={props.RenderAdditionalView}
-            columns={tableColumns}
+            columns={props.columns}
             sortKeys={props.sortKeys}
             onChange={(sortKey: string, sortOrder: string) => {
               refreshColumns({
@@ -755,7 +769,13 @@ const PeriodicTable = (props: PeriodicTableProps) => {
             }}
           />
         )}
-        {dimensions.width > maxPhoneWidth && <Table columns={tableColumns} />}
+        {dimensions.width > maxPhoneWidth && (
+          <Table
+            columns={props.columns}
+            rows={dataRows}
+            onRowClick={props.onRowClick}
+          />
+        )}
         {dimensions.width <= maxPhoneWidth && (
           <MobileView columns={props.columns} rows={mobileRows} />
         )}
