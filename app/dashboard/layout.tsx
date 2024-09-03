@@ -200,7 +200,7 @@ const SideNav = ({
       <div
         className={`fixed top-0 left-0 m-2 shadow-xl rounded-xl justify-center items-center`}
         style={{
-          background: inspiredPalette.dark,
+          background: theme.palette.primary.main,
           zIndex: 230,
         }}
       >
@@ -208,7 +208,7 @@ const SideNav = ({
           aria-label="open drawer"
           onClick={handleDrawerToggle}
           size="large"
-          sx={{ color: "white" }}
+          sx={{ color: theme.palette.primary.contrastText }}
         >
           <Dashboard />
         </IconButton>

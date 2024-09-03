@@ -55,7 +55,7 @@ interface PeriodicTableProps {
   reload?: boolean;
   RenderAdditionalView?: ReactElement;
   refreshFilterView?: boolean;
-  onRowClick?: () => void;
+  onRowClick?: (rowData: any) => void;
   checkBoxSelection?: boolean;
   renderCheckedView?: (values: any[]) => ReactElement;
 }
@@ -105,7 +105,7 @@ interface TableRow {
 interface TableProps {
   columns: TableColumn[];
   rows: TableRow[][];
-  onRowClick?: any;
+  onRowClick?: (rowData: any) => void;
   checkBox?: boolean;
   onChecked?: (values: any[]) => void;
 }
@@ -293,6 +293,13 @@ const Table = ({
   const startX = useRef<number>(0);
   const startWidth = useRef<number>(0);
 
+  const handleRowClick = (rowData: any) => {
+    // Call the callback function only if it is provided
+    if (onRowClick) {
+      onRowClick(rowData);
+    }
+  };
+
   useEffect(() => {
     let columnWidths = columns.map((column: TableColumn) => {
       return {
@@ -409,7 +416,7 @@ const Table = ({
               style={{
                 background: rowIndex % 2 === 0 ? "white" : "#F9F9F9",
               }}
-              onClick={() => onRowClick(row)}
+              onClick={() => handleRowClick(row)}
             >
               {checkBox && (
                 <Box
