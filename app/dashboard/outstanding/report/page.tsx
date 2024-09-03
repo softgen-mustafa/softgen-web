@@ -25,7 +25,7 @@ import { Button, IconButton, Modal, Stack } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 import { numericToString } from "@/app/services/Local/helper";
 import { OsSettingsView } from "@/app/dashboard/outstanding/report/outstanding_setings";
-
+import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
 const isDebitType = [
   {
     name: "Payable",
@@ -327,10 +327,10 @@ const Page = () => {
               triggerRefresh(!refresh);
             }}
           />
-          <ApiDropDown
+          <ApiMultiDropDown
             label="Party"
             displayFieldKey={"name"}
-            valueFieldKey={null}
+            valueFieldKey={""}
             onApi={loadParties}
             helperText={""}
             onSelection={(selection) => {

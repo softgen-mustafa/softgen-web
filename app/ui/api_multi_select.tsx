@@ -10,8 +10,9 @@ import {
   TextField,
   Checkbox,
   ListItemText,
+  Chip,
 } from "@mui/material";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const ApiMultiDropDown = ({
   label,
@@ -24,7 +25,7 @@ const ApiMultiDropDown = ({
 }: {
   label: string;
   displayFieldKey: string;
-  valueFieldKey: string | null;
+  valueFieldKey: string;
   onApi: (searchValue: string) => Promise<any[]>;
   helperText: string | null;
   defaultSelectionIndex?: number;
@@ -49,17 +50,22 @@ const ApiMultiDropDown = ({
           value={valueFieldKey == null ? entry : entry[valueFieldKey!]}
         >
           <Checkbox checked={selectedValues.indexOf(entry) > -1} />
+
           <ListItemText primary={entry[displayFieldKey]} />
         </MenuItem>
       );
     });
-    if (selectionValues && selectionValues.length > 0 && selectedValues.length === 0) {
+    if (
+      selectionValues &&
+      selectionValues.length > 0 &&
+      selectedValues.length === 0
+    ) {
       setSelectedValues([selectionValues[defaultSelectionIndex]]);
     }
     setDropDownValues(entries);
   };
 
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+  const handleChange = (event: any) => {
     const value = event.target.value as any[];
     setSelectedValues(value);
     onSelection(value);
@@ -74,7 +80,18 @@ const ApiMultiDropDown = ({
         value={selectedValues}
         label={label}
         onChange={handleChange}
-        renderValue={(selected) => selected.map((item: any) => item[displayFieldKey]).join(', ')}
+        renderValue={(selected) => (
+          <div className="flex flex-wrap gap-1">
+            {selected.map((value) => (
+              <Chip
+                key={value[valueFieldKey]}
+                label={value[displayFieldKey]}
+                size="small"
+                className="m-1"
+              />
+            ))}
+          </div>
+        )}
       >
         <ListSubheader>
           <TextField
