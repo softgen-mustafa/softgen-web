@@ -18,6 +18,8 @@ import {
   Sync,
   FilterAlt,
   FilterAltOff,
+  TableChart,
+  BarChart,
 } from "@mui/icons-material";
 import React, {
   useState,
@@ -35,6 +37,7 @@ import {
 } from "@mui/material";
 import { SketchPicker } from "react-color";
 import { DynGrid, Weight } from "../responsive_grid";
+import { DropDown } from "../drop_down";
 
 interface ApiProps {
   offset: number;
@@ -63,6 +66,7 @@ interface PeriodicTableProps {
 interface TableActionProps {
   onFilterToggle: () => void;
   onSync: () => void;
+  onSelectType: (selectedvalue: string) => void;
 }
 
 interface TablePaginationProps {
@@ -491,8 +495,24 @@ const Table = ({
   );
 };
 
-const TableActions = ({ onFilterToggle, onSync }: TableActionProps) => {
+const TableActions = ({
+  onFilterToggle,
+  onSync,
+  onSelectType,
+}: TableActionProps) => {
   const [openFilter, toggleFilter] = useState(false);
+
+  const viewTypeData = [
+    {
+      label: "Table View",
+      value: "table",
+    },
+    {
+      label: "Chart View",
+      value: "chart",
+    },
+  ];
+
   return (
     <Box className="flex flex-row">
       <IconButton
@@ -511,6 +531,17 @@ const TableActions = ({ onFilterToggle, onSync }: TableActionProps) => {
       >
         <Sync />
       </IconButton>
+
+      <DropDown
+        label={"Select View"}
+        displayFieldKey={"label"}
+        valueFieldKey={null}
+        selectionValues={viewTypeData}
+        helperText={""}
+        onSelection={(selection) => {
+          onSelectType(selection.value);
+        }}
+      />
     </Box>
   );
 };
@@ -759,6 +790,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
 
   const [filterOpen, toggleFilter] = useState(false);
   const [dataRows, updateRows] = useState<TableRow[][]>([]);
+  const [viewType, toggleViewType] = useState("table");
 
   const loadColumns = (rows: any[]) => {
     if (dimensions.width <= maxPhoneWidth) {
@@ -811,6 +843,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
             refreshColumns({ offset: 0, limit: 5, searchText: "" });
             toggleRefresh(!refresh);
           }}
+          onSelectType={(selectedValue) => toggleViewType(selectedValue)}
         />
         {props.useSearch && (
           <TableSearch

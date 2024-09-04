@@ -40,7 +40,7 @@ const TextInput = ({
   placeHolder,
   onTextChange,
   defaultValue,
-  multiline = false
+  multiline = false,
 }: {
   mode: string;
   placeHolder: string;
@@ -57,7 +57,8 @@ const TextInput = ({
   return (
     <div>
       <TextField
-      multiline={multiline}
+        className="w-full"
+        multiline={multiline}
         value={value}
         label={placeHolder}
         variant="outlined"

@@ -59,11 +59,11 @@ const AgingCard: React.FC<AgingCardProps> = ({ data, onPress }) => {
 const AgingView = ({
   billType,
   title,
-  companyId
+  companyId,
 }: {
   billType: string;
   title: string;
-    companyId: string;
+  companyId: string;
 }) => {
   const router = useRouter();
   const [data, setData] = useState<AgingData[]>([]);
