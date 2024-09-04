@@ -9,21 +9,7 @@ export default function AuthLayout({
 }>) {
   return (
     <div className="w-full h-[100vh] flex flex-col  bg-gray-100  items-center overflow-x-hidden ">
-      <Box className="items-center">
-        <Image
-          src={logoImage}
-          alt="SoftGen Logo"
-          width={300}
-          height={300}
-          className=""
-        />
-      </Box>
-      <Box component={"div"} className=" w-full md:w-1/2 flex justify-center items-center">
-        <div className="w-full h-full">{children}</div>
-      </Box>
+      <div className="w-full h-full">{children}</div>
     </div>
   );
 }
-
-
-

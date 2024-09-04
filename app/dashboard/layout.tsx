@@ -131,13 +131,19 @@ const DrawerContent = ({
             Are you sure you want to log out?
           </Typography>
           <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
-            <Button onClick={() => setOpenLogoutModal(false)} sx={{ mr: 1.5 }}>
+            <Button
+              onClick={() => setOpenLogoutModal(false)}
+              sx={{ mr: 1.5, textTransform: "capitalize" }}
+            >
               Cancel
             </Button>
             <Button
               onClick={handleLogout}
               variant="contained"
-              style={{ background: inspiredPalette.darkRed }}
+              style={{
+                background: inspiredPalette.darkRed,
+                textTransform: "capitalize",
+              }}
             >
               Logout
             </Button>

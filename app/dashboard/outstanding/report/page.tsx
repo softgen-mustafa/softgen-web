@@ -167,7 +167,7 @@ const Page = () => {
     return values;
   };
 
-  const columns: GridColDef<any[number]>[] = [
+  const columns: any[] = [
     {
       field: "LedgerName",
       headerName: "Party",
@@ -176,6 +176,7 @@ const Page = () => {
       flex: 1,
       minWidth: 200,
       hideable: false,
+      mobileFullView: true,
     },
     {
       field: "BillName",

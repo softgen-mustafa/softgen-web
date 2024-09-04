@@ -18,6 +18,8 @@ import {
   Sync,
   FilterAlt,
   FilterAltOff,
+  TableChart,
+  BarChart,
 } from "@mui/icons-material";
 import React, {
   useState,
@@ -35,6 +37,7 @@ import {
 } from "@mui/material";
 import { SketchPicker } from "react-color";
 import { DynGrid, Weight } from "../responsive_grid";
+import { DropDown } from "../drop_down";
 
 interface ApiProps {
   offset: number;
@@ -63,6 +66,7 @@ interface PeriodicTableProps {
 interface TableActionProps {
   onFilterToggle: () => void;
   onSync: () => void;
+  onSelectType: (selectedvalue: string) => void;
 }
 
 interface TablePaginationProps {
@@ -93,6 +97,7 @@ interface TableColumn {
   color?: any;
   width?: number;
   hideable?: boolean;
+  mobileFullView?: boolean;
 }
 
 interface TableRow {
@@ -250,13 +255,23 @@ const MobileView = ({ columns, rows }: MobileViewProps) => {
             }}
           >
             {columns.map((column: any, colIndex: number) => {
+              console.log(columns);
               return (
                 <div
                   key={colIndex}
-                  className="flex flex-row justify-between items-center"
+                  className="flex flex-row justify-between items-baseline mb-2"
                 >
-                  <Typography>{column.header}</Typography>
-                  <Typography sx={{}}>{row[column.field]} </Typography>
+                  {!column.mobileFullView && (
+                    <Typography>{column.header}:</Typography>
+                  )}
+                  <Typography
+                    sx={{
+                      textAlign: column.mobileFullView ? "center" : "right",
+                      width: "60%",
+                    }}
+                  >
+                    {row[column.field]}{" "}
+                  </Typography>
                 </div>
               );
             })}
@@ -480,8 +495,24 @@ const Table = ({
   );
 };
 
-const TableActions = ({ onFilterToggle, onSync }: TableActionProps) => {
+const TableActions = ({
+  onFilterToggle,
+  onSync,
+  onSelectType,
+}: TableActionProps) => {
   const [openFilter, toggleFilter] = useState(false);
+
+  const viewTypeData = [
+    {
+      label: "Table View",
+      value: "table",
+    },
+    {
+      label: "Chart View",
+      value: "chart",
+    },
+  ];
+
   return (
     <Box className="flex flex-row">
       <IconButton
@@ -500,6 +531,17 @@ const TableActions = ({ onFilterToggle, onSync }: TableActionProps) => {
       >
         <Sync />
       </IconButton>
+
+      <DropDown
+        label={"Select View"}
+        displayFieldKey={"label"}
+        valueFieldKey={null}
+        selectionValues={viewTypeData}
+        helperText={""}
+        onSelection={(selection) => {
+          onSelectType(selection.value);
+        }}
+      />
     </Box>
   );
 };
@@ -748,6 +790,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
 
   const [filterOpen, toggleFilter] = useState(false);
   const [dataRows, updateRows] = useState<TableRow[][]>([]);
+  const [viewType, toggleViewType] = useState("table");
 
   const loadColumns = (rows: any[]) => {
     if (dimensions.width <= maxPhoneWidth) {
@@ -793,13 +836,14 @@ const PeriodicTable = (props: PeriodicTableProps) => {
   return (
     <div className="flex flex-col w-full h-auto">
       {/* <div>width: {dimensions.width}</div> */}
-      <Box className="flex flex-col sm:flex-row w-full justify-between mb-4">
+      <Box className="flex flex-col sm:flex-row w-full justify-between mb-4 gap-2">
         <TableActions
           onFilterToggle={() => toggleFilter(!filterOpen)}
           onSync={() => {
             refreshColumns({ offset: 0, limit: 5, searchText: "" });
             toggleRefresh(!refresh);
           }}
+          onSelectType={(selectedValue) => toggleViewType(selectedValue)}
         />
         {props.useSearch && (
           <TableSearch
@@ -826,7 +870,11 @@ const PeriodicTable = (props: PeriodicTableProps) => {
         />
       </Box>
       {loading && <CircularProgress />}
-      <Box className="flex flex-row">
+      <Box
+        display={"flex"}
+        flexDirection={{ xs: "column", md: "row" }}
+        alignItems={"center"}
+      >
         {filterOpen && (
           <TableFilterView
             refreshFilterView={props.refreshFilterView}
