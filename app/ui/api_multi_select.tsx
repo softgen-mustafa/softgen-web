@@ -25,8 +25,7 @@ const ApiMultiDropDown = ({
 }: {
   label: string;
   displayFieldKey: string;
-  valueFieldKey: string;
-
+  valueFieldKey: string | null;
   onApi: (searchValue: string) => Promise<any[]>;
   helperText: string | null;
   defaultSelectionIndex?: number;
@@ -85,7 +84,7 @@ const ApiMultiDropDown = ({
           <div className="flex flex-wrap gap-1">
             {selected.map((value) => (
               <Chip
-                key={value[valueFieldKey]}
+                key={valueFieldKey !== null ? value[valueFieldKey] : value}
                 label={value[displayFieldKey]}
                 size="small"
                 className="m-1"
