@@ -27,6 +27,8 @@ const Page = ({ params }: { params: any }) => {
   const router = useRouter();
   const mobile = params.mobile;
   const error = useRef<string[]>([]);
+  const otpError = useRef("");
+
   let userDetail = useRef({
     otp: "",
     password: "",
@@ -71,6 +73,17 @@ const Page = ({ params }: { params: any }) => {
     return [error.current.length > 0, error.current.join("\n")];
   };
 
+  const isOtpInvalid = (text: string) => {
+    let otpRegex = /^\d{5}$/;
+    otpError.current = "";
+
+    if (otpRegex.test(text)) {
+      otpError.current = "";
+    } else {
+      otpError.current = "Invalid Otp";
+    }
+  };
+
   const handlePasswordChange = (value = "") => {
     userDetail.current.password = value;
     const [isInvalid, validationMessages] = isPasswordInvalid(value);
@@ -85,6 +98,17 @@ const Page = ({ params }: { params: any }) => {
 
   const closeSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
+  };
+
+  const handleForgetPassword = async () => {
+    const isOtpValid = await verifyOtp();
+    if (!isOtpValid) {
+      showSnackbar("Invalid OTP");
+
+      return;
+    }
+
+    router.push(`/auth/forgetPassword/${mobile}`);
   };
 
   const gridConfig: GridConfig[] = [
@@ -250,10 +274,11 @@ const Page = ({ params }: { params: any }) => {
           maxWidth: "100%", // Ensures it doesn't exceed the screen width
           maxHeight: 650,
         }}
+        overflow="hidden"
       >
         <Box
           sx={{
-            width: { xs: 200, sm: 250, md: 300 },
+            width: { xs: 200, sm: 250, md: 280 },
             // height: { xs: 200, sm: 250, md: 300 },
           }}
         >
@@ -278,10 +303,13 @@ const Page = ({ params }: { params: any }) => {
               {`You'll get an OTP on your this mobile number: ${mobile}`}
             </Typography>
           </Stack>
-          <Box className="w-full px-5 flex flex-col gap-2.5">
+          <Box
+            className="w-full px-5 flex flex-col gap-2.5"
+            sx={{ flexGrow: 1 }}
+          >
             <TextInput
               mode="number"
-              placeHolder="Enter Mobile Number"
+              placeHolder="Enter OTP"
               onTextChange={(value: string) => {
                 userDetail.current.otp = value;
               }}
@@ -292,9 +320,12 @@ const Page = ({ params }: { params: any }) => {
               onTextChange={handlePasswordChange}
             />
             {error.current.length > 0 && (
-              <p className="text-red-500">{error.current.join(", ")}</p>
+              <Typography variant="body2" color="error">
+                {error.current.join(", ")}
+              </Typography>
             )}
             <Button
+              onClick={() => handleForgetPassword()}
               variant="text"
               sx={{ fontSize: 14, textTransform: "capitalize" }}
             >

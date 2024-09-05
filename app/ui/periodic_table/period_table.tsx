@@ -859,10 +859,10 @@ const PeriodicTable = (props: PeriodicTableProps) => {
             }}
           />
         )}
-        {checkedValues &&
+        {/* {checkedValues &&
           checkedValues.length > 0 &&
           props.renderCheckedView !== null &&
-          props.renderCheckedView!(checkedValues)}
+          props.renderCheckedView!(checkedValues)} */}
         <TablePagination
           refresh={refresh}
           onChange={(offset: number, limit: number) => {
