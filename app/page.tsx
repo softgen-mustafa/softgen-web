@@ -15,23 +15,23 @@ import "../src/index.css";
 export default function Home() {
   const router = useRouter();
 
-  // useEffect(() => {
-  //   const token = Cookies.get("authToken") ?? null;
-  //   if (token !== null && token.length > 0) {
-  //     router.push("/dashboard");
-  //   } else {
-  //     router.push("/auth");
-  //   }
-  // }, [router]);
+  useEffect(() => {
+    const token = Cookies.get("authToken") ?? null;
+    if (token !== null && token.length > 0) {
+      router.push("/dashboard");
+    } else {
+      router.push("/auth");
+    }
+  }, [router]);
 
   return (
     <main className="bg-white">
-      <Navbar />
+      {/* <Navbar />
       <Hero />
       <Highlights />
       <Features />
       <HowItWorks />
-      <Footer />
+      <Footer /> */}
     </main>
   );
 }

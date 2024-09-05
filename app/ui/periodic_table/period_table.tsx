@@ -873,7 +873,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
       <Box
         display={"flex"}
         flexDirection={{ xs: "column", md: "row" }}
-        alignItems={"center"}
+        // alignItems={"center"}
       >
         {filterOpen && (
           <TableFilterView
