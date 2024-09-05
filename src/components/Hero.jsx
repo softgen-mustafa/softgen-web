@@ -2,8 +2,13 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { heroVideo, smallHeroVideo } from "../utils";
 import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 const Hero = () => {
+
+  const router = useRouter();
+
   const [videoSrc, setVideoSrc] = useState(heroVideo);
 
   const handleVideoSrcSet = () => {
@@ -54,7 +59,7 @@ const Hero = () => {
         className="flex flex-col items-center opacity-0 translate-y-20"
       >
         <a href="#highlights" className="btn">
-          for more
+         Login
         </a>
       </div>
     </section>

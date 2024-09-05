@@ -16,9 +16,9 @@ const Navbar = () => {
             </div>
           ))}
         </div>
-        <div className="flex items-baseline gap-7 max-sm:justify-end max-sm:flex-1">
+        {/* <div className="flex items-baseline gap-7 max-sm:justify-end max-sm:flex-1">
           <Image src={searchImg} alt="search" width={48} height={48} />
-        </div>
+        </div> */}
       </nav>
     </header>
   );
