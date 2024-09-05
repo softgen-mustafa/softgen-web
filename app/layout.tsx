@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@mui/material";
 import theme from "./ui/mui_theme";
+import "../src/index.css"
 
 export const metadata: Metadata = {
   title: "Softgen",

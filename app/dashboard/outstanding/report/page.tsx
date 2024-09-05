@@ -330,7 +330,7 @@ const Page = () => {
           <ApiMultiDropDown
             label="Party"
             displayFieldKey={"name"}
-            valueFieldKey={""}
+            valueFieldKey={null}
             onApi={loadParties}
             helperText={""}
             onSelection={(selection) => {

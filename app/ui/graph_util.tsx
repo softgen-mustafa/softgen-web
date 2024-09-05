@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Chip,
+  Divider,
   IconButton,
   Menu,
   MenuItem,
@@ -14,14 +15,9 @@ import {
 } from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 import MenuIcon from "@mui/icons-material/MoreVertOutlined";
+import CircleIcon from "@mui/icons-material/Circle";
 
 const graphColors: string[] = [
-  "#a6cee3",
-  "#1f78b4",
-  "#b2df8a",
-  "#33a02c",
-  "#fb9a99",
-  "#e31a1c",
   "#fdbf6f",
   "#ff7f00",
   "#cab2d6",
@@ -37,6 +33,12 @@ const graphColors: string[] = [
   "#e5d8bd",
   "#fddaec",
   "#f2f2f2",
+  "#a6cee3",
+  "#1f78b4",
+  "#b2df8a",
+  "#33a02c",
+  "#fb9a99",
+  "#e31a1c",
   "#b3e2cd",
   "#fdcdac",
   "#cbd5e8",
@@ -56,18 +58,43 @@ const graphColors: string[] = [
   "#999999",
 ];
 
+const Legends = ({ data }: { data: any[] }) => {
+  return (
+    <Stack
+      mt={3}
+      flexDirection={"row"}
+      alignItems={"center"}
+      justifyContent={"center"}
+      flexWrap={"wrap"}
+      gap={2}
+    >
+      {data.map((item, index) => (
+        <Stack
+          key={index}
+          flexDirection={"row"}
+          alignItems={"center"}
+          gap={0.3}
+        >
+          <CircleIcon sx={{ color: graphColors[index % graphColors.length] }} />
+          <Typography>{item.label}</Typography>
+        </Stack>
+      ))}
+    </Stack>
+  );
+};
+
 const Pie = (values: any[], title: string) => {
   return (
     <Box
       display={"flex"}
-      flexDirection={"row"}
+      flexDirection={"column"}
       alignItems={"center"}
       justifyContent={"center"}
     >
       <PieChart
         width={360}
-        height={400}
-        margin={{ top: 100, left: 100, bottom: 100, right: 100 }}
+        height={300}
+        margin={{ top: 0, left: 100, bottom: 0, right: 100 }}
         sx={{
           flex: 1,
           // borderWidth: 2,
@@ -78,7 +105,7 @@ const Pie = (values: any[], title: string) => {
         }}
         slotProps={{
           legend: {
-            // hidden: true,
+            hidden: true,
             direction: "row",
             position: {
               vertical: "bottom",
@@ -88,7 +115,10 @@ const Pie = (values: any[], title: string) => {
         }}
         series={[
           {
-            data: values,
+            data: values.map((item, index) => ({
+              ...item,
+              color: graphColors[index % graphColors.length],
+            })),
             innerRadius: 30,
             outerRadius: 120,
             paddingAngle: 1,
@@ -100,6 +130,8 @@ const Pie = (values: any[], title: string) => {
           },
         ]}
       />
+      <Divider orientation="horizontal" sx={{ width: "100%" }} />
+      <Legends data={values} />
     </Box>
   );
 };
@@ -108,7 +140,7 @@ const Bar = (values: any[], title: string) => {
   return (
     <Box
       display={"flex"}
-      flexDirection={"row"}
+      flexDirection={"column"}
       alignItems={"center"}
       justifyContent={"center"}
     >
@@ -129,6 +161,8 @@ const Bar = (values: any[], title: string) => {
         width={360}
         height={350}
       />
+      <Divider orientation="horizontal" sx={{ width: "100%" }} />
+      <Legends data={values} />
     </Box>
   );
 };
@@ -137,7 +171,7 @@ const HorizontalBar = (values: any[], title: string) => {
   return (
     <Box
       display={"flex"}
-      flexDirection={"row"}
+      flexDirection={"column"}
       alignItems={"center"}
       justifyContent={"center"}
     >
@@ -160,6 +194,8 @@ const HorizontalBar = (values: any[], title: string) => {
         height={350}
         borderRadius={10}
       />
+      <Divider orientation="horizontal" sx={{ width: "100%" }} />
+      <Legends data={values} />
     </Box>
   );
 };
@@ -209,20 +245,6 @@ const SingleChartView = ({
   return (
     <div className="overflow-x-auto">
       <Stack flexDirection={"row"} justifyContent={"flex-end"}>
-        {/* <Button
-          id="menu-item"
-          variant="contained"
-          aria-controls={open ? "demo-customized-menu" : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? "true" : undefined}
-          onClick={handleClick}
-          endIcon={<KeyboardArrowDownIcon />}
-          sx={{
-            textTransform: "capitalize",
-          }}
-        >
-          Select Chart
-        </Button> */}
         <IconButton
           id="menu-item"
           aria-controls={open ? "demo-customized-menu" : undefined}
@@ -254,25 +276,7 @@ const SingleChartView = ({
           ))}
         </Menu>
       </Stack>
-      <Box my={2}>
-        {renderChart()}
-        {/* <Typography className="font-medium text-sm text-center mb-1">
-          Select Chart
-        </Typography>
-        <Stack flexDirection="row" justifyContent={"center"} gap={1}>
-          {charts.map((_chart) => (
-            <Chip
-              key={_chart.id}
-              size="medium"
-              label={_chart.label}
-              variant={chartType === _chart.type ? "filled" : "outlined"}
-              color={chartType === _chart.type ? "primary" : "default"}
-              onClick={() => setChartType(_chart.type)}
-              sx={{ px: 2 }}
-            />
-          ))}
-        </Stack> */}
-      </Box>
+      <Box my={0}>{renderChart()}</Box>
     </div>
   );
 };

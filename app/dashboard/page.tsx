@@ -430,7 +430,7 @@ const DashboardPage = () => {
       ),
     },
     {
-      weight: Weight.Low,
+      weight: Weight.Medium,
       view: (
         <CardView
           title={"Payable vs Receivable"}
@@ -444,7 +444,7 @@ const DashboardPage = () => {
       ),
     },
     {
-      weight: Weight.Low,
+      weight: Weight.Medium,
       view: (
         <CardView title={"Aging Wise"} permissionCode="AgingOutstandingCard">
           <AgingView
