@@ -34,7 +34,7 @@ const ApiMultiDropDown = ({
   useSearch?: boolean;
 }) => {
   const [selectedValues, setSelectedValues] = useState<any[]>([]);
-  const [dropDownValues, setDropDownValues] = useState<JSX.Element[]>([]);
+  const [dropDownValues, setDropDownValues] = useState<any[]>([]);
   let searchText = useRef("");
 
   useEffect(() => {
@@ -43,18 +43,7 @@ const ApiMultiDropDown = ({
 
   const loadData = async () => {
     let selectionValues: any[] = await onApi(searchText.current);
-    let entries = selectionValues.map((entry, index) => {
-      return (
-        <MenuItem
-          key={index}
-          value={valueFieldKey == null ? entry : entry[valueFieldKey!]}
-        >
-          <Checkbox checked={selectedValues.indexOf(entry) > -1} />
-
-          <ListItemText primary={entry[displayFieldKey]} />
-        </MenuItem>
-      );
-    });
+    setDropDownValues(selectionValues);
     if (
       selectionValues &&
       selectionValues.length > 0 &&
@@ -62,7 +51,6 @@ const ApiMultiDropDown = ({
     ) {
       setSelectedValues([selectionValues[defaultSelectionIndex]]);
     }
-    setDropDownValues(entries);
   };
 
   const handleChange = (event: any) => {
@@ -111,7 +99,21 @@ const ApiMultiDropDown = ({
             }}
           />
         </ListSubheader>
-        {dropDownValues}
+        {dropDownValues.map((entry, index) => (
+          <MenuItem
+            key={index}
+            value={valueFieldKey == null ? entry : entry[valueFieldKey!]}
+          >
+            <Checkbox
+              checked={selectedValues.some(
+                (item) =>
+                  (valueFieldKey == null ? item : item[valueFieldKey!]) ===
+                  (valueFieldKey == null ? entry : entry[valueFieldKey!])
+              )}
+            />
+            <ListItemText primary={entry[displayFieldKey]} />
+          </MenuItem>
+        ))}
       </Select>
       {helperText && <FormHelperText>{helperText}</FormHelperText>}
     </FormControl>
