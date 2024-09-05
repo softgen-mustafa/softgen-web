@@ -141,7 +141,7 @@ const getSgBizBaseUrl = () => {
 
 const getBaseUrl = () => {
   //Local
-  // return "http://192.168.1.2:5000";
+  // return "http://192.168.1.2:5000"
   //GoDadddddddy
   // return "https://118.139.167.125:45400";
   return "http://118.139.167.125:45400";

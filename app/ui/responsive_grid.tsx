@@ -58,9 +58,13 @@ const CardView: React.FC<CardViewProps> = ({
   };
 
   return (
-    <Card className={`h-full p-3 rounded-lg shadow-md ${className}`}>
+    <Card className={`h-full p-3 rounded-lg shadow-lg ${className}`}>
       {title != null && title.length > 0 && (
-        <CardHeader title={title} className="" />
+        <CardHeader
+          title={title}
+          titleTypographyProps={{ variant: "h6" }}
+          className=""
+        />
       )}
       {!hasAccess && (
         <CardContent className={`flex flex-col `}>
@@ -144,7 +148,7 @@ const DynGrid = ({
   return (
     <div>
       <div
-        className={`p-2 w-full flex ${direction} flex-wrap gap-4 justify-stretch`}
+        className={`p-2 w-full flex ${direction} flex-wrap gap-6 justify-stretch`}
       >
         {views.map((entry: any, index: number) => {
           let styles: any = {
