@@ -1,3 +1,4 @@
+"use client";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/all";
@@ -50,7 +51,7 @@ const VideoCarousel = () => {
     let currentProgress = 0;
     let span = videoSpanRef.current;
 
-    if (span[videoId]) {
+    if (span[videoId] && videoRef.current[videoId]) {
       let anim = gsap.to(span[videoId], {
         onUpdate: () => {
           const progress = Math.ceil(anim.progress() * 100);
@@ -91,10 +92,12 @@ const VideoCarousel = () => {
       }
 
       const animUpdate = () => {
-        anim.progress(
-          videoRef.current[videoId].currentTime /
-            hightlightsSlides[videoId].videoDuration
-        );
+        if (videoRef.current[videoId]) {
+          anim.progress(
+            videoRef.current[videoId].currentTime /
+              hightlightsSlides[videoId].videoDuration
+          );
+        }
       };
 
       if (isPlaying) {
@@ -106,7 +109,7 @@ const VideoCarousel = () => {
   }, [videoId, startPlay]);
 
   useEffect(() => {
-    if (loadedData.length > 3) {
+    if (loadedData.length > 3 && videoRef.current[videoId]) {
       if (!isPlaying) {
         videoRef.current[videoId].pause();
       } else {

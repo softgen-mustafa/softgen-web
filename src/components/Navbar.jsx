@@ -1,3 +1,5 @@
+"use client";
+
 import { appleImg, searchImg } from "../utils";
 import { navLists } from "../constants";
 import Image from "next/image";

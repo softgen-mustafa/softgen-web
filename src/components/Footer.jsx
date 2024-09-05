@@ -1,4 +1,6 @@
 // import React from 'react'
+"use client";
+
 import { footerLinks } from '../constants'
 
 const Footer = () => {
