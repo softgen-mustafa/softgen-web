@@ -2,6 +2,7 @@
 
 import KeyStore from "@/keys";
 import axios from "axios";
+import http from "http";
 var CryptoJS = require("crypto-js");
 import Cookies from "js-cookie";
 
@@ -67,22 +68,13 @@ const getAsync = async (url: string) => {
     token: Cookies.get("authToken") ?? "",
     companyid: Cookies.get("companyId") ?? 1,
   };
-  console.log(
-    "----------- This is my Headers Value look. ----------------",
-    appHeaders
-  );
-  // console.log("----------- This is my url Value look. ----------------",url)
 
   return axios
     .get(url, { headers: appHeaders, withCredentials: false })
     .then((response) => {
-      // console.log(`[Company:${appHeaders.CompanyId}]::[URL: ${url}]::[encrypted-data: ${JSON.stringify(response.data)}]`);
-      // console.log(`GET ${url}`);
-      // console.log("received from server ", response.status);
       return response.data;
     })
     .catch((error) => {
-      // console.log(`[Company:${appHeaders.CompanyId}]::[URL: ${url}]::[ERROR]`);
       return null;
     })
     .then((data) => {
@@ -151,7 +143,8 @@ const getBaseUrl = () => {
   //Local
   // return "http://192.168.1.2:5000";
   //GoDadddddddy
-  return "http://118.139.167.125:45400";
+  //return "https://118.139.167.125:45400";
+  return "https://softgensolutions.in/service";
 };
 
 export {
