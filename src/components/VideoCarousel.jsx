@@ -105,8 +105,13 @@ const VideoCarousel = () => {
       } else {
         gsap.ticker.remove(animUpdate);
       }
+      return () => {
+        gsap.ticker.remove(animUpdate);
+      };
     }
-  }, [videoId, startPlay]);
+  }, [videoId, startPlay, isPlaying]);
+    
+  // }, [videoId, startPlay]);
 
   useEffect(() => {
     if (loadedData.length > 3 && videoRef.current[videoId]) {
