@@ -125,11 +125,11 @@ const Page = () => {
         flexDirection={"column"}
         alignItems={"center"}
         bgcolor={"#FFFFFF"}
-        borderRadius={2}
+        borderRadius={3}
         sx={{
           p: { xs: 2, sm: 3, md: 5 },
-          width: { xs: 300, sm: 400, md: 500 }, // Adjust width for different screen sizes
-          height: { xs: 450, sm: 550, md: 650 }, // Adjust height for different screen sizes
+          width: { xs: 350, sm: 400, md: 500 }, // Adjust width for different screen sizes
+          height: { xs: 500, sm: 550, md: 650 }, // Adjust height for different screen sizes
           maxWidth: "100%", // Ensures it doesn't exceed the screen width
           maxHeight: 650,
         }}
@@ -150,7 +150,9 @@ const Page = () => {
           }}
         >
           <Stack alignItems={"center"} gap={0.2} mb={3}>
-            <Typography variant="h5">Welcome To BizOpp</Typography>
+            <Typography variant="h5" color={inspiredPalette.darker}>
+              Welcome To BizOpp
+            </Typography>
             <Typography variant="body2" color={inspiredPalette.darkTextGrey}>
               Your Decision Making Buddy
             </Typography>

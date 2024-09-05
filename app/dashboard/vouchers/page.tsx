@@ -784,7 +784,6 @@ const Page = () => {
     <div className="w-full" style={{}}>
       <Grid
         container
-        className="bg-gray-200"
         sx={{
           flexGrow: 1,
           height: "100vh",

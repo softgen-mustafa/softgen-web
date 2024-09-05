@@ -418,7 +418,7 @@ const Table = ({
                     borderRightWidth: colIndex === columns.length - 1 ? 0 : 2,
                   }}
                 >
-                  {column.header}
+                  <Typography>{column.header}</Typography>
                 </Box>
               );
             })}
@@ -473,6 +473,7 @@ const Table = ({
                   if (cellWidth === null) {
                     cellWidth = 150;
                   }
+
                   return (
                     <Box
                       key={cellIndex}
@@ -480,10 +481,10 @@ const Table = ({
                       sx={{
                         minWidth: 100,
                         maxWidth: cellWidth,
-                        borderRightWidth: 2,
+                        borderRightWidth: cellIndex === row.length - 1 ? 0 : 2,
                       }}
                     >
-                      {cell.value}
+                      <Typography>{cell.value}</Typography>
                     </Box>
                   );
                 })}
