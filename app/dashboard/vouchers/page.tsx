@@ -377,7 +377,7 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
           <CircularProgress />
         </div>
       )} */}
-      <DataTable
+      {/* <DataTable
         columns={columns}
         refresh={refresh}
         onApi={async (page, pageSize, searchText) => {
@@ -405,6 +405,21 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
             </Button>
           </div>
         )}
+      /> */}
+      <PeriodicTable
+        useSearch={false}
+        columns={columns.map((col: any) => {
+          let column: TableColumn = {
+            header: col.headerName,
+            field: col.field,
+            type: "text",
+            pinned: false,
+            rows: [],
+          };
+          return column;
+        })}
+        onApi={loadData}
+        reload={refresh}
       />
     </div>
   );
