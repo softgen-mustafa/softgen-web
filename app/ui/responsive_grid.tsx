@@ -144,9 +144,11 @@ const GridDirection = {
 const DynGrid = ({
   views,
   direction = GridDirection.Row,
+  width,
 }: {
   views: any[];
   direction?: string;
+  width?: string;
 }) => {
   const minWidth = 290;
   return (
@@ -160,6 +162,7 @@ const DynGrid = ({
             minHeight: 200,
             maxHeight: 800,
             flexGrow: entry.weight ?? 0,
+            width: width,
           };
 
           if (entry.maxWidth) {

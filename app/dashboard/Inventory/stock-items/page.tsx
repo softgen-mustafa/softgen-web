@@ -194,7 +194,11 @@ const Page = () => {
 
   return (
     <div className="w-full">
-      <DynGrid views={gridConfig} direction={GridDirection.Column} />
+      <DynGrid
+        views={gridConfig}
+        direction={GridDirection.Column}
+        width="100%"
+      />
     </div>
   );
 };

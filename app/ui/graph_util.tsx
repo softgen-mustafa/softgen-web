@@ -243,7 +243,7 @@ const SingleChartView = ({
   };
 
   return (
-    <div className="overflow-x-auto">
+    <Box className="overflow-x-auto">
       <Stack flexDirection={"row"} justifyContent={"flex-end"}>
         <IconButton
           id="menu-item"
@@ -277,7 +277,7 @@ const SingleChartView = ({
         </Menu>
       </Stack>
       <Box my={0}>{renderChart()}</Box>
-    </div>
+    </Box>
   );
 };
 

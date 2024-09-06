@@ -477,7 +477,7 @@ const DashboardPage = () => {
     {
       weight: Weight.High,
       view: (
-        <CardView title="Upcoming Collections">
+        <CardView title="Upcoming Collections" className="overflow-scroll">
           {/* <Container className="flex overflow-x-auto"> */}
           <Stack
             flexDirection="row"

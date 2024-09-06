@@ -21,7 +21,7 @@ import {
   getSgBizBaseUrl,
   postAsync,
 } from "@/app/services/rest_services";
-import { Button, IconButton, Modal, Stack } from "@mui/material";
+import { Box, Button, IconButton, Modal, Stack } from "@mui/material";
 import { Settings, MailOutline, Send } from "@mui/icons-material";
 import { numericToString } from "@/app/services/Local/helper";
 import { OsSettingsView } from "@/app/dashboard/outstanding/report/outstanding_setings";
@@ -76,7 +76,7 @@ const Page = () => {
 
   const [showSettings, toggleSetting] = useState(false);
   const [refresh, triggerRefresh] = useState(false);
-  const [refreshGroups, triggerGroupRefresh] = useState(false)
+  const [refreshGroups, triggerGroupRefresh] = useState(false);
   const [groups, setGroups] = useState<any[]>([]);
 
   useEffect(() => {
@@ -109,7 +109,7 @@ const Page = () => {
       }`;
       let response = await getAsync(url);
       if (response == null || response.Data == null) {
-          return [];
+        return [];
       }
       let values = response.Data.map((entry: any) => {
         return {
@@ -118,7 +118,7 @@ const Page = () => {
       });
       return values;
     } catch {
-        return [];
+      return [];
     }
   };
 
@@ -128,8 +128,8 @@ const Page = () => {
     }`;
     console.log("load DAta", url);
     let groupNames = selectedGroups.current.map((entry: any) => {
-        return entry.name;
-    })
+      return entry.name;
+    });
     let requestBody = {
       Limit: apiProps.limit,
       Offset: apiProps.offset,
@@ -160,10 +160,10 @@ const Page = () => {
         DueAmount: entry.DueAmount,
         OverDueAmount: entry.OverDueAmount,
         //DueAmount: `${entry.currency ?? "₹"} ${numericToString(
-          //entry.DueAmount
+        //entry.DueAmount
         //)}`,
         //OverDueAmount: `${entry.currency ?? "₹"} ${numericToString(
-         // entry.OverDueAmount
+        // entry.OverDueAmount
         //)}`,
         currency: entry.currency ?? "₹",
       };
@@ -354,7 +354,7 @@ const Page = () => {
 
   const gridConfig = [
     {
-      weight: Weight.High,
+      weight: Weight.Low,
       view: (
         <CardView title="Filters">
           <Stack flexDirection={"column"} gap={2}>
@@ -367,8 +367,8 @@ const Page = () => {
               onSelection={(selection) => {
                 selectedisDebitType.current = selection.value;
                 loadGroups().then((_) => {
-                    triggerRefresh(!refresh);
-                    triggerGroupRefresh(!refreshGroups);
+                  triggerRefresh(!refresh);
+                  triggerGroupRefresh(!refreshGroups);
                 });
               }}
             />
@@ -383,37 +383,37 @@ const Page = () => {
         <CardView title="Party Outstandings" actions={[]}>
           <PeriodicTable
             chartKeyFields={[
-                {
-                "label": "Party",
-                "value": "LedgerName"
-                },
-                {
-                "label": "LedgerGroup",
-                "value": "LedgerGroupName"
-                },
+              {
+                label: "Party",
+                value: "LedgerName",
+              },
+              {
+                label: "LedgerGroup",
+                value: "LedgerGroupName",
+              },
             ]}
             chartValueFields={[
-                {
-                "label": "Pending Amount",
-                "value": "Amount"
-                },
-                {
-                "label": "Due Amount",
-                "value": "DueAmount"
-                },
-                {
-                "label": "OverDue Amount",
-                "value": "OverDueAmount"
-                },
+              {
+                label: "Pending Amount",
+                value: "Amount",
+              },
+              {
+                label: "Due Amount",
+                value: "DueAmount",
+              },
+              {
+                label: "OverDue Amount",
+                value: "OverDueAmount",
+              },
             ]}
             iconActions={[
-                {
-                    label: "Send Reminder",
-                    icon: (<MailOutline/>),
-                    onPress: (row: any) => {
-                        alert(JSON.stringify(row))
-                    },
+              {
+                label: "Send Reminder",
+                icon: <MailOutline />,
+                onPress: (row: any) => {
+                  alert(JSON.stringify(row));
                 },
+              },
             ]}
             refreshFilterView={refresh}
             RenderAdditionalView={renderFilterView()}
@@ -455,9 +455,13 @@ const Page = () => {
   ];
 
   return (
-    <div className="">
-      <DynGrid views={gridConfig} direction={GridDirection.Column} />
-    </div>
+    <Box>
+      <DynGrid
+        views={gridConfig}
+        direction={GridDirection.Column}
+        width="100%"
+      />
+    </Box>
   );
 };
 
