@@ -237,7 +237,6 @@ const ItemDetailScreen = () => {
                 onSelection={(selection) => {
                   selectedListType.current = selection;
                   triggerRefresh(!refresh);
-
                   onApi(1, 10);
                 }}
               />
