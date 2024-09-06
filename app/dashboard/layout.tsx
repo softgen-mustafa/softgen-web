@@ -124,10 +124,14 @@ const DrawerContent = ({
             p: 4,
           }}
         >
-          <Typography id="logout-modal-title" variant="h6" component="h2">
+          <Typography variant="h6" component="h2" color="#000000">
             Confirm Logout
           </Typography>
-          <Typography id="logout-modal-description" sx={{ mt: 2 }}>
+          <Typography
+            id="logout-modal-description"
+            color="#232323"
+            sx={{ mt: 2 }}
+          >
             Are you sure you want to log out?
           </Typography>
           <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>

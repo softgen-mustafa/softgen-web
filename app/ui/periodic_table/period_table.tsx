@@ -311,10 +311,25 @@ const Table = ({
   const startX = useRef<number>(0);
   const startWidth = useRef<number>(0);
 
+  // const handleRowClick = (rowData: any) => {
+  //   // Call the callback function only if it is provided
+  //   if (onRowClick) {
+  //     onRowClick(rowData);
+  //   }
+  // };
   const handleRowClick = (rowData: any) => {
     // Call the callback function only if it is provided
     if (onRowClick) {
-      onRowClick(rowData);
+      // Convert the row data to an object format if it's not already
+      const rowObject = Array.isArray(rowData) 
+        ? rowData.reduce((obj, cell) => {
+            obj[cell.field] = cell.value;
+            return obj;
+          }, {})
+        : rowData;
+      
+      console.log("Row click data:", rowObject);
+      onRowClick(rowObject);
     }
   };
 
@@ -932,10 +947,10 @@ const PeriodicTable = (props: PeriodicTableProps) => {
             }}
           />
         )}
-        {checkedValues &&
+        {/* {checkedValues &&
           checkedValues.length > 0 &&
           props.renderCheckedView !== null &&
-          props.renderCheckedView!(checkedValues)}
+          props.renderCheckedView!(checkedValues)} */}
         <TablePagination
           refresh={refresh}
           onChange={(offset: number, limit: number) => {

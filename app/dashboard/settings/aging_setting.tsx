@@ -96,6 +96,15 @@ const AgingSettings = () => {
   //   );
   // }
 
+
+  const handleRowClick = (rowData: any) => {
+    console.log("Clicked on row:", rowData);
+    localStorage.setItem("aging_mode", "edit");
+    localStorage.setItem("aging_code", JSON.stringify(rowData));
+    router.push("/dashboard/settings/aging-edit");
+    // Your code here to handle row click event.
+  };
+
   return (
     <div>
       <Box
@@ -148,6 +157,13 @@ const AgingSettings = () => {
           return column;
         })}
         onApi={loadData}
+        onRowClick={handleRowClick}
+        // onRowClick={(rowData) => {
+        //   console.log("Received row data:", rowData);
+        //   localStorage.setItem("aging_mode", "edit");
+        //   localStorage.setItem("aging_code", JSON.stringify(rowData));
+        //   router.push("/dashboard/settings/aging-edit");
+        // }}
       />
     </div>
   );

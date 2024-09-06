@@ -87,7 +87,7 @@ canvas {
   }
 
   .hero-title {
-    @apply text-center font-semibold text-3xl text-gray-950 opacity-0 max-md:mb-10;
+    @apply text-center font-semibold text-3xl text-stone-950 opacity-0 max-md:mb-10;
   }
 
   .hiw-title {
@@ -95,7 +95,7 @@ canvas {
   }
 
   .hiw-subtitle {
-    @apply text-gray font-semibold text-xl md:text-2xl py-10 text-center;
+    @apply text-stone font-semibold text-xl md:text-2xl py-10 text-center;
   }
 
   .hiw-video {
@@ -107,7 +107,7 @@ canvas {
   }
 
   .hiw-text {
-    @apply text-gray text-xl font-normal md:font-semibold;
+    @apply text-stone text-xl font-normal md:font-semibold;
   }
 
   .hiw-bigtext {
