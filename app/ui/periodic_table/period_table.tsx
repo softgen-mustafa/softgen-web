@@ -69,7 +69,6 @@ interface PeriodicTableProps {
 interface TableActionProps {
   onFilterToggle: () => void;
   onSync: () => void;
-  onSelectType: (selectedvalue: string) => void;
 }
 
 interface TablePaginationProps {
@@ -514,23 +513,22 @@ const Table = ({
   );
 };
 
+const viewTypeData = [
+    {
+        label: "Table View",
+        value: "table",
+    },
+    {
+        label: "Chart View",
+        value: "chart",
+    },
+];
 const TableActions = ({
   onFilterToggle,
   onSync,
-  onSelectType,
 }: TableActionProps) => {
   const [openFilter, toggleFilter] = useState(false);
 
-  const viewTypeData = [
-    {
-      label: "Table View",
-      value: "table",
-    },
-    {
-      label: "Chart View",
-      value: "chart",
-    },
-  ];
 
   return (
     <Box className="flex flex-row">
@@ -551,16 +549,6 @@ const TableActions = ({
         <Sync />
       </IconButton>
 
-      <DropDown
-        label={"Select View"}
-        displayFieldKey={"label"}
-        valueFieldKey={null}
-        selectionValues={viewTypeData}
-        helperText={""}
-        onSelection={(selection) => {
-          onSelectType(selection.value);
-        }}
-      />
     </Box>
   );
 };
@@ -791,7 +779,6 @@ const TableChartView = ({dataRows, keyFields, valueFields}: TableChartProps) => 
                 value: valueData.value,
             });
         })
-        alert(`chart value: ${JSON.stringify(chartValues)}`)
         setData(chartValues)
     }
 
@@ -932,7 +919,6 @@ const PeriodicTable = (props: PeriodicTableProps) => {
             refreshColumns({ offset: 0, limit: 5, searchText: "" });
             toggleRefresh(!refresh);
           }}
-          onSelectType={(selectedValue) => toggleViewType(selectedValue)}
         />
         {props.useSearch && (
           <TableSearch
@@ -951,6 +937,16 @@ const PeriodicTable = (props: PeriodicTableProps) => {
           checkedValues.length > 0 &&
           props.renderCheckedView !== null &&
           props.renderCheckedView!(checkedValues)} */}
+      <DropDown
+        label={"Select View"}
+        displayFieldKey={"label"}
+        valueFieldKey={null}
+        selectionValues={viewTypeData}
+        helperText={""}
+        onSelection={(selection) => {
+            toggleViewType(selection.value)
+        }}
+      />
         <TablePagination
           refresh={refresh}
           onChange={(offset: number, limit: number) => {
