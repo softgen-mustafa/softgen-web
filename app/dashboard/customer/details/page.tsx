@@ -16,7 +16,7 @@ const CustomerDetailsScreen = ({}) => {
   const [outstandingAmount, setOutstandingAmount] = useState("-");
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
-  let filterValue: string = "";
+  let filterValue: any = "";
 
   useEffect(() => {
     FeatureControl("CustomerDetailsScreen").then((permission) => {
@@ -39,12 +39,18 @@ const CustomerDetailsScreen = ({}) => {
   const onLoad = async () => {
     try {
       setLoadingStatus(true);
-      let url = `${getBmrmBaseUrl()}/ledger/${filterValue}`;
+      let url = `${getBmrmBaseUrl()}/ledger/${filterValue.replace(/"/g, "")}`;
+
       console.log("CustomerDetailsScreen", url);
       let response = await getAsync(url);
       setLedgerDetail(response);
 
-      url = `${getBmrmBaseUrl()}/bill/customer-outstanding/${filterValue}`;
+      // url = `${getBmrmBaseUrl()}/bill/customer-outstanding/${filterValue}`;
+      url = `${getBmrmBaseUrl()}/bill/customer-outstanding/${filterValue.replace(
+        /"/g,
+        ""
+      )}`;
+
       response = await getAsync(url);
       if (!response) {
         response = { total_amount: 0 };
