@@ -22,7 +22,7 @@ import {
   postAsync,
 } from "@/app/services/rest_services";
 import { Button, IconButton, Modal, Stack } from "@mui/material";
-import { Settings } from "@mui/icons-material";
+import { Settings, MailOutline, Send } from "@mui/icons-material";
 import { numericToString } from "@/app/services/Local/helper";
 import { OsSettingsView } from "@/app/dashboard/outstanding/report/outstanding_setings";
 import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
@@ -404,6 +404,15 @@ const Page = () => {
                 {
                 "label": "OverDue Amount",
                 "value": "OverDueAmount"
+                },
+            ]}
+            iconActions={[
+                {
+                    label: "Send Reminder",
+                    icon: (<MailOutline/>),
+                    onPress: (row: any) => {
+                        alert(JSON.stringify(row))
+                    },
                 },
             ]}
             refreshFilterView={refresh}
