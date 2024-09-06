@@ -108,8 +108,8 @@ const CustomerPartySearch = () => {
     {
       type: "item",
       view: (
-        <CardView>
-          <Typography variant="h4">Customer Search</Typography>
+        <CardView title="Customer Search">
+          {/* <Typography variant="h4">Customer Search</Typography> */}
           {/* <DataTable
             columns={columns}
             onApi={async (page, pageSize) => {

@@ -60,7 +60,6 @@ const Page = () => {
       SortOrder: apiParams.sortOrder ?? "",
       StockGroups: selectedGroup.current != null ? [selectedGroup.current] : [],
     };
-    alert(requestBody);
     /*let appHeaders = {
             "Content-Type": "application/json; charset=utf-8",
             "CompanyId": Cookies.get("companyId") ?? 1,

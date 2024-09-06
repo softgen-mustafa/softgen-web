@@ -8,11 +8,13 @@ import {
   CircularProgress,
   IconButton,
   Box,
+  Stack,
 } from "@mui/material";
 import { ChevronRight, Dashboard } from "@mui/icons-material";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { useRouter } from "next/navigation";
 import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
+import GroupIcon from "@mui/icons-material/Group";
 
 interface CustomerDetailsCardProps {
   companyId: string | null;
@@ -63,7 +65,7 @@ const CustomerDetailsCard: React.FC<CustomerDetailsCardProps> = ({
 
   return (
     // hasPermission && (
-    <Box display={"flex"} flexDirection={"column"} justifyContent={"flex-end"}>
+    <Box display={"flex"} flexDirection={"column"} justifyContent={"center"}>
       {isLoading ? (
         // <CardContent className="flex justify-center items-center h-40">
         <Box display={"flex"} justifyContent={"center"}>
@@ -71,41 +73,52 @@ const CustomerDetailsCard: React.FC<CustomerDetailsCardProps> = ({
         </Box>
       ) : (
         // </CardContent>
-        <Box
-          onClick={handleCardClick}
-          className="flex flex-row justify-between"
-          sx={{
-            cursor: "pointer",
-            // borderWidth: 2,
-            // borderRadius: 1,
-            // padding: 2,
-            // marginTop: 3,
-          }}
-        >
-          <div className="flex flex-col">
-            <Typography
-              sx={{
-                color: "white",
-                letterSpacing: 1,
-                mb: 1,
-                fontWeight: "500",
-                fontSize: 20,
-              }}
-            >
-              Total Customers
-            </Typography>
-            <Typography
-              sx={{ color: "#FFFFFF", fontWeight: "400", fontSize: 28 }}
-            >
-              {data?.totalCount.toLocaleString() || "0"}
-            </Typography>
-          </div>
-          <div className="flex justify-end">
-            <IconButton size="small">
-              <ChevronRight sx={{ color: "#FFFFFF" }} />
-            </IconButton>
-          </div>
-        </Box>
+        <Stack flexDirection={"column"} justifyContent={"center"} gap={2}>
+          <Box
+            width={50}
+            height={50}
+            borderRadius={2}
+            bgcolor={"#ef7a7a80"}
+            className="flex items-center justify-center"
+          >
+            <GroupIcon sx={{ color: "#FFFFFF" }} />
+          </Box>
+          <Box
+            onClick={handleCardClick}
+            className="flex flex-row items-center justify-between"
+            sx={{
+              cursor: "pointer",
+              // borderWidth: 2,
+              // borderRadius: 1,
+              // padding: 2,
+              // marginTop: 3,
+            }}
+          >
+            <Box>
+              <Typography
+                sx={{
+                  color: "white",
+                  letterSpacing: 1,
+                  mb: 1,
+                  fontWeight: "500",
+                  fontSize: 20,
+                }}
+              >
+                Total Customers
+              </Typography>
+              <Typography
+                sx={{ color: "#FFFFFF", fontWeight: "400", fontSize: 28 }}
+              >
+                {data?.totalCount.toLocaleString() || "0"}
+              </Typography>
+            </Box>
+            <Box>
+              <IconButton size="medium" onClick={handleCardClick}>
+                <ChevronRight sx={{ color: "#FFFFFF", fontSize: 30 }} />
+              </IconButton>
+            </Box>
+          </Box>
+        </Stack>
       )}
     </Box>
   );

@@ -30,6 +30,7 @@ import {
   TableColumn,
   TableSearchKey,
 } from "@/app/ui/periodic_table/period_table";
+import Loading from "../loading";
 
 const InventoryOverviewScreen = () => {
   const router = useRouter();
@@ -388,7 +389,7 @@ const InventoryOverviewScreen = () => {
     // <Container sx={{ overflowX: "hidden" }}>
     <Box>
       {hasPermission === null ? (
-        <CircularProgress />
+        <Loading />
       ) : hasPermission ? (
         <DynGrid views={gridConfig} />
       ) : (
