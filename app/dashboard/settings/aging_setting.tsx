@@ -43,6 +43,7 @@ const AgingSettings = () => {
           tagName: entry.tag_name,
         };
       });
+      // alert(JSON.stringify(entries));
       setData(entries);
       return entries;
     } catch {
@@ -52,6 +53,15 @@ const AgingSettings = () => {
   };
 
   const columns: GridColDef[] = [
+    {
+      field: "id",
+      headerName: "Id",
+      editable: false,
+      sortable: false,
+      hideable: true,
+      flex: 1,
+      minWidth: 250,
+    },
     {
       field: "title",
       headerName: "Title",
@@ -96,13 +106,11 @@ const AgingSettings = () => {
   //   );
   // }
 
-
   const handleRowClick = (rowData: any) => {
-    console.log("Clicked on row:", rowData);
+    alert(JSON.stringify(rowData));
     localStorage.setItem("aging_mode", "edit");
     localStorage.setItem("aging_code", JSON.stringify(rowData));
     router.push("/dashboard/settings/aging-edit");
-    // Your code here to handle row click event.
   };
 
   return (
@@ -158,12 +166,6 @@ const AgingSettings = () => {
         })}
         onApi={loadData}
         onRowClick={handleRowClick}
-        // onRowClick={(rowData) => {
-        //   console.log("Received row data:", rowData);
-        //   localStorage.setItem("aging_mode", "edit");
-        //   localStorage.setItem("aging_code", JSON.stringify(rowData));
-        //   router.push("/dashboard/settings/aging-edit");
-        // }}
       />
     </div>
   );

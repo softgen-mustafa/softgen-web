@@ -35,6 +35,15 @@ const CustomerPartySearch = () => {
 
   const columns: GridColDef<any[number]>[] = [
     {
+      field: "id",
+      headerName: "Id",
+      editable: false,
+      sortable: false,
+      hideable: true,
+      flex: 1,
+      minWidth: 250,
+    },
+    {
       field: "partyName",
       headerName: "Name",
       editable: false,
@@ -125,6 +134,10 @@ const CustomerPartySearch = () => {
             })}
             onApi={onApi}
             sortKeys={sortKeys}
+            onRowClick={(rowData) => {
+              localStorage.setItem("party_filter_value", JSON.stringify(rowData.id));
+              router.push("/dashboard/customer/details");
+            }}
           />
         </CardView>
       ),

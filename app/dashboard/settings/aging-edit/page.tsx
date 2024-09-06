@@ -17,6 +17,11 @@ const Page = () => {
     tagName: "",
   });
 
+  const [errors, setErrors] = useState({
+    title: "",
+    minDays: "",
+  });
+
   useEffect(() => {
     const storedMode = localStorage.getItem("aging_mode");
     setMode(storedMode === "edit" ? "edit" : "add");
@@ -29,11 +34,29 @@ const Page = () => {
     }
   }, []);
 
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = { title: "", minDays: "" };
+
+    if (!agingData.title.trim()) {
+      newErrors.title = "Aging Name cannot be empty";
+      isValid = false;
+    }
+
+    if (!agingData.minDays || agingData.minDays <= 0) {
+      newErrors.minDays = "Minimum Days Cannot be zero or empty";
+      isValid = false;
+    }
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const deleteEntry = async () => {
     try {
       let url = `${getBmrmBaseUrl()}/aging-settings/delete?agingCode=${
         agingData.id
       }`;
+      alert(url);
       await postAsync(url, {});
       router.push("/dashboard/settings");
     } catch (error) {
@@ -42,6 +65,8 @@ const Page = () => {
   };
 
   const update = async () => {
+    if (!validateForm()) return;
+
     try {
       let url = `${getBmrmBaseUrl()}/aging-settings/update?agingCode=${
         agingData.id
@@ -60,6 +85,8 @@ const Page = () => {
   };
 
   const create = async () => {
+    if (!validateForm()) return;
+
     try {
       let url = `${getBmrmBaseUrl()}/aging-settings/create`;
       let requestBody = {
@@ -87,8 +114,13 @@ const Page = () => {
             defaultValue={agingData.title}
             onTextChange={(value: string) => {
               setAgingData({ ...agingData, title: value });
+              setErrors({ ...errors, title: "" });
             }}
           />
+          {errors.title && (
+            <Typography color="error">{errors.title}</Typography>
+          )}
+
           <br />
           <TextInput
             mode="number"
@@ -96,8 +128,13 @@ const Page = () => {
             defaultValue={agingData.minDays.toString()}
             onTextChange={(value: string) => {
               setAgingData({ ...agingData, minDays: parseInt(value) });
+              setErrors({ ...errors, minDays: "" });
             }}
           />
+          {errors.minDays && (
+            <Typography color="error">{errors.minDays}</Typography>
+          )}
+
           <br />
           <TextInput
             mode="text"
