@@ -76,6 +76,7 @@ const Page = () => {
 
   const [showSettings, toggleSetting] = useState(false);
   const [refresh, triggerRefresh] = useState(false);
+  const [refreshGroups, triggerGroupRefresh] = useState(false)
   const [groups, setGroups] = useState<any[]>([]);
 
   useEffect(() => {
@@ -108,17 +109,16 @@ const Page = () => {
       }`;
       let response = await getAsync(url);
       if (response == null || response.Data == null) {
-        setGroups([]);
-        return;
+          return [];
       }
       let values = response.Data.map((entry: any) => {
         return {
           name: entry,
         };
       });
-      setGroups(values);
+      return values;
     } catch {
-      setGroups([]);
+        return [];
     }
   };
 
@@ -127,12 +127,15 @@ const Page = () => {
       selectedisDebitType.current
     }`;
     console.log("load DAta", url);
+    let groupNames = selectedGroups.current.map((entry: any) => {
+        return entry.name;
+    })
     let requestBody = {
       Limit: apiProps.limit,
       Offset: apiProps.offset,
       PartyName: selectedParty.current === "None" ? "" : selectedParty.current,
       SearchText: apiProps.searchText ?? "",
-      Groups: selectedGroups.current ?? [],
+      Groups: groupNames ?? [],
       DueDays: 30,
       OverDueDays: 90,
       SearchKey: apiProps.searchKey, //;selectedSearchKey.current ?? "Party"
@@ -319,18 +322,20 @@ const Page = () => {
               triggerRefresh(!refresh);
             }}
           />
-          <DropDown
+          <ApiMultiDropDown
+            reload={refreshGroups}
             label="Ledger Group"
             displayFieldKey={"name"}
+            defaultSelections={selectedGroups.current}
             valueFieldKey={null}
-            selectionValues={groups}
+            onApi={loadGroups}
             helperText={""}
             onSelection={(selection) => {
-              selectedGroups.current = [selection.name];
+              selectedGroups.current = selection;
               triggerRefresh(!refresh);
             }}
           />
-          <ApiMultiDropDown
+          <ApiDropDown
             label="Party"
             displayFieldKey={"name"}
             valueFieldKey={null}
@@ -361,7 +366,10 @@ const Page = () => {
               helperText={""}
               onSelection={(selection) => {
                 selectedisDebitType.current = selection.value;
-                loadGroups().then((_) => triggerRefresh(!refresh));
+                loadGroups().then((_) => {
+                    triggerRefresh(!refresh);
+                    triggerGroupRefresh(!refreshGroups);
+                });
               }}
             />
           </Stack>
