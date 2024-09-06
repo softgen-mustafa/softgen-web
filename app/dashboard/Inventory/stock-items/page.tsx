@@ -26,25 +26,42 @@ import {
   TableSortKey,
   ApiProps,
 } from "@/app/ui/periodic_table/period_table";
-
+import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
+import { Stack } from "@mui/material";
 const Page = () => {
   const [refresh, setRefresh] = useState(false);
   const [groups, setGroups] = useState<any>([]);
+  const [refreshGroups, triggerGroupRefresh] = useState(false);
 
-  let selectedGroup = useRef<any>(null);
+  let selectedGroups = useRef<any>(null);
 
-  useEffect(() => {
-    loadGroups().then((_) => setRefresh(!refresh));
-  }, []);
+  // useEffect(() => {
+  //   loadGroups().then((_) => setRefresh(!refresh));
+  // }, []);
 
   const loadGroups = async () => {
-    let url = `${getBmrmBaseUrl()}/stock-group/get/names`;
-    let response = await getAsync(url);
-    let values = [{ id: "none", title: "All" }];
-    response.map((entry: any) => {
-      values.push(entry);
-    });
-    setGroups(values);
+    try {
+      let url = `${getBmrmBaseUrl()}/stock-group/get/names`;
+      console.log("URL:", url);
+
+      let response = await getAsync(url);
+      console.log("API Response:", response);
+
+      // Check if response is valid and contains the necessary data
+      if (!response || !Array.isArray(response)) {
+        console.error("Invalid response format or no data.");
+        return [];
+      }
+
+      let values = response.map((entry: any) => ({
+        id: entry.id,
+        name: entry.title,
+      }));
+      return values;
+    } catch (error) {
+      console.error("Error loading groups:", error);
+      return [];
+    }
   };
 
   const loadData = async (apiParams: ApiProps) => {
@@ -58,9 +75,10 @@ const Page = () => {
       SearchKey: apiParams.searchKey ?? "",
       SortKey: apiParams.sortKey ?? "",
       SortOrder: apiParams.sortOrder ?? "",
-      StockGroups: selectedGroup.current != null ? [selectedGroup.current] : [],
+      StockGroups:
+        selectedGroups.current != null ? [selectedGroups.current] : [],
     };
-    alert(requestBody);
+    // alert(JSON.stringify(requestBody));
     /*let appHeaders = {
             "Content-Type": "application/json; charset=utf-8",
             "CompanyId": Cookies.get("companyId") ?? 1,
@@ -83,6 +101,7 @@ const Page = () => {
         ...entry,
       };
     });
+    // alert(JSON.stringify(values));
     return values;
   };
 
@@ -120,6 +139,15 @@ const Page = () => {
     {
       field: "Amount",
       headerName: "Value",
+      editable: false,
+      sortable: true,
+      type: "number",
+      flex: 1,
+      minWidth: 150,
+    },
+    {
+      field: "Rate",
+      headerName: "Rate",
       editable: false,
       sortable: true,
       type: "number",
@@ -166,12 +194,61 @@ const Page = () => {
     // Your code here to handle row click event.
   };
 
+  const renderFilterView = () => {
+    return (
+      <div>
+        <Stack flexDirection={"column"} gap={2}>
+          <ApiMultiDropDown
+            reload={refreshGroups}
+            label="Stock Group"
+            displayFieldKey={"name"}
+            defaultSelections={selectedGroups.current}
+            valueFieldKey={null}
+            onApi={loadGroups}
+            helperText={""}
+            onSelection={(selection) => {
+              selectedGroups.current = selection;
+              setRefresh(!refresh);
+            }}
+          />
+        </Stack>
+        <div className="mt-4" />
+      </div>
+    );
+  };
+
   const gridConfig = [
     {
       weight: Weight.High,
       view: (
         <CardView title="Items">
           <PeriodicTable
+            chartKeyFields={[
+              {
+                label: "Item",
+                value: "Name",
+              },
+              {
+                label: "Parent",
+                value: "StockGroup",
+              },
+            ]}
+            chartValueFields={[
+              {
+                label: "Quantity",
+                value: "Quantity",
+              },
+              {
+                label: "Item Value",
+                value: "Amount",
+              },
+              {
+                label: "Rate",
+                value: "Rate",
+              },
+            ]}
+            refreshFilterView={refresh}
+            RenderAdditionalView={renderFilterView()}
             useSearch={true}
             searchKeys={searchKeys}
             columns={columns.map((col: any) => {

@@ -102,6 +102,7 @@ const Page = () => {
       return [];
     }
   };
+
   const loadGroups = async () => {
     try {
       let url = `${getSgBizBaseUrl()}/os/get/groups?isDebit=${
@@ -116,6 +117,7 @@ const Page = () => {
           name: entry,
         };
       });
+      alert(JSON.stringify(values));
       return values;
     } catch {
       return [];
@@ -388,7 +390,7 @@ const Page = () => {
                 value: "LedgerName",
               },
               {
-                label: "LedgerGroup",
+                label: "Ledger Group",
                 value: "LedgerGroupName",
               },
             ]}
