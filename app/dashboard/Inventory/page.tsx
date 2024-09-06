@@ -365,6 +365,19 @@ const InventoryOverviewScreen = () => {
             onApi={fetchInventoryItems}
             sortKeys={sortKeys}
             reload={refresh}
+            onRowClick={(rowData) => {
+              if (selectedListType.current.code === "item") {
+                localStorage.setItem("item", JSON.stringify(rowData));
+                router.push("/dashboard/Inventory/InventoryItemDetails");
+              } else {
+                localStorage.setItem("record", JSON.stringify(rowData));
+                localStorage.setItem(
+                  "viewType",
+                  selectedListType.current.code || ""
+                );
+                router.push("/dashboard/Inventory/InventoryDetails");
+              }
+            }}
           />
         </CardView>
       ),

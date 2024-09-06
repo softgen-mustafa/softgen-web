@@ -135,7 +135,10 @@ const CustomerPartySearch = () => {
             onApi={onApi}
             sortKeys={sortKeys}
             onRowClick={(rowData) => {
-              localStorage.setItem("party_filter_value", JSON.stringify(rowData.id));
+              localStorage.setItem(
+                "party_filter_value",
+                JSON.stringify(rowData.id)
+              );
               router.push("/dashboard/customer/details");
             }}
           />
