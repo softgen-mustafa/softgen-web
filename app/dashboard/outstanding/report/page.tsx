@@ -22,7 +22,7 @@ import {
   postAsync,
 } from "@/app/services/rest_services";
 import { Button, IconButton, Modal, Stack } from "@mui/material";
-import { Settings } from "@mui/icons-material";
+import { Settings, MailOutline, Send } from "@mui/icons-material";
 import { numericToString } from "@/app/services/Local/helper";
 import { OsSettingsView } from "@/app/dashboard/outstanding/report/outstanding_setings";
 import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
@@ -76,6 +76,7 @@ const Page = () => {
 
   const [showSettings, toggleSetting] = useState(false);
   const [refresh, triggerRefresh] = useState(false);
+  const [refreshGroups, triggerGroupRefresh] = useState(false)
   const [groups, setGroups] = useState<any[]>([]);
 
   useEffect(() => {
@@ -108,17 +109,16 @@ const Page = () => {
       }`;
       let response = await getAsync(url);
       if (response == null || response.Data == null) {
-        setGroups([]);
-        return;
+          return [];
       }
       let values = response.Data.map((entry: any) => {
         return {
           name: entry,
         };
       });
-      setGroups(values);
+      return values;
     } catch {
-      setGroups([]);
+        return [];
     }
   };
 
@@ -127,12 +127,15 @@ const Page = () => {
       selectedisDebitType.current
     }`;
     console.log("load DAta", url);
+    let groupNames = selectedGroups.current.map((entry: any) => {
+        return entry.name;
+    })
     let requestBody = {
       Limit: apiProps.limit,
       Offset: apiProps.offset,
       PartyName: selectedParty.current === "None" ? "" : selectedParty.current,
       SearchText: apiProps.searchText ?? "",
-      Groups: selectedGroups.current ?? [],
+      Groups: groupNames ?? [],
       DueDays: 30,
       OverDueDays: 90,
       SearchKey: apiProps.searchKey, //;selectedSearchKey.current ?? "Party"
@@ -152,13 +155,16 @@ const Page = () => {
         ...entry,
         BillDate: entry.BillDate.substring(0, 10),
         DueDate: entry.DueDate.substring(0, 10),
-        Amount: `${entry.currency ?? "₹"} ${numericToString(entry.Amount)}`,
-        DueAmount: `${entry.currency ?? "₹"} ${numericToString(
-          entry.DueAmount
-        )}`,
-        OverDueAmount: `${entry.currency ?? "₹"} ${numericToString(
-          entry.OverDueAmount
-        )}`,
+        //Amount: `${entry.currency ?? "₹"} ${numericToString(entry.Amount)}`,
+        Amount: entry.Amount,
+        DueAmount: entry.DueAmount,
+        OverDueAmount: entry.OverDueAmount,
+        //DueAmount: `${entry.currency ?? "₹"} ${numericToString(
+          //entry.DueAmount
+        //)}`,
+        //OverDueAmount: `${entry.currency ?? "₹"} ${numericToString(
+         // entry.OverDueAmount
+        //)}`,
         currency: entry.currency ?? "₹",
       };
     });
@@ -316,18 +322,20 @@ const Page = () => {
               triggerRefresh(!refresh);
             }}
           />
-          <DropDown
+          <ApiMultiDropDown
+            reload={refreshGroups}
             label="Ledger Group"
             displayFieldKey={"name"}
+            defaultSelections={selectedGroups.current}
             valueFieldKey={null}
-            selectionValues={groups}
+            onApi={loadGroups}
             helperText={""}
             onSelection={(selection) => {
-              selectedGroups.current = [selection.name];
+              selectedGroups.current = selection;
               triggerRefresh(!refresh);
             }}
           />
-          <ApiMultiDropDown
+          <ApiDropDown
             label="Party"
             displayFieldKey={"name"}
             valueFieldKey={null}
@@ -358,7 +366,10 @@ const Page = () => {
               helperText={""}
               onSelection={(selection) => {
                 selectedisDebitType.current = selection.value;
-                loadGroups().then((_) => triggerRefresh(!refresh));
+                loadGroups().then((_) => {
+                    triggerRefresh(!refresh);
+                    triggerGroupRefresh(!refreshGroups);
+                });
               }}
             />
           </Stack>
@@ -371,6 +382,39 @@ const Page = () => {
       view: (
         <CardView title="Party Outstandings" actions={[]}>
           <PeriodicTable
+            chartKeyFields={[
+                {
+                "label": "Party",
+                "value": "LedgerName"
+                },
+                {
+                "label": "LedgerGroup",
+                "value": "LedgerGroupName"
+                },
+            ]}
+            chartValueFields={[
+                {
+                "label": "Pending Amount",
+                "value": "Amount"
+                },
+                {
+                "label": "Due Amount",
+                "value": "DueAmount"
+                },
+                {
+                "label": "OverDue Amount",
+                "value": "OverDueAmount"
+                },
+            ]}
+            iconActions={[
+                {
+                    label: "Send Reminder",
+                    icon: (<MailOutline/>),
+                    onPress: (row: any) => {
+                        alert(JSON.stringify(row))
+                    },
+                },
+            ]}
             refreshFilterView={refresh}
             RenderAdditionalView={renderFilterView()}
             useSearch={true}

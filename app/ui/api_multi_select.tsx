@@ -16,30 +16,33 @@ import { useEffect, useRef, useState } from "react";
 
 const ApiMultiDropDown = ({
   label,
+  reload,
   displayFieldKey,
   valueFieldKey,
   onApi,
   helperText,
   onSelection,
-  defaultSelectionIndex = 0,
+  defaultSelections = []
 }: {
   label: string;
+  reload: boolean;
   displayFieldKey: string;
   valueFieldKey: string | null;
   onApi: (searchValue: string) => Promise<any[]>;
   helperText: string | null;
-  defaultSelectionIndex?: number;
+  defaultSelections?: any[];
   onSelection: (selected: any) => void;
   onSearchUpdate?: (value: string) => void;
   useSearch?: boolean;
 }) => {
   const [selectedValues, setSelectedValues] = useState<any[]>([]);
   const [dropDownValues, setDropDownValues] = useState<any[]>([]);
+
   let searchText = useRef("");
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [reload]);
 
   const loadData = async () => {
     let selectionValues: any[] = await onApi(searchText.current);
@@ -49,7 +52,7 @@ const ApiMultiDropDown = ({
       selectionValues.length > 0 &&
       selectedValues.length === 0
     ) {
-      setSelectedValues([selectionValues[defaultSelectionIndex]]);
+      setSelectedValues(defaultSelections);
     }
   };
 
@@ -68,18 +71,6 @@ const ApiMultiDropDown = ({
         value={selectedValues}
         label={label}
         onChange={handleChange}
-        renderValue={(selected) => (
-          <div className="flex flex-wrap gap-1">
-            {selected.map((value) => (
-              <Chip
-                key={valueFieldKey !== null ? value[valueFieldKey] : value}
-                label={value[displayFieldKey]}
-                size="small"
-                className="m-1"
-              />
-            ))}
-          </div>
-        )}
       >
         <ListSubheader>
           <TextField
