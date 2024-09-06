@@ -63,7 +63,7 @@ const CustomerDetailsCard: React.FC<CustomerDetailsCardProps> = ({
 
   return (
     // hasPermission && (
-    <Box>
+    <Box display={"flex"} flexDirection={"column"} justifyContent={"flex-end"}>
       {isLoading ? (
         // <CardContent className="flex justify-center items-center h-40">
         <Box display={"flex"} justifyContent={"center"}>

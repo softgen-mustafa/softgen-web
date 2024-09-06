@@ -400,7 +400,7 @@ const DashboardPage = () => {
 
   const views = [
     {
-      weight: Weight.Low,
+      weight: Weight.Medium,
       view: (
         <div className={`flex flex-col h-full`}>
           <CardView className="mb-2" title="Switch Company">

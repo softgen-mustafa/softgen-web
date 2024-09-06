@@ -62,7 +62,11 @@ const CardView: React.FC<CardViewProps> = ({
       {title != null && title.length > 0 && (
         <CardHeader
           title={title}
-          titleTypographyProps={{ variant: "h6" }}
+          titleTypographyProps={{
+            fontSize: 20,
+            fontWeight: "bold",
+            letterSpacing: 0.8,
+          }}
           className=""
         />
       )}

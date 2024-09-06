@@ -10,6 +10,7 @@ import {
   RadioGroup,
   Radio,
   useTheme,
+  Stack,
 } from "@mui/material";
 import {
   Search,
@@ -320,13 +321,13 @@ const Table = ({
     // Call the callback function only if it is provided
     if (onRowClick) {
       // Convert the row data to an object format if it's not already
-      const rowObject = Array.isArray(rowData) 
+      const rowObject = Array.isArray(rowData)
         ? rowData.reduce((obj, cell) => {
             obj[cell.field] = cell.value;
             return obj;
           }, {})
         : rowData;
-      
+
       console.log("Row click data:", rowObject);
       onRowClick(rowObject);
     }
@@ -514,21 +515,17 @@ const Table = ({
 };
 
 const viewTypeData = [
-    {
-        label: "Table View",
-        value: "table",
-    },
-    {
-        label: "Chart View",
-        value: "chart",
-    },
+  {
+    label: "Table View",
+    value: "table",
+  },
+  {
+    label: "Chart View",
+    value: "chart",
+  },
 ];
-const TableActions = ({
-  onFilterToggle,
-  onSync,
-}: TableActionProps) => {
+const TableActions = ({ onFilterToggle, onSync }: TableActionProps) => {
   const [openFilter, toggleFilter] = useState(false);
-
 
   return (
     <Box className="flex flex-row">
@@ -548,7 +545,6 @@ const TableActions = ({
       >
         <Sync />
       </IconButton>
-
     </Box>
   );
 };
@@ -750,73 +746,71 @@ const TableFilterView = ({
 };
 
 interface TableChartProps {
-    dataRows: any[];
-    keyFields: string[];
-    valueFields: string[];
+  dataRows: any[];
+  keyFields: string[];
+  valueFields: string[];
 }
 
-const TableChartView = ({dataRows, keyFields, valueFields}: TableChartProps) => {
+const TableChartView = ({
+  dataRows,
+  keyFields,
+  valueFields,
+}: TableChartProps) => {
+  const [data, setData] = useState<any[]>([]);
+  const [keyField, setKeyField] = useState<any>(keyFields[0]);
+  const [valueField, setValueField] = useState<any>(valueFields[0]);
 
-    const [data, setData] = useState<any[]>([]);
-    const [keyField, setKeyField] = useState<any>(keyFields[0]);
-    const [valueField, setValueField] = useState<any>(valueFields[0]);
+  useEffect(() => {
+    createChartData(keyFields[0], valueFields[0]);
+  }, [dataRows]);
 
-    useEffect(() => {
-        createChartData(keyFields[0], valueFields[0]);
-    }, [dataRows])
+  const createChartData = (key: any, value: any) => {
+    let chartValues: any[] = [];
+    dataRows.map((row: any[]) => {
+      let keyData = row.find((entry: any) => entry.field === key.value) ?? null;
+      let valueData =
+        row.find((entry: any) => entry.field === value.value) ?? null;
+      if (keyData === null || valueData === null) {
+        return;
+      }
+      chartValues.push({
+        label: keyData.value,
+        value: valueData.value,
+      });
+    });
+    setData(chartValues);
+  };
 
-
-    const createChartData = (key: any, value: any) => {
-        let chartValues: any[] =[]
-        dataRows.map((row: any[]) => {
-            let keyData = row.find((entry: any) => entry.field === key.value) ?? null;
-            let valueData = row.find((entry: any) => entry.field === value.value) ?? null;
-            if (keyData === null || valueData === null) {
-                return;
-            }
-            chartValues.push({
-                label: keyData.value,
-                value: valueData.value,
-            });
-        })
-        setData(chartValues)
-    }
-
-    return (
-        <Box>
-        <div className="flex flex-row justify-center">
-            <DropDown
-                label={"Select Label"}
-                displayFieldKey={"label"}
-                valueFieldKey={null}
-                selectionValues={keyFields}
-                helperText={""}
-                onSelection={(selection) => {
-                    setKeyField(selection)
-                    createChartData(selection, valueField);
-                }}
-            />
-            <DropDown
-                label={"Select Value"}
-                displayFieldKey={"label"}
-                valueFieldKey={null}
-                selectionValues={valueFields}
-                helperText={""}
-                onSelection={(selection) => {
-                    setValueField(selection)
-                    createChartData(keyField, selection);
-                }}
-            />
-
-        </div>
-            <SingleChartView 
-                defaultChart="pie"
-                values={data}
-                title=""
-            />
-        </Box>
-    );
-}
+  return (
+    <Box>
+      <div className="flex flex-row justify-center">
+        <DropDown
+          label={"Select Label"}
+          displayFieldKey={"label"}
+          valueFieldKey={null}
+          selectionValues={keyFields}
+          helperText={""}
+          onSelection={(selection) => {
+            setKeyField(selection);
+            createChartData(selection, valueField);
+          }}
+        />
+        <DropDown
+          label={"Select Value"}
+          displayFieldKey={"label"}
+          valueFieldKey={null}
+          selectionValues={valueFields}
+          helperText={""}
+          onSelection={(selection) => {
+            setValueField(selection);
+            createChartData(keyField, selection);
+          }}
+        />
+      </div>
+      <SingleChartView defaultChart="pie" values={data} title="" />
+    </Box>
+  );
+};
 
 const PeriodicTable = (props: PeriodicTableProps) => {
   const [loading, setLoading] = useState(false);
@@ -937,22 +931,24 @@ const PeriodicTable = (props: PeriodicTableProps) => {
           checkedValues.length > 0 &&
           props.renderCheckedView !== null &&
           props.renderCheckedView!(checkedValues)} */}
-      <DropDown
-        label={"Select View"}
-        displayFieldKey={"label"}
-        valueFieldKey={null}
-        selectionValues={viewTypeData}
-        helperText={""}
-        onSelection={(selection) => {
-            toggleViewType(selection.value)
-        }}
-      />
-        <TablePagination
-          refresh={refresh}
-          onChange={(offset: number, limit: number) => {
-            refreshColumns({ offset: offset, limit: limit, searchText: "" });
-          }}
-        />
+        <Stack flexDirection={"row"} alignItems={"center"} gap={2}>
+          <DropDown
+            label={"Select View"}
+            displayFieldKey={"label"}
+            valueFieldKey={null}
+            selectionValues={viewTypeData}
+            helperText={""}
+            onSelection={(selection) => {
+              toggleViewType(selection.value);
+            }}
+          />
+          <TablePagination
+            refresh={refresh}
+            onChange={(offset: number, limit: number) => {
+              refreshColumns({ offset: offset, limit: limit, searchText: "" });
+            }}
+          />
+        </Stack>
       </Box>
       {loading && <CircularProgress />}
       <Box
@@ -994,17 +990,15 @@ const PeriodicTable = (props: PeriodicTableProps) => {
         {viewType === "table" && dimensions.width <= maxPhoneWidth && (
           <MobileView columns={props.columns} rows={mobileRows} />
         )}
-        {
-            viewType !== "table" 
-            &&
-            props.chartKeyFields != null 
-            &&
-            props.chartValueFields != null 
-            &&
-            (
-                <TableChartView keyFields={props.chartKeyFields} valueFields={props.chartValueFields} dataRows={dataRows}/>
-            )
-        }
+        {viewType !== "table" &&
+          props.chartKeyFields != null &&
+          props.chartValueFields != null && (
+            <TableChartView
+              keyFields={props.chartKeyFields}
+              valueFields={props.chartValueFields}
+              dataRows={dataRows}
+            />
+          )}
         <Box></Box>
       </Box>
     </div>
