@@ -152,13 +152,16 @@ const Page = () => {
         ...entry,
         BillDate: entry.BillDate.substring(0, 10),
         DueDate: entry.DueDate.substring(0, 10),
-        Amount: `${entry.currency ?? "₹"} ${numericToString(entry.Amount)}`,
-        DueAmount: `${entry.currency ?? "₹"} ${numericToString(
-          entry.DueAmount
-        )}`,
-        OverDueAmount: `${entry.currency ?? "₹"} ${numericToString(
-          entry.OverDueAmount
-        )}`,
+        //Amount: `${entry.currency ?? "₹"} ${numericToString(entry.Amount)}`,
+        Amount: entry.Amount,
+        DueAmount: entry.DueAmount,
+        OverDueAmount: entry.OverDueAmount,
+        //DueAmount: `${entry.currency ?? "₹"} ${numericToString(
+          //entry.DueAmount
+        //)}`,
+        //OverDueAmount: `${entry.currency ?? "₹"} ${numericToString(
+         // entry.OverDueAmount
+        //)}`,
         currency: entry.currency ?? "₹",
       };
     });
@@ -371,6 +374,30 @@ const Page = () => {
       view: (
         <CardView title="Party Outstandings" actions={[]}>
           <PeriodicTable
+            chartKeyFields={[
+                {
+                "label": "Party",
+                "value": "LedgerName"
+                },
+                {
+                "label": "LedgerGroup",
+                "value": "LedgerGroupName"
+                },
+            ]}
+            chartValueFields={[
+                {
+                "label": "Pending Amount",
+                "value": "Amount"
+                },
+                {
+                "label": "Due Amount",
+                "value": "DueAmount"
+                },
+                {
+                "label": "OverDue Amount",
+                "value": "OverDueAmount"
+                },
+            ]}
             refreshFilterView={refresh}
             RenderAdditionalView={renderFilterView()}
             useSearch={true}

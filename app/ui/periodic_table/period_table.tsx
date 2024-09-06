@@ -38,6 +38,7 @@ import {
 import { SketchPicker } from "react-color";
 import { DynGrid, Weight } from "../responsive_grid";
 import { DropDown } from "../drop_down";
+import { SingleChartView } from "@/app/ui/graph_util";
 
 interface ApiProps {
   offset: number;
@@ -61,6 +62,8 @@ interface PeriodicTableProps {
   onRowClick?: (rowData: any) => void;
   checkBoxSelection?: boolean;
   renderCheckedView?: (values: any[]) => ReactElement;
+  chartKeyFields?: any[];
+  chartValueFields?: any[];
 }
 
 interface TableActionProps {
@@ -743,6 +746,76 @@ const TableFilterView = ({
   );
 };
 
+interface TableChartProps {
+    dataRows: any[];
+    keyFields: string[];
+    valueFields: string[];
+}
+
+const TableChartView = ({dataRows, keyFields, valueFields}: TableChartProps) => {
+
+    const [data, setData] = useState<any[]>([]);
+    const [keyField, setKeyField] = useState<any>(keyFields[0]);
+    const [valueField, setValueField] = useState<any>(valueFields[0]);
+
+    useEffect(() => {
+        createChartData(keyFields[0], valueFields[0]);
+    }, [dataRows])
+
+
+    const createChartData = (key: any, value: any) => {
+        let chartValues: any[] =[]
+        dataRows.map((row: any[]) => {
+            let keyData = row.find((entry: any) => entry.field === key.value) ?? null;
+            let valueData = row.find((entry: any) => entry.field === value.value) ?? null;
+            if (keyData === null || valueData === null) {
+                return;
+            }
+            chartValues.push({
+                label: keyData.value,
+                value: valueData.value,
+            });
+        })
+        alert(`chart value: ${JSON.stringify(chartValues)}`)
+        setData(chartValues)
+    }
+
+    return (
+        <Box>
+        <div className="flex flex-row justify-center">
+            <DropDown
+                label={"Select Label"}
+                displayFieldKey={"label"}
+                valueFieldKey={null}
+                selectionValues={keyFields}
+                helperText={""}
+                onSelection={(selection) => {
+                    setKeyField(selection)
+                    createChartData(selection, valueField);
+                }}
+            />
+            <DropDown
+                label={"Select Value"}
+                displayFieldKey={"label"}
+                valueFieldKey={null}
+                selectionValues={valueFields}
+                helperText={""}
+                onSelection={(selection) => {
+                    setValueField(selection)
+                    createChartData(keyField, selection);
+                }}
+            />
+
+        </div>
+            <SingleChartView 
+                defaultChart="pie"
+                values={data}
+                title=""
+            />
+        </Box>
+    );
+}
+
 const PeriodicTable = (props: PeriodicTableProps) => {
   const [loading, setLoading] = useState(false);
   const [refresh, toggleRefresh] = useState(false);
@@ -892,7 +965,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
             }}
           />
         )}
-        {dimensions.width > maxPhoneWidth && (
+        {viewType === "table" && dimensions.width > maxPhoneWidth && (
           <Table
             columns={props.columns}
             rows={dataRows}
@@ -907,9 +980,20 @@ const PeriodicTable = (props: PeriodicTableProps) => {
             }}
           />
         )}
-        {dimensions.width <= maxPhoneWidth && (
+        {viewType === "table" && dimensions.width <= maxPhoneWidth && (
           <MobileView columns={props.columns} rows={mobileRows} />
         )}
+        {
+            viewType !== "table" 
+            &&
+            props.chartKeyFields != null 
+            &&
+            props.chartValueFields != null 
+            &&
+            (
+                <TableChartView keyFields={props.chartKeyFields} valueFields={props.chartValueFields} dataRows={dataRows}/>
+            )
+        }
         <Box></Box>
       </Box>
     </div>
