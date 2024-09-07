@@ -118,8 +118,6 @@ const DataTable: React.FC<TableViewProps> = ({
               borderWidth: 1,
               borderRadius: 4,
               borderColor: inspiredPalette.lightTextGrey,
-           
-
             }}
           >
             <IconButton
@@ -142,11 +140,9 @@ const DataTable: React.FC<TableViewProps> = ({
               borderRadius: 4,
               borderColor: inspiredPalette.lightTextGrey,
             }}
-           
           >
             <IconButton
               className="w-full justify-between"
-          
               sx={{
                 color: theme.palette.primary.main,
               }}
@@ -160,7 +156,7 @@ const DataTable: React.FC<TableViewProps> = ({
           </Box>
 
           {openFilter && (
-            <Box 
+            <Box
               className="w-auto h-full  "
               style={{
                 minWidth: 200,
@@ -175,8 +171,6 @@ const DataTable: React.FC<TableViewProps> = ({
                   <Box
                     key={index}
                     className="flex flex-row justify-start items-center px-2 "
-
-                  
                   >
                     <Checkbox
                       checked={columnVisibility[entry.field]}

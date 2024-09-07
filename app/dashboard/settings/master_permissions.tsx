@@ -302,70 +302,77 @@ const MasterPermissions = () => {
   // }
 
   return (
-    <Stack flexDirection={"column"} gap={1.5}>
-      <DropDown
-        label={"Select User"}
-        displayFieldKey={"name"}
-        valueFieldKey={null}
-        selectionValues={data}
-        helperText={""}
-        onSelection={(_data) => {
-          selectedUser.current = _data?.id;
-          triggerRefresh(!refresh);
-        }}
-      />
+    <Box>
+      <Stack flexDirection={"column"} gap={1.5}>
+        <DropDown
+          label={"Select User"}
+          displayFieldKey={"name"}
+          valueFieldKey={null}
+          selectionValues={data}
+          helperText={""}
+          onSelection={(_data) => {
+            selectedUser.current = _data?.id;
+            triggerRefresh(!refresh);
+          }}
+        />
 
-      <DropDown
-        label={"Select Master"}
-        displayFieldKey={"title"}
-        valueFieldKey={null}
-        selectionValues={masterTypes}
-        helperText={""}
-        onSelection={(selection) => {
-          selectedMasterType.current = selection;
-          triggerRefresh(!refresh);
-        }}
-      />
-      <Stack flexDirection={"row"} alignItems={"center"} gap={1.2}>
-        <Box sx={{ flex: 1 }}>
-          <DropDown
-            label="Filter"
-            displayFieldKey={"title"}
-            valueFieldKey={null}
-            selectionValues={filterData}
-            helperText={""}
-            onSelection={(_selection) => {
-              selectedFilter.current = _selection.title;
-              triggerRefresh(!refresh);
-            }}
-          />
-        </Box>
-        <Button variant="contained" onClick={handleMapAll} sx={{ height: 50 }}>
-          <Typography textTransform={"capitalize"} letterSpacing={0.8}>
-            Map All
-          </Typography>
-        </Button>
-        <Button
-          variant="contained"
-          onClick={handleRemoveAll}
-          sx={{ height: 50 }}
-        >
-          <Typography textTransform={"capitalize"} letterSpacing={0.8}>
-            Remove All
-          </Typography>
-        </Button>
+        <DropDown
+          label={"Select Master"}
+          displayFieldKey={"title"}
+          valueFieldKey={null}
+          selectionValues={masterTypes}
+          helperText={""}
+          onSelection={(selection) => {
+            selectedMasterType.current = selection;
+            triggerRefresh(!refresh);
+          }}
+        />
+        <Stack flexDirection={"row"} alignItems={"center"} gap={1.2}>
+          <Box sx={{ flex: 1 }}>
+            <DropDown
+              label="Filter"
+              displayFieldKey={"title"}
+              valueFieldKey={null}
+              selectionValues={filterData}
+              helperText={""}
+              onSelection={(_selection) => {
+                selectedFilter.current = _selection.title;
+                triggerRefresh(!refresh);
+              }}
+            />
+          </Box>
+          <Button
+            variant="contained"
+            onClick={handleMapAll}
+            sx={{ height: 50 }}
+          >
+            <Typography textTransform={"capitalize"} letterSpacing={0.8}>
+              Map All
+            </Typography>
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleRemoveAll}
+            sx={{ height: 50 }}
+          >
+            <Typography textTransform={"capitalize"} letterSpacing={0.8}>
+              Remove All
+            </Typography>
+          </Button>
+        </Stack>
+
+        <DataTable
+          columns={columns}
+          useServerPagination={false}
+          refresh={refresh}
+          onApi={async () => {
+            return await onApi();
+          }}
+          useSearch={false}
+          onRowClick={(params) => {}}
+        />
       </Stack>
-      <DataTable
-        columns={columns}
-        useServerPagination={false}
-        refresh={refresh}
-        onApi={async () => {
-          return await onApi();
-        }}
-        useSearch={false}
-        onRowClick={(params) => {}}
-      />
-    </Stack>
+    </Box>
   );
 };
 
