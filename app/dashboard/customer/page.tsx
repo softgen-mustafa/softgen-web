@@ -121,6 +121,7 @@ const CustomerPartySearch = () => {
             }}
           /> */}
           <PeriodicTable
+            hideColumns={["id"]}
             useSearch={false}
             columns={columns.map((col: any) => {
               let column: TableColumn = {

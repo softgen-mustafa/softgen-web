@@ -52,6 +52,7 @@ interface ApiProps {
 
 interface PeriodicTableProps {
   iconActions?: any[];
+  hideColumns?: string[];
   columns: TableColumn[];
   rows?: any[];
   useSearch: boolean;
@@ -874,9 +875,13 @@ const PeriodicTable = (props: PeriodicTableProps) => {
     }
     let tableRows: TableRow[][] = [];
 
+    const visibleColumns = props.columns.filter(
+      (column) => !props.hideColumns?.includes(column.field)
+    );
+
     rows.map((row: any) => {
       let cells: TableRow[] = [];
-      props.columns.map((column: TableColumn) => {
+      visibleColumns.map((column: TableColumn) => {
         let cell: TableRow = {
           type: column.type,
           field: column.field,
@@ -983,7 +988,10 @@ const PeriodicTable = (props: PeriodicTableProps) => {
         {viewType === "table" && dimensions.width > maxPhoneWidth && (
           <Table
             iconActions={props.iconActions}
-            columns={props.columns}
+            columns={props.columns.filter(
+              (column) => !props.hideColumns?.includes(column.field)
+            )}
+            // columns={props.columns}
             rows={dataRows}
             onRowClick={props.onRowClick}
             checkBox={props.checkBoxSelection}
@@ -997,7 +1005,12 @@ const PeriodicTable = (props: PeriodicTableProps) => {
           />
         )}
         {viewType === "table" && dimensions.width <= maxPhoneWidth && (
-          <MobileView columns={props.columns} rows={mobileRows} />
+          <MobileView
+            columns={props.columns.filter(
+              (column) => !props.hideColumns?.includes(column.field)
+            )}
+            rows={mobileRows}
+          />
         )}
         {viewType !== "table" &&
           props.chartKeyFields != null &&
