@@ -29,6 +29,8 @@ import { numericToString } from "@/app/services/Local/helper";
 import {
   PeriodicTable,
   TableColumn,
+  ApiProps,
+  TableSearchKey,
 } from "@/app/ui/periodic_table/period_table";
 
 const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
@@ -49,6 +51,11 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
     //   }
     // });
   }, [voucherType]);
+
+  // interface TableSearchKey {
+  //   title: string;
+  //   value: string;
+  // }
 
   const columns: GridColDef<any[number]>[] = [
     {
@@ -76,6 +83,13 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
       sortable: true,
       flex: 1,
       minWidth: 150,
+    },
+  ];
+
+  const searchKeys: TableSearchKey[] = [
+    {
+      title: "StockGroup",
+      value: "Stock Group",
     },
   ];
 
@@ -144,7 +158,8 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
         onRowClick={() => {}}
       /> */}
       <PeriodicTable
-        useSearch={false}
+        useSearch={true}
+        searchKeys={searchKeys}
         columns={columns.map((col: any) => {
           console.log(col);
           let column: TableColumn = {
@@ -544,7 +559,7 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
           <CircularProgress />
         </div>
       )} */}
-      <DataTable
+      {/* <DataTable
         columns={columns}
         refresh={refresh}
         onApi={async (page, pageSize, searchText) => {
@@ -572,6 +587,21 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
             </Button>
           </div>
         )}
+      /> */}
+      <PeriodicTable
+        useSearch={false}
+        columns={columns.map((col: any) => {
+          let column: TableColumn = {
+            header: col.headerName,
+            field: col.field,
+            type: "text",
+            pinned: false,
+            rows: [],
+          };
+          return column;
+        })}
+        onApi={loadData}
+        reload={refresh}
       />
     </div>
   );
@@ -668,7 +698,7 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
         disableRowSelectionOnClick
         onPaginationModelChange={(value) => {}}
       /> */}
-      <DataTable
+      {/* <DataTable
         columns={columns}
         refresh={refresh}
         onApi={async (page, pageSize, searchText) => {
@@ -677,6 +707,21 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
         useSearch={false}
         useServerPagination={false}
         onRowClick={() => {}}
+      /> */}
+      <PeriodicTable
+        useSearch={false}
+        columns={columns.map((col: any) => {
+          let column: TableColumn = {
+            header: col.headerName,
+            field: col.field,
+            type: "text",
+            pinned: false,
+            rows: [],
+          };
+          return column;
+        })}
+        onApi={loadData}
+        reload={refresh}
       />
     </div>
   );
