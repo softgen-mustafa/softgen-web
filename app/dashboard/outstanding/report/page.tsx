@@ -117,7 +117,6 @@ const Page = () => {
           name: entry,
         };
       });
-      alert(JSON.stringify(values));
       return values;
     } catch {
       return [];

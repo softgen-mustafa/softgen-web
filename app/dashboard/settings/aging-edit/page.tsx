@@ -145,13 +145,14 @@ const Page = () => {
             }}
           />
           <br />
-          <div className="flex flex-row justify-end">
+          <div className="flex flex-row gap-2 justify-end">
             {mode === "edit" ? (
               <>
                 <Button
                   style={{ background: inspiredPalette.dark }}
                   variant="contained"
                   onClick={update}
+                  sx={{ textTransform: "capitalize" }}
                 >
                   Update
                 </Button>
@@ -159,6 +160,7 @@ const Page = () => {
                   style={{ background: inspiredPalette.darkRed }}
                   variant="contained"
                   onClick={deleteEntry}
+                  sx={{ textTransform: "capitalize" }}
                 >
                   Delete
                 </Button>
@@ -168,6 +170,7 @@ const Page = () => {
                 style={{ background: inspiredPalette.dark }}
                 variant="contained"
                 onClick={create}
+                sx={{ textTransform: "capitalize" }}
               >
                 Create
               </Button>

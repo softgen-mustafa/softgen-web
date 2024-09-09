@@ -52,7 +52,6 @@ interface ApiProps {
 
 interface PeriodicTableProps {
   iconActions?: any[];
-  hideColumns?: string[];
   columns: TableColumn[];
   rows?: any[];
   useSearch: boolean;
@@ -790,7 +789,7 @@ const TableChartView = ({
 
   return (
     <Stack sx={{ flexDirection: { xs: "col", sm: "col", md: "row" } }} gap={3}>
-      <div className="flex flex-1 flex-col gap-4">
+      <Box className="flex flex-1 flex-col gap-4">
         <DropDown
           label={"Select Label"}
           displayFieldKey={"label"}
@@ -813,8 +812,10 @@ const TableChartView = ({
             createChartData(keyField, selection);
           }}
         />
-      </div>
-      <SingleChartView defaultChart="pie" values={data} title="" />
+      </Box>
+      <Box sx={{ width: "80%" }}>
+        <SingleChartView defaultChart="pie" values={data} title="" />
+      </Box>
     </Stack>
   );
 };
@@ -875,13 +876,9 @@ const PeriodicTable = (props: PeriodicTableProps) => {
     }
     let tableRows: TableRow[][] = [];
 
-    const visibleColumns = props.columns.filter(
-      (column) => !props.hideColumns?.includes(column.field)
-    );
-
     rows.map((row: any) => {
       let cells: TableRow[] = [];
-      visibleColumns.map((column: TableColumn) => {
+      props.columns.map((column: TableColumn) => {
         let cell: TableRow = {
           type: column.type,
           field: column.field,
@@ -988,9 +985,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
         {viewType === "table" && dimensions.width > maxPhoneWidth && (
           <Table
             iconActions={props.iconActions}
-            columns={props.columns.filter(
-              (column) => !props.hideColumns?.includes(column.field)
-            )}
+            columns={props.columns}
             // columns={props.columns}
             rows={dataRows}
             onRowClick={props.onRowClick}
@@ -1005,12 +1000,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
           />
         )}
         {viewType === "table" && dimensions.width <= maxPhoneWidth && (
-          <MobileView
-            columns={props.columns.filter(
-              (column) => !props.hideColumns?.includes(column.field)
-            )}
-            rows={mobileRows}
-          />
+          <MobileView columns={props.columns} rows={mobileRows} />
         )}
         {viewType !== "table" &&
           props.chartKeyFields != null &&

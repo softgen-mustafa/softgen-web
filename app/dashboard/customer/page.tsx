@@ -121,7 +121,6 @@ const CustomerPartySearch = () => {
             }}
           /> */}
           <PeriodicTable
-            hideColumns={["id"]}
             useSearch={false}
             columns={columns.map((col: any) => {
               let column: TableColumn = {
@@ -129,6 +128,7 @@ const CustomerPartySearch = () => {
                 field: col.field,
                 type: "text",
                 pinned: false,
+                hideable: col.hideable,
                 rows: [],
               };
               return column;
