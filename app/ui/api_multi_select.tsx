@@ -22,7 +22,7 @@ const ApiMultiDropDown = ({
   onApi,
   helperText,
   onSelection,
-  defaultSelections = []
+  defaultSelections = [],
 }: {
   label: string;
   reload: boolean;
@@ -41,12 +41,14 @@ const ApiMultiDropDown = ({
   let searchText = useRef("");
 
   useEffect(() => {
+  
     loadData();
   }, [reload]);
 
   const loadData = async () => {
     let selectionValues: any[] = await onApi(searchText.current);
     setDropDownValues(selectionValues);
+    // alert(JSON.stringify(selectionValues));
     if (
       selectionValues &&
       selectionValues.length > 0 &&
@@ -57,7 +59,10 @@ const ApiMultiDropDown = ({
   };
 
   const handleChange = (event: any) => {
+
+    
     const value = event.target.value as any[];
+    // alert(JSON.stringify(value))
     setSelectedValues(value);
     onSelection(value);
   };
@@ -68,7 +73,7 @@ const ApiMultiDropDown = ({
       <Select
         className="w-full"
         multiple
-        value={selectedValues}
+        value={selectedValues ?? []}
         label={label}
         onChange={handleChange}
       >
@@ -96,11 +101,15 @@ const ApiMultiDropDown = ({
             value={valueFieldKey == null ? entry : entry[valueFieldKey!]}
           >
             <Checkbox
-              checked={selectedValues.some(
-                (item) =>
-                  (valueFieldKey == null ? item : item[valueFieldKey!]) ===
-                  (valueFieldKey == null ? entry : entry[valueFieldKey!])
-              )}
+              checked={
+                selectedValues != null &&
+                selectedValues.length > 0 &&
+                selectedValues.some(
+                  (item) =>
+                    (valueFieldKey == null ? item : item[valueFieldKey!]) ===
+                    (valueFieldKey == null ? entry : entry[valueFieldKey!])
+                )
+              }
             />
             <ListItemText primary={entry[displayFieldKey]} />
           </MenuItem>

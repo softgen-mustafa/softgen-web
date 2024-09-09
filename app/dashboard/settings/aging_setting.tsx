@@ -107,7 +107,7 @@ const AgingSettings = () => {
   // }
 
   const handleRowClick = (rowData: any) => {
-    alert(JSON.stringify(rowData));
+    // alert(JSON.stringify(rowData));
     localStorage.setItem("aging_mode", "edit");
     localStorage.setItem("aging_code", JSON.stringify(rowData));
     router.push("/dashboard/settings/aging-edit");

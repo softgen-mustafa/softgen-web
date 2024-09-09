@@ -56,7 +56,7 @@ const Page = () => {
       let url = `${getBmrmBaseUrl()}/aging-settings/delete?agingCode=${
         agingData.id
       }`;
-      alert(url);
+      // alert(url);
       await postAsync(url, {});
       router.push("/dashboard/settings");
     } catch (error) {
