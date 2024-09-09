@@ -91,7 +91,8 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
         return {
           id: index + 1,
           partyName: entry.name,
-          amount: `\u20B9 ${numericToString(entry.totalAmount)}`,
+          // amount: `\u20B9 ${numericToString(entry.totalAmount)}`,
+          amount: entry.totalAmount,
           // currency: entry.currency ?? "₹",
         };
       });
@@ -157,6 +158,18 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
         onRowClick={() => {}}
       /> */}
       <PeriodicTable
+        chartKeyFields={[
+          {
+            label: "Party",
+            value: "partyName",
+          },
+        ]}
+        chartValueFields={[
+          {
+            label: "Amount",
+            value: "amount",
+          },
+        ]}
         useSearch={false}
         columns={columns.map((col: any) => {
           let column: TableColumn = {
