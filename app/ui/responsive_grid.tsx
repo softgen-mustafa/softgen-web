@@ -29,6 +29,7 @@ interface CardViewProps {
   title?: string;
   actions?: JSX.Element[];
   permissionCode?: PermissionKeys;
+  style?: any;
 }
 
 const CardView: React.FC<CardViewProps> = ({
@@ -37,6 +38,7 @@ const CardView: React.FC<CardViewProps> = ({
   title,
   actions,
   permissionCode = null,
+  style,
 }) => {
   const [hasAccess, setAccess] = useState(false);
 
@@ -58,7 +60,7 @@ const CardView: React.FC<CardViewProps> = ({
   };
 
   return (
-    <Card className={`h-full p-3 rounded-lg shadow-lg ${className}`}>
+    <Card sx={style} className={`h-full p-3 rounded-lg shadow-lg ${className}`}>
       {title != null && title.length > 0 && (
         <CardHeader
           title={title}

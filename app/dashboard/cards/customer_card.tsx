@@ -9,6 +9,7 @@ import {
   IconButton,
   Box,
   Stack,
+  useTheme,
 } from "@mui/material";
 import { ChevronRight, Dashboard } from "@mui/icons-material";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
@@ -24,6 +25,7 @@ const CustomerDetailsCard: React.FC<CustomerDetailsCardProps> = ({
   companyId,
 }) => {
   const router = useRouter();
+  const theme = useTheme();
   const [data, setData] = useState<{ totalCount: number } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasPermission, setHasPermission] = useState(false);
@@ -78,7 +80,7 @@ const CustomerDetailsCard: React.FC<CustomerDetailsCardProps> = ({
             width={50}
             height={50}
             borderRadius={2}
-            bgcolor={"#ef7a7a80"}
+            bgcolor={theme.palette.primary.light}
             className="flex items-center justify-center"
           >
             <GroupIcon sx={{ color: "#FFFFFF" }} />

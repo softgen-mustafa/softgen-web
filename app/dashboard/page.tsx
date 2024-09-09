@@ -289,7 +289,11 @@ const DashboardPage = () => {
               }}
             />
           </CardView>
-          <CardView className="mt-2 bg-red-500" permissionCode="CustomerCard">
+          <CardView
+            className="mt-2"
+            style={{ bgcolor: theme.palette.primary.main }}
+            permissionCode="CustomerCard"
+          >
             <CustomerDetailsCard companyId={data[cachedCompanyIndex]} />
           </CardView>
         </div>

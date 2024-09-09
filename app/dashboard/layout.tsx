@@ -192,7 +192,10 @@ const DrawerContent = ({
               width={35}
               height={35}
               borderRadius={"50%"}
-              onClick={() => onThemeChange(_theme.theme)}
+              onClick={() => {
+                onThemeChange(_theme.theme);
+                Cookies.set("theme", _theme.code);
+              }}
               sx={{
                 cursor: "pointer",
                 borderWidth: _theme.theme.palette === theme.palette ? 2 : 0,
@@ -226,6 +229,25 @@ const DrawerContent = ({
           <ListItemText color={inspiredPalette.darker} primary={"Logout"} />
         </ListItem>
       </ButtonBase>
+      {/* <Button
+        variant="contained"
+        sx={{
+          color: inspiredPalette.darker,
+          bgcolor: "#FFFFFF",
+          textTransform: "capitalize",
+          p: 1.2,
+          mx: 2,
+          mt: 1,
+          mb: 2,
+          boxShadow: "none",
+          "&:hover": {
+            bgcolor: "#FFFFFF",
+          },
+        }}
+        startIcon={<Logout />}
+      >
+        Logout
+      </Button> */}
     </div>
   );
 };
@@ -294,7 +316,11 @@ export default function DashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [palette, changePalette] = useState<any>(appThemes[0].theme);
+  let currentTheme =
+    appThemes.find((th: any) => th.code == Cookies.get("theme")) ??
+    appThemes[0];
+
+  const [palette, changePalette] = useState<any>(currentTheme.theme);
   const theme = useMemo(() => {
     return getTheme(palette);
   }, [palette]);

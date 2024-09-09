@@ -12,53 +12,60 @@ import {
   MenuItem,
   Stack,
   Typography,
+  useTheme,
 } from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 import MenuIcon from "@mui/icons-material/MoreVertOutlined";
 import CircleIcon from "@mui/icons-material/Circle";
+import { appThemes, getColorKey, themeWheelByHex } from "../theme";
+import Cookies from "js-cookie";
 
-const graphColors: string[] = [
-  "#fdbf6f",
-  "#ff7f00",
-  "#cab2d6",
-  "#6a3d9a",
-  "#ffff99",
-  "#b15928",
-  "#fbb4ae",
-  "#b3cde3",
-  "#ccebc5",
-  "#decbe4",
-  "#fed9a6",
-  "#ffffcc",
-  "#e5d8bd",
-  "#fddaec",
-  "#f2f2f2",
-  "#a6cee3",
-  "#1f78b4",
-  "#b2df8a",
-  "#33a02c",
-  "#fb9a99",
-  "#e31a1c",
-  "#b3e2cd",
-  "#fdcdac",
-  "#cbd5e8",
-  "#f4cae4",
-  "#e6f5c9",
-  "#fff2ae",
-  "#f1e2cc",
-  "#cccccc",
-  "#e41a1c",
-  "#377eb8",
-  "#4daf4a",
-  "#984ea3",
-  "#ff7f00",
-  "#ffff33",
-  "#a65628",
-  "#f781bf",
-  "#999999",
-];
+// const graphColors: string[] = [
+//   "#fdbf6f",
+//   "#ff7f00",
+//   "#cab2d6",
+//   "#6a3d9a",
+//   "#ffff99",
+//   "#b15928",
+//   "#fbb4ae",
+//   "#b3cde3",
+//   "#ccebc5",
+//   "#decbe4",
+//   "#fed9a6",
+//   "#ffffcc",
+//   "#e5d8bd",
+//   "#fddaec",
+//   "#f2f2f2",
+//   "#a6cee3",
+//   "#1f78b4",
+//   "#b2df8a",
+//   "#33a02c",
+//   "#fb9a99",
+//   "#e31a1c",
+//   "#b3e2cd",
+//   "#fdcdac",
+//   "#cbd5e8",
+//   "#f4cae4",
+//   "#e6f5c9",
+//   "#fff2ae",
+//   "#f1e2cc",
+//   "#cccccc",
+//   "#e41a1c",
+//   "#377eb8",
+//   "#4daf4a",
+//   "#984ea3",
+//   "#ff7f00",
+//   "#ffff33",
+//   "#a65628",
+//   "#f781bf",
+//   "#999999",
+// ];
 
 const Legends = ({ data }: { data: any[] }) => {
+  let currentTheme =
+    appThemes.find((th: any) => th.code == Cookies.get("theme")) ??
+    appThemes[0];
+
   return (
     <Stack
       mt={3}
@@ -75,7 +82,11 @@ const Legends = ({ data }: { data: any[] }) => {
           alignItems={"center"}
           gap={0.3}
         >
-          <CircleIcon sx={{ color: graphColors[index % graphColors.length] }} />
+          <CircleIcon
+            sx={{
+              color: currentTheme.colors[index % currentTheme.colors.length],
+            }}
+          />
           <Typography>{item.label}</Typography>
         </Stack>
       ))}
@@ -84,6 +95,10 @@ const Legends = ({ data }: { data: any[] }) => {
 };
 
 const Pie = (values: any[], title: string) => {
+  let currentTheme =
+    appThemes.find((th: any) => th.code == Cookies.get("theme")) ??
+    appThemes[0];
+
   return (
     <Box
       display={"flex"}
@@ -117,12 +132,12 @@ const Pie = (values: any[], title: string) => {
           {
             data: values.map((item, index) => ({
               ...item,
-              color: graphColors[index % graphColors.length],
+              color: currentTheme.colors[index % currentTheme.colors.length],
             })),
-            innerRadius: 30,
+            innerRadius: 70,
             outerRadius: 120,
-            paddingAngle: 1,
-            cornerRadius: 3,
+            paddingAngle: 0.5,
+            cornerRadius: 1,
             startAngle: 0,
             endAngle: 360,
             // cx: 150,
@@ -137,6 +152,10 @@ const Pie = (values: any[], title: string) => {
 };
 
 const Bar = (values: any[], title: string) => {
+  let currentTheme =
+    appThemes.find((th: any) => th.code == Cookies.get("theme")) ??
+    appThemes[0];
+
   return (
     <Box
       display={"flex"}
@@ -153,7 +172,7 @@ const Bar = (values: any[], title: string) => {
             dataKey: "label",
             colorMap: {
               type: "ordinal",
-              colors: graphColors,
+              colors: currentTheme.colors,
             },
           },
         ]}
@@ -168,6 +187,10 @@ const Bar = (values: any[], title: string) => {
 };
 
 const HorizontalBar = (values: any[], title: string) => {
+  let currentTheme =
+    appThemes.find((th: any) => th.code == Cookies.get("theme")) ??
+    appThemes[0];
+
   return (
     <Box
       display={"flex"}
@@ -183,7 +206,7 @@ const HorizontalBar = (values: any[], title: string) => {
             dataKey: "label",
             colorMap: {
               type: "ordinal",
-              colors: graphColors,
+              colors: currentTheme.colors,
             },
           },
         ]}
