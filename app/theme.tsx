@@ -15,6 +15,7 @@ const appThemes: any = [
       palette: {
         primary: {
           main: "#303f9f",
+          light: "#1d265c",
           contrastText: "#ffffff",
         },
         secondary: {
@@ -53,6 +54,7 @@ const appThemes: any = [
       palette: {
         primary: {
           main: inspiredPalette.lightOrange,
+          light: "#f2815e",
           contrastText: "#232325",
         },
         secondary: {
@@ -72,6 +74,7 @@ const appThemes: any = [
       palette: {
         primary: {
           main: inspiredPalette.lightBlue,
+          light: "#5b9dd4",
           contrastText: "#232325",
         },
         secondary: {

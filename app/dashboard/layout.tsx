@@ -12,6 +12,7 @@ import {
   Typography,
   Modal,
   Button,
+  Stack,
 } from "@mui/material";
 import { useTheme, Theme } from "@mui/material/styles";
 import React, {
@@ -40,6 +41,7 @@ import { PaletteMode } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
 import { getTheme, appThemes } from "../theme";
+import CheckIcon from "@mui/icons-material/Check";
 
 const drawerWidth = 300;
 
@@ -162,7 +164,7 @@ const DrawerContent = ({
       </Box>
       <DrawerList userType={userType.current} onRoute={onRoute} />
 
-      <div className="mx-3 p-2 bg-white rounded-md">
+      {/* <div className="mx-3 p-2 bg-white rounded-md">
         <DropDown
           label={"Change theme"}
           displayFieldKey={"name"}
@@ -173,7 +175,43 @@ const DrawerContent = ({
             onThemeChange(selection.theme);
           }}
         />
-      </div>
+      </div> */}
+      <Stack
+        className="ml-4"
+        flexDirection={"row"}
+        alignItems={"center"}
+        gap={2}
+        mb={1}
+      >
+        {appThemes.map((_theme: any) => {
+          return (
+            <Box
+              className="flex items-center justify-center"
+              key={_theme.code}
+              bgcolor={_theme.theme.palette.primary.main}
+              width={35}
+              height={35}
+              borderRadius={"50%"}
+              onClick={() => onThemeChange(_theme.theme)}
+              sx={{
+                cursor: "pointer",
+                borderWidth: _theme.theme.palette === theme.palette ? 2 : 0,
+                borderColor:
+                  _theme.theme.palette === theme.palette
+                    ? theme.palette.primary.contrastText
+                    : "",
+              }}
+            >
+              {_theme.theme.palette === theme.palette && (
+                <CheckIcon
+                  fontSize="small"
+                  sx={{ color: theme.palette.primary.contrastText }}
+                />
+              )}
+            </Box>
+          );
+        })}
+      </Stack>
 
       <ButtonBase
         className="w-11/12 m-3 mb-3 rounded-md flex flex-row align-middle justify-center bg-white"

@@ -45,23 +45,19 @@ const DrawerEntry = ({
       <ListItem
         className={entry.selected ? "rounded-md" : ""}
         style={{
-          backgroundColor: entry.selected ? "#FFFFFF" : "",
+          backgroundColor: entry.selected ? theme.palette.primary.light : "",
         }}
       >
         <ListItemIcon
           style={{
-            color: entry.selected
-              ? inspiredPalette.darker
-              : theme.palette.primary.contrastText,
+            color: theme.palette.primary.contrastText,
           }}
         >
           {entry.icon}
         </ListItemIcon>
         <ListItemText
           style={{
-            color: entry.selected
-              ? inspiredPalette.darker
-              : theme.palette.primary.contrastText,
+            color: theme.palette.primary.contrastText,
           }}
           primary={entry.title}
         />
