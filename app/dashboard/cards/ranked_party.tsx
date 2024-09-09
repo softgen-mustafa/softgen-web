@@ -57,9 +57,10 @@ const RankedPartyOutstandingCard = ({
         return {
           id: entry.name,
           name: entry.name,
-          amount: `${entry.currency ?? "₹"} ${numericToString(
-            entry.totalAmount
-          )}`,
+          amount: entry.totalAmount,
+          // amount: `${entry.currency ?? "₹"} ${numericToString(
+          //   entry.totalAmount
+          // )}`,
           currency: entry.currency ?? "₹",
         };
       });
@@ -96,6 +97,18 @@ const RankedPartyOutstandingCard = ({
         onRowClick={() => {}}
       /> */}
       <PeriodicTable
+        chartKeyFields={[
+          {
+            label: "Party",
+            value: "name",
+          },
+        ]}
+        chartValueFields={[
+          {
+            label: "Amount",
+            value: "amount",
+          },
+        ]}
         useSearch={false}
         columns={columns.map((col: any) => {
           let column: TableColumn = {

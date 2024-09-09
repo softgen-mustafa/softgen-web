@@ -218,7 +218,8 @@ const DashboardPage = () => {
         return {
           id: entry.id,
           name: entry.title,
-          amount: `${entry.currency ?? "₹"} ${numericToString(entry.amount)}`,
+          amount: entry.amount,
+          // amount: `${entry.currency ?? "₹"} ${numericToString(entry.amount)}`,
           billCount: entry.billCount,
           currency: entry.currency ?? "₹",
         };
@@ -246,8 +247,9 @@ const DashboardPage = () => {
       flex: 1,
       type: "number",
       // valueGetter: (value, row) => `${row.currency || ""} ${row.amount || "0"}`,
-      valueGetter: (value, row) =>
-        `${row.currency || ""} ${numericToString(row.amount) || "0"}`,
+      // valueGetter: (value, row) =>
+      //   `${row.currency || ""} ${numericToString(row.amount) || "0"}`,
+      valueGetter: (value, row) => row.amount || "0",
     },
   ];
 
@@ -259,142 +261,6 @@ const DashboardPage = () => {
           <BrokerMonthlyOverview companyId={data[cachedCompanyIndex]} />
         </CardView>
       ),
-    },
-  ];
-
-  const CC = [
-    {
-      header: "Name",
-      field: "name",
-      type: "string",
-      pinned: true,
-    },
-    {
-      header: "Age",
-      field: "age",
-      type: "number",
-    },
-    {
-      header: "Location",
-      field: "location",
-      type: "string",
-    },
-    {
-      header: "Email",
-      field: "email",
-      type: "string",
-      pinned: true,
-    },
-    {
-      header: "Phone Number",
-      field: "phoneNumber",
-      type: "string",
-    },
-    {
-      header: "Gender",
-      field: "gender",
-      type: "string",
-    },
-    {
-      header: "Occupation",
-      field: "occupation",
-      type: "string",
-    },
-    {
-      header: "Hobbies",
-      field: "hobbies",
-      type: "string",
-    },
-  ];
-
-  const dummyData = [
-    {
-      id: 1,
-      name: "John",
-      age: 16,
-      location: "Pune",
-      email: "john@example.com",
-      phoneNumber: "123-456-7890",
-      gender: "Male",
-      occupation: "Student",
-      hobbies: ["Reading", "Cycling"],
-    },
-    {
-      id: 2,
-      name: "Tom",
-      age: 18,
-      location: "Pune",
-      email: "tom@example.com",
-      phoneNumber: "987-654-3210",
-      gender: "Male",
-      occupation: "Intern",
-      hobbies: ["Gaming", "Music"],
-    },
-    {
-      id: 3,
-      name: "Thor",
-      age: 20,
-      location: "Mumbai",
-      email: "thor@example.com",
-      phoneNumber: "555-555-5555",
-      gender: "Male",
-      occupation: "Athlete",
-      hobbies: ["Sports", "Movies"],
-    },
-    {
-      id: 4,
-      name: "Mia",
-      age: 22,
-      location: "Delhi",
-      email: "mia@example.com",
-      phoneNumber: "111-222-3333",
-      gender: "Female",
-      occupation: "Graphic Designer",
-      hobbies: ["Art", "Photography"],
-    },
-    {
-      id: 5,
-      name: "Emma",
-      age: 30,
-      location: "Bangalore",
-      email: "emma@example.com",
-      phoneNumber: "222-333-4444",
-      gender: "Female",
-      occupation: "Software Engineer",
-      hobbies: ["Coding", "Hiking"],
-    },
-    {
-      id: 6,
-      name: "Alex",
-      age: 28,
-      location: "Chennai",
-      email: "alex@example.com",
-      phoneNumber: "444-555-6666",
-      gender: "Non-binary",
-      occupation: "Data Scientist",
-      hobbies: ["Research", "Cooking"],
-    },
-    {
-      id: 7,
-      name: "Liam",
-      age: 35,
-      location: "Hyderabad",
-      email: "liam@example.com",
-      phoneNumber: "333-444-5555",
-      gender: "Male",
-      occupation: "Marketing Manager",
-      hobbies: ["Writing", "Traveling"],
-    },
-    {
-      id: 8,
-      name: "Sophia",
-      age: 27,
-      location: "Kolkata",
-      email: "sophia@example.com",
-      phoneNumber: "666-777-8888",
-      gender: "Female",
-      occupation: "Doctor",
-      hobbies: ["Reading", "Yoga"],
     },
   ];
 
@@ -548,6 +414,18 @@ const DashboardPage = () => {
             }}
           /> */}
           <PeriodicTable
+            chartKeyFields={[
+              {
+                label: "Duration",
+                value: "name",
+              },
+            ]}
+            chartValueFields={[
+              {
+                label: "Amount",
+                value: "amount",
+              },
+            ]}
             useSearch={false}
             columns={columns.map((col: any) => {
               let column: TableColumn = {

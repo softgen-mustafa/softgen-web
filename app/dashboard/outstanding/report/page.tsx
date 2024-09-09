@@ -117,7 +117,7 @@ const Page = () => {
           name: entry,
         };
       });
-      alert(JSON.stringify(values));
+      // alert(JSON.stringify(values));
       return values;
     } catch {
       return [];
@@ -413,7 +413,7 @@ const Page = () => {
                 label: "Send Reminder",
                 icon: <MailOutline />,
                 onPress: (row: any) => {
-                  alert(JSON.stringify(row));
+                  // alert(JSON.stringify(row));
                 },
               },
             ]}
