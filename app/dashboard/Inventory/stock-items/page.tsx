@@ -35,31 +35,26 @@ const Page = () => {
 
   let selectedGroups = useRef<any>(null);
 
-  // useEffect(() => {
-  //   loadGroups().then((_) => setRefresh(!refresh));
-  // }, []);
+  useEffect(() => {
+    
+  }, []);
 
   const loadGroups = async () => {
     try {
-      let url = `${getBmrmBaseUrl()}/stock-group/get/names`;
-      console.log("URL:", url);
+      let url = `${getSgBizBaseUrl()}/stock-group/get/names?searchKey=${""}`;
 
       let response = await getAsync(url);
-      console.log("API Response:", response);
-
-      // Check if response is valid and contains the necessary data
-      if (!response || !Array.isArray(response)) {
-        console.error("Invalid response format or no data.");
+      if (response == null || response.Data == null) {
         return [];
       }
-
-      let values = response.map((entry: any) => ({
-        id: entry.id,
-        name: entry.title,
-      }));
+      let values = response.Data.map((entry: any) => {
+        return {
+          name: entry.Name,
+        };
+      }); 
+      setRefresh(!refresh)
       return values;
-    } catch (error) {
-      console.error("Error loading groups:", error);
+    } catch {
       return [];
     }
   };
@@ -67,6 +62,7 @@ const Page = () => {
   const loadData = async (apiParams: ApiProps) => {
     //let url = "http://118.139.167.125:45700/stock-items/get/report";
     //let url = "http://localhost:35001/stock-items/get/report";
+     
     let url = `${getSgBizBaseUrl()}/stock-items/get/report`;
     let requestBody = {
       Limit: apiParams.limit,
@@ -76,18 +72,9 @@ const Page = () => {
       SortKey: apiParams.sortKey ?? "",
       SortOrder: apiParams.sortOrder ?? "",
       StockGroups:
-        selectedGroups.current != null ? [selectedGroups.current] : [],
+        selectedGroups.current != null ? selectedGroups.current : [],
     };
-    // alert(JSON.stringify(requestBody));
-    /*let appHeaders = {
-            "Content-Type": "application/json; charset=utf-8",
-            "CompanyId": Cookies.get("companyId") ?? 1,
-        };
-        let res = await axios.post(url, requestBody, { headers: appHeaders })
-        if (res.data == null || res.data.Data ==null) {
-            return [];
-        }
-        */
+     
     let res = await postAsync(url, requestBody);
     if (res === null || res.Data === null) {
       return [];
@@ -207,8 +194,9 @@ const Page = () => {
             onApi={loadGroups}
             helperText={""}
             onSelection={(selection) => {
-              selectedGroups.current = selection;
+              selectedGroups.current = selection.map((entry: any) => entry.name) ?? [];
               setRefresh(!refresh);
+
             }}
           />
         </Stack>
@@ -262,6 +250,7 @@ const Page = () => {
               return column;
             })}
             onApi={loadData}
+            reload={refresh}
             sortKeys={sortKeys}
             onRowClick={handleRowClick}
           />
