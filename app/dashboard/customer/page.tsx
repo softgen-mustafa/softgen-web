@@ -128,6 +128,7 @@ const CustomerPartySearch = () => {
                 field: col.field,
                 type: "text",
                 pinned: false,
+                hideable: col.hideable,
                 rows: [],
               };
               return column;

@@ -789,7 +789,7 @@ const TableChartView = ({
 
   return (
     <Stack sx={{ flexDirection: { xs: "col", sm: "col", md: "row" } }} gap={3}>
-      <div className="flex flex-1 flex-col gap-4">
+      <Box className="flex flex-1 flex-col gap-4">
         <DropDown
           label={"Select Label"}
           displayFieldKey={"label"}
@@ -812,8 +812,10 @@ const TableChartView = ({
             createChartData(keyField, selection);
           }}
         />
-      </div>
-      <SingleChartView defaultChart="pie" values={data} title="" />
+      </Box>
+      <Box sx={{ width: "80%" }}>
+        <SingleChartView defaultChart="pie" values={data} title="" />
+      </Box>
     </Stack>
   );
 };
@@ -984,6 +986,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
           <Table
             iconActions={props.iconActions}
             columns={props.columns}
+            // columns={props.columns}
             rows={dataRows}
             onRowClick={props.onRowClick}
             checkBox={props.checkBoxSelection}
