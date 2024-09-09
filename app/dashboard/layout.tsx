@@ -266,11 +266,11 @@ const SideNav = ({
   };
 
   return (
-    <div style={{}}>
-      <div
+    <Box style={{}}>
+      <Box
         className={`fixed top-0 left-0 m-2 shadow-xl rounded-xl justify-center items-center`}
+        bgcolor={theme.palette.primary.main}
         style={{
-          background: theme.palette.primary.main,
           zIndex: 230,
         }}
       >
@@ -282,7 +282,7 @@ const SideNav = ({
         >
           <Dashboard />
         </IconButton>
-      </div>
+      </Box>
       <Box sx={{ display: { md: "none", xs: "block", sm: "block" } }}>
         <Drawer
           variant="temporary"
@@ -307,7 +307,7 @@ const SideNav = ({
           />
         </Drawer>
       </Box>
-    </div>
+    </Box>
   );
 };
 
