@@ -51,6 +51,7 @@ interface ApiProps {
 }
 
 interface PeriodicTableProps {
+  actionViews?: any[];
   iconActions?: any[];
   columns: TableColumn[];
   rows?: any[];
@@ -118,6 +119,7 @@ interface TableProps {
   checkBox?: boolean;
   onChecked?: (values: any[]) => void;
   iconActions?: any[];
+  actionViews?: any[];
 }
 
 const ColumnColorPicker = ({
@@ -300,6 +302,7 @@ const Table = ({
   onRowClick,
   checkBox,
   iconActions = [],
+  actionViews = [],
 }: TableProps) => {
   const theme = useTheme();
 
@@ -421,6 +424,23 @@ const Table = ({
                 </Box>
               );
             })}
+          {actionViews &&
+            actionViews.length > 0 &&
+            actionViews.map((entry: any, index: number) => {
+              return (
+                <Box
+                  key={index}
+                  className="w-full flex p-2"
+                  sx={{
+                    minWidth: 100,
+                    borderBottomWidth: 2,
+                    borderRightWidth: 2,
+                  }}
+                >
+                  <Typography>{entry.label}</Typography>
+                </Box>
+              );
+            })}
         </Box>
         {tableRows.map((row: any[], rowIndex: number) => {
           return (
@@ -509,6 +529,22 @@ const Table = ({
                       >
                         {entry.icon}
                       </IconButton>
+                    </Box>
+                  );
+                })}
+              {actionViews &&
+                actionViews.length > 0 &&
+                actionViews.map((entry: any, index: number) => {
+                  return (
+                    <Box
+                      key={index}
+                      className={`w-full flex p-2 justify-center`}
+                      sx={{
+                        minWidth: 100,
+                        borderRightWidth: 2,
+                      }}
+                    >
+                    {entry.renderView(row)}
                     </Box>
                   );
                 })}
@@ -984,6 +1020,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
         )}
         {viewType === "table" && dimensions.width > maxPhoneWidth && (
           <Table
+            actionViews={props.actionViews}
             iconActions={props.iconActions}
             columns={props.columns}
             // columns={props.columns}

@@ -76,7 +76,15 @@ const UserPermissions = () => {
   //   });
   // }, []);
 
-  const columns: GridColDef<any[number]>[] = [
+  const columns: any[] = [
+    {
+      field: "code",
+      headerName: "Code",
+      editable: false,
+      sortable: true,
+      hideable: true,
+      flex: 2,
+    },
     {
       field: "name",
       headerName: "Name",
@@ -86,22 +94,11 @@ const UserPermissions = () => {
     },
     {
       field: "status",
+      hideable: true,
       headerName: "Status",
       editable: false,
       sortable: false,
       flex: 1,
-      renderCell: (params) => {
-        return (
-          <Box>
-            <Switch
-              checked={params.row.status ? true : false}
-              onChange={() =>
-                updateUserStatus(params.row.code, params.row.status)
-              }
-            />
-          </Box>
-        );
-      },
     },
   ];
 
@@ -125,23 +122,16 @@ const UserPermissions = () => {
   };
 
   const onApi = async (
-    page: number,
-    pageSize: number,
-    searchValue?: string
-    // apiProps: ApiProps
+    apiProps: ApiProps
   ) => {
     let url = `${getBmrmBaseUrl()}/user-info/get/permission?userId=${
       selectedUser.current
     }`;
 
     let requestBody = {
-      page_number: page,
-      page_size: pageSize,
-      search_text: searchValue ?? "",
-
-      // page_number: apiProps.offset + 1,
-      // page_size: apiProps.limit,
-      // search_text: apiProps.searchText ?? "",
+       page_number: apiProps.offset + 1,
+       page_size: apiProps.limit,
+       search_text: apiProps.searchText ?? "",
       filter: selectedFilter.current,
     };
     try {
@@ -222,7 +212,7 @@ const UserPermissions = () => {
           />
         </Box>
       </Stack>
-      <DataTable
+      {/*<DataTable
         columns={columns}
         refresh={refresh}
         onApi={async (page, pageSize, searchText) => {
@@ -230,21 +220,42 @@ const UserPermissions = () => {
         }}
         useSearch={true}
         onRowClick={(params) => {}}
-      />
-      {/* <PeriodicTable
+      /> */}
+      <PeriodicTable
+        actionViews={[
+            {
+                label: "Status",
+                renderView: (row: any[]) => {
+                    let code = row.find((entry: any) => entry.field === "code");
+                    let status = row.find((entry: any) => entry.field === "status");
+                    return (
+                        <div>
+                            <Switch
+                            checked={status != null && status.value ? true : false}
+                            onChange={() =>
+                                updateUserStatus(code != null ? code.value : "", status != null ? status.value : "false")
+                            }
+                            />
+                       </div>
+                    );
+                },
+            }
+        ]}
         useSearch={true}
+        reload={refresh}
         columns={columns.map((col: any) => {
           let column: TableColumn = {
             header: col.headerName,
             field: col.field,
             type: "text",
             pinned: false,
+            hideable: col.hideable,
             rows: [],
           };
           return column;
         })}
         onApi={onApi}
-      /> */}
+      /> 
     </Box>
   );
 };
