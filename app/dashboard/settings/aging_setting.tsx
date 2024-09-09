@@ -153,6 +153,7 @@ const AgingSettings = () => {
         onPaginationModelChange={(value) => {}}
       /> */}
       <PeriodicTable
+
         useSearch={false}
         columns={columns.map((col: any) => {
           let column: TableColumn = {
@@ -160,6 +161,7 @@ const AgingSettings = () => {
             field: col.field,
             type: "text",
             pinned: false,
+            hideable: col.hideable,
             rows: [],
           };
           return column;
