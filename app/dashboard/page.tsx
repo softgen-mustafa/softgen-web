@@ -198,7 +198,6 @@ const DashboardPage = () => {
   const checkPermission = async () => {
     loadAmount();
     loadUpcoming();
-  
   };
 
   const loadAmount = async () => {
@@ -219,7 +218,7 @@ const DashboardPage = () => {
       let url = `${getSgBizBaseUrl()}/sync-info/get`;
       url += `?companyId=${companyId}`;
       let response = await getAsync(url);
-      console.log("lastsync", JSON.stringify(response));
+      // console.log("lastsync", JSON.stringify(response));
       const syncInfo = convertToDate(response.Data.SyncDateTime);
       setSyncInfo(syncInfo);
       return syncInfo;
@@ -411,8 +410,8 @@ const DashboardPage = () => {
                   });
                   updateFilters(values);
                   selectedFilter.current = card;
-                  // loadUpcoming();
-                  triggerRefresh(!refresh);
+                  loadUpcoming();
+                  // triggerRefresh(!refresh);
                 }}
               >
                 <Typography

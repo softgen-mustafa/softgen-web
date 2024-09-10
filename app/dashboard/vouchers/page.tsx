@@ -66,12 +66,22 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
       flex: 1,
       minWidth: 250,
     },
+
     {
       field: "amount",
+      headerName: "Value",
+      editable: false,
+      sortable: true,
+      type: "number",
+      flex: 1,
+    },
+    {
+      field: "amountstr",
       type: "number",
       headerName: "Value",
       editable: false,
       sortable: true,
+      hideable: true,
       flex: 1,
       minWidth: 200,
     },
@@ -103,9 +113,14 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
         return {
           id: index + 1,
           itemGroup: entry.itemGroup,
-          ...entry,
+          amount: `\u20B9 ${numericToString(entry.amount)}`,
+          amountstr: entry.amount,
+          quantity: entry.quantity,
+
+          // ...entry,
         };
       });
+      setData(entries);
       return entries;
     } catch {
       showSnackbar("Could not Item Group Sales");
@@ -158,6 +173,22 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
         onRowClick={() => {}}
       /> */}
       <PeriodicTable
+        chartKeyFields={[
+          {
+            label: "Stock Group",
+            value: "itemGroup",
+          },
+        ]}
+        chartValueFields={[
+          {
+            label: "Amount",
+            value: "amountstr",
+          },
+          {
+            label: "Quantity",
+            value: "quantity",
+          },
+        ]}
         useSearch={true}
         searchKeys={searchKeys}
         columns={columns.map((col: any) => {
@@ -168,10 +199,12 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
             type: "text",
             pinned: false,
             rows: [],
+            hideable: col.hideable,
           };
           return column;
         })}
-        onApi={loadData}
+        // onApi={loadData}
+        rows={data}
       />
     </div>
   );
@@ -344,6 +377,15 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
       type: "number",
       flex: 1,
     },
+    {
+      field: "amount",
+      headerName: "Value",
+      editable: false,
+      sortable: true,
+      type: "number",
+      hideable: true,
+      flex: 1,
+    },
   ];
 
   const loadData = async () => {
@@ -360,7 +402,8 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
           monthStr: entry.monthStr,
           monthNumber: months.indexOf(entry.monthStr.substring(0, 3)),
           year: entry.monthStr.substring(4),
-          preGstAmount: entry.preGstAmount,
+          preGstAmount: `\u20B9 ${numericToString(entry.preGstAmount)}`,
+          amount: entry.preGstAmount,
         };
       });
 
@@ -373,7 +416,8 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
             : b.monthNumber - a.monthNumber; // If years are equal, sort by MonthNumber
         }
       });
-
+      setData(sortedValues);
+      // triggerRefresh(!refresh)
       return sortedValues;
     } catch {
       showSnackbar("Could not Load Monthly Sales");
@@ -422,6 +466,18 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
         )}
       /> */}
       <PeriodicTable
+        chartKeyFields={[
+          {
+            label: "Month",
+            value: "monthStr",
+          },
+        ]}
+        chartValueFields={[
+          {
+            label: "Amount",
+            value: "amount",
+          },
+        ]}
         useSearch={false}
         columns={columns.map((col: any) => {
           let column: TableColumn = {
@@ -430,10 +486,12 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
             type: "text",
             pinned: false,
             rows: [],
+            hideable: col.hideable,
           };
           return column;
         })}
-        onApi={loadData}
+        rows={data}
+        // onApi={loadData}
         reload={refresh}
       />
     </div>
@@ -505,6 +563,16 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
       flex: 1,
       minWidth: 180,
     },
+    {
+      field: "amount",
+      headerName: "Value",
+      editable: false,
+      type: "number",
+      sortable: true,
+      flex: 1,
+      hideable: true,
+      minWidth: 180,
+    },
   ];
 
   const loadData = async () => {
@@ -520,6 +588,7 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
           monthNumber: months.indexOf(entry.monthStr.substring(0, 3)),
           year: entry.monthStr.substring(4),
           preGstAmount: `\u20B9 ${numericToString(entry.preGstAmount)}`,
+          amount: entry.preGstAmount,
         };
       });
 
@@ -532,7 +601,7 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
             : b.monthNumber - a.monthNumber; // If years are equal, sort by MonthNumber
         }
       });
-
+      setData(sortedValues);
       return sortedValues;
     } catch {
       showSnackbar("Could not load Monthly Party Sales");
@@ -589,6 +658,18 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
         )}
       /> */}
       <PeriodicTable
+        chartKeyFields={[
+          {
+            label: "Party",
+            value: "partyName",
+          },
+        ]}
+        chartValueFields={[
+          {
+            label: "Amount",
+            value: "amount",
+          },
+        ]}
         useSearch={false}
         columns={columns.map((col: any) => {
           let column: TableColumn = {
@@ -597,10 +678,12 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
             type: "text",
             pinned: false,
             rows: [],
+            hideable: col.hideable,
           };
           return column;
         })}
-        onApi={loadData}
+        // onApi={loadData}
+        rows={data}
         reload={refresh}
       />
     </div>
@@ -642,6 +725,15 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
       sortable: true,
       flex: 1,
     },
+    {
+      field: "amount",
+      headerName: "Value",
+      editable: false,
+      type: "number",
+      hideable: true,
+      sortable: true,
+      flex: 1,
+    },
   ];
 
   const { showSnackbar } = useSnackbar();
@@ -654,9 +746,11 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
         return {
           id: index + 1,
           partyName: entry.partyName,
-          preGstAmount: entry.preGstAmount,
+          preGstAmount: `\u20B9 ${numericToString(entry.preGstAmount)}`,
+          amount: entry.preGstAmount,
         };
       });
+      setData(entries);
       return entries;
     } catch {
       showSnackbar("Could not load customer sales");
@@ -709,6 +803,18 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
         onRowClick={() => {}}
       /> */}
       <PeriodicTable
+        chartKeyFields={[
+          {
+            label: "Party",
+            value: "partyName",
+          },
+        ]}
+        chartValueFields={[
+          {
+            label: "Amount",
+            value: "amount",
+          },
+        ]}
         useSearch={false}
         columns={columns.map((col: any) => {
           let column: TableColumn = {
@@ -717,10 +823,12 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
             type: "text",
             pinned: false,
             rows: [],
+            hideable: col.hideable,
           };
           return column;
         })}
-        onApi={loadData}
+        rows={data}
+        // onApi={loadData}
         reload={refresh}
       />
     </div>

@@ -871,6 +871,12 @@ const PeriodicTable = (props: PeriodicTableProps) => {
     refreshColumns({ offset: 0, limit: 5, searchText: "" });
   }, [props.reload]);
 
+  useEffect(() => {
+    setDimensions({ width: window.innerWidth, height: window.innerHeight });
+    refreshColumns({ offset: 0, limit: 5, searchText: "" });
+  }, [props.rows]);
+
+
   const refreshColumns = (apiParams: ApiProps) => {
     if (props.onApi != null) {
       try {
