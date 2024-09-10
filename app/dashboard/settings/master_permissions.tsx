@@ -20,6 +20,10 @@ import { DropDown } from "@/app/ui/drop_down";
 import { DataTable } from "@/app/ui/data_grid";
 import { GridColDef } from "@mui/x-data-grid";
 import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
+import {
+  PeriodicTable,
+  TableColumn,
+} from "@/app/ui/periodic_table/period_table";
 
 interface UserProps {
   id: number;
@@ -136,6 +140,14 @@ const MasterPermissions = () => {
 
   const columns: GridColDef<any[number]>[] = [
     {
+      field: "userId",
+      headerName: "Id",
+      editable: false,
+      sortable: false,
+      hideable: true,
+      flex: 1,
+    },
+    {
       field: "name",
       headerName: "Name",
       editable: false,
@@ -147,25 +159,26 @@ const MasterPermissions = () => {
       headerName: "Status",
       editable: false,
       sortable: false,
+      hideable: true,
       flex: 1,
-      renderCell: (params) => {
-        return (
-          <Box>
-            <Switch
-              checked={params.row.selected ? true : false}
-              onChange={() =>
-                updateStatus(
-                  selectedUser.current,
-                  selectedMasterType.current.title === "User"
-                    ? params.row.userId
-                    : params.row.name,
-                  params.row.selected
-                )
-              }
-            />
-          </Box>
-        );
-      },
+      // renderCell: (params) => {
+      //   return (
+      //     <Box>
+      //       <Switch
+      //         checked={params.row.selected ? true : false}
+      //         onChange={() =>
+      //           updateStatus(
+      //             selectedUser.current,
+      //             selectedMasterType.current.title === "User"
+      //               ? params.row.userId
+      //               : params.row.name,
+      //             params.row.selected
+      //           )
+      //         }
+      //       />
+      //     </Box>
+      //   );
+      // },
     },
   ];
 
@@ -361,7 +374,7 @@ const MasterPermissions = () => {
           </Button>
         </Stack>
 
-        <DataTable
+        {/* <DataTable
           columns={columns}
           useServerPagination={false}
           refresh={refresh}
@@ -370,6 +383,49 @@ const MasterPermissions = () => {
           }}
           useSearch={false}
           onRowClick={(params) => {}}
+        />*/}
+
+        <PeriodicTable
+          actionViews={[
+            {
+              label: "Status",
+              renderView: (row: any[]) => {
+                let userId = row.find((entry: any) => entry.field === "userId");
+                let name = row.find((entry: any) => entry.field === "name");
+                let selected = row.find(
+                  (entry: any) => entry.field === "selected"
+                );
+                return (
+                  <Box>
+                    <Switch
+                      checked={selected.value ? true : false}
+                      onChange={() =>
+                        updateStatus(
+                          userId != null ? userId.value : "",
+                          name != null ? name.value : "",
+                          selected != null ? selected.value : "false"
+                        )
+                      }
+                    />
+                  </Box>
+                );
+              },
+            },
+          ]}
+          useSearch={true}
+          reload={refresh}
+          columns={columns.map((col: any) => {
+            let column: TableColumn = {
+              header: col.headerName,
+              field: col.field,
+              type: "text",
+              pinned: false,
+              hideable: col.hideable,
+              rows: [],
+            };
+            return column;
+          })}
+          onApi={onApi}
         />
       </Stack>
     </Box>
