@@ -146,6 +146,7 @@ const DashboardPage = () => {
   const [rows, setRows] = useState([]);
 
   const [refresh, triggerRefresh] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const theme = useTheme();
   const router = useRouter();
@@ -158,6 +159,7 @@ const DashboardPage = () => {
 
   const loadData = async () => {
     try {
+      setLoading(true);
       let url = `${getBmrmBaseUrl()}/info/user-tenant/get/companies`;
       let response = await getAsync(url);
       let values = response.map((entry: any) => {
@@ -183,7 +185,10 @@ const DashboardPage = () => {
         Cookies.set("companyId", guid);
       }
     } catch (error) {
+      setLoading(false);
       console.error("Failed to load companies", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -319,13 +324,21 @@ const DashboardPage = () => {
               {`${"Last Sync"} ${syncInfo}`}
             </Typography>
           </CardView>
-          <CardView
-            className="mt-2"
-            style={{ backgroundColor: theme.palette.primary.main }}
-            permissionCode="CustomerCard"
-          >
-            <CustomerDetailsCard companyId={data[cachedCompanyIndex]} />
-          </CardView>
+          {loading ? (
+            <Loading />
+          ) : (
+            <CardView
+              className="mt-2"
+              style={{
+                backgroundColor: loading
+                  ? "#FFFFFF"
+                  : theme.palette.primary.main,
+              }}
+              permissionCode="CustomerCard"
+            >
+              <CustomerDetailsCard companyId={data[cachedCompanyIndex]} />
+            </CardView>
+          )}
         </div>
       ),
     },
@@ -517,7 +530,7 @@ const DashboardPage = () => {
   ];
 
   return (
-    <div className="">
+    <div>
       <DynGrid views={views} />
     </div>
   );
