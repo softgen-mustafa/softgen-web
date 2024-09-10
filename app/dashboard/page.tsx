@@ -12,12 +12,16 @@ import {
   DynGrid,
 } from "../ui/responsive_grid";
 import { DropDown } from "../ui/drop_down";
-import { getAsync, getBmrmBaseUrl } from "../services/rest_services";
+import {
+  getAsync,
+  getBmrmBaseUrl,
+  getSgBizBaseUrl,
+} from "../services/rest_services";
 import { useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
 import { inspiredPalette } from "../ui/theme";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { numericToString } from "../services/Local/helper";
+import { convertToDate, numericToString } from "../services/Local/helper";
 import { useRouter } from "next/navigation";
 import { FeatureControl } from "../components/featurepermission/permission_helper";
 import RankedPartyOutstandingCard from "./cards/ranked_party";
@@ -136,6 +140,8 @@ const DashboardPage = () => {
   const [cachedCompanyIndex, setCompanyId] = useState(0);
 
   const [totalAmount, setAmount] = useState("0");
+  const [syncInfo, setSyncInfo] = useState("");
+
   const [rows, setRows] = useState([]);
 
   const [refresh, triggerRefresh] = useState(false);
@@ -192,7 +198,7 @@ const DashboardPage = () => {
   const checkPermission = async () => {
     loadAmount();
     loadUpcoming();
-    // }
+  
   };
 
   const loadAmount = async () => {
@@ -205,6 +211,21 @@ const DashboardPage = () => {
       setAmount(amount);
     } catch {
       alert("Coult not load amount");
+    }
+  };
+
+  const loadLastSync = async (companyId: any) => {
+    try {
+      let url = `${getSgBizBaseUrl()}/sync-info/get`;
+      url += `?companyId=${companyId}`;
+      let response = await getAsync(url);
+      console.log("lastsync", JSON.stringify(response));
+      const syncInfo = convertToDate(response.Data.SyncDateTime);
+      setSyncInfo(syncInfo);
+      return syncInfo;
+    } catch (error) {
+      console.error("Failed to load sync details:", error);
+      alert("Could not load Sync Details");
     }
   };
 
@@ -285,9 +306,18 @@ const DashboardPage = () => {
                 if (exisitngIndex != -1) {
                   setCompanyId(exisitngIndex);
                   Cookies.set("companyId", companyId);
+                  loadLastSync(companyId).catch(() => {
+                    // Handle any errors silently, keeping the previous sync info
+                  });
                 }
               }}
             />
+
+            <br></br>
+
+            <Typography className="text-base mb-8 justify-center">
+              {`${"Last Sync"} ${syncInfo}`}
+            </Typography>
           </CardView>
           <CardView
             className="mt-2"
