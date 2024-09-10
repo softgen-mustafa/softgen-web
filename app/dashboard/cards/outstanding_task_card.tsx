@@ -17,6 +17,7 @@ import { inspiredPalette } from "@/app/ui/theme";
 import { DataTable } from "@/app/ui/data_grid";
 import { GridColDef } from "@mui/x-data-grid";
 import {
+  ApiProps,
   PeriodicTable,
   TableColumn,
 } from "@/app/ui/periodic_table/period_table";
@@ -74,20 +75,23 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
   //   fetchTasks();
   // }, [companyId]);
 
-  const fetchTasks = async () => {
-    // setIsLoading(true);
+  const fetchTasks = async (apiProps: ApiProps) => {
+    setIsLoading(true);
     try {
       const url = `${getBmrmBaseUrl()}/bill/get/upcoming-bills?groupType=receivable&durationType=daily&durationKey=${durationKey}`;
       const requestBody = {
-        page_number: 1,
-        page_size: 2,
-        search_text: "",
-        sort_by: "name",
-        sort_order: "asc",
+        page_number: apiProps.offset + 1,
+        page_size: apiProps.limit,
+        search_text: apiProps.searchText ?? "",
+        sort_by: apiProps.sortKey ?? "",
+        sort_order: apiProps.sortOrder ?? "",
       };
 
       const response = await postAsync(url, requestBody);
-      const entries = response.slice(0, 2).map((entry: any, index: number) => {
+      console.log(response);
+      // alert(JSON.stringify(response));P
+
+      const entries = response.map((entry: any, index: number) => {
         return {
           id: index + 1,
           partyName: entry.name,
@@ -97,12 +101,11 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
         };
       });
 
-      // setTasks(entries);
       return entries;
     } catch (error) {
       console.log("Error fetching tasks:", error);
     } finally {
-      // setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -157,6 +160,7 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
         }}
         onRowClick={() => {}}
       /> */}
+
       <PeriodicTable
         chartKeyFields={[
           {
@@ -182,7 +186,9 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
           return column;
         })}
         onApi={fetchTasks}
+        reload={refresh}
       />
+
       {/* )} */}
     </Box>
     // )
