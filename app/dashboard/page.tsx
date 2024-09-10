@@ -191,7 +191,7 @@ const DashboardPage = () => {
 
   const checkPermission = async () => {
     loadAmount();
-    // loadUpcoming();
+    loadUpcoming();
     // }
   };
 
@@ -208,7 +208,7 @@ const DashboardPage = () => {
     }
   };
 
-  const loadUpcoming = async (apiProps: ApiProps) => {
+  const loadUpcoming = async () => {
     try {
       let url = `${getBmrmBaseUrl()}/bill/get/upcoming-overview?groupType=${
         selectedType.current.code
@@ -441,7 +441,8 @@ const DashboardPage = () => {
               };
               return column;
             })}
-            onApi={loadUpcoming}
+            // onApi={loadUpcoming}
+            rows={rows}
             reload={refresh}
           />
           {/* <DataGrid
