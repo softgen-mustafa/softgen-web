@@ -42,6 +42,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
 import { getTheme, appThemes } from "../theme";
 import CheckIcon from "@mui/icons-material/Check";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const drawerWidth = 300;
 
@@ -149,6 +150,7 @@ const DrawerContent = ({
               style={{
                 background: inspiredPalette.darkRed,
                 textTransform: "capitalize",
+                color: "#FFFFFF",
               }}
             >
               Logout
@@ -267,9 +269,8 @@ const SideNav = ({
 
   return (
     <Box style={{}}>
-      <Box
-        className={`fixed top-0 left-0 m-2 shadow-xl rounded-xl justify-center items-center`}
-        bgcolor={theme.palette.primary.main}
+      {/* <Box
+        className={`fixed top-0 left-0 m-2 mb-2 shadow-md bg-[#2e263d14] rounded-xl justify-center items-center`}
         style={{
           zIndex: 230,
         }}
@@ -278,10 +279,29 @@ const SideNav = ({
           aria-label="open drawer"
           onClick={handleDrawerToggle}
           size="large"
-          sx={{ color: theme.palette.primary.contrastText }}
         >
           <Dashboard />
         </IconButton>
+      </Box> */}
+      {/* <Box
+        className="flex items-center justify-center fixed m-2"
+        onClick={handleDrawerToggle}
+        sx={{
+          bgcolor: "rgb(203 213 225)",
+        }}
+      >
+        <MenuIcon sx={{ color: "#000000" }} />
+      </Box> */}
+      <Box
+        width={50}
+        height={50}
+        borderRadius={2}
+        border={1}
+        borderColor="#000000"
+        className="flex items-center shadow-lg justify-center fixed ml-3 mt-2"
+        onClick={handleDrawerToggle}
+      >
+        <MenuIcon sx={{ color: "#000000" }} />
       </Box>
       <Box sx={{ display: { md: "none", xs: "block", sm: "block" } }}>
         <Drawer
@@ -341,7 +361,7 @@ export default function DashboardLayout({
           <Suspense fallback={<Loading />}>
             <Box
               component={"div"}
-              className="ml-1 w-full overflow-x-hidden mt-12"
+              className="ml-1 w-full overflow-x-hidden mt-14"
             >
               <div className="w-full h-full overflow-x-hidden ">{children}</div>
             </Box>

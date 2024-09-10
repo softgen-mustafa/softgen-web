@@ -3,7 +3,7 @@ import { CircularProgress } from "@mui/material";
 const Loading = () => {
   return (
     <div className="w-full h-full flex flex-col justify-center items-center">
-      Please Wait,...
+      {/* Please Wait,... */}
       <CircularProgress />
     </div>
   );
