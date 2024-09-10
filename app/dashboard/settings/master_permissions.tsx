@@ -116,6 +116,7 @@ const filterData = [
 const MasterPermissions = () => {
   const [data, setData] = useState([]);
   const [refresh, triggerRefresh] = useState(false);
+  const [rows, setRows] = useState<any[]>([]);
   // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   let selectedMasterType = useRef(masterTypes[0]);
@@ -133,6 +134,7 @@ const MasterPermissions = () => {
     //   if (permission) {
     loadUser().then((_) => {
       triggerRefresh(!refresh);
+      onApi();
     });
     //   }
     // });
@@ -251,7 +253,7 @@ const MasterPermissions = () => {
         entries.push(newEntry);
       }
     });
-
+    setRows(entries);
     return entries ?? [];
   };
 
@@ -425,7 +427,8 @@ const MasterPermissions = () => {
             };
             return column;
           })}
-          onApi={onApi}
+          // onApi={onApi}
+          rows={rows}
         />
       </Stack>
     </Box>
