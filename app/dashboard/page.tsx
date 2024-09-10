@@ -30,6 +30,7 @@ import {
   PeriodicTable,
   TableColumn,
 } from "../ui/periodic_table/period_table";
+import Loading from "./loading";
 
 const BrokerMonthlyOverview = ({ companyId }: { companyId: string }) => {
   useEffect(() => {}, [companyId]);
@@ -139,6 +140,7 @@ const DashboardPage = () => {
   const [rows, setRows] = useState([]);
 
   const [refresh, triggerRefresh] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const theme = useTheme();
   const router = useRouter();
@@ -197,6 +199,7 @@ const DashboardPage = () => {
 
   const loadAmount = async () => {
     try {
+      setLoading(true);
       let url = `${getBmrmBaseUrl()}/bill/get/outstanding-amount?groupType=${
         selectedType.current.code
       }`;
@@ -205,11 +208,15 @@ const DashboardPage = () => {
       setAmount(amount);
     } catch {
       alert("Coult not load amount");
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
   const loadUpcoming = async () => {
     try {
+      setLoading(true);
       let url = `${getBmrmBaseUrl()}/bill/get/upcoming-overview?groupType=${
         selectedType.current.code
       }&durationType=${selectedFilter.current.value}`;
@@ -228,6 +235,9 @@ const DashboardPage = () => {
       return entries;
     } catch {
       alert("Could not load upcoming outstanding");
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -488,7 +498,13 @@ const DashboardPage = () => {
 
   return (
     <div className="">
-      <DynGrid views={views} />
+      {loading ? (
+        <Box className="h-full flex flex-col">
+          <Loading />
+        </Box>
+      ) : (
+        <DynGrid views={views} />
+      )}
     </div>
   );
 };

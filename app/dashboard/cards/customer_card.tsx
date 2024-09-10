@@ -83,7 +83,7 @@ const CustomerDetailsCard: React.FC<CustomerDetailsCardProps> = ({
             bgcolor={theme.palette.primary.light}
             className="flex items-center justify-center"
           >
-            <GroupIcon sx={{ color: "#FFFFFF" }} />
+            <GroupIcon sx={{ color: theme.palette.primary.contrastText }} />
           </Box>
           <Box
             onClick={handleCardClick}
@@ -99,7 +99,7 @@ const CustomerDetailsCard: React.FC<CustomerDetailsCardProps> = ({
             <Box>
               <Typography
                 sx={{
-                  color: "white",
+                  color: theme.palette.primary.contrastText,
                   letterSpacing: 1,
                   mb: 1,
                   fontWeight: "500",
@@ -109,14 +109,23 @@ const CustomerDetailsCard: React.FC<CustomerDetailsCardProps> = ({
                 Total Customers
               </Typography>
               <Typography
-                sx={{ color: "#FFFFFF", fontWeight: "400", fontSize: 28 }}
+                sx={{
+                  color: theme.palette.primary.contrastText,
+                  fontWeight: "400",
+                  fontSize: 28,
+                }}
               >
                 {data?.totalCount.toLocaleString() || "0"}
               </Typography>
             </Box>
             <Box>
               <IconButton size="medium" onClick={handleCardClick}>
-                <ChevronRight sx={{ color: "#FFFFFF", fontSize: 30 }} />
+                <ChevronRight
+                  sx={{
+                    color: theme.palette.primary.contrastText,
+                    fontSize: 30,
+                  }}
+                />
               </IconButton>
             </Box>
           </Box>
