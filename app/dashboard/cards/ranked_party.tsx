@@ -1,11 +1,11 @@
 "use client";
-
 import { numericToString } from "@/app/services/Local/helper";
 import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { DataTable } from "@/app/ui/data_grid";
 import {
   PeriodicTable,
   TableColumn,
+  TableSearchKey,
 } from "@/app/ui/periodic_table/period_table";
 import { TextInput } from "@/app/ui/text_inputs";
 import { CircularProgress } from "@mui/material";
@@ -22,8 +22,9 @@ const RankedPartyOutstandingCard = ({
   let rank = useRef(5);
   const [rows, setRows] = useState([]);
   const [refresh, triggerRefresh] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const columns: GridColDef[] = [
+  const columns: GridColDef<any[number]>[] = [
     {
       field: "name",
       headerName: "Party",
@@ -46,10 +47,13 @@ const RankedPartyOutstandingCard = ({
   ];
 
   useEffect(() => {
-    loadData();
-  }, [billType]);
+    loadData(rank.current);
+    // loadData();
+  }, [billType, companyId]);
 
   const loadData = async (searchText?: string | number) => {
+    setLoading(true);
+
     try {
       let url = `${getBmrmBaseUrl()}/bill/get/party-os/overview?groupType=${billType}&rank=${searchText}`;
       let response = await getAsync(url);
@@ -64,10 +68,12 @@ const RankedPartyOutstandingCard = ({
           currency: entry.currency ?? "₹",
         };
       });
+      setRows(values);
       return values;
-      // setRows(values);
     } catch {
+      alert("Could not load Ranked Parties");
     } finally {
+      setLoading(false);
     }
   };
   return (
@@ -96,32 +102,39 @@ const RankedPartyOutstandingCard = ({
         }}
         onRowClick={() => {}}
       /> */}
-      <PeriodicTable
-        chartKeyFields={[
-          {
-            label: "Party",
-            value: "name",
-          },
-        ]}
-        chartValueFields={[
-          {
-            label: "Amount",
-            value: "amount",
-          },
-        ]}
-        useSearch={false}
-        columns={columns.map((col: any) => {
-          let column: TableColumn = {
-            header: col.headerName,
-            field: col.field,
-            type: "text",
-            pinned: false,
-            rows: [],
-          };
-          return column;
-        })}
-        onApi={() => loadData(rank.current)}
-      />
+
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <PeriodicTable
+          chartKeyFields={[
+            {
+              label: "Party",
+              value: "name",
+            },
+          ]}
+          chartValueFields={[
+            {
+              label: "Amount",
+              value: "amount",
+            },
+          ]}
+          useSearch={false}
+          columns={columns.map((col: any) => {
+            let column: TableColumn = {
+              header: col.headerName,
+              field: col.field,
+              type: "text",
+              pinned: false,
+              rows: [],
+            };
+            return column;
+          })}
+          // onApi={() => loadData(rank.current)}
+          rows={rows}
+          reload={refresh}
+        />
+      )}
     </div>
   );
 };
