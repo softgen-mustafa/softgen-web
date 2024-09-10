@@ -205,6 +205,7 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
         })}
         // onApi={loadData}
         rows={data}
+        reload={refresh}
       />
     </div>
   );
@@ -213,6 +214,8 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
 const BillsCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
   const [refresh, triggerRefresh] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
   // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   const router = useRouter();
@@ -247,10 +250,20 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
     },
     {
       field: "preGstAmount",
+      headerName: "Pre Gst Amount",
+      editable: false,
+      sortable: true,
+      flex: 1,
+      minWidth: 200,
+      type: "number",
+    },
+    {
+      field: "amount",
       headerName: "Value",
       editable: false,
       sortable: true,
       flex: 1,
+      hideable: true,
       minWidth: 200,
       type: "number",
     },
@@ -263,21 +276,29 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
       flex: 1,
       minWidth: 200,
     },
+    {
+      field: "guid",
+      headerName: "GUID",
+      editable: false,
+      type: "number",
+      sortable: true,
+      hideable: true,
+      flex: 1,
+      minWidth: 200,
+    },
   ];
 
   const { showSnackbar } = useSnackbar();
 
-  const loadData = async (
-    page: number,
-    pageSize: number,
-    searchValue?: string
-  ) => {
+  const loadData = async (apiProps: ApiProps) => {
+    // alert(JSON.stringify(apiProps));
+    setIsLoading(true);
     try {
       let url = `${getBmrmBaseUrl()}/meta-voucher/bill/overview?voucherType=${voucherType}`;
       let requestBody = {
-        page_number: page,
-        page_size: pageSize,
-        search_text: searchValue ?? "",
+        page_number: apiProps.offset + 1,
+        page_size: apiProps.limit,
+        search_text: apiProps.searchText ?? "",
         filter: "",
       };
 
@@ -287,7 +308,12 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
           id: index + 1,
           voucherNumber: entry.voucherNumber,
           guid: entry.guid,
-          ...entry,
+          partyName: entry.partyName,
+          postGstAmount: `\u20B9 ${numericToString(entry.postGstAmount)}`,
+          amount: `\u20B9 ${numericToString(entry.amount)}`,
+          preGstAmount: `\u20B9 ${numericToString(entry.preGstAmount)}`,
+          // preGstAmount: entry.preGstAmount,
+          // ...entry,
         };
       });
 
@@ -296,6 +322,8 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
       return entries;
     } catch {
       showSnackbar("Could not load Transactions");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -313,9 +341,33 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
   //   );
   // }
 
+  const handleRowClick = (rowData: any) => {
+    alert(JSON.stringify(rowData));
+    localStorage.setItem("guid", rowData.guid);
+    localStorage.setItem("party_view_type", "voucher");
+    router.push("/dashboard/vouchers/voucherDetails");
+  };
+
   return (
     <div className="flex flex-col">
-      <DataTable
+      <PeriodicTable
+        useSearch={true}
+        columns={columns.map((col: any) => {
+          let column: TableColumn = {
+            header: col.headerName,
+            field: col.field,
+            type: "text",
+            pinned: false,
+            rows: [],
+            hideable: col.hideable,
+          };
+          return column;
+        })}
+        onApi={loadData}
+        reload={refresh}
+        onRowClick={handleRowClick}
+      />
+      {/* <DataTable
         columns={columns}
         refresh={refresh}
         useSearch={true}
@@ -327,7 +379,7 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
           localStorage.setItem("party_view_type", "voucher");
           router.push("/dashboard/vouchers/voucherDetails");
         }}
-      />
+      /> */}
     </div>
   );
 };
