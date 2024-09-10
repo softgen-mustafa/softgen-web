@@ -26,6 +26,7 @@ import { Settings, MailOutline, Send } from "@mui/icons-material";
 import { numericToString } from "@/app/services/Local/helper";
 import { OsSettingsView } from "@/app/dashboard/outstanding/report/outstanding_setings";
 import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
+import ApiAutoComplete from "@/app/ui/autocomplete";
 const isDebitType = [
   {
     name: "Payable",
@@ -346,6 +347,11 @@ const Page = () => {
               selectedParty.current = selection.name;
               triggerRefresh(!refresh);
             }}
+          />
+          <ApiAutoComplete
+            displayFieldKey={"name"}
+            label="Select User"
+            onApi={loadParties}
           />
         </Stack>
         <div className="mt-4" />
