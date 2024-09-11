@@ -201,6 +201,11 @@ const DashboardPage = () => {
     });
   }, []);
 
+  let cmpId = Cookies.get("companyId");
+  useEffect(() => {
+    loadLastSync(cmpId);
+  }, [cmpId]);
+
   const checkPermission = async () => {
     loadAmount();
     loadUpcoming();
