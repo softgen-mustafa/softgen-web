@@ -121,17 +121,15 @@ const UserPermissions = () => {
     }
   };
 
-  const onApi = async (
-    apiProps: ApiProps
-  ) => {
+  const onApi = async (apiProps: ApiProps) => {
     let url = `${getBmrmBaseUrl()}/user-info/get/permission?userId=${
       selectedUser.current
     }`;
 
     let requestBody = {
-       page_number: apiProps.offset + 1,
-       page_size: apiProps.limit,
-       search_text: apiProps.searchText ?? "",
+      page_number: apiProps.offset + 1,
+      page_size: apiProps.limit,
+      search_text: apiProps.searchText ?? "",
       filter: selectedFilter.current,
     };
     try {
@@ -150,6 +148,8 @@ const UserPermissions = () => {
     } catch (error) {
       console.error("Failed to fetch data:", error);
       return [];
+    } finally {
+      triggerRefresh(false);
     }
   };
 
@@ -198,7 +198,7 @@ const UserPermissions = () => {
           }}
           useSearch={true}
         />
-        <Box sx={{ width: "20%" }} >
+        <Box sx={{ width: "20%" }}>
           <DropDown
             label={"Filter"}
             displayFieldKey={"name"}
@@ -223,23 +223,26 @@ const UserPermissions = () => {
       /> */}
       <PeriodicTable
         actionViews={[
-            {
-                label: "Status",
-                renderView: (row: any[]) => {
-                    let code = row.find((entry: any) => entry.field === "code");
-                    let status = row.find((entry: any) => entry.field === "status");
-                    return (
-                        <div>
-                            <Switch
-                            checked={status != null && status.value ? true : false}
-                            onChange={() =>
-                                updateUserStatus(code != null ? code.value : "", status != null ? status.value : "false")
-                            }
-                            />
-                       </div>
-                    );
-                },
-            }
+          {
+            label: "Status",
+            renderView: (row: any[]) => {
+              let code = row.find((entry: any) => entry.field === "code");
+              let status = row.find((entry: any) => entry.field === "status");
+              return (
+                <div>
+                  <Switch
+                    checked={status != null && status.value ? true : false}
+                    onChange={() =>
+                      updateUserStatus(
+                        code != null ? code.value : "",
+                        status != null ? status.value : "false"
+                      )
+                    }
+                  />
+                </div>
+              );
+            },
+          },
         ]}
         useSearch={true}
         reload={refresh}
@@ -255,7 +258,7 @@ const UserPermissions = () => {
           return column;
         })}
         onApi={onApi}
-      /> 
+      />
     </Box>
   );
 };

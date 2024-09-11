@@ -254,6 +254,7 @@ const MasterPermissions = () => {
       }
     });
     setRows(entries);
+    triggerRefresh(false);
     return entries ?? [];
   };
 
@@ -273,6 +274,8 @@ const MasterPermissions = () => {
       triggerRefresh(!refresh);
     } catch (error) {
       console.log("Something went wrong...");
+    } finally {
+      triggerRefresh(false);
     }
   };
 
@@ -287,6 +290,8 @@ const MasterPermissions = () => {
       triggerRefresh(!refresh);
     } catch (error) {
       console.log("Something went wrong...");
+    } finally {
+      triggerRefresh(false);
     }
   };
 
@@ -301,6 +306,8 @@ const MasterPermissions = () => {
       triggerRefresh(!refresh);
     } catch (error) {
       console.log("Something went wrong...");
+    } finally {
+      triggerRefresh(false);
     }
   };
 

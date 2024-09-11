@@ -11,6 +11,7 @@ import {
   Radio,
   useTheme,
   Stack,
+  LinearProgress,
 } from "@mui/material";
 import {
   Search,
@@ -120,6 +121,7 @@ interface TableProps {
   onChecked?: (values: any[]) => void;
   iconActions?: any[];
   actionViews?: any[];
+  reload: any;
 }
 
 const ColumnColorPicker = ({
@@ -303,6 +305,7 @@ const Table = ({
   checkBox,
   iconActions = [],
   actionViews = [],
+  reload,
 }: TableProps) => {
   const theme = useTheme();
 
@@ -442,6 +445,12 @@ const Table = ({
               );
             })}
         </Box>
+        {reload && <LinearProgress />}
+        {tableRows.length <= 0 && (
+          <Box className="flex flex-row align-middle justify-center mt-4 mb-2">
+            <Typography>No Data Found</Typography>
+          </Box>
+        )}
         {tableRows.map((row: any[], rowIndex: number) => {
           return (
             <div
@@ -544,7 +553,7 @@ const Table = ({
                         borderRightWidth: 2,
                       }}
                     >
-                    {entry.renderView(row)}
+                      {entry.renderView(row)}
                     </Box>
                   );
                 })}
@@ -876,7 +885,6 @@ const PeriodicTable = (props: PeriodicTableProps) => {
     refreshColumns({ offset: 0, limit: 5, searchText: "" });
   }, [props.rows]);
 
-
   const refreshColumns = (apiParams: ApiProps) => {
     if (props.onApi != null) {
       try {
@@ -1031,6 +1039,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
             columns={props.columns}
             // columns={props.columns}
             rows={dataRows}
+            reload={props.reload}
             onRowClick={props.onRowClick}
             checkBox={props.checkBoxSelection}
             onChecked={(selectedIndexes: any[]) => {
