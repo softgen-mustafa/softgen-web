@@ -26,7 +26,7 @@ import { Settings, MailOutline, Send } from "@mui/icons-material";
 import { numericToString } from "@/app/services/Local/helper";
 import { OsSettingsView } from "@/app/dashboard/outstanding/report/outstanding_setings";
 import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
-import ApiAutoComplete from "@/app/ui/autocomplete";
+import ApiAutoComplete from "@/app/ui/api_auto_complete";
 const isDebitType = [
   {
     name: "Payable",
@@ -74,6 +74,7 @@ const Page = () => {
   let selectedReportType = useRef<number>(0); //0 - Party Wise, 1 - Bill Wise
   let selectedDueType = useRef<number>(0);
   let selectedisDebitType = useRef<boolean>(false);
+  let selectedUser = useRef<string>("");
 
   const [showSettings, toggleSetting] = useState(false);
   const [refresh, triggerRefresh] = useState(false);
@@ -352,12 +353,17 @@ const Page = () => {
             displayFieldKey={"name"}
             label="Select User"
             onApi={loadParties}
+            onSelection={(selection) => {
+              selectedUser.current = selection;
+            }}
           />
         </Stack>
         <div className="mt-4" />
       </div>
     );
   };
+
+  console.log(selectedUser.current);
 
   const gridConfig = [
     {
