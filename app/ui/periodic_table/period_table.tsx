@@ -446,7 +446,7 @@ const Table = ({
             })}
         </Box>
         {reload && <LinearProgress />}
-        {tableRows.length <= 0 && (
+        {!reload && tableRows.length <= 0 && (
           <Box className="flex flex-row align-middle justify-center mt-4 mb-2">
             <Typography>No Data Found</Typography>
           </Box>
@@ -1010,7 +1010,11 @@ const PeriodicTable = (props: PeriodicTableProps) => {
           />
         </Stack>
       </Box>
-      {loading && <CircularProgress />}
+      {loading && (
+        <Box mb={1}>
+          <CircularProgress />
+        </Box>
+      )}
       <Box
         display={"flex"}
         flexDirection={{ xs: "column", md: "row" }}

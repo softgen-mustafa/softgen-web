@@ -223,7 +223,7 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
     // FeatureControl("CustomerPartySearch").then((permission) => {
     //   setHasPermission(permission);
     //   if (permission) {
-    triggerRefresh(!refresh);
+    // triggerRefresh(!refresh);
     //   }
     // });
   }, [voucherType]);
@@ -364,7 +364,7 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
           return column;
         })}
         onApi={loadData}
-        reload={refresh}
+        reload={isLoading}
         onRowClick={handleRowClick}
       />
       {/* <DataTable
@@ -544,7 +544,7 @@ const MonthlySalesCard = ({ voucherType }: { voucherType: string }) => {
         })}
         rows={data}
         // onApi={loadData}
-        reload={refresh}
+        reload={loading}
       />
     </div>
   );
@@ -736,7 +736,7 @@ const MonthlyCustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
         })}
         // onApi={loadData}
         rows={data}
-        reload={refresh}
+        reload={loading}
       />
     </div>
   );

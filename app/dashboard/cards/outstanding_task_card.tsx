@@ -186,7 +186,7 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
           return column;
         })}
         onApi={fetchTasks}
-        reload={refresh}
+        reload={isLoading}
       />
 
       {/* )} */}
