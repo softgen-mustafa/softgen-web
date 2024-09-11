@@ -75,6 +75,12 @@ const adminReportPaths: any[] = [
         icon: <Settings />,
         selected: false,
     },
+    {
+        title: "Follow Up",
+        destination: "/dashboard/followup",
+        icon: <Receipt />,
+        selected: false,
+    },
 ];
 
 export {
