@@ -99,6 +99,7 @@ const Page = () => {
           name: entry.Name,
         });
       });
+      triggerRefresh(false);
       return values;
     } catch {
       return [];
@@ -119,6 +120,7 @@ const Page = () => {
           name: entry,
         };
       });
+      triggerRefresh(false);
       return values;
     } catch {
       return [];
@@ -172,7 +174,7 @@ const Page = () => {
       };
     });
     // console.log(values);
-
+    triggerRefresh(false);
     return values;
   };
 
@@ -233,7 +235,7 @@ const Page = () => {
     },
     {
       field: "Amount",
-      headerName: "Pending Amount",
+      headerName: "No Due",
       editable: false,
       sortable: true,
       type: "number",
@@ -266,6 +268,44 @@ const Page = () => {
       hideable: !(
         selectedDueType.current === 0 || selectedDueType.current === 3
       ),
+    },
+    {
+      field: "OpeningAmount",
+      headerName: "Opening Amount",
+      editable: false,
+      sortable: true,
+      type: "number",
+      flex: 1,
+      minWidth: 150,
+      hideable: false,
+    },
+    {
+      field: "ClosingAmount",
+      headerName: "Closing Amount",
+      editable: false,
+      sortable: true,
+      type: "number",
+      flex: 1,
+      minWidth: 150,
+      hideable: false,
+    },
+    {
+      field: "PendingPercentage",
+      headerName: "Pending Percentage",
+      editable: false,
+      sortable: true,
+      flex: 1,
+      minWidth: 200,
+      hideable: selectedReportType.current === 1,
+    },
+    {
+      field: "PaidPercentage",
+      headerName: "Paid Percentage",
+      editable: false,
+      sortable: true,
+      flex: 1,
+      minWidth: 200,
+      hideable: selectedReportType.current === 1,
     },
   ];
 
@@ -335,6 +375,7 @@ const Page = () => {
             helperText={""}
             onSelection={(selection) => {
               selectedGroups.current = selection;
+              loadGroups();
               triggerRefresh(!refresh);
             }}
           />
@@ -346,17 +387,18 @@ const Page = () => {
             helperText={""}
             onSelection={(selection) => {
               selectedParty.current = selection.name;
+              loadParties("");
               triggerRefresh(!refresh);
             }}
           />
-          <ApiAutoComplete
+          {/* <ApiAutoComplete
             displayFieldKey={"name"}
             label="Select User"
             onApi={loadParties}
             onSelection={(selection) => {
               selectedUser.current = selection;
             }}
-          />
+          /> */}
         </Stack>
         <div className="mt-4" />
       </div>
