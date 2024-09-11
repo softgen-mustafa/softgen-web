@@ -327,6 +327,7 @@ const MasterPermissions = () => {
           helperText={""}
           onSelection={(_data) => {
             selectedUser.current = _data?.id;
+            onApi();
             triggerRefresh(!refresh);
           }}
         />
@@ -339,6 +340,7 @@ const MasterPermissions = () => {
           helperText={""}
           onSelection={(selection) => {
             selectedMasterType.current = selection;
+            onApi();
             triggerRefresh(!refresh);
           }}
         />
@@ -352,6 +354,7 @@ const MasterPermissions = () => {
               helperText={""}
               onSelection={(_selection) => {
                 selectedFilter.current = _selection.title;
+                onApi();
                 triggerRefresh(!refresh);
               }}
             />
