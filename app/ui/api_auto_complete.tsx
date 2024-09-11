@@ -25,7 +25,7 @@ const ApiAutoComplete = ({
   }, []);
 
   const loadData = async () => {
-    let values: any[] = await onApi(searchText.current);
+    let values: any[] = await onApi(searchText.current || "");
     setOptions(values);
   };
 

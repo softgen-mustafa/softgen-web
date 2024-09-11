@@ -60,6 +60,7 @@ const TextInput = ({
         className="w-full"
         multiline={multiline}
         value={value}
+      
         label={placeHolder}
         variant="outlined"
         type={mode}
