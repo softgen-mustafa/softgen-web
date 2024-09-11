@@ -164,6 +164,8 @@ const Page = () => {
         Amount: entry.Amount,
         DueAmount: entry.DueAmount,
         OverDueAmount: entry.OverDueAmount,
+        PendingPercentage: parseFloat(entry.PendingPercentage.toFixed(2)),
+        PaidPercentage: parseFloat(entry.PaidPercentage.toFixed(2)),
         //DueAmount: `${entry.currency ?? "₹"} ${numericToString(
         //entry.DueAmount
         //)}`,
@@ -479,7 +481,7 @@ const Page = () => {
               let column: TableColumn = {
                 header: col.headerName,
                 field: col.field,
-                type: "text",
+                type: col.type,
                 pinned: false,
                 hideable: col.hideable,
                 rows: [],

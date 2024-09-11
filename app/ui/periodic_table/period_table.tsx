@@ -41,6 +41,7 @@ import { SketchPicker } from "react-color";
 import { DynGrid, Weight } from "../responsive_grid";
 import { DropDown } from "../drop_down";
 import { SingleChartView } from "@/app/ui/graph_util";
+import { numericToString } from "@/app/services/Local/helper";
 
 interface ApiProps {
   offset: number;
@@ -512,7 +513,11 @@ const Table = ({
                         borderRightWidth: cellIndex === row.length - 1 ? 0 : 2,
                       }}
                     >
-                      <Typography>{cell.value}</Typography>
+                      <Typography>
+                        {cell.type == "number"
+                          ? numericToString(parseFloat(cell.value).toFixed(2))
+                          : cell.value}
+                      </Typography>
                     </Box>
                   );
                 })}
