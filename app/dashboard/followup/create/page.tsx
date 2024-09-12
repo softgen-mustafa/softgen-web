@@ -3,19 +3,13 @@ import {
   getAsync,
   getBmrmBaseUrl,
   getUmsBaseUrl,
+  getSgBizBaseUrl,
 } from "@/app/services/rest_services";
 import { DropDown } from "@/app/ui/drop_down";
-import {
-  CardView,
-  DynGrid,
-  GridConfig,
-  GridDirection,
-  Weight,
-} from "@/app/ui/responsive_grid";
+import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { Box, Grid } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { useSnackbar } from "@/app/ui/snack_bar_provider";
 import Cookies from "js-cookie";
 import ApiAutoComplete from "@/app/ui/api_auto_complete";
 import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
@@ -28,6 +22,9 @@ import {
   PeriodicTable,
   TableColumn,
 } from "@/app/ui/periodic_table/period_table";
+import { GridColDef } from "@mui/x-data-grid";
+import { ApiDropDown } from "@/app/ui/api_drop_down";
+import { convertToDate } from "@/app/services/Local/helper";
 
 interface OsSettings {
   pocEmail: string;
@@ -47,177 +44,126 @@ const Page = () => {
     nextDate: "",
   };
 
-  const [voucherTypes, setVoucherTypes] = useState([]);
   const [pocDetails, setPocDetails] = useState<OsSettings>(initialDetails);
-  const [selectedVoucherType, setVoucherType] = useState("Sales");
   const [data, setData] = useState([]);
   const [refresh, triggerRefresh] = useState(false);
   const [refreshBills, triggerBillsRefresh] = useState(false);
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
 
   let selectedBills = useRef<string[]>([]);
-
   let selectedUser = useRef(null);
-
+  let selectedParty = useRef<string>("");
   const compId = Cookies.get("companyId");
 
-  const datanew = [
+  const columns: GridColDef[] = [
     {
-      BillNumber: 3333,
-      TotalBills: 12,
-      TotalFollowUpCount: 3,
-      LastPersonInCharge: "Alice Smith",
-      Amount: 1500.75,
-    },
-    {
-      BillNumber: 2427,
-      TotalBills: 8,
-      TotalFollowUpCount: 2,
-      LastPersonInCharge: "Bob Johnson",
-      Amount: 980.5,
-    },
-    {
-      BillNumber: 1111,
-      TotalBills: 15,
-      TotalFollowUpCount: 4,
-      LastPersonInCharge: "Charlie Davis",
-      Amount: 2200.25,
-    },
-    {
-      BillNumber: 6789,
-      TotalBills: 6,
-      TotalFollowUpCount: 1,
-      LastPersonInCharge: "David Lee",
-      Amount: 750.0,
-    },
-    {
-      BillNumber: 9876,
-      TotalBills: 10,
-      TotalFollowUpCount: 3,
-      LastPersonInCharge: "Eva Martin",
-      Amount: 1800.5,
-    },
-    {
-      BillNumber: 5432,
-      TotalBills: 20,
-      TotalFollowUpCount: 5,
-      LastPersonInCharge: "Frank Brown",
-      Amount: 3500.0,
-    },
-    {
-      BillNumber: 2468,
-      TotalBills: 9,
-      TotalFollowUpCount: 2,
-      LastPersonInCharge: "Grace White",
-      Amount: 1200.75,
-    },
-    {
-      BillNumber: 1357,
-      TotalBills: 18,
-      TotalFollowUpCount: 4,
-      LastPersonInCharge: "Helen Taylor",
-      Amount: 2800.25,
-    },
-    {
-      BillNumber: 9753,
-      TotalBills: 12,
-      TotalFollowUpCount: 3,
-      LastPersonInCharge: "Ivan Hall",
-      Amount: 2000.0,
-    },
-    {
-      BillNumber: 4219,
-      TotalBills: 15,
-      TotalFollowUpCount: 4,
-      LastPersonInCharge: "Julia Kim",
-      Amount: 3000.5,
-    },
-  ];
-
-  const columns: any[] = [
-    {
-      field: "BillNumber",
+      field: "name",
       headerName: "Bill Number",
-      editable: false,
       sortable: false,
-      hideable: false,
       flex: 1,
     },
+
     {
-      field: "TotalBills",
-      headerName: "Opening Balance",
-      editable: false,
-      sortable: false,
-      hideable: false,
-      flex: 1,
-    },
-    {
-      field: "TotalFollowUpCount",
+      field: "PendingAmount",
       headerName: "Pending Balance",
-      editable: false,
       sortable: false,
-      hideable: false,
       flex: 1,
     },
     {
-      field: "LastPersonInCharge",
+      field: "OpeningAmount",
+      headerName: "Opening Balance",
+      sortable: false,
+      flex: 1,
+    },
+    {
+      field: "BillDate",
       headerName: "Bill Date",
-      editable: false,
       sortable: false,
-      hideable: false,
       flex: 1,
     },
     {
-      field: "Amount",
+      field: "DueDate",
       headerName: "Due Date",
-      editable: false,
       sortable: false,
-      hideable: false,
       flex: 1,
     },
   ];
 
   useEffect(() => {
-    loadVoucherTypes();
+    loadParties("");
+    loadBills("");
   }, []);
 
-  const { showSnackbar } = useSnackbar();
-
-  const loadVoucherTypes = async () => {
+  const loadParties = async (searchValue: string) => {
+    let values = [{ name: "None" }];
     try {
-      let url = `${getBmrmBaseUrl()}/meta-voucher/get/voucher-types`;
+      let url = `${getSgBizBaseUrl()}/os/search/ledgers?searchKey=${searchValue}`;
       let response = await getAsync(url);
-      setVoucherTypes(
-        response.map((entry: any) => {
-          return {
-            id: entry.name,
-            name: entry.name,
-          };
-        })
-      );
-      return response;
+      if (response == null || response.Data == null) {
+        return [];
+      }
+      response.Data.map((entry: any) => {
+        values.push({
+          name: entry.Name,
+        });
+      });
+      triggerRefresh(false);
+      return values;
     } catch {
-      showSnackbar("Could not load voucher types");
+      return [];
+    }
+  };
+
+  const loadBills = async (searchValue: string) => {
+    try {
+      let url = `${getSgBizBaseUrl()}/os/get/bills?searchText=${searchValue}&partyName=${
+        selectedParty.current
+      }`;
+      let response = await getAsync(url);
+      if (response == null || response.Data == null) {
+        return [];
+      }
+      let values = response.Data.map((entry: any) => {
+        return {
+          name: entry.BillNumber,
+          PartyName: entry.PartyName,
+          ParentGroup: entry.ParentGroup,
+          PendingAmount: entry.PendingAmount,
+          OpeningAmount: entry.OpeningAmount.value,
+          BillDate: convertToDate(entry.BillDate),
+          DueDate: convertToDate(entry.DueDate),
+        };
+      });
+      return values;
+      triggerRefresh(false);
+    } catch {
+      return [];
     }
   };
 
   const loadUser = async () => {
     try {
-      if (compId) {
-        const url = `${getUmsBaseUrl()}/users/company/${compId}`;
-        let response = await getAsync(url);
-        if (response && response.length > 0) {
-          let values = response.map((entry: any) => ({
-            id: entry.id,
-            name: entry.name,
-          }));
-          selectedUser.current = response[0]?.id;
-          setData(values);
-          return values;
-        }
+      let url = `${getSgBizBaseUrl()}/party/get/contact-person?partyName=${
+        selectedParty.current
+      }`;
+
+      let response = await getAsync(url);
+      if (response && response.length > 0) {
+        let values = response.map((entry: any) => ({
+          PersonId: entry.PersonId,
+          Name: entry.Name,
+          PartyName: entry.PartyName,
+          pocEmail: entry.Email,
+          pocMobile: entry.PhoneNo,
+        }));
+
+        setData(values);
+        selectedUser.current = response;
+        return values;
       }
     } catch {
       console.log("Something went wrong...");
+    } finally {
     }
   };
 
@@ -231,9 +177,10 @@ const Page = () => {
     }
   };
 
-  const gridConfig = [
+  const gridConfig: GridConfig[] = [
     {
-      weight: Weight.Low,
+      type: "item",
+      className: "",
       view: (
         <CardView
           title={"Overview"}
@@ -241,17 +188,20 @@ const Page = () => {
           className="h-fit"
         >
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DropDown
-              label="Select Type"
+            <ApiDropDown
+              label="Party"
               displayFieldKey={"name"}
               valueFieldKey={null}
-              selectionValues={voucherTypes}
-              helperText={"Select Party"}
+              onApi={loadParties}
+              helperText={""}
               onSelection={(selection) => {
-                setVoucherType(selection.name);
+                selectedParty.current = selection.name;
+                loadParties("");
+                triggerBillsRefresh(!refreshBills);
+                triggerRefresh(!refresh);
               }}
-              useSearch={true}
             />
+
             <br></br>
             <ApiMultiDropDown
               reload={refreshBills}
@@ -259,7 +209,7 @@ const Page = () => {
               displayFieldKey={"name"}
               defaultSelections={selectedBills.current}
               valueFieldKey={null}
-              onApi={loadVoucherTypes}
+              onApi={loadBills}
               helperText={""}
               onSelection={(selection) => {
                 selectedBills.current = selection;
@@ -325,13 +275,15 @@ const Page = () => {
           </LocalizationProvider>
         </CardView>
       ),
+      children: [],
     },
     {
-      weight: Weight.Low,
+      type: "item",
+      className: "",
       view: (
         <CardView title="Status Table">
           <PeriodicTable
-            useSearch={false}
+            useSearch={true}
             reload={refresh}
             columns={columns.map((col: any) => {
               let column: TableColumn = {
@@ -344,7 +296,18 @@ const Page = () => {
               };
               return column;
             })}
-            rows={datanew}
+            rows={selectedBills.current}
+            // onApi={loadBills}
+            checkBoxSelection={true}
+            renderCheckedView={(values: any) => {
+              return (
+                <div>
+                  {values.map((entry: any, index: number) => {
+                    return <div key={index}>{entry[0].value}</div>;
+                  })}
+                </div>
+              );
+            }}
             actionViews={[
               {
                 label: "Status",
@@ -356,12 +319,13 @@ const Page = () => {
                     (entry: any) => entry.field === "selected"
                   );
                   let statusOptions = [
-                    { id: "pending", name: "Pending" },
-                    { id: "schedule", name: "Schedule" },
-                    { id: "done", name: "Done" },
+                    { id: 0, name: "Pending" },
+                    { id: 1, name: "Scheduled" },
+                    { id: 2, name: "Completed" },
                   ];
                   return (
-                    <Box>
+                    <Box sx={{ minWidth: 120, maxWidth: "100%" }}>
+                      {" "}
                       <DropDown
                         label="Status"
                         displayFieldKey="name"
@@ -382,10 +346,11 @@ const Page = () => {
           />
         </CardView>
       ),
+      children: [],
     },
     {
-      weight: Weight.Low,
-
+      type: "item",
+      className: "",
       view: (
         <CardView title="History Table">
           <PeriodicTable
@@ -402,20 +367,24 @@ const Page = () => {
               };
               return column;
             })}
-            rows={datanew}
+            // rows={datanew}
           />
         </CardView>
       ),
+      children: [],
     },
   ];
-
   return (
     <Box>
-      <DynGrid
-        views={gridConfig}
-        direction={GridDirection.Column}
-        width="100%"
-      />
+      <Grid
+        container
+        sx={{
+          flexGrow: 1,
+          height: "100vh",
+        }}
+      >
+        {RenderGrid(gridConfig)}
+      </Grid>
     </Box>
   );
 };
