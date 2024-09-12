@@ -411,9 +411,9 @@ const Page = () => {
 
   const gridConfig = [
     {
-      weight: Weight.Low,
+      weight: Weight.High,
       view: (
-        <CardView title="Filters">
+        <CardView title="Party Outstandings" actions={[]}>
           <Stack flexDirection={"column"} gap={2}>
             <DropDown
               label="View"
@@ -431,13 +431,7 @@ const Page = () => {
             />
           </Stack>
           <div className="mt-4" />
-        </CardView>
-      ),
-    },
-    {
-      weight: Weight.High,
-      view: (
-        <CardView title="Party Outstandings" actions={[]}>
+
           <PeriodicTable
             chartKeyFields={[
               {

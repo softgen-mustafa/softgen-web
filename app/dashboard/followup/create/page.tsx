@@ -327,7 +327,7 @@ const Page = () => {
       ),
     },
     {
-      weight: Weight.High,
+      weight: Weight.Low,
       view: (
         <CardView title="Status Table">
           <PeriodicTable
@@ -384,7 +384,7 @@ const Page = () => {
       ),
     },
     {
-      weight: Weight.High,
+      weight: Weight.Low,
 
       view: (
         <CardView title="History Table">
