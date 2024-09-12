@@ -360,7 +360,7 @@ const BillsCard = ({ voucherType }: { voucherType: string }) => {
           return column;
         })}
         onApi={loadData}
-        reload={isLoading}
+        reload={refresh}
         onRowClick={handleRowClick}
       />
       {/* <DataTable
