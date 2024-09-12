@@ -99,16 +99,17 @@ const Page = () => {
       sort_by: apiProps.sortKey ?? "",
       sort_order: apiProps.sortOrder ?? "",
     };
+
     try {
       let response = await postAsync(url, requestBody);
       let entries = response.map((entry: any, index: number) => {
         return {
           id: index + 1,
           partyName: entry.name,
-          amount: `${entry.currency ?? "₹"} ${numericToString(
+          amount: entry.totalAmount,
+          amountstr: `${entry.currency ?? "₹"} ${numericToString(
             entry.totalAmount
           )}`,
-
           billCount: entry.billCount,
           currency: entry.currency ?? "₹",
         };
@@ -116,7 +117,10 @@ const Page = () => {
       setRows(entries);
 
       return entries;
-    } catch {}
+    } catch {
+    } finally {
+      triggerRefresh(false);
+    }
   };
   const columns: GridColDef<any[number]>[] = [
     {
@@ -135,10 +139,16 @@ const Page = () => {
       type: "number",
       flex: 1,
       minWidth: 150,
-      valueGetter: (value, row) =>
-        `${row.currency || ""} ${
-          row.amount != null ? numericToString(row.amount) : "0"
-        }`,
+      hideable: true,
+    },
+    {
+      field: "amountstr",
+      headerName: "Value",
+      editable: false,
+      sortable: true,
+      type: "number",
+      flex: 1,
+      minWidth: 150,
     },
     {
       field: "billCount",
@@ -153,7 +163,7 @@ const Page = () => {
 
   const gridConfig = [
     {
-      weight: Weight.Low,
+      weight: Weight.High,
       view: (
         <CardView title="Outstanding Overview">
           <DropDown
@@ -179,13 +189,7 @@ const Page = () => {
               triggerRefresh(!refresh);
             }}
           />
-        </CardView>
-      ),
-    },
-    {
-      weight: Weight.High,
-      view: (
-        <CardView title="Parties">
+          <div className="mt-4" />
           {/* <DataTable
             columns={columns}
             refresh={refresh}
@@ -202,6 +206,22 @@ const Page = () => {
             }}
           /> */}
           <PeriodicTable
+            chartKeyFields={[
+              {
+                label: "Party Name",
+                value: "partyName",
+              },
+            ]}
+            chartValueFields={[
+              {
+                label: "Amount",
+                value: "amount",
+              },
+              {
+                label: "Bill Count",
+                value: "billCount",
+              },
+            ]}
             useSearch={true}
             columns={columns.map((col: any) => {
               let column: TableColumn = {
@@ -210,6 +230,7 @@ const Page = () => {
                 type: "text",
                 pinned: false,
                 rows: [],
+                hideable: col.hideable,
               };
               return column;
             })}

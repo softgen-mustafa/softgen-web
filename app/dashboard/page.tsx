@@ -250,7 +250,9 @@ const DashboardPage = () => {
           id: entry.id,
           name: entry.title,
           amount: entry.amount,
-          // amount: `${entry.currency ?? "₹"} ${numericToString(entry.amount)}`,
+          amountstr: `${entry.currency ?? "₹"} ${numericToString(
+            entry.amount
+          )}`,
           billCount: entry.billCount,
           currency: entry.currency ?? "₹",
         };
@@ -271,16 +273,22 @@ const DashboardPage = () => {
       flex: 1,
     },
     {
+      field: "amountstr",
+      headerName: "Value",
+      editable: false,
+      sortable: true,
+      flex: 1,
+      type: "number",
+      valueGetter: (value, row) => row.amount || "0",
+    },
+    {
       field: "amount",
       headerName: "Value",
       editable: false,
       sortable: true,
       flex: 1,
       type: "number",
-      // valueGetter: (value, row) => `${row.currency || ""} ${row.amount || "0"}`,
-      // valueGetter: (value, row) =>
-      //   `${row.currency || ""} ${numericToString(row.amount) || "0"}`,
-      valueGetter: (value, row) => row.amount || "0",
+      hideable: true,
     },
   ];
 
@@ -486,6 +494,7 @@ const DashboardPage = () => {
                 type: "text",
                 pinned: false,
                 rows: [],
+                hideable: col.hideable,
               };
               return column;
             })}

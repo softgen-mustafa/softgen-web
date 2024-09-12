@@ -5,8 +5,14 @@ import {
   getUmsBaseUrl,
 } from "@/app/services/rest_services";
 import { DropDown } from "@/app/ui/drop_down";
-import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
-import { Grid } from "@mui/material";
+import {
+  CardView,
+  DynGrid,
+  GridConfig,
+  GridDirection,
+  Weight,
+} from "@/app/ui/responsive_grid";
+import { Box, Grid } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
@@ -22,7 +28,6 @@ import {
   PeriodicTable,
   TableColumn,
 } from "@/app/ui/periodic_table/period_table";
-import { GridColDef } from "@mui/x-data-grid";
 
 interface OsSettings {
   pocEmail: string;
@@ -58,44 +63,80 @@ const Page = () => {
 
   const datanew = [
     {
-      Party: "John Doe",
+      BillNumber: 3333,
       TotalBills: 12,
       TotalFollowUpCount: 3,
       LastPersonInCharge: "Alice Smith",
       Amount: 1500.75,
     },
     {
-      Party: "Jane Smith",
+      BillNumber: 2427,
       TotalBills: 8,
       TotalFollowUpCount: 2,
       LastPersonInCharge: "Bob Johnson",
       Amount: 980.5,
     },
     {
-      Party: "Acme Corp",
-      TotalBills: 20,
-      TotalFollowUpCount: 5,
-      LastPersonInCharge: "Carol White",
-      Amount: 3020.1,
-    },
-    {
-      Party: "Global Inc.",
+      BillNumber: 1111,
       TotalBills: 15,
       TotalFollowUpCount: 4,
-      LastPersonInCharge: "David Brown",
-      Amount: 2125.25,
+      LastPersonInCharge: "Charlie Davis",
+      Amount: 2200.25,
     },
     {
-      Party: "Tech Solutions",
-      TotalBills: 9,
+      BillNumber: 6789,
+      TotalBills: 6,
       TotalFollowUpCount: 1,
-      LastPersonInCharge: "Eve Davis",
-      Amount: 1250.0,
+      LastPersonInCharge: "David Lee",
+      Amount: 750.0,
+    },
+    {
+      BillNumber: 9876,
+      TotalBills: 10,
+      TotalFollowUpCount: 3,
+      LastPersonInCharge: "Eva Martin",
+      Amount: 1800.5,
+    },
+    {
+      BillNumber: 5432,
+      TotalBills: 20,
+      TotalFollowUpCount: 5,
+      LastPersonInCharge: "Frank Brown",
+      Amount: 3500.0,
+    },
+    {
+      BillNumber: 2468,
+      TotalBills: 9,
+      TotalFollowUpCount: 2,
+      LastPersonInCharge: "Grace White",
+      Amount: 1200.75,
+    },
+    {
+      BillNumber: 1357,
+      TotalBills: 18,
+      TotalFollowUpCount: 4,
+      LastPersonInCharge: "Helen Taylor",
+      Amount: 2800.25,
+    },
+    {
+      BillNumber: 9753,
+      TotalBills: 12,
+      TotalFollowUpCount: 3,
+      LastPersonInCharge: "Ivan Hall",
+      Amount: 2000.0,
+    },
+    {
+      BillNumber: 4219,
+      TotalBills: 15,
+      TotalFollowUpCount: 4,
+      LastPersonInCharge: "Julia Kim",
+      Amount: 3000.5,
     },
   ];
-  const columns: GridColDef<any[number]>[] = [
+
+  const columns: any[] = [
     {
-      field: "Party",
+      field: "BillNumber",
       headerName: "Bill Number",
       editable: false,
       sortable: false,
@@ -190,10 +231,9 @@ const Page = () => {
     }
   };
 
-  const gridConfig: GridConfig[] = [
+  const gridConfig = [
     {
-      type: "item",
-      className: "",
+      weight: Weight.Low,
       view: (
         <CardView
           title={"Overview"}
@@ -212,7 +252,6 @@ const Page = () => {
               }}
               useSearch={true}
             />
-
             <br></br>
             <ApiMultiDropDown
               reload={refreshBills}
@@ -286,16 +325,11 @@ const Page = () => {
           </LocalizationProvider>
         </CardView>
       ),
-      children: [],
     },
     {
-      type: "item",
-      className: "",
+      weight: Weight.Low,
       view: (
-        <CardView
-          title="Status Table"
-          // permissionCode="CustomerPartySearch"
-        >
+        <CardView title="Status Table">
           <PeriodicTable
             useSearch={false}
             reload={refresh}
@@ -311,29 +345,49 @@ const Page = () => {
               return column;
             })}
             rows={datanew}
-            checkBoxSelection={true}
-            renderCheckedView={(values: any) => {
-              return (
-                <div>
-                  {values.map((entry: any, index: number) => {
-                    return <div key={index}>{entry[0].value}</div>;
-                  })}
-                </div>
-              );
-            }}
+            actionViews={[
+              {
+                label: "Status",
+                renderView: (row: any[]) => {
+                  let BillNumber = row.find(
+                    (entry: any) => entry.field === "BillNumber"
+                  );
+                  let selected = row.find(
+                    (entry: any) => entry.field === "selected"
+                  );
+                  let statusOptions = [
+                    { id: "pending", name: "Pending" },
+                    { id: "schedule", name: "Schedule" },
+                    { id: "done", name: "Done" },
+                  ];
+                  return (
+                    <Box>
+                      <DropDown
+                        label="Status"
+                        displayFieldKey="name"
+                        valueFieldKey="id"
+                        selectionValues={statusOptions}
+                        onSelection={(selection) => {
+                          console.log(
+                            `Status for BillNumber ${BillNumber.value} changed to ${selection.id}`
+                          );
+                        }}
+                        helperText="Select status"
+                      />
+                    </Box>
+                  );
+                },
+              },
+            ]}
           />
         </CardView>
       ),
-      children: [],
     },
     {
-      type: "item",
-      className: "",
+      weight: Weight.Low,
+
       view: (
-        <CardView
-          title="History Table"
-          // permissionCode="CustomerPartySearch"
-        >
+        <CardView title="History Table">
           <PeriodicTable
             useSearch={false}
             reload={refresh}
@@ -352,22 +406,17 @@ const Page = () => {
           />
         </CardView>
       ),
-      children: [],
     },
   ];
 
   return (
-    <div className="w-full" style={{}}>
-      <Grid
-        container
-        sx={{
-          flexGrow: 1,
-          height: "100vh",
-        }}
-      >
-        {RenderGrid(gridConfig)}
-      </Grid>
-    </div>
+    <Box>
+      <DynGrid
+        views={gridConfig}
+        direction={GridDirection.Column}
+        width="100%"
+      />
+    </Box>
   );
 };
 export default Page;

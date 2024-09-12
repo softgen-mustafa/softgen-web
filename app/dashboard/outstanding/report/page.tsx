@@ -29,12 +29,12 @@ import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
 import ApiAutoComplete from "@/app/ui/api_auto_complete";
 const isDebitType = [
   {
-    name: "Payable",
-    value: false,
-  },
-  {
     name: "Receivable",
     value: true,
+  },
+  {
+    name: "Payable",
+    value: false,
   },
 ];
 
@@ -73,7 +73,7 @@ const Page = () => {
   let selectedParty = useRef<string>("");
   let selectedReportType = useRef<number>(0); //0 - Party Wise, 1 - Bill Wise
   let selectedDueType = useRef<number>(0);
-  let selectedisDebitType = useRef<boolean>(false);
+  let selectedisDebitType = useRef<boolean>(true);
   let selectedUser = useRef<string>("");
 
   const [showSettings, toggleSetting] = useState(false);
@@ -109,7 +109,7 @@ const Page = () => {
   const loadGroups = async () => {
     try {
       let url = `${getSgBizBaseUrl()}/os/get/groups?isDebit=${
-        selectedisDebitType.current
+        selectedisDebitType.current ?? true
       }`;
       let response = await getAsync(url);
       if (response == null || response.Data == null) {
@@ -411,9 +411,9 @@ const Page = () => {
 
   const gridConfig = [
     {
-      weight: Weight.Low,
+      weight: Weight.High,
       view: (
-        <CardView title="Filters">
+        <CardView title="Party Outstandings" actions={[]}>
           <Stack flexDirection={"column"} gap={2}>
             <DropDown
               label="View"
@@ -431,13 +431,7 @@ const Page = () => {
             />
           </Stack>
           <div className="mt-4" />
-        </CardView>
-      ),
-    },
-    {
-      weight: Weight.High,
-      view: (
-        <CardView title="Party Outstandings" actions={[]}>
+
           <PeriodicTable
             chartKeyFields={[
               {

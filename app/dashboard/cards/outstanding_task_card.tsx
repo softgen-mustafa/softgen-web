@@ -56,6 +56,14 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
       headerName: "Amount",
       editable: false,
       sortable: true,
+      hideable: true,
+      flex: 1,
+    },
+    {
+      field: "amountstr",
+      headerName: "Amount",
+      editable: false,
+      sortable: true,
       flex: 1,
     },
   ];
@@ -95,7 +103,7 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
         return {
           id: index + 1,
           partyName: entry.name,
-          // amount: `\u20B9 ${numericToString(entry.totalAmount)}`,
+          amountstr: `\u20B9 ${numericToString(entry.totalAmount)}`,
           amount: entry.totalAmount,
           // currency: entry.currency ?? "₹",
         };
@@ -106,6 +114,7 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
       console.log("Error fetching tasks:", error);
     } finally {
       setIsLoading(false);
+      triggerRefresh(false)
     }
   };
 
@@ -182,11 +191,12 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
             type: "text",
             pinned: false,
             rows: [],
+            hideable: col.hideable,
           };
           return column;
         })}
         onApi={fetchTasks}
-        reload={isLoading}
+        reload={refresh}
       />
 
       {/* )} */}
