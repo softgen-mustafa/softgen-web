@@ -717,19 +717,28 @@ interface TableFilterProps {
   columns: TableColumn[];
   sortKeys?: TableSortKey[];
   onChange?: (sortKey: string, sortOrder: string) => void;
+  onHideColumns?: any;
   refreshFilterView?: boolean;
   RenderAdditionalView?: ReactElement;
 }
 
 const TableFilterView = ({
+  columns,
   refreshFilterView,
   RenderAdditionalView,
   sortKeys = [],
   onChange,
+  onHideColumns,
 }: TableFilterProps) => {
   const [sortKey, setSortKey] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
   const [AddtionalView, setAddtionalView] = useState<ReactElement | null>(null);
+
+  const handleFilterColumns = (index: number) => {
+    let updatedColumns = [...columns];
+    updatedColumns[index].hideable = !updatedColumns[index].hideable;
+    onHideColumns(updatedColumns);
+  };
 
   useEffect(() => {
     setAddtionalView(RenderAdditionalView || null);
@@ -797,6 +806,19 @@ const TableFilterView = ({
           </FormControl>
         </Box>
       )}
+
+      <FormLabel className="mt-4">Filter Columns</FormLabel>
+      {columns.map((col, index) => {
+        return (
+          <Box key={index} className="flex flex-row items-center">
+            <Checkbox
+              defaultChecked={!col.hideable}
+              onChange={() => handleFilterColumns(index)}
+            />
+            <Typography>{col.header}</Typography>
+          </Box>
+        );
+      })}
     </Box>
   );
 };
@@ -924,6 +946,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
   const [filterOpen, toggleFilter] = useState(false);
   const [dataRows, updateRows] = useState<TableRow[][]>([]);
   const [viewType, toggleViewType] = useState("table");
+  const [filterColumns, setFiletrColumns] = useState(props.columns);
 
   const loadColumns = (rows: any[]) => {
     if (dimensions.width <= maxPhoneWidth) {
@@ -965,6 +988,10 @@ const PeriodicTable = (props: PeriodicTableProps) => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  const handelHideColumn = (updatedColumn: any) => {
+    setFiletrColumns(updatedColumn);
+  };
 
   return (
     <div className="flex flex-col w-full h-auto">
@@ -1039,13 +1066,14 @@ const PeriodicTable = (props: PeriodicTableProps) => {
                 sortOrder: sortOrder,
               });
             }}
+            onHideColumns={handelHideColumn}
           />
         )}
         {viewType === "table" && dimensions.width > maxPhoneWidth && (
           <Table
             actionViews={props.actionViews}
             iconActions={props.iconActions}
-            columns={props.columns}
+            columns={filterColumns}
             // columns={props.columns}
             rows={dataRows}
             reload={props.reload}
