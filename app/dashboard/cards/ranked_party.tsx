@@ -33,7 +33,7 @@ const RankedPartyOutstandingCard = ({
       flex: 1,
     },
     {
-      field: "amount",
+      field: "amountstr",
       headerName: "Value",
       type: "number",
       editable: false,
@@ -43,6 +43,15 @@ const RankedPartyOutstandingCard = ({
         `${row.currency || ""} ${
           row.amount != null ? numericToString(row.amount) : "0"
         }`,
+    },
+    {
+      field: "amount",
+      headerName: "Value",
+      type: "number",
+      editable: false,
+      sortable: true,
+      flex: 1,
+      hideable: true,
     },
   ];
 
@@ -62,9 +71,9 @@ const RankedPartyOutstandingCard = ({
           id: entry.name,
           name: entry.name,
           amount: entry.totalAmount,
-          // amount: `${entry.currency ?? "₹"} ${numericToString(
-          //   entry.totalAmount
-          // )}`,
+          amountstr: `${entry.currency ?? "₹"} ${numericToString(
+            entry.totalAmount
+          )}`,
           currency: entry.currency ?? "₹",
         };
       });
@@ -127,6 +136,7 @@ const RankedPartyOutstandingCard = ({
               type: "text",
               pinned: false,
               rows: [],
+              hideable:col.hideable
             };
             return column;
           })}

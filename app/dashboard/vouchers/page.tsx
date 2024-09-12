@@ -7,10 +7,7 @@ import {
 import { DataTable } from "@/app/ui/data_grid";
 import { DropDown } from "@/app/ui/drop_down";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
-import {
-  ChevronLeftRounded,
-  
-} from "@mui/icons-material";
+import { ChevronLeftRounded } from "@mui/icons-material";
 import {
   Button,
   CircularProgress,
@@ -213,7 +210,7 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
 const BillsCard = ({ voucherType }: { voucherType: string }) => {
   const [data, setData] = useState([]);
   const [refresh, triggerRefresh] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
