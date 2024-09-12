@@ -33,7 +33,7 @@ interface OutstandingTaskProps {
 }
 const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [durationKey] = useState(dayjs().format("YYYY-MM-DD"));
   const [hasPermission, setHasPermission] = useState(false);
@@ -114,6 +114,7 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
       console.log("Error fetching tasks:", error);
     } finally {
       setIsLoading(false);
+      triggerRefresh(false)
     }
   };
 
