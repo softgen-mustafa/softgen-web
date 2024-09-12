@@ -264,27 +264,29 @@ const MobileView = ({ columns, rows }: MobileViewProps) => {
               padding: 2,
             }}
           >
-            {columns.map((column: any, colIndex: number) => {
-              console.log(columns);
-              return (
-                <div
-                  key={colIndex}
-                  className="flex flex-row justify-between items-baseline mb-2"
-                >
-                  {!column.mobileFullView && (
-                    <Typography>{column.header}:</Typography>
-                  )}
-                  <Typography
-                    sx={{
-                      textAlign: column.mobileFullView ? "center" : "right",
-                      width: "60%",
-                    }}
+            {columns
+              .filter((_column) => !_column.hideable)
+              .map((column: any, colIndex: number) => {
+                // console.log(columns);
+                return (
+                  <div
+                    key={colIndex}
+                    className="flex flex-row justify-between items-baseline mb-2"
                   >
-                    {row[column.field]}{" "}
-                  </Typography>
-                </div>
-              );
-            })}
+                    {!column.mobileFullView && (
+                      <Typography>{column.header}:</Typography>
+                    )}
+                    <Typography
+                      sx={{
+                        textAlign: column.mobileFullView ? "center" : "right",
+                        width: "60%",
+                      }}
+                    >
+                      {row[column.field]}{" "}
+                    </Typography>
+                  </div>
+                );
+              })}
           </Box>
         ),
       };
@@ -1089,7 +1091,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
           />
         )}
         {viewType === "table" && dimensions.width <= maxPhoneWidth && (
-          <MobileView columns={props.columns} rows={mobileRows} />
+          <MobileView columns={filterColumns} rows={mobileRows} />
         )}
         {viewType !== "table" &&
           props.chartKeyFields != null &&
