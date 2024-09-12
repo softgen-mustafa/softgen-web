@@ -334,7 +334,7 @@ const DashboardPage = () => {
             <br></br>
 
             <Typography className="text-base mb-8 justify-center">
-              {`${"Last Sync"} ${syncInfo}`}
+              {`Last Sync: ${syncInfo}`}
             </Typography>
           </CardView>
           {loading ? (
@@ -384,7 +384,7 @@ const DashboardPage = () => {
     {
       weight: Weight.High,
       view: (
-        <CardView title="Today's O/S">
+        <CardView title="Today's O/S" className="overflow-scroll">
           <OutstandingTask companyId={data[cachedCompanyIndex]} />
         </CardView>
       ),
@@ -392,7 +392,7 @@ const DashboardPage = () => {
     {
       weight: Weight.High,
       view: (
-        <CardView title="Ranked Parties">
+        <CardView title="Ranked Parties" className="overflow-scroll">
           <RankedPartyOutstandingCard
             companyId={data[cachedCompanyIndex]}
             billType={selectedType.current.code}

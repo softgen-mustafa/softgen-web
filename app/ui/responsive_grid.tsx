@@ -150,10 +150,12 @@ const DynGrid = ({
   views,
   direction = GridDirection.Row,
   width,
+  isMobileView,
 }: {
   views: any[];
   direction?: string;
   width?: string;
+  isMobileView?: boolean;
 }) => {
   const minWidth = 290;
   return (
@@ -164,7 +166,7 @@ const DynGrid = ({
         {views.map((entry: any, index: number) => {
           let styles: any = {
             minWidth: entry.minWidth ? entry.minWidth : minWidth,
-            minHeight: 200,
+            minHeight: !isMobileView && 200,
             maxHeight: 800,
             flexGrow: entry.weight ?? 0,
             width: width,

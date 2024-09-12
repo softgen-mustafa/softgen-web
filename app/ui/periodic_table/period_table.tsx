@@ -251,40 +251,44 @@ interface MobileViewProps {
 
 const MobileView = ({ columns, rows }: MobileViewProps) => {
   useEffect(() => {}, [columns]);
+  const theme = useTheme();
 
   const populateView = () => {
     return rows.map((row: any) => {
       return {
-        weight: Weight.High,
+        weight: Weight.Low,
         view: (
           <Box
             sx={{
               borderWidth: 1,
               borderRadius: 4,
               padding: 2,
+              borderColor: theme.palette.primary.light,
             }}
           >
-            {columns.map((column: any, colIndex: number) => {
-              console.log(columns);
-              return (
-                <div
-                  key={colIndex}
-                  className="flex flex-row justify-between items-baseline mb-2"
-                >
-                  {!column.mobileFullView && (
-                    <Typography>{column.header}:</Typography>
-                  )}
-                  <Typography
-                    sx={{
-                      textAlign: column.mobileFullView ? "center" : "right",
-                      width: "60%",
-                    }}
+            {columns
+              .filter((_column) => !_column.hideable)
+              .map((column: any, colIndex: number) => {
+                // console.log(columns);
+                return (
+                  <div
+                    key={colIndex}
+                    className="flex flex-row justify-between items-baseline mb-2"
                   >
-                    {row[column.field]}{" "}
-                  </Typography>
-                </div>
-              );
-            })}
+                    {!column.mobileFullView && (
+                      <Typography>{column.header}:</Typography>
+                    )}
+                    <Typography
+                      sx={{
+                        textAlign: column.mobileFullView ? "center" : "right",
+                        width: "60%",
+                      }}
+                    >
+                      {row[column.field]}{" "}
+                    </Typography>
+                  </div>
+                );
+              })}
           </Box>
         ),
       };
@@ -293,7 +297,7 @@ const MobileView = ({ columns, rows }: MobileViewProps) => {
 
   return (
     <div className="">
-      <DynGrid views={populateView()} />
+      <DynGrid views={populateView()} isMobileView={true} />
     </div>
   );
 };
@@ -885,7 +889,7 @@ const TableChartView = ({
           }}
         />
       </Box>
-      <Box sx={{ width: "80%" }}>
+      <Box sx={{ width: { md: "80%" } }}>
         <SingleChartView defaultChart="pie" values={data} title="" />
       </Box>
     </Stack>
@@ -1089,7 +1093,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
           />
         )}
         {viewType === "table" && dimensions.width <= maxPhoneWidth && (
-          <MobileView columns={props.columns} rows={mobileRows} />
+          <MobileView columns={filterColumns} rows={mobileRows} />
         )}
         {viewType !== "table" &&
           props.chartKeyFields != null &&
