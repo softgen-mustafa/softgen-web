@@ -261,32 +261,53 @@ const MobileView = ({ columns, rows }: MobileViewProps) => {
           <Box
             sx={{
               borderWidth: 1,
-              borderRadius: 4,
+              borderRadius: 2,
               padding: 2,
               borderColor: theme.palette.primary.light,
+              borderLeftWidth: 8,
+              borderLeftColor: theme.palette.primary.main,
             }}
+            className="flex flex-row flex-wrap justify-between"
           >
             {columns
               .filter((_column) => !_column.hideable)
               .map((column: any, colIndex: number) => {
                 // console.log(columns);
                 return (
-                  <div
+                  // <div
+                  //   key={colIndex}
+                  //   className="flex flex-row justify-between items-baseline mb-2"
+                  // >
+                  <Box
                     key={colIndex}
-                    className="flex flex-row justify-between items-baseline mb-2"
+                    className={`flex flex-col ${
+                      colIndex % 2 === 0 ? "items-start" : "items-end"
+                    }`}
+                    width={"50%"}
+                    mb={2}
                   >
                     {!column.mobileFullView && (
-                      <Typography>{column.header}:</Typography>
+                      <Typography
+                        sx={{
+                          fontSize: 14,
+                          textAlign: colIndex % 2 === 0 ? "left" : "right",
+                        }}
+                      >
+                        {column.header}
+                      </Typography>
                     )}
                     <Typography
                       sx={{
-                        textAlign: column.mobileFullView ? "center" : "right",
-                        width: "60%",
+                        // textAlign: column.mobileFullView ? "center" : "right",
+                        // width: "60%",
+                        fontSize: 16,
+                        fontWeight: "bold",
                       }}
                     >
                       {row[column.field]}{" "}
                     </Typography>
-                  </div>
+                  </Box>
+                  // </div>
                 );
               })}
           </Box>
