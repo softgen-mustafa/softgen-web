@@ -29,6 +29,7 @@ import { convertToDate } from "@/app/services/Local/helper";
 interface OsSettings {
   pocEmail: string;
   pocMobile: number;
+  pocName: string;
   Notes: string;
   nextFollowup: string;
   nextDate: string;
@@ -39,6 +40,7 @@ const Page = () => {
   const initialDetails: OsSettings = {
     pocEmail: "",
     pocMobile: 0,
+    pocName: "",
     Notes: "",
     nextFollowup: "",
     nextDate: "",
@@ -51,7 +53,7 @@ const Page = () => {
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
 
   let selectedBills = useRef<string[]>([]);
-  let selectedUser = useRef(null);
+  let selectedUser = useRef<string[]>([]);
   let selectedParty = useRef<string>("");
   const compId = Cookies.get("companyId");
 
@@ -129,14 +131,14 @@ const Page = () => {
           PartyName: entry.PartyName,
           ParentGroup: entry.ParentGroup,
           PendingAmount: entry.PendingAmount,
-          OpeningAmount: entry.OpeningAmount.value,
+          OpeningAmount: entry.OpeningAmount.Value,
           BillDate: convertToDate(entry.BillDate),
           DueDate: convertToDate(entry.DueDate),
         };
       });
       return values;
-      triggerRefresh(false);
     } catch {
+      triggerRefresh(false);
       return [];
     }
   };
@@ -149,16 +151,15 @@ const Page = () => {
 
       let response = await getAsync(url);
       if (response && response.length > 0) {
-        let values = response.map((entry: any) => ({
-          PersonId: entry.PersonId,
-          Name: entry.Name,
-          PartyName: entry.PartyName,
-          pocEmail: entry.Email,
-          pocMobile: entry.PhoneNo,
-        }));
-
-        setData(values);
-        selectedUser.current = response;
+        let values = response.Data.map((entry: any) => {
+          return {
+            PersonId: entry.PersonId,
+            Name: entry.Name,
+            PartyName: entry.PartyName,
+            pocEmail: entry.Email,
+            pocMobile: entry.PhoneNo,
+          };
+        });
         return values;
       }
     } catch {
@@ -222,7 +223,8 @@ const Page = () => {
               displayFieldKey={"name"}
               onApi={loadUser}
               onSelection={(data) => {
-                selectedUser.current = data;
+                setPocDetails((prev) => ({ ...prev, pocName: data }));
+                selectedUser.current = data.Name;
                 triggerRefresh(!refresh);
               }}
             />
