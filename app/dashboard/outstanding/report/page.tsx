@@ -27,6 +27,7 @@ import { numericToString } from "@/app/services/Local/helper";
 import { OsSettingsView } from "@/app/dashboard/outstanding/report/outstanding_setings";
 import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
 import ApiAutoComplete from "@/app/ui/api_auto_complete";
+
 const isDebitType = [
   {
     name: "Receivable",
@@ -68,6 +69,21 @@ const dueTypes = [
   },
 ];
 
+const locationTypes = [
+  {
+    name: "District",
+    value: "District",
+  },
+  {
+    name: "Region",
+    value: "Region",
+  },
+  {
+    name: "Pincode",
+    value: "Pincode",
+  },
+];
+
 const Page = () => {
   let selectedGroups = useRef<string[]>([]);
   let selectedParty = useRef<string>("");
@@ -75,6 +91,8 @@ const Page = () => {
   let selectedDueType = useRef<number>(0);
   let selectedisDebitType = useRef<boolean>(true);
   let selectedUser = useRef<string>("");
+  let selectedlocationTypes = useRef<string>("");
+  let selectedStateType = useRef<string>("");
 
   const [showSettings, toggleSetting] = useState(false);
   const [refresh, triggerRefresh] = useState(false);
@@ -84,6 +102,7 @@ const Page = () => {
   useEffect(() => {
     loadParties("");
     loadGroups();
+    loadStates();
   }, []);
 
   const loadParties = async (searchValue: string) => {
@@ -176,6 +195,56 @@ const Page = () => {
       };
     });
     // console.log(values);
+    triggerRefresh(false);
+    return values;
+  };
+
+  const loadStates = async () => {
+    try {
+      let url = `${getSgBizBaseUrl()}/dsp/get/states`;
+      let response = await getAsync(url);
+      if (response == null || response.Data == null) {
+        return [];
+      }
+      let values = response.Data.map((entry: any) => {
+        return {
+          name: entry,
+        };
+      });
+      triggerRefresh(false);
+      return values;
+    } catch {
+      return [];
+    }
+  };
+
+  const loadMapsData = async (apiProps: ApiProps) => {
+    let url = `${getSgBizBaseUrl()}/os/location/report?isDebit=${
+      selectedisDebitType.current
+    }`;
+    console.log("load DAta", url);
+    let requestBody = {
+      State: selectedStateType.current ?? "",
+      LocationType: selectedlocationTypes.current ?? "",
+    };
+    console.log(requestBody);
+    let res = await postAsync(url, requestBody);
+    if (!res || !res.Data) {
+      return [];
+    }
+
+    let values = res.Data.map((entry: any, index: number) => {
+      return {
+        id: index + 1,
+        LocationName: entry.LocationName,
+        OpeningAmount: entry.OpeningAmount,
+        ClosingAmount: entry.ClosingAmount,
+        OpeningAmountstr: `\u20B9 ${numericToString(entry.OpeningAmount)}`,
+        ClosingAmountstr: `\u20B9 ${numericToString(entry.ClosingAmount)}`,
+        // ...entry,
+      };
+    });
+    console.log("this is maps ", values);
     triggerRefresh(false);
     return values;
   };
@@ -311,6 +380,55 @@ const Page = () => {
     },
   ];
 
+  const columnsMap: any[] = [
+    {
+      field: "LocationName",
+      headerName: "Location Name",
+      editable: false,
+      sortable: true,
+      flex: 1,
+      minWidth: 200,
+      hideable: false,
+      mobileFullView: true,
+    },
+    {
+      field: "OpeningAmount",
+      headerName: "Opening Amount",
+      editable: false,
+      sortable: true,
+      flex: 1,
+      minWidth: 200,
+      hideable: true,
+    },
+    {
+      field: "ClosingAmountstr",
+      headerName: "Closing Amount",
+      editable: false,
+      sortable: true,
+      flex: 1,
+      minWidth: 200,
+      hideable: false,
+    },
+    {
+      field: "OpeningAmountstr",
+      headerName: "Opening Amount",
+      editable: false,
+      sortable: true,
+      flex: 1,
+      minWidth: 200,
+      hideable: false,
+    },
+    {
+      field: "ClosingAmount",
+      headerName: "Closing Amount",
+      editable: false,
+      sortable: true,
+      flex: 1,
+      minWidth: 200,
+      hideable: true,
+    },
+  ];
+
   const osSearchKeys: TableSearchKey[] = [
     {
       title: "Party Name",
@@ -407,11 +525,43 @@ const Page = () => {
     );
   };
 
+  const renderFilterViewMaps = () => {
+    return (
+      <div>
+        <Stack flexDirection={"column"} gap={2}>
+          <ApiDropDown
+            label="States"
+            displayFieldKey={"name"}
+            valueFieldKey={null}
+            onApi={loadStates}
+            helperText={""}
+            onSelection={(selection) => {
+              selectedStateType.current = selection.name;
+              loadParties("");
+              triggerRefresh(!refresh);
+            }}
+          />
+          <DropDown
+            label="Location Type"
+            displayFieldKey={"name"}
+            valueFieldKey={null}
+            selectionValues={locationTypes}
+            helperText={""}
+            onSelection={(selection) => {
+              selectedlocationTypes.current = selection.value;
+              triggerRefresh(!refresh);
+            }}
+          />
+        </Stack>
+        <div className="mt-4" />
+      </div>
+    );
+  };
+
   console.log(selectedUser.current);
 
   const gridConfig = [
     {
-      weight: Weight.High,
       view: (
         <CardView title="Party Outstandings" actions={[]}>
           <Stack flexDirection={"column"} gap={2}>
@@ -425,7 +575,6 @@ const Page = () => {
                 selectedisDebitType.current = selection.value;
                 loadGroups().then((_) => {
                   triggerRefresh(!refresh);
-                  triggerGroupRefresh(!refreshGroups);
                 });
               }}
             />
@@ -500,6 +649,78 @@ const Page = () => {
           />
 
           <IconButton> </IconButton>
+        </CardView>
+      ),
+    },
+    {
+      view: (
+        <CardView title="Map wise Outstandings" actions={[]}>
+          <Stack flexDirection={"column"} gap={2}>
+            <DropDown
+              label="View"
+              displayFieldKey={"name"}
+              valueFieldKey={null}
+              selectionValues={isDebitType}
+              helperText={""}
+              onSelection={(selection) => {
+                selectedisDebitType.current = selection.value;
+                loadGroups().then((_) => {
+                  triggerRefresh(!refresh);
+                  triggerGroupRefresh(!refreshGroups);
+                });
+              }}
+            />
+          </Stack>
+          <div className="mt-4" />
+
+          <PeriodicTable
+            chartKeyFields={[
+              {
+                label: "Location Name",
+                value: "LocationName",
+              },
+            ]}
+            chartValueFields={[
+              {
+                label: "Opening Amount",
+                value: "OpeningAmount",
+              },
+              {
+                label: "Closing Amount",
+                value: "ClosingAmount",
+              },
+            ]}
+            refreshFilterView={refresh}
+            RenderAdditionalView={renderFilterViewMaps()}
+            useSearch={true}
+            // searchKeys={osSearchKeys}
+            reload={refresh}
+            columns={columnsMap.map((col: any) => {
+              let columnsMap: TableColumn = {
+                header: col.headerName,
+                field: col.field,
+                type: col.type,
+                pinned: false,
+                hideable: col.hideable,
+                rows: [],
+              };
+              return columnsMap;
+            })}
+            onApi={loadMapsData}
+            onRowClick={() => {
+              // (row)
+            }}
+            checkBoxSelection={true}
+            renderCheckedView={(values: any) => {
+              return (
+                <div>
+                  {values.map((entry: any, index: number) => {
+                    return <div key={index}>{entry[0].value}</div>;
+                  })}
+                </div>
+              );
+            }}
+          />
         </CardView>
       ),
     },
