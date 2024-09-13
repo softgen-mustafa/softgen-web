@@ -328,7 +328,10 @@ const InventoryOverviewScreen = () => {
     {
       weight: Weight.High,
       view: (
-        <CardView title={selectedListType.current.label}>
+        <CardView
+          title={selectedListType.current.label}
+          className="overflow-scroll"
+        >
           {/* <DataTable
             refresh={refresh}
             columns={columns}
