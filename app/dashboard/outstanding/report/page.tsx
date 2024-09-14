@@ -706,7 +706,7 @@ const Page = () => {
 
     return (
         <Box>
-        <ResponsiveCardGrid initialCards={initialCard}/>
+        <ResponsiveCardGrid screenName="outstanding_dashboard" initialCards={initialCard}/>
         </Box>
     );
 };

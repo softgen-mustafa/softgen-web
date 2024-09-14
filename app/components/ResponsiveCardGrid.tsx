@@ -9,16 +9,37 @@ type CardData = {
 };
 
 type ResponsiveCardGridProps = {
+  screenName: string;
   initialCards: CardData[];
 };
 
-const ResponsiveCardGrid: React.FC<ResponsiveCardGridProps> = ({ initialCards }) => {
+const ResponsiveCardGrid: React.FC<ResponsiveCardGridProps> = ({ screenName, initialCards }) => {
   const [cards, setCards] = useState<CardData[]>([]);
 
   // Load cards from initialCards (localStorage code commented out for now)
   useEffect(() => {
-    setCards(initialCards);
+    let sequenceString = localStorage.getItem(`${screenName}_view`) ?? "";
+    if (sequenceString != null && sequenceString.length > 0) {
+        let sequence = JSON.parse(sequenceString) ?? []
+        if (sequence != null && sequence.length > 0) {
+            let sequencedCards = sequence.map((id: number) => {
+                let card = initialCards.find((entry: CardData) => entry.id === id) 
+                return card;
+            })
+            setCards(sequencedCards)
+        }
+    } else {
+        setCards(initialCards);
+    }
   }, [initialCards]);
+
+  useEffect(() => {
+      let sequence = cards.map((entry: CardData) => {
+          return entry.id;
+      })
+      let sequenceString = JSON.stringify(sequence)
+      localStorage.setItem(`${screenName}_view`, sequenceString)
+  },[cards])
 
   // Drag and Drop Handlers (same as your current code)
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
@@ -58,7 +79,7 @@ const ResponsiveCardGrid: React.FC<ResponsiveCardGridProps> = ({ initialCards })
       {cards.map((card, index) => (
         <div
           key={card.id}
-          className="flex flex-col h-auto mx-2 p-4 rounded-lg shadow-lg flex-shrink-0 min-h-[300px]  overflow-y-auto w-full md:w-auto mb-4 md:mb-0 bg-white text-black"
+          className="flex flex-col h-auto p-4 rounded-lg shadow-lg flex-shrink-0 min-h-[300px]  overflow-y-auto w-full md:w-auto mb-4 md:mb-0 bg-white text-black"
           style={{ flexGrow: card.weight }}
           draggable
           onDragStart={(e) => handleDragStart(e, index)}

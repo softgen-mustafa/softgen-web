@@ -1,15 +1,10 @@
 "use client";
 import { CustomerDetailsCard } from "./cards/customer_card";
-import { Box, Grid, Stack, Typography, useTheme } from "@mui/material";
+import { Box, Stack, Typography, useTheme } from "@mui/material";
 import { OutstandingCard } from "./cards/outstanding_card";
-import { InventoryCard } from "./cards/inventory_card";
 import { OutstandingTask } from "./cards/outstanding_task_card";
 import {
-  CardView,
-  GridConfig,
-  RenderGrid,
   Weight,
-  DynGrid,
 } from "../ui/responsive_grid";
 import { DropDown } from "../ui/drop_down";
 import {
@@ -20,21 +15,18 @@ import {
 import { useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
 import { inspiredPalette } from "../ui/theme";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { GridColDef } from "@mui/x-data-grid";
 import { convertToDate, numericToString } from "../services/Local/helper";
 import { useRouter } from "next/navigation";
-import { FeatureControl } from "../components/featurepermission/permission_helper";
 import RankedPartyOutstandingCard from "./cards/ranked_party";
 import { AgingView } from "./cards/aging_card";
 import { DataTable } from "@/app/ui/data_grid";
-import { SingleChartView } from "@/app/ui/graph_util";
-import Column from "../ui/periodic_table/column";
 import {
-  ApiProps,
   PeriodicTable,
   TableColumn,
 } from "../ui/periodic_table/period_table";
 import Loading from "./loading";
+import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
 
 const BrokerMonthlyOverview = ({ companyId }: { companyId: string }) => {
   useEffect(() => {}, [companyId]);
@@ -295,20 +287,21 @@ const DashboardPage = () => {
   const brokerGridConfig = [
     {
       weight: Weight.Medium,
-      view: (
-        <CardView title="Montly Overview">
+      content: (
+        <div title="Montly Overview">
           <BrokerMonthlyOverview companyId={data[cachedCompanyIndex]} />
-        </CardView>
+        </div>
       ),
     },
   ];
 
   const views = [
     {
+    id:1,
       weight: Weight.Medium,
-      view: (
+      content: (
         <div className={`flex flex-col h-full`}>
-          <CardView className="mb-2" title="Switch Company">
+          <div className="mb-2" title="Switch Company">
             <DropDown
               label={"Select Company"}
               displayFieldKey={"name"}
@@ -336,74 +329,63 @@ const DashboardPage = () => {
             <Typography className="text-base mb-8 justify-center">
               {`Last Sync: ${syncInfo}`}
             </Typography>
-          </CardView>
-          {loading ? (
-            <Loading />
-          ) : (
-            <CardView
-              className="mt-2"
-              style={{
-                backgroundColor: loading
-                  ? "#FFFFFF"
-                  : theme.palette.primary.main,
-              }}
-              permissionCode="CustomerCard"
-            >
-              <CustomerDetailsCard companyId={data[cachedCompanyIndex]} />
-            </CardView>
-          )}
+          </div>
         </div>
       ),
     },
     {
+    id:2,
       weight: Weight.Medium,
-      view: (
-        <CardView
+      content: (
+        <div
           title={"Payable vs Receivable"}
-          permissionCode="OutstandingCard"
         >
           <OutstandingCard
             companyId={data[cachedCompanyIndex]}
             title="Outstanding Overview"
           />
-        </CardView>
+        </div>
       ),
     },
     {
+    id:3,
       weight: Weight.Medium,
-      view: (
-        <CardView title={"Aging Wise"} permissionCode="AgingOutstandingCard">
+      content: (
+        <div >
           <AgingView
             billType={selectedType.current.code}
             companyId={data[cachedCompanyIndex]}
             title="Aging-Wise O/S"
           />
-        </CardView>
+        </div>
       ),
     },
     {
+    id:4,
       weight: Weight.High,
-      view: (
-        <CardView title="Today's O/S" className="overflow-scroll">
+      content: (
+        <div title="Today's O/S" className="overflow-scroll">
           <OutstandingTask companyId={data[cachedCompanyIndex]} />
-        </CardView>
+        </div>
       ),
     },
     {
+    id:5,
       weight: Weight.High,
-      view: (
-        <CardView title="Ranked Parties" className="overflow-scroll">
+      content: (
+        <div title="Ranked Parties" className="overflow-scroll">
           <RankedPartyOutstandingCard
             companyId={data[cachedCompanyIndex]}
             billType={selectedType.current.code}
           />
-        </CardView>
+        </div>
       ),
     },
     {
+    id:6,
       weight: Weight.High,
-      view: (
-        <CardView title="Upcoming Collections" className="overflow-scroll">
+      content: (
+        <div title="Upcoming Collections" className="overflow-scroll">
           {/* <Container className="flex overflow-x-auto"> */}
           <Stack
             flexDirection="row"
@@ -530,22 +512,22 @@ const DashboardPage = () => {
               alert(`page model:  ${JSON.stringify(value)}`);
             }}
           /> */}
-        </CardView>
+        </div>
       ),
     },
     // {
     //   weight: Weight.High,
-    //   view: (
-    //     <CardView title="Data Grid">
+    //   content: (
+    //     <div title="Data Grid">
     //       <PeriodicTable cColumn={CC} data={dummyData} />
-    //     </CardView>
+    //     </div>
     //   ),
     // },
   ];
 
   return (
     <div>
-      <DynGrid views={views} />
+        <ResponsiveCardGrid screenName="dashboard" initialCards={views} />
     </div>
   );
 };
