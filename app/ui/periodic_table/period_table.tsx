@@ -382,7 +382,7 @@ const Table = ({
   const handleMouseDown = (index: number, event: React.MouseEvent) => {};
 
   return (
-    <Box className="w-full flex flex-row overflow-x-scroll overflow-y-scroll">
+    <Box className="w-full flex flex-row max-h-[600px] overflow-x-scroll overflow-y-auto">
       <Box
         className="w-full flex flex-col p-2 overflow-x-scroll"
         style={{
@@ -774,7 +774,7 @@ const TableFilterView = ({
   };
   return (
     <Box
-      className="flex flex-col mr-1 p-2"
+      className="flex flex-col mr-1 p-2 max-h-[600px] overflow-y-auto"
       style={{
         borderWidth: 1,
         minWidth: 250,
@@ -1094,6 +1094,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
             onHideColumns={handelHideColumn}
           />
         )}
+
         {viewType === "table" && dimensions.width > maxPhoneWidth && (
           <Table
             actionViews={props.actionViews}
