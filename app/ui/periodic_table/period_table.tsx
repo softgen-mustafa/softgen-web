@@ -382,7 +382,7 @@ const Table = ({
   const handleMouseDown = (index: number, event: React.MouseEvent) => {};
 
   return (
-    <Box className="w-full flex flex-row overflow-x-scroll overflow-y-scroll">
+    <Box className="w-full flex flex-row max-h-[600px] overflow-x-scroll overflow-y-auto">
       <Box
         className="w-full flex flex-col p-2 overflow-x-scroll"
         style={{
@@ -774,7 +774,7 @@ const TableFilterView = ({
   };
   return (
     <Box
-      className="flex flex-col mr-1 p-2"
+      className="flex flex-col mr-1 p-2 max-h-[600px] overflow-y-auto"
       style={{
         borderWidth: 1,
         minWidth: 250,
@@ -932,10 +932,10 @@ const PeriodicTable = (props: PeriodicTableProps) => {
     refreshColumns({ offset: 0, limit: 5, searchText: "" });
   }, [props.reload]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     setDimensions({ width: window.innerWidth, height: window.innerHeight });
     refreshColumns({ offset: 0, limit: 5, searchText: "" });
-  }, [props.rows]);
+  }, [props.rows]);*/
 
   const refreshColumns = (apiParams: ApiProps) => {
     if (props.onApi != null) {
@@ -1067,11 +1067,11 @@ const PeriodicTable = (props: PeriodicTableProps) => {
           />
         </Stack>
       </Box>
-      {loading && (
+      {/*loading && (
         <Box mb={1}>
           <CircularProgress />
         </Box>
-      )}
+      )*/}
       <Box
         display={"flex"}
         flexDirection={{ xs: "column", md: "row" }}
@@ -1094,6 +1094,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
             onHideColumns={handelHideColumn}
           />
         )}
+
         {viewType === "table" && dimensions.width > maxPhoneWidth && (
           <Table
             actionViews={props.actionViews}
@@ -1101,7 +1102,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
             columns={filterColumns}
             // columns={props.columns}
             rows={dataRows}
-            reload={props.reload}
+            reload={loading}
             onRowClick={props.onRowClick}
             checkBox={props.checkBoxSelection}
             onChecked={(selectedIndexes: any[]) => {
