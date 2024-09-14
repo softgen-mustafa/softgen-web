@@ -115,7 +115,7 @@ const Page: React.FC = () => {
   return (
     <div className="w-full h-[100vh] bg-red-300">
       <h1 className="text-2xl font-bold mb-4">Responsive Grid with Drag and Drop</h1>
-      <ResponsiveCardGrid initialCards={initialCards} />
+      <ResponsiveCardGrid screenName="portal" initialCards={initialCards} />
     </div>
   );
 };
