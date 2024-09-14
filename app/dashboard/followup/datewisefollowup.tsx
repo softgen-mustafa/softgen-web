@@ -1,49 +1,35 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   PeriodicTable,
   TableColumn,
 } from "@/app/ui/periodic_table/period_table";
-import { GridColDef } from "@mui/x-data-grid";
+import { ApiProps } from "@/app/ui/periodic_table/period_table";
+import { getSgBizBaseUrl , postAsync} from "@/app/services/rest_services";
+import { convertToDate } from "@/app/services/Local/helper"
 
 const DateWiseFollowup = () => {
-  const data = [
-    {
-      PartyName: "John Doe",
-      Bill: 250.75,
-      Notes: "Urgent payment required",
-      PersonInCharge: "Alice Smith",
-    },
-    {
-      PartyName: "Jane Smith",
-      Bill: 180.5,
-      Notes: "Follow up next week",
-      PersonInCharge: "Bob Johnson",
-    },
-    {
-      PartyName: "Acme Corp",
-      Bill: 3200.0,
-      Notes: "Invoice sent, waiting for approval",
-      PersonInCharge: "Carol White",
-    },
-    {
-      PartyName: "Global Inc.",
-      Bill: 1125.25,
-      Notes: "Partial payment received",
-      PersonInCharge: "David Brown",
-    },
-    {
-      PartyName: "Tech Solutions",
-      Bill: 750.0,
-      Notes: "No issues reported",
-      PersonInCharge: "Eve Davis",
-    },
-  ];
-
   const [refresh, triggerRefresh] = useState(false);
 
-  const columns: GridColDef<any[number]>[] = [
+
+  const columns: any[] = [
+    {
+      field: "Created",
+      headerName: "Creation Date",
+      editable: false,
+      sortable: false,
+      hideable: false,
+      flex: 1,
+    },
+    {
+      field: "LastUpdated",
+      headerName: "Last Update Date",
+      editable: false,
+      sortable: false,
+      hideable: false,
+      flex: 1,
+    },
     {
       field: "PartyName",
       headerName: "Party Name",
@@ -53,24 +39,8 @@ const DateWiseFollowup = () => {
       flex: 1,
     },
     {
-      field: "Bill",
-      headerName: "Bill",
-      editable: false,
-      sortable: false,
-      hideable: false,
-      flex: 1,
-    },
-    {
-      field: "Notes",
+      field: "Description",
       headerName: "Notes",
-      editable: false,
-      sortable: false,
-      hideable: false,
-      flex: 1,
-    },
-    {
-      field: "PersonInCharge",
-      headerName: "Person in Charge",
       editable: false,
       sortable: false,
       hideable: false,
@@ -78,8 +48,30 @@ const DateWiseFollowup = () => {
     },
   ];
 
+  const onApi = async (props: ApiProps) => {
+      try {
+          let url = `${getSgBizBaseUrl()}/os/followup/get/day-wise`
+          let requestBody = {
+              "StartDateStr": "01-01-2024",
+              "EndDateStr": "01-01-2025",
+          }
+          let response = await postAsync(url, requestBody)
+          //alert(JSON.stringify(response))
+          let values =  response.Data.map((entry: any) => {
+              return {
+                  ...entry,
+                  Created: convertToDate(entry.Created),
+                  LastUpdated: convertToDate(entry.LastUpdated),
+              }
+          });
+          return values;
+
+      } catch {
+          return []
+      }
+  }
+
   return (
-    <div>
       <PeriodicTable
         useSearch={false}
         reload={refresh}
@@ -94,10 +86,9 @@ const DateWiseFollowup = () => {
           };
           return column;
         })}
-        rows={data}
+        onApi={onApi}
       />
-    </div>
   );
 };
 
-export default DateWiseFollowup;
+export { DateWiseFollowup };

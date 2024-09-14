@@ -932,10 +932,10 @@ const PeriodicTable = (props: PeriodicTableProps) => {
     refreshColumns({ offset: 0, limit: 5, searchText: "" });
   }, [props.reload]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     setDimensions({ width: window.innerWidth, height: window.innerHeight });
     refreshColumns({ offset: 0, limit: 5, searchText: "" });
-  }, [props.rows]);
+  }, [props.rows]);*/
 
   const refreshColumns = (apiParams: ApiProps) => {
     if (props.onApi != null) {
@@ -1067,11 +1067,11 @@ const PeriodicTable = (props: PeriodicTableProps) => {
           />
         </Stack>
       </Box>
-      {loading && (
+      {/*loading && (
         <Box mb={1}>
           <CircularProgress />
         </Box>
-      )}
+      )*/}
       <Box
         display={"flex"}
         flexDirection={{ xs: "column", md: "row" }}
@@ -1102,7 +1102,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
             columns={filterColumns}
             // columns={props.columns}
             rows={dataRows}
-            reload={props.reload}
+            reload={loading}
             onRowClick={props.onRowClick}
             checkBox={props.checkBoxSelection}
             onChecked={(selectedIndexes: any[]) => {
