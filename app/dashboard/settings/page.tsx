@@ -47,7 +47,7 @@ const Page = () => {
       weight: Weight.Low,
       view: (
         <CardView
-          className="max-h-fit h-fit"
+          className="max-h-fit h-fit overflow-scroll"
           title="User Permissions"
           permissionCode="MasterConfigButton"
         >
@@ -59,7 +59,7 @@ const Page = () => {
       weight: Weight.Low,
       view: (
         <CardView
-          className="max-h-fit h-fit"
+          className="max-h-fit h-fit overflow-scroll"
           title="Master Permissions"
           permissionCode="MasterConfigButton"
         >
@@ -72,7 +72,7 @@ const Page = () => {
       weight: Weight.Medium,
       view: (
         <CardView
-          className="h-fit"
+          className="h-fit overflow-scroll"
           title="Aging Settings"
           permissionCode="MasterConfigButton"
         >

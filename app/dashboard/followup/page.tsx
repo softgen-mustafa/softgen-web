@@ -16,7 +16,10 @@ const Page = () => {
     {
       weight: Weight.Medium,
       view: (
-        <CardView className="max-h-fit h-fit" title="Date Wise Follow Up">
+        <CardView
+          className="max-h-fit h-fit overflow-scroll"
+          title="Date Wise Follow Up"
+        >
           <DateWiseFollowup />
         </CardView>
       ),
@@ -24,7 +27,10 @@ const Page = () => {
     {
       weight: Weight.Medium,
       view: (
-        <CardView className="max-h-fit h-fit" title="Team Follow Up">
+        <CardView
+          className="max-h-fit h-fit overflow-scroll"
+          title="Team Follow Up"
+        >
           <TeamFollowup />
         </CardView>
       ),
@@ -32,7 +38,10 @@ const Page = () => {
     {
       weight: Weight.High,
       view: (
-        <CardView className="max-h-fit h-fit" title="Party Follow Up">
+        <CardView
+          className="max-h-fit h-fit overflow-scroll"
+          title="Party Follow Up"
+        >
           <PartyFollowup />
         </CardView>
       ),
