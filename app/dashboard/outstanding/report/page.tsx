@@ -21,7 +21,14 @@ import {
   getSgBizBaseUrl,
   postAsync,
 } from "@/app/services/rest_services";
-import { Box, Button, IconButton, Modal, Stack } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  Modal,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { Settings, MailOutline, Send } from "@mui/icons-material";
 import { numericToString } from "@/app/services/Local/helper";
 import { OsSettingsView } from "@/app/dashboard/outstanding/report/outstanding_setings";
@@ -647,36 +654,17 @@ const Page = () => {
               );
             }}
           />
-
-          <IconButton> </IconButton>
-        </CardView>
-      ),
-    },
-    {
-      view: (
-        <CardView title="Map wise Outstandings" actions={[]}>
-          <Stack flexDirection={"column"} gap={2}>
-            <DropDown
-              label="View"
-              displayFieldKey={"name"}
-              valueFieldKey={null}
-              selectionValues={isDebitType}
-              helperText={""}
-              onSelection={(selection) => {
-                selectedisDebitType.current = selection.value;
-                loadGroups().then((_) => {
-                  triggerRefresh(!refresh);
-                  triggerGroupRefresh(!refreshGroups);
-                });
-              }}
-            />
-          </Stack>
-          <div className="mt-4" />
-
+          <br></br>
+          <Typography
+            style={{ fontSize: 20, fontWeight: "bold", letterSpacing: 0.8 }}
+          >
+            {"Location Wise Outstanding"}
+          </Typography>
+          <br></br>
           <PeriodicTable
             chartKeyFields={[
               {
-                label: "Location Name",
+                label: "Location Type",
                 value: "LocationName",
               },
             ]}
@@ -693,7 +681,6 @@ const Page = () => {
             refreshFilterView={refresh}
             RenderAdditionalView={renderFilterViewMaps()}
             useSearch={true}
-            // searchKeys={osSearchKeys}
             reload={refresh}
             columns={columnsMap.map((col: any) => {
               let columnsMap: TableColumn = {
@@ -721,6 +708,8 @@ const Page = () => {
               );
             }}
           />
+
+          <IconButton> </IconButton>
         </CardView>
       ),
     },

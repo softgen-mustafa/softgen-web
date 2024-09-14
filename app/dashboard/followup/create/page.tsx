@@ -1,16 +1,13 @@
 "use client";
 import {
   getAsync,
-  getBmrmBaseUrl,
-  getUmsBaseUrl,
   getSgBizBaseUrl,
+  postAsync,
 } from "@/app/services/rest_services";
 import { DropDown } from "@/app/ui/drop_down";
 import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
 import { Box, Grid } from "@mui/material";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import Cookies from "js-cookie";
 import ApiAutoComplete from "@/app/ui/api_auto_complete";
 import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
 import { TextInput } from "@/app/ui/text_inputs";
@@ -28,7 +25,7 @@ import { convertToDate } from "@/app/services/Local/helper";
 
 interface OsSettings {
   pocEmail: string;
-  pocMobile: number;
+  pocMobile: string;
   pocName: string;
   Notes: string;
   nextFollowup: string;
@@ -36,30 +33,37 @@ interface OsSettings {
 }
 
 const Page = () => {
-  const router = useRouter();
   const initialDetails: OsSettings = {
     pocEmail: "",
-    pocMobile: 0,
+    pocMobile: "",
     pocName: "",
     Notes: "",
     nextFollowup: "",
     nextDate: "",
   };
 
+  interface Bill {
+    BillNumber: string;
+    PartyName: string;
+    ParentGroup: string;
+    PendingAmount: number | null;
+    OpeningAmount: number;
+    BillDate: string;
+    DueDate: string;
+  }
   const [pocDetails, setPocDetails] = useState<OsSettings>(initialDetails);
   const [data, setData] = useState([]);
   const [refresh, triggerRefresh] = useState(false);
   const [refreshBills, triggerBillsRefresh] = useState(false);
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
 
-  let selectedBills = useRef<string[]>([]);
+  let selectedBills = useRef<Bill[]>([]);
   let selectedUser = useRef<string[]>([]);
   let selectedParty = useRef<string>("");
-  const compId = Cookies.get("companyId");
 
   const columns: GridColDef[] = [
     {
-      field: "name",
+      field: "BillNumber",
       headerName: "Bill Number",
       sortable: false,
       flex: 1,
@@ -94,6 +98,7 @@ const Page = () => {
   useEffect(() => {
     loadParties("");
     loadBills("");
+    loadUser();
   }, []);
 
   const loadParties = async (searchValue: string) => {
@@ -109,7 +114,7 @@ const Page = () => {
           name: entry.Name,
         });
       });
-      triggerRefresh(false);
+      triggerRefresh(!refresh);
       return values;
     } catch {
       return [];
@@ -127,7 +132,7 @@ const Page = () => {
       }
       let values = response.Data.map((entry: any) => {
         return {
-          name: entry.BillNumber,
+          BillNumber: entry.BillNumber,
           PartyName: entry.PartyName,
           ParentGroup: entry.ParentGroup,
           PendingAmount: entry.PendingAmount,
@@ -142,31 +147,82 @@ const Page = () => {
       return [];
     }
   };
-
   const loadUser = async () => {
     try {
-      let url = `${getSgBizBaseUrl()}/party/get/contact-person?partyName=${
-        selectedParty.current
-      }`;
+      const encodedPartyName = encodeURIComponent(selectedParty.current);
+      let url = `${getSgBizBaseUrl()}/party/get/contact-person?partyName=${encodedPartyName}`;
 
       let response = await getAsync(url);
-      if (response && response.length > 0) {
-        let values = response.Data.map((entry: any) => {
-          return {
-            PersonId: entry.PersonId,
-            Name: entry.Name,
-            PartyName: entry.PartyName,
-            pocEmail: entry.Email,
-            pocMobile: entry.PhoneNo,
-          };
-        });
-        return values;
+      console.log("loadUser response", JSON.stringify(response));
+
+      if (response && response.Data && response.Data.length > 0) {
+        return response.Data.map((entry: any) => ({
+          pocName: entry.Name,
+        }));
+      } else {
+        return [];
       }
-    } catch {
-      console.log("Something went wrong...");
-    } finally {
+    } catch (error) {
+      console.log("Error loading user data", error);
+      return [];
     }
   };
+
+  const fetchUserDetails = async (name: string) => {
+    try {
+      const encodedPartyName = encodeURIComponent(selectedParty.current);
+      const encodedName = encodeURIComponent(name);
+      let url = `${getSgBizBaseUrl()}/party/get/contact-person?partyName=${encodedPartyName}&name=${encodedName}`;
+
+      let response = await getAsync(url);
+      console.log("fetchUserDetails response", JSON.stringify(response));
+
+      if (response && response.Data && response.Data.length > 0) {
+        const userData = response.Data[0];
+        return {
+          pocName: userData.Name,
+          pocEmail: userData.Email,
+          pocMobile: userData.PhoneNo,
+        };
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.log("Error fetching user details", error);
+      return null;
+    }
+  };
+
+  // const loadUser = async () => {
+  //   try {
+  //     const encodedPartyName = encodeURIComponent(selectedParty.current);
+  //     let url = `${getSgBizBaseUrl()}/party/get/contact-person?partyName=${encodedPartyName}`;
+
+  //     let response = await getAsync(url);
+  //     console.log("loadUser response", JSON.stringify(response));
+
+  //     if (response && response.Data.length > 0) {
+  //       const userData = response.Data[0];
+  //       setPocDetails((prev) => ({
+  //         ...prev,
+  //         pocName: userData.Name,
+  //         pocEmail: userData.Email,
+  //         pocMobile: userData.PhoneNo,
+  //       }));
+
+  //       return response.Data.map((entry: any) => ({
+  //         pocName: entry.Name,
+  //         pocEmail: entry.Email,
+  //         pocMobile: entry.PhoneNo,
+  //       }));
+  //     } else {
+  //       return [];
+  //     }
+  //   } catch (error) {
+  //     console.log("Error loading user data", error);
+  //     return [];
+  //   }
+  // };
 
   const handleDateChange = (newDate: dayjs.Dayjs | null) => {
     if (newDate) {
@@ -177,6 +233,119 @@ const Page = () => {
       }));
     }
   };
+  const submitFollowup = async () => {
+    console.log("Current pocDetails:", pocDetails);
+
+    if (!pocDetails.pocName || pocDetails.pocName.trim() === "") {
+      alert("Please select a valid user.");
+      return;
+    }
+
+    try {
+      const url = `${getSgBizBaseUrl()}/os/followup/create`;
+      const requestBody = {
+        Followup: {
+          RefPrevFollowUpId: null,
+          FollowUpId: "",
+          ContactPersonId: "",
+          PartyName: selectedParty.current,
+          Description: pocDetails.Notes,
+          FollowUpBills: selectedBills.current.map((bill: Bill) => ({
+            BillId: bill.BillNumber,
+            Status: 0,
+          })),
+        },
+        PointOfContact: {
+          PersonId: "",
+          Name: pocDetails.pocName,
+          PartyName: selectedParty.current,
+          Email: pocDetails.pocEmail,
+          PhoneNo: pocDetails.pocMobile,
+        },
+      };
+      console.log("Request body:", JSON.stringify(requestBody));
+      const response = await postAsync(url, requestBody);
+      console.log("Response:", response);
+      alert("Follow-up created successfully");
+    } catch (error) {
+      console.error("Error creating follow-up:", error);
+      alert("Failed to create follow-up");
+    }
+  };
+  // const submitFollowup = async () => {
+  //   console.log("Current pocDetails:", pocDetails); // Add this line
+
+  //   // Validation check
+  //   if (!pocDetails.pocName || pocDetails.pocName.trim() === "") {
+  //     alert("Please enter a valid name for the point of contact.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const url = `${getSgBizBaseUrl()}/os/followup/create`;
+  //     const requestBody = {
+  //       Followup: {
+  //         RefPrevFollowUpId: null,
+  //         FollowUpId: "",
+  //         ContactPersonId: "",
+  //         PartyName: selectedParty.current,
+  //         Description: pocDetails.Notes,
+  //         FollowUpBills: selectedBills.current.map((bill: Bill) => ({
+  //           BillId: bill.BillNumber,
+  //           Status: 0,
+  //         })),
+  //       },
+  //       PointOfContact: {
+  //         PersonId: "",
+  //         Name: pocDetails.pocName,
+  //         PartyName: selectedParty.current,
+  //         Email: pocDetails.pocEmail,
+  //         PhoneNo: pocDetails.pocMobile,
+  //       },
+  //     };
+  //     console.log("Request body:", JSON.stringify(requestBody)); // Add this line
+  //     const response = await postAsync(url, requestBody);
+  //     console.log("Response:", response);
+  //     alert("Follow-up created successfully");
+  //   } catch (error) {
+  //     console.error("Error creating follow-up:", error);
+  //     alert("Failed to create follow-up");
+  //   }
+  // };
+  // const submitFollowup = async () => {
+  //   try {
+  //     const url = `${getSgBizBaseUrl()}/os/followup/create`;
+  //     const requestBody = {
+  //       Followup: {
+  //         RefPrevFollowUpId: null,
+  //         FollowUpId: "",
+  //         ContactPersonId: "",
+  //         PartyName: selectedParty.current,
+  //         Description: pocDetails.Notes,
+  //         FollowUpBills: selectedBills.current.map((bill: Bill) => ({
+  //           BillId: bill.BillNumber,
+  //           Status: 0,
+  //         })),
+  //       },
+  //       PointOfContact: {
+  //         PersonId: "",
+  //         Name :"Aquib2",
+  //         // Name: pocDetails.pocName,
+  //         PartyName: selectedParty.current,
+  //         Email: pocDetails.pocEmail,
+  //         PhoneNo: pocDetails.pocMobile,
+  //       },
+  //     };
+  //     console.log("POC Name:", pocDetails.pocName);
+  //     alert(JSON.stringify(requestBody));
+  //     console.log(JSON.stringify(requestBody));
+  //     const response = await postAsync(url, requestBody);
+  //     console.log(response);
+  //   } catch (error) {
+  //     console.error("Error creating follow-up:", error);
+  //     alert("Failed to create follow-up");
+  //   }
+  // };
 
   const gridConfig: GridConfig[] = [
     {
@@ -195,19 +364,75 @@ const Page = () => {
               valueFieldKey={null}
               onApi={loadParties}
               helperText={""}
-              onSelection={(selection) => {
+              onSelection={async (selection) => {
                 selectedParty.current = selection.name;
-                loadParties("");
                 triggerBillsRefresh(!refreshBills);
+                const userData = await loadUser();
+
+                if (userData.length > 0) {
+                  const { pocName, pocEmail, pocMobile } = userData[0];
+                  setPocDetails((prev) => ({
+                    ...prev,
+                    pocName,
+                    pocEmail,
+                    pocMobile,
+                    Notes: "",
+                    nextDate: "",
+                  }));
+                } else {
+                  setPocDetails((prev) => ({
+                    ...prev,
+                    pocName: "",
+                    pocEmail: "",
+                    pocMobile: "",
+                    Notes: "",
+                    nextDate: "",
+                  }));
+                }
                 triggerRefresh(!refresh);
               }}
             />
+            {/* <ApiDropDown
+              label="Party"
+              displayFieldKey={"name"}
+              valueFieldKey={null}
+              onApi={loadParties}
+              helperText={""}
+              onSelection={async (selection) => {
+                selectedParty.current = selection.name;
+                triggerBillsRefresh(!refreshBills);
+                const userData = await loadUser();
+                // If user data is available, update the state with contact info
+                if (userData.length > 0) {
+                  const { pocName, pocEmail, pocMobile } = userData[0];
+                  setPocDetails((prev) => ({
+                    ...prev,
+                    pocName,
+                    pocEmail,
+                    pocMobile,
+                    Notes: "",
+                    nextDate: "",
+                  }));
+                } else {
+                  // Reset the contact details if no user is found
+                  setPocDetails((prev) => ({
+                    ...prev,
+                    pocName: "",
+                    pocEmail: "",
+                    pocMobile: "",
+                    Notes: "",
+                    nextDate: "",
+                  }));
+                }
+                triggerRefresh(!refresh);
+              }}
+            /> */}
 
             <br></br>
             <ApiMultiDropDown
               reload={refreshBills}
               label="Bills"
-              displayFieldKey={"name"}
+              displayFieldKey={"BillNumber"}
               defaultSelections={selectedBills.current}
               valueFieldKey={null}
               onApi={loadBills}
@@ -220,14 +445,62 @@ const Page = () => {
             <br></br>
             <ApiAutoComplete
               label="Select User"
-              displayFieldKey={"name"}
+              displayFieldKey="pocName"
               onApi={loadUser}
-              onSelection={(data) => {
-                setPocDetails((prev) => ({ ...prev, pocName: data }));
-                selectedUser.current = data.Name;
+              onSelection={async (userData) => {
+                const userDetails = await fetchUserDetails(userData.pocName);
+                if (userDetails) {
+                  setPocDetails((prev) => ({
+                    ...prev,
+                    pocName: userDetails.pocName,
+                    pocEmail: userDetails.pocEmail,
+                    pocMobile: userDetails.pocMobile,
+                  }));
+                  console.log("Selected user details:", userDetails);
+                } else {
+                  setPocDetails((prev) => ({
+                    ...prev,
+                    pocName: userData.pocName,
+                    pocEmail: "",
+                    pocMobile: "",
+                  }));
+                  console.log("No details found for selected user");
+                }
+                selectedUser.current = userData.pocName;
                 triggerRefresh(!refresh);
               }}
             />
+            {/* <ApiAutoComplete
+              label="Select User"
+              displayFieldKey="pocName"
+              onApi={loadUser}
+              onSelection={(userData) => {
+                setPocDetails((prev) => ({
+                  ...prev,
+                  pocName: userData.pocName,
+                  pocEmail: userData.pocEmail,
+                  pocMobile: userData.pocMobile,
+                }));
+                selectedUser.current = userData.pocName;
+                triggerRefresh(!refresh);
+              }}
+            /> */}
+            {/* <ApiAutoComplete
+              label="Select User"
+              displayFieldKey={"pocName"}
+              onApi={loadUser}
+              onSelection={(userData) => {
+                setPocDetails((prev) => ({
+                  ...prev,
+                  pocName: userData.pocName,
+                  pocEmail: userData.pocEmail,
+                  pocMobile: userData.pocMobile,
+                }));
+                selectedUser.current = userData.pocName;
+                triggerRefresh(!refresh);
+              }}
+            /> */}
+
             <br></br>
             <TextInput
               mode="text"
@@ -239,15 +512,15 @@ const Page = () => {
             />
             <br></br>
             <TextInput
-              mode="number"
+              mode="text"
               placeHolder="Mobile Number"
               onTextChange={(value) => {
                 setPocDetails((prev) => ({
                   ...prev,
-                  pocMobile: parseInt(value ?? "0"),
+                  pocMobile: value,
                 }));
               }}
-              defaultValue={pocDetails.pocMobile.toString()}
+              defaultValue={pocDetails.pocMobile}
             />
             <br></br>
             <TextInput
@@ -275,6 +548,7 @@ const Page = () => {
               }}
             />
           </LocalizationProvider>
+          <button onClick={submitFollowup}>Create Follow-up</button>
         </CardView>
       ),
       children: [],
@@ -345,31 +619,6 @@ const Page = () => {
                 },
               },
             ]}
-          />
-        </CardView>
-      ),
-      children: [],
-    },
-    {
-      type: "item",
-      className: "",
-      view: (
-        <CardView title="History Table">
-          <PeriodicTable
-            useSearch={false}
-            reload={refresh}
-            columns={columns.map((col: any) => {
-              let column: TableColumn = {
-                header: col.headerName,
-                field: col.field,
-                type: "text",
-                pinned: false,
-                hideable: col.hideable,
-                rows: [],
-              };
-              return column;
-            })}
-            // rows={datanew}
           />
         </CardView>
       ),
