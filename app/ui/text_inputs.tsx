@@ -49,9 +49,13 @@ const TextInput = ({
   multiline?: boolean;
 }) => {
   const [value, setValue] = useState<any | null>(null);
+  const [shrinkLabel, setShrink] = useState(false)
   useEffect(() => {
     if (defaultValue != null) {
       setValue(mode == "number" ? parseInt(defaultValue) : defaultValue);
+      setShrink(true)
+    } else if (value == null || value.length < 1) {
+      setShrink(false)
     }
   }, [defaultValue]);
   return (
@@ -60,11 +64,14 @@ const TextInput = ({
         className="w-full"
         multiline={multiline}
         value={value}
-      
+        InputLabelProps={{
+        shrink: shrinkLabel,
+        }}
         label={placeHolder}
         variant="outlined"
         type={mode}
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setShrink(true)
           let updatedValue = event.target.value;
           onTextChange(updatedValue);
         }}

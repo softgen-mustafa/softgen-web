@@ -13,12 +13,14 @@ import {
     getSgBizBaseUrl,
     postAsync,
 } from "@/app/services/rest_services";
-import { Box, IconButton, Stack } from "@mui/material";
-import { MailOutline } from "@mui/icons-material";
+import { Box, IconButton, Stack, Modal } from "@mui/material";
+import { MailOutline, Settings } from "@mui/icons-material";
 import { numericToString } from "@/app/services/Local/helper";
 import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
+import { OsSettingsView } from "./outstanding_setings"
 
 import  ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
+import { useSnackbar } from "@/app/ui/snack_bar_provider";
 
 const isDebitType = [
     {
@@ -91,11 +93,26 @@ const Page = () => {
     const [refreshGroups, triggerGroupRefresh] = useState(false);
     const [groups, setGroups] = useState<any[]>([]);
 
+    const snackbar = useSnackbar();
+
     useEffect(() => {
         loadParties("");
         loadGroups();
         loadStates();
     }, []);
+
+    const sendMail = async (parties: string[]) => {
+        try {
+            let url = `${getSgBizBaseUrl()}/os/send-email`;
+            let requestBody = {
+                Parties: (parties && parties.length > 0) ? parties: [],
+            }
+            await postAsync(url, requestBody);
+            snackbar.showSnackbar("Email sent", "success")
+        } catch {
+            snackbar.showSnackbar("Could not send email", "error")
+        }
+    }
 
     const loadParties = async (searchValue: string) => {
         let values = [{ name: "None" }];
@@ -604,7 +621,12 @@ const Page = () => {
                         label: "Send Reminder",
                         icon: <MailOutline />,
                         onPress: (row: any) => {
-                            // alert(JSON.stringify(row));
+                            let partyField  =row.find((entry: any) => entry.field === "LedgerName") ?? null
+                            if (partyField !== null) {
+                                let party = partyField.value
+                                alert(party)
+                                sendMail([party])
+                            }
                         },
                     },
                 ]}
@@ -685,8 +707,7 @@ const Page = () => {
                     return columnsMap;
                 })}
                 onApi={loadMapsData}
-                onRowClick={() => {
-                    // (row)
+                onRowClick={(row: any) => {
                 }}
                 checkBoxSelection={true}
                 renderCheckedView={(values: any) => {
@@ -706,7 +727,27 @@ const Page = () => {
 
     return (
         <Box>
+      <Box
+        width={50}
+        height={50}
+        borderRadius={2}
+        border={2}
+        borderColor="#000000"
+        className="flex items-center shadow-lg justify-center fixed mr-3 mb-2 bg-white"
+        sx={{
+            bottom: 0,
+            right: 0,
+        }}
+        onClick={() => {
+            toggleSetting(!showSettings)
+        }}
+      >
+        <Settings sx={{ color: "#000000" }} />
+      </Box>
         <ResponsiveCardGrid screenName="outstanding_dashboard" initialCards={initialCard}/>
+        <Modal open={showSettings} onClose={() => toggleSetting(false)}>
+            <OsSettingsView onClose={() => toggleSetting(false)}/>
+        </Modal>
         </Box>
     );
 };

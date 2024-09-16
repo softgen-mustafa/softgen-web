@@ -1,6 +1,7 @@
 "use client";
 
 import { Box, Typography, Button, IconButton } from "@mui/material";
+import { Close } from "@mui/icons-material"
 import { TextInput } from "@/app/ui/text_inputs";
 import { useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
@@ -10,6 +11,7 @@ import {
   postAsync,
   putAsync,
 } from "@/app/services/rest_services";
+import { useSnackbar } from "@/app/ui/snack_bar_provider";
 
 interface EmailSettings {
   SmtpServer: string;
@@ -36,7 +38,7 @@ interface OsSettings {
   EmailSetting: EmailSettings;
 }
 
-const OsSettingsView = () => {
+const OsSettingsView = ({onClose}: {onClose: () => void}) => {
   const initialSettings: OsSettings = {
     ID: "",
     CompanyId: Cookies.get("companyId") || "",
@@ -63,6 +65,8 @@ const OsSettingsView = () => {
   const [settings, setSettings] = useState<OsSettings>(initialSettings);
   const [showEmailConfig, toggleEmailConfig] = useState(false);
   const isSettingsLoaded = useRef(false);
+
+  const snackbar = useSnackbar();
 
   useEffect(() => {
     const loadData = async () => {
@@ -103,27 +107,25 @@ const OsSettingsView = () => {
   const handleUpdate = async () => {
     try {
       let url = `${getSgBizBaseUrl()}/os-setting/update`;
-      console.log("Update URL hit:", url);
 
       let requestBody = { ...settings };
-      console.log("Update request body:", requestBody);
 
       let response = await postAsync(url, requestBody);
-      console.log("Update response:", response);
-
-      //   onClose();
+      snackbar.showSnackbar("Settings Updated", 'success')
     } catch (error) {
-      console.error("Error updating data:", error);
+      snackbar.showSnackbar("Could not Update Settings", "error" )
     }
   };
 
   return (
     <Box className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 overflow-y-scroll">
       <div className="bg-white p-8 rounded shadow-md w-1/3 overflow-y-hidden">
-        <Typography>Outstanding Settings</Typography>
-        {/* <IconButton onClick={onClose}>
+      <div className="flex flex-row justify-between items-center mb-4">
+        <Typography className="text-black text-xl">Configure Settings</Typography>
+         <IconButton size={"large"} onClick={onClose}>
           <Close />
-        </IconButton> */}
+        </IconButton> 
+      </div>
 
         {isSettingsLoaded.current ? (
           <>
@@ -134,18 +136,6 @@ const OsSettingsView = () => {
                 setSettings((prev) => ({ ...prev, CutOffDate: value }));
               }}
               defaultValue={settings.CutOffDate}
-            />
-            <div className="mt-2" />
-            <TextInput
-              mode="number"
-              placeHolder="Due Days"
-              onTextChange={(value) => {
-                setSettings((prev) => ({
-                  ...prev,
-                  DueDays: parseInt(value ?? "0"),
-                }));
-              }}
-              defaultValue={settings.DueDays.toString()}
             />
             <div className="mt-2" />
             <TextInput
