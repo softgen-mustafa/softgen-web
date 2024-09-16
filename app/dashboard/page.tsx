@@ -56,11 +56,12 @@ const DashboardPage = () => {
   }, []);
 
   const checkPermission = async () => {
-    loadUpcoming();
+    loadUpcoming().then((_) => triggerRefresh(!refresh));
   };
 
   const loadUpcoming = async () => {
     try {
+      triggerRefresh(!refresh);
       let url = `${getBmrmBaseUrl()}/bill/get/upcoming-overview?groupType=${
         selectedType.current.code
       }&durationType=${selectedFilter.current.value}`;
@@ -81,6 +82,8 @@ const DashboardPage = () => {
       return entries;
     } catch {
       alert("Could not load upcoming outstanding");
+    } finally {
+      triggerRefresh(false);
     }
   };
 
@@ -197,7 +200,7 @@ const DashboardPage = () => {
                   updateFilters(values);
                   selectedFilter.current = card;
                   loadUpcoming();
-                  // triggerRefresh(!refresh);
+                  triggerRefresh(!refresh);
                 }}
               >
                 <Typography

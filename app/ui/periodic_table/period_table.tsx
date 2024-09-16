@@ -471,7 +471,7 @@ const Table = ({
               );
             })}
         </Box>
-        {reload && <LinearProgress />}
+        {/* {reload && <LinearProgress />} */}
         {!reload && tableRows.length <= 0 && (
           <Box className="flex flex-row align-middle justify-center mt-4 mb-2">
             <Typography>No Data Found</Typography>
