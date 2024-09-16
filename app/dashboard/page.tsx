@@ -28,91 +28,8 @@ import {
 import Loading from "./loading";
 import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
 
-const BrokerMonthlyOverview = ({ companyId }: { companyId: string }) => {
-  useEffect(() => {}, [companyId]);
-
-  const columns: GridColDef<any[number]>[] = [
-    {
-      field: "dateStr",
-      headerName: "Month",
-      editable: false,
-      sortable: true,
-      flex: 1,
-    },
-    {
-      field: "preGstAmount",
-      headerName: "Value",
-      editable: false,
-      sortable: true,
-      flex: 1,
-      type: "number",
-      // valueGetter: (value, row) => `${row.currency || ""} ${row.amount || "0"}`,
-      valueGetter: (value, row) =>
-        `${numericToString(row.preGstAmount) || "0"}`,
-    },
-    {
-      field: "postGstAmount",
-      headerName: "Post Tax",
-      editable: false,
-      sortable: true,
-      flex: 1,
-      type: "number",
-      // valueGetter: (value, row) => `${row.currency || ""} ${row.amount || "0"}`,
-      valueGetter: (value, row) =>
-        `${numericToString(row.postGstAmount) || "0"}`,
-    },
-    {
-      field: "commission",
-      headerName: "Commission",
-      editable: false,
-      sortable: true,
-      flex: 1,
-      type: "number",
-      // valueGetter: (value, row) => `${row.currency || ""} ${row.amount || "0"}`,
-      valueGetter: (value, row) => `${numericToString(row.commission) || "0"}`,
-    },
-  ];
-
-  const onApi = async () => {
-    try {
-      let url = `${getBmrmBaseUrl()}/broker-sales/get/broker/monthly-sales?monthYear=all`;
-      let response = await getAsync(url);
-      let entries = response.map((entry: any, index: number) => {
-        return {
-          id: index + 1,
-          ...entry,
-        };
-      });
-      return entries ?? [];
-    } catch {
-      return [];
-    }
-  };
-
-  return (
-    <Box>
-      <DataTable
-        columns={columns}
-        refresh={true}
-        useSearch={true}
-        useServerPagination={false}
-        onApi={async (page, pageSize, searchText) => {
-          return await onApi();
-        }}
-        onRowClick={(params) => {}}
-      />
-    </Box>
-  );
-};
-
-interface ColumProps {
-  header: string;
-  field: string;
-  type: string;
-}
 
 const DashboardPage = () => {
-  const [data, setData] = useState([]);
   const [filters, updateFilters] = useState([
     { id: 1, label: "Daily", value: "daily", isSelected: true },
     { id: 2, label: "Weekly", value: "weekly", isSelected: false },
@@ -130,106 +47,27 @@ const DashboardPage = () => {
   let selectedType = useRef(types[incomingBillType === "Payable" ? 1 : 0]);
   let selectedFilter = useRef(filters[0]);
 
-  const [cachedCompanyIndex, setCompanyId] = useState(0);
-
-  const [totalAmount, setAmount] = useState("0");
-  const [syncInfo, setSyncInfo] = useState("");
 
   const [rows, setRows] = useState([]);
 
   const [refresh, triggerRefresh] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const theme = useTheme();
   const router = useRouter();
 
-  console.log(
-    Cookies.get("authToken"),
-    Cookies.get("companyId"),
-    Cookies.get("userType")
-  );
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      let url = `${getBmrmBaseUrl()}/info/user-tenant/get/companies`;
-      let response = await getAsync(url);
-      let values = response.map((entry: any) => {
-        return {
-          id: entry["company_id"],
-          name: entry["company_name"],
-          user_id: entry.user_id,
-        };
-      });
-      setData(values);
-      console.log(values);
-      if (values && values.length > 0) {
-        let existingCompany = Cookies.get("companyId");
-        let exisitngIndex = values.findIndex(
-          (entry: any) => entry.id === existingCompany
-        );
-        setCompanyId(0);
-        let guid = values[0].id;
-        if (exisitngIndex !== -1) {
-          guid = values[exisitngIndex].id;
-          setCompanyId(exisitngIndex);
-        }
-        Cookies.set("companyId", guid);
-      }
-    } catch (error) {
-      setLoading(false);
-      console.error("Failed to load companies", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const [userType, setUserType] = useState("");
 
   useEffect(() => {
-    loadData().then((_) => {
       setUserType(Cookies.get("userType") ?? "");
       checkPermission();
-    });
   }, []);
 
-  let cmpId = Cookies.get("companyId");
-  useEffect(() => {
-    loadLastSync(cmpId);
-  }, [cmpId]);
 
   const checkPermission = async () => {
-    loadAmount();
     loadUpcoming();
   };
 
-  const loadAmount = async () => {
-    try {
-      let url = `${getBmrmBaseUrl()}/bill/get/outstanding-amount?groupType=${
-        selectedType.current.code
-      }`;
-      let response = await getAsync(url);
-      let amount = `${"₹"} ${numericToString(response)}`;
-      setAmount(amount);
-    } catch {
-      alert("Coult not load amount");
-    }
-  };
-
-  const loadLastSync = async (companyId: any) => {
-    try {
-      let url = `${getSgBizBaseUrl()}/sync-info/get`;
-      url += `?companyId=${companyId}`;
-      let response = await getAsync(url);
-      // console.log("lastsync", JSON.stringify(response));
-      const syncInfo = convertToDate(response.Data.SyncDateTime);
-      setSyncInfo(syncInfo);
-      return syncInfo;
-    } catch (error) {
-      console.error("Failed to load sync details:", error);
-      alert("Could not load Sync Details");
-    }
-  };
 
   const loadUpcoming = async () => {
     try {
@@ -284,52 +122,19 @@ const DashboardPage = () => {
     },
   ];
 
-  const brokerGridConfig = [
-    {
-      weight: Weight.Medium,
-      content: (
-        <div title="Montly Overview">
-          <BrokerMonthlyOverview companyId={data[cachedCompanyIndex]} />
-        </div>
-      ),
-    },
-  ];
 
   const views = [
     {
     id:1,
       weight: Weight.Medium,
       content: (
-        <div className={`flex flex-col h-full`}>
-          <div className="mb-2" title="Switch Company">
-            <DropDown
-              label={"Select Company"}
-              displayFieldKey={"name"}
-              valueFieldKey={null}
-              selectionValues={data}
-              helperText={""}
-              defaultSelectionIndex={cachedCompanyIndex}
-              onSelection={(selection) => {
-                const companyId = selection.id;
-                let exisitngIndex = data.findIndex(
-                  (entry: any) => entry.id === companyId
-                );
-                if (exisitngIndex != -1) {
-                  setCompanyId(exisitngIndex);
-                  Cookies.set("companyId", companyId);
-                  loadLastSync(companyId).catch(() => {
-                    // Handle any errors silently, keeping the previous sync info
-                  });
-                }
-              }}
-            />
-
-            <br></br>
-
-            <Typography className="text-base mb-8 justify-center">
-              {`Last Sync: ${syncInfo}`}
-            </Typography>
-          </div>
+        <div
+          title={"Payable vs Receivable"}
+        >
+          <OutstandingCard
+            companyId={Cookies.get("companyId")?? ""}
+            title="Outstanding Overview"
+          />
         </div>
       ),
     },
@@ -337,26 +142,21 @@ const DashboardPage = () => {
     id:2,
       weight: Weight.Medium,
       content: (
-        <div
-          title={"Payable vs Receivable"}
-        >
-          <OutstandingCard
-            companyId={data[cachedCompanyIndex]}
-            title="Outstanding Overview"
+        <div >
+          <AgingView
+            billType={selectedType.current.code}
+            companyId={Cookies.get("companyId")?? ""}
+            title="Aging-Wise O/S"
           />
         </div>
       ),
     },
     {
     id:3,
-      weight: Weight.Medium,
+      weight: Weight.High,
       content: (
-        <div >
-          <AgingView
-            billType={selectedType.current.code}
-            companyId={data[cachedCompanyIndex]}
-            title="Aging-Wise O/S"
-          />
+        <div title="Today's O/S" className="overflow-scroll">
+          <OutstandingTask companyId={Cookies.get("companyId")?? ""} />
         </div>
       ),
     },
@@ -364,8 +164,11 @@ const DashboardPage = () => {
     id:4,
       weight: Weight.High,
       content: (
-        <div title="Today's O/S" className="overflow-scroll">
-          <OutstandingTask companyId={data[cachedCompanyIndex]} />
+        <div title="Ranked Parties" className="overflow-scroll">
+          <RankedPartyOutstandingCard
+            companyId={Cookies.get("companyId")?? ""}
+            billType={selectedType.current.code}
+          />
         </div>
       ),
     },
@@ -373,20 +176,7 @@ const DashboardPage = () => {
     id:5,
       weight: Weight.High,
       content: (
-        <div title="Ranked Parties" className="overflow-scroll">
-          <RankedPartyOutstandingCard
-            companyId={data[cachedCompanyIndex]}
-            billType={selectedType.current.code}
-          />
-        </div>
-      ),
-    },
-    {
-    id:6,
-      weight: Weight.High,
-      content: (
         <div title="Upcoming Collections" className="overflow-scroll">
-          {/* <Container className="flex overflow-x-auto"> */}
           <Stack
             flexDirection="row"
             gap={1}
@@ -432,30 +222,8 @@ const DashboardPage = () => {
               </Box>
             ))}
           </Stack>
-          {/* </Container> */}
           <br />
-          {/* <DataTable
-            columns={columns}
-            refresh={refresh}
-            useSearch={false}
-            useServerPagination={false}
-            onApi={async (page, pageSize, searchText) => {
-              return loadUpcoming();
-            }}
-            onRowClick={(params) => {
-              localStorage.setItem("party_filter_value", params.row.id);
-              localStorage.setItem("party_view_type", "upcoming");
-              localStorage.setItem(
-                "party_bill_type",
-                selectedType.current.code
-              );
-              localStorage.setItem(
-                "party_filter_type",
-                selectedFilter.current.value
-              );
-            }}
-          /> */}
-          <PeriodicTable
+         <PeriodicTable
             chartKeyFields={[
               {
                 label: "Duration",
@@ -484,45 +252,9 @@ const DashboardPage = () => {
             rows={rows}
             reload={refresh}
           />
-          {/* <DataGrid
-            columns={columns}
-            rows={rows}
-            initialState={{
-              pagination: {
-                paginationModel: {
-                  pageSize: 10,
-                },
-              },
-            }}
-            onRowClick={(params) => {
-              localStorage.setItem("party_filter_value", params.row.id);
-              localStorage.setItem("party_view_type", "upcoming");
-              localStorage.setItem(
-                "party_bill_type",
-                selectedType.current.code
-              );
-              localStorage.setItem(
-                "party_filter_type",
-                selectedFilter.current.value
-              );
-            }}
-            pageSizeOptions={[5, 10, 25, 50, 75, 100]}
-            disableRowSelectionOnClick
-            onPaginationModelChange={(value) => {
-              alert(`page model:  ${JSON.stringify(value)}`);
-            }}
-          /> */}
         </div>
       ),
     },
-    // {
-    //   weight: Weight.High,
-    //   content: (
-    //     <div title="Data Grid">
-    //       <PeriodicTable cColumn={CC} data={dummyData} />
-    //     </div>
-    //   ),
-    // },
   ];
 
   return (

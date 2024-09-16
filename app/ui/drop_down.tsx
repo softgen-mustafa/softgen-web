@@ -21,7 +21,8 @@ const DropDown = ({
   onSelection,
   defaultSelectionIndex = 0,
   useSearch,
-  onSearchUpdate
+  onSearchUpdate,
+  useFullWidth = true,
 }: {
   label: string;
   displayFieldKey: string;
@@ -32,6 +33,7 @@ const DropDown = ({
   onSelection: (selected: any) => void;
   onSearchUpdate?: (value: string) => void;
   useSearch?: boolean;
+  useFullWidth?: boolean;
 }) => {
   const [value, setValue] = useState({});
   const [dropDownValues, setDropDownValues] = useState<JSX.Element[]>([]);
@@ -99,7 +101,7 @@ const DropDown = ({
 
   return (
     // <FormControl className="w-full md:w-[30vw] mt-4 md:mt-0">
-    <FormControl className="w-full mt-4 md:mt-0">
+    <FormControl className={`${useFullWidth ? "w-full" :"" } mt-4 md:mt-0`}>
       <InputLabel>{label}</InputLabel>
       <Select
         className="w-full"
