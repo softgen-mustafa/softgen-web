@@ -382,7 +382,7 @@ const Table = ({
   const handleMouseDown = (index: number, event: React.MouseEvent) => {};
 
   return (
-    <Box className="w-full flex flex-row max-h-[600px] overflow-x-scroll overflow-y-auto">
+    <Box className="w-full max-w-[100vw] flex flex-row max-h-[600px] overflow-x-auto overflow-y-auto">
       <Box
         className="w-full flex flex-col p-2 overflow-x-scroll"
         style={{
@@ -928,8 +928,8 @@ const PeriodicTable = (props: PeriodicTableProps) => {
   });
 
   useEffect(() => {
-    setDimensions({ width: window.innerWidth, height: window.innerHeight });
     refreshColumns({ offset: 0, limit: 5, searchText: "" });
+    setDimensions({ width: window.innerWidth, height: window.innerHeight });
   }, [props.reload]);
 
   /*useEffect(() => {

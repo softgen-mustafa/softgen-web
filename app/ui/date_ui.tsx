@@ -1,16 +1,37 @@
 import { Typography } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Dayjs } from "dayjs";
-import { useState } from "react";
+import dayjs, { Dayjs } from "dayjs";
+import { useEffect, useState } from "react";
+
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
+
+const format = "DD-MM-YYYY"; // Format of your date string
+
+
+
 
 const DateRangePicker = ({
+    defaultStart = "",
+    defaultEnd = "",
   onDateChange,
 }: {
+    defaultStart?: string,
+    defaultEnd?: string,
   onDateChange: (fromDate?: string, toDate?: string) => void;
 }) => {
   const [fromDate, setFromDate] = useState<Dayjs | null>(null);
   const [toDate, setToDate] = useState<Dayjs | null>(null);
+
+  useEffect(() => {
+      if (defaultStart.length > 0) {
+          setFromDate(dayjs(defaultStart, format))
+      }
+      if (defaultEnd.length > 0) {
+          setToDate(dayjs(defaultEnd, format))
+      }
+  },[defaultStart, defaultEnd])
 
   return (
     <div className="flex flex-col">

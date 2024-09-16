@@ -1,6 +1,6 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
+import { DateRangePicker } from "@/app/ui/date_ui";
+import React, { useRef, useState } from "react";
 import {
   PeriodicTable,
   TableColumn,
@@ -11,6 +11,12 @@ import { convertToDate } from "@/app/services/Local/helper"
 
 const DateWiseFollowup = () => {
   const [refresh, triggerRefresh] = useState(false);
+
+
+  let dateRange = useRef({
+      startDate: "01-01-2024",
+      endDate: "01-01-2025",
+  });
 
 
   const columns: any[] = [
@@ -130,11 +136,17 @@ const DateWiseFollowup = () => {
       try {
           let url = `${getSgBizBaseUrl()}/os/followup/get/day-wise`
           let requestBody = {
-              "StartDateStr": "01-01-2024",
-              "EndDateStr": "01-01-2025",
+              "StartDateStr": dateRange.current.startDate,
+              "EndDateStr": dateRange.current.endDate,
+              "Filter": {
+                  "Batch": {
+                      "Apply": true, 
+                      "Limit": props.limit,
+                      "Offset": props.offset,
+                  }
+              }
           }
           let response = await postAsync(url, requestBody)
-          //alert(JSON.stringify(response))
           let values =  response.Data.map((entry: any) => {
               return {
                   ...entry,
@@ -151,10 +163,31 @@ const DateWiseFollowup = () => {
       }
   }
 
+  const renderFilterView = () => {
+      return (
+          <div>
+          <DateRangePicker
+          defaultStart={dateRange.current.startDate}
+          defaultEnd={dateRange.current.endDate}
+          onDateChange={(fromDate, toDate) => {
+              dateRange.current = {
+                  startDate: fromDate ?? "",
+                  endDate: toDate ?? "",
+              }
+              triggerRefresh(!refresh)
+          }}
+          />
+          </div>
+      );
+
+  }
+
+
   return (
       <PeriodicTable
         useSearch={false}
         reload={refresh}
+        RenderAdditionalView={renderFilterView()}
         columns={columns.map((col: any) => {
           let column: TableColumn = {
             header: col.headerName,
