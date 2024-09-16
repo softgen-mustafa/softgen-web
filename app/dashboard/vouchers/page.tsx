@@ -6,7 +6,12 @@ import {
 } from "@/app/services/rest_services";
 import { DataTable } from "@/app/ui/data_grid";
 import { DropDown } from "@/app/ui/drop_down";
-import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
+import {
+  CardView,
+  GridConfig,
+  RenderGrid,
+  Weight,
+} from "@/app/ui/responsive_grid";
 import { ChevronLeftRounded } from "@mui/icons-material";
 import {
   Button,
@@ -28,6 +33,7 @@ import {
   ApiProps,
   TableSearchKey,
 } from "@/app/ui/periodic_table/period_table";
+import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
 
 const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
   const [loading, setLoading] = useState(false);
@@ -996,9 +1002,105 @@ const Page = () => {
     },
   ];
 
+  const views = [
+    {
+      id: 1,
+      weight: Weight.High,
+      content: (
+        // <CardView
+        //   title={"Overview"}
+        //   permissionCode="CustomerPartySearch"
+        //   className="h-fit"
+        //   actions={[
+        //     <IconButton
+        //       key={1}
+        //       onClick={() => {
+        //         router.back();
+        //       }}
+        //     >
+        //       <ChevronLeftRounded />
+        //       <Typography>Go Back</Typography>
+        //     </IconButton>,
+        //   ]}
+        // >
+        <div title="Overview">
+          <DropDown
+            label="Select Type"
+            displayFieldKey={"name"}
+            valueFieldKey={null}
+            selectionValues={voucherTypes}
+            helperText={"Select Outstanding Type"}
+            onSelection={(selection) => {
+              setVoucherType(selection.name);
+            }}
+            useSearch={true}
+          />
+          <br />
+          <Typography>Monthly Review</Typography>
+          <br />
+          <MonthlySalesCard voucherType={selectedVoucherType} />
+        </div>
+        // </CardView>
+      ),
+      children: [],
+    },
+    {
+      id: 2,
+      weight: Weight.High,
+      content: (
+        <div
+          title="Monthly Party Sales"
+          // permissionCode="CustomerPartySearch"
+        >
+          <MonthlyCustomerSalesCard voucherType={selectedVoucherType} />
+        </div>
+      ),
+      children: [],
+    },
+    {
+      id: 3,
+      weight: Weight.High,
+      content: (
+        <div
+          title="Party Wise Sales"
+          // permissionCode="CustomerPartySearch"
+        >
+          <CustomerSalesCard voucherType={selectedVoucherType} />
+        </div>
+      ),
+      children: [],
+    },
+    {
+      id: 4,
+      weight: Weight.High,
+      content: (
+        <div
+          title="Item Group Sales"
+          // permissionCode="CustomerPartySearch"
+        >
+          <ItemGroupCard voucherType={selectedVoucherType} />
+        </div>
+      ),
+      children: [],
+    },
+    {
+      id: 5,
+      weight: Weight.High,
+      content: (
+        <div
+          title="Bill Wise Review"
+          // permissionCode="CustomerPartySearch"
+        >
+          <BillsCard voucherType={selectedVoucherType} />
+        </div>
+      ),
+      children: [],
+    },
+  ];
+
   return (
     <div className="w-full" style={{}}>
-      <Grid
+      {/* <Grid
         container
         sx={{
           flexGrow: 1,
@@ -1006,7 +1108,8 @@ const Page = () => {
         }}
       >
         {RenderGrid(gridConfig)}
-      </Grid>
+      </Grid> */}
+      <ResponsiveCardGrid screenName="vouchers" initialCards={views} />
     </div>
   );
 };

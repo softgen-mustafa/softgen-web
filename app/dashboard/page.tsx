@@ -3,9 +3,7 @@ import { CustomerDetailsCard } from "./cards/customer_card";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
 import { OutstandingCard } from "./cards/outstanding_card";
 import { OutstandingTask } from "./cards/outstanding_task_card";
-import {
-  Weight,
-} from "../ui/responsive_grid";
+import { Weight } from "../ui/responsive_grid";
 import { DropDown } from "../ui/drop_down";
 import {
   getAsync,
@@ -21,13 +19,9 @@ import { useRouter } from "next/navigation";
 import RankedPartyOutstandingCard from "./cards/ranked_party";
 import { AgingView } from "./cards/aging_card";
 import { DataTable } from "@/app/ui/data_grid";
-import {
-  PeriodicTable,
-  TableColumn,
-} from "../ui/periodic_table/period_table";
+import { PeriodicTable, TableColumn } from "../ui/periodic_table/period_table";
 import Loading from "./loading";
 import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
-
 
 const DashboardPage = () => {
   const [filters, updateFilters] = useState([
@@ -47,7 +41,6 @@ const DashboardPage = () => {
   let selectedType = useRef(types[incomingBillType === "Payable" ? 1 : 0]);
   let selectedFilter = useRef(filters[0]);
 
-
   const [rows, setRows] = useState([]);
 
   const [refresh, triggerRefresh] = useState(false);
@@ -55,19 +48,16 @@ const DashboardPage = () => {
   const theme = useTheme();
   const router = useRouter();
 
-
   const [userType, setUserType] = useState("");
 
   useEffect(() => {
-      setUserType(Cookies.get("userType") ?? "");
-      checkPermission();
+    setUserType(Cookies.get("userType") ?? "");
+    checkPermission();
   }, []);
-
 
   const checkPermission = async () => {
     loadUpcoming();
   };
-
 
   const loadUpcoming = async () => {
     try {
@@ -122,58 +112,55 @@ const DashboardPage = () => {
     },
   ];
 
-
   const views = [
     {
-    id:1,
+      id: 1,
       weight: Weight.Medium,
       content: (
-        <div
-          title={"Payable vs Receivable"}
-        >
+        <div title={"Payable vs Receivable"}>
           <OutstandingCard
-            companyId={Cookies.get("companyId")?? ""}
+            companyId={Cookies.get("companyId") ?? ""}
             title="Outstanding Overview"
           />
         </div>
       ),
     },
     {
-    id:2,
+      id: 2,
       weight: Weight.Medium,
       content: (
-        <div >
+        <div>
           <AgingView
             billType={selectedType.current.code}
-            companyId={Cookies.get("companyId")?? ""}
+            companyId={Cookies.get("companyId") ?? ""}
             title="Aging-Wise O/S"
           />
         </div>
       ),
     },
     {
-    id:3,
+      id: 3,
       weight: Weight.High,
       content: (
         <div title="Today's O/S" className="overflow-scroll">
-          <OutstandingTask companyId={Cookies.get("companyId")?? ""} />
+          <OutstandingTask companyId={Cookies.get("companyId") ?? ""} />
         </div>
       ),
     },
     {
-    id:4,
+      id: 4,
       weight: Weight.High,
       content: (
         <div title="Ranked Parties" className="overflow-scroll">
           <RankedPartyOutstandingCard
-            companyId={Cookies.get("companyId")?? ""}
+            companyId={Cookies.get("companyId") ?? ""}
             billType={selectedType.current.code}
           />
         </div>
       ),
     },
     {
-    id:5,
+      id: 5,
       weight: Weight.High,
       content: (
         <div title="Upcoming Collections" className="overflow-scroll">
@@ -223,7 +210,7 @@ const DashboardPage = () => {
             ))}
           </Stack>
           <br />
-         <PeriodicTable
+          <PeriodicTable
             chartKeyFields={[
               {
                 label: "Duration",
@@ -259,7 +246,7 @@ const DashboardPage = () => {
 
   return (
     <div>
-        <ResponsiveCardGrid screenName="dashboard" initialCards={views} />
+      <ResponsiveCardGrid screenName="dashboard" initialCards={views} />
     </div>
   );
 };
