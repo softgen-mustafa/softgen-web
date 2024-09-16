@@ -419,7 +419,7 @@ const Table = ({
                 (entry: any) => entry.field === column.field
               );
               if (cellWidth === null) {
-                cellWidth = 150;
+                cellWidth = 200;
               }
               return (
                 <Box
@@ -525,7 +525,7 @@ const Table = ({
                     (entry: any) => entry.field === cell.field
                   );
                   if (cellWidth === null) {
-                    cellWidth = 150;
+                    cellWidth = 200;
                   }
 
                   return (
@@ -538,7 +538,7 @@ const Table = ({
                         borderRightWidth: cellIndex === row.length - 1 ? 0 : 2,
                       }}
                     >
-                      <Typography>
+                      <Typography className="overflow-x-auto">
                         {cell.type == "number"
                           ? numericToString(parseFloat(cell.value).toFixed(2))
                           : cell.value}

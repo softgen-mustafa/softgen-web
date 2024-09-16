@@ -15,7 +15,7 @@ const DateWiseFollowup = () => {
 
   const columns: any[] = [
     {
-      field: "Created",
+      field: "CreationDate",
       headerName: "Creation Date",
       editable: false,
       sortable: false,
@@ -23,8 +23,8 @@ const DateWiseFollowup = () => {
       flex: 1,
     },
     {
-      field: "LastUpdated",
-      headerName: "Last Update Date",
+      field: "NextFollowUpDate",
+      headerName: "Next FollowUp",
       editable: false,
       sortable: false,
       hideable: false,
@@ -32,15 +32,93 @@ const DateWiseFollowup = () => {
     },
     {
       field: "PartyName",
-      headerName: "Party Name",
+      headerName: "Party",
       editable: false,
       sortable: false,
       hideable: false,
       flex: 1,
     },
     {
+      field: "PersonInCharge",
+      headerName: "Attended By",
+      minWidth: 300,
+      editable: false,
+      sortable: false,
+      type: "text",
+      hideable: false,
+      flex: 1,
+    },
+    {
+      field: "PocName",
+      headerName: "Contact Person",
+      editable: false,
+      sortable: false,
+      hideable: false,
+      type: "text",
+      flex: 1,
+    },
+    {
+      field: "PocEmail",
+      headerName: "Contact Email",
+      editable: false,
+      sortable: false,
+      hideable: false,
+      type: "text",
+      flex: 1,
+    },
+    {
+      field: "PocMobile",
+      headerName: "Contact Mobile",
+      editable: false,
+      sortable: false,
+      hideable: false,
+      type: "text",
+      flex: 1,
+    },
+    {
       field: "Description",
-      headerName: "Notes",
+      headerName: "Description",
+      editable: false,
+      sortable: false,
+      hideable: false,
+      type: "text",
+      flex: 1,
+    },
+    {
+      field: "TotalCount",
+      headerName: "Total Bills",
+      editable: false,
+      sortable: false,
+      hideable: false,
+      flex: 1,
+    },
+    {
+      field: "PendingCount",
+      headerName: "Pending",
+      editable: false,
+      sortable: false,
+      hideable: false,
+      flex: 1,
+    },
+    {
+      field: "ScheduledCount",
+      headerName: "Scheduled",
+      editable: false,
+      sortable: false,
+      hideable: false,
+      flex: 1,
+    },
+    {
+      field: "CompleteCount",
+      headerName: "Completed",
+      editable: false,
+      sortable: false,
+      hideable: false,
+      flex: 1,
+    },
+    {
+      field: "UpdationDate",
+      headerName: "Last Updated",
       editable: false,
       sortable: false,
       hideable: false,
@@ -60,8 +138,10 @@ const DateWiseFollowup = () => {
           let values =  response.Data.map((entry: any) => {
               return {
                   ...entry,
-                  Created: convertToDate(entry.Created),
-                  LastUpdated: convertToDate(entry.LastUpdated),
+                  CreationDate: convertToDate(entry.CreationDate),
+                  UpdationDate: convertToDate(entry.UpdationDate),
+                  NextFollowUpDate: entry.NextFollowUpDate === null ? "" : convertToDate(entry.NextFollowUpDate),
+           
               }
           });
           return values;
