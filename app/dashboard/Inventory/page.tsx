@@ -31,6 +31,7 @@ import {
   TableSearchKey,
 } from "@/app/ui/periodic_table/period_table";
 import Loading from "../loading";
+import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
 
 const InventoryOverviewScreen = () => {
   const router = useRouter();
@@ -240,25 +241,27 @@ const InventoryOverviewScreen = () => {
     },
   ];
 
-  const gridConfig = [
+  const views = [
     {
+      id: 1,
       weight: Weight.Low,
-      view: (
-        <CardView
-          className="h-fit"
-          title="Inventory"
-          actions={[
-            <IconButton
-              key={1}
-              onClick={() => {
-                router.back();
-              }}
-            >
-              <ChevronLeftRounded />
-              <Typography>Go Back</Typography>
-            </IconButton>,
-          ]}
-        >
+      content: (
+        // <CardView
+        //   className="h-fit"
+        //   title="Inventory"
+        //   actions={[
+        //     <IconButton
+        //       key={1}
+        //       onClick={() => {
+        //         router.back();
+        //       }}
+        //     >
+        //       <ChevronLeftRounded />
+        //       <Typography>Go Back</Typography>
+        //     </IconButton>,
+        //   ]}
+        // >
+        <div title="Inventory">
           <Typography className="mt-4 text-md flex">Total Amount</Typography>
           <Typography className="text-lg md:text-xl mt-2 flex">
             {details?.currency} {numericToString(details?.totalAmount)}
@@ -268,13 +271,15 @@ const InventoryOverviewScreen = () => {
           <Typography className="text-lg md:text-xl mt-2 flex">
             {details?.totalItem}
           </Typography>
-        </CardView>
+          {/* </CardView> */}
+        </div>
       ),
     },
     {
+      id: 2,
       weight: Weight.Low,
-      view: (
-        <CardView title="Filters">
+      content: (
+        <div title="Filters">
           <br />
           <DropDown
             label="Select Master"
@@ -322,16 +327,14 @@ const InventoryOverviewScreen = () => {
               <br />
             </>
           )}
-        </CardView>
+        </div>
       ),
     },
     {
+      id: 3,
       weight: Weight.High,
-      view: (
-        <CardView
-          title={selectedListType.current.label}
-          className="overflow-scroll"
-        >
+      content: (
+        <div title={selectedListType.current.label} className="overflow-scroll">
           {/* <DataTable
             refresh={refresh}
             columns={columns}
@@ -383,18 +386,19 @@ const InventoryOverviewScreen = () => {
               }
             }}
           />
-        </CardView>
+        </div>
       ),
     },
   ];
 
   return (
     // <Container sx={{ overflowX: "hidden" }}>
-    <Box>
+    <div className="w-full" style={{}}>
       {hasPermission === null ? (
         <Loading />
       ) : hasPermission ? (
-        <DynGrid views={gridConfig} />
+        // <DynGrid views={gridConfig} />
+        <ResponsiveCardGrid screenName="inventory" initialCards={views} />
       ) : (
         <Typography className="text-2xl text-center font-bold flex items-center justify-center flex-1 pl-2 pr-2">
           Check Your Internet Access Or This Feature is not included in your
@@ -402,7 +406,7 @@ const InventoryOverviewScreen = () => {
           feature.
         </Typography>
       )}
-    </Box>
+    </div>
     // </Container>
   );
 };

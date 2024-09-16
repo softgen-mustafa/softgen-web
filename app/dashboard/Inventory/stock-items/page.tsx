@@ -27,7 +27,8 @@ import {
   ApiProps,
 } from "@/app/ui/periodic_table/period_table";
 import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
-import { Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
+import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
 const Page = () => {
   const [refresh, setRefresh] = useState(false);
   const [groups, setGroups] = useState<any>([]);
@@ -35,9 +36,7 @@ const Page = () => {
 
   let selectedGroups = useRef<any>(null);
 
-  useEffect(() => {
-    
-  }, []);
+  useEffect(() => {}, []);
 
   const loadGroups = async () => {
     try {
@@ -51,8 +50,8 @@ const Page = () => {
         return {
           name: entry.Name,
         };
-      }); 
-      setRefresh(!refresh)
+      });
+      setRefresh(!refresh);
       return values;
     } catch {
       return [];
@@ -62,7 +61,7 @@ const Page = () => {
   const loadData = async (apiParams: ApiProps) => {
     //let url = "http://118.139.167.125:45700/stock-items/get/report";
     //let url = "http://localhost:35001/stock-items/get/report";
-     
+
     let url = `${getSgBizBaseUrl()}/stock-items/get/report`;
     let requestBody = {
       Limit: apiParams.limit,
@@ -71,10 +70,9 @@ const Page = () => {
       SearchKey: apiParams.searchKey ?? "",
       SortKey: apiParams.sortKey ?? "",
       SortOrder: apiParams.sortOrder ?? "",
-      StockGroups:
-        selectedGroups.current != null ? selectedGroups.current : [],
+      StockGroups: selectedGroups.current != null ? selectedGroups.current : [],
     };
-     
+
     let res = await postAsync(url, requestBody);
     if (res === null || res.Data === null) {
       return [];
@@ -194,9 +192,9 @@ const Page = () => {
             onApi={loadGroups}
             helperText={""}
             onSelection={(selection) => {
-              selectedGroups.current = selection.map((entry: any) => entry.name) ?? [];
+              selectedGroups.current =
+                selection.map((entry: any) => entry.name) ?? [];
               setRefresh(!refresh);
-
             }}
           />
         </Stack>
@@ -205,11 +203,12 @@ const Page = () => {
     );
   };
 
-  const gridConfig = [
+  const views = [
     {
-      weight: Weight.High,
-      view: (
-        <CardView title="Items">
+      id: 1,
+      weight: 1,
+      content: (
+        <div>
           <PeriodicTable
             chartKeyFields={[
               {
@@ -254,18 +253,14 @@ const Page = () => {
             sortKeys={sortKeys}
             onRowClick={handleRowClick}
           />
-        </CardView>
+        </div>
       ),
     },
   ];
 
   return (
     <div className="w-full">
-      <DynGrid
-        views={gridConfig}
-        direction={GridDirection.Column}
-        width="100%"
-      />
+      <ResponsiveCardGrid screenName="stock-items" initialCards={views} />
     </div>
   );
 };
