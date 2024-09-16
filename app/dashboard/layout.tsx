@@ -411,7 +411,7 @@ export default function DashboardLayout({
                 style={{ background: "rgb(247, 249, 252)" }}
                 >
                     <SideNav onThemeChange={changeTheme} />
-                    <div className="flex flex-col">
+                    <div className="flex flex-col w-full" >
                         <div className="bg-gray-100 min-h-[70px] flex flex-row justify-end items-center pb-1 pr-1" style={{
                             borderBottomWidth: 2,
                             borderBottomColor: theme.palette.primary.main,

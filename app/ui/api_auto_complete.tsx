@@ -1,16 +1,18 @@
 "use client";
 
-import { Autocomplete, TextField } from "@mui/material";
+import { Stack, Autocomplete, TextField } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 
 interface AutoCompleteProps {
+reload: boolean;
   label: string;
   displayFieldKey: string;
   onApi: (searchValue: string) => Promise<any[]>;
-  onSelection: (selected: any) => void;
+  onSelection: (selected?: any, value?: any) => void;
 }
 
 const ApiAutoComplete = ({
+reload,
   label,
   onApi,
   displayFieldKey,
@@ -22,47 +24,30 @@ const ApiAutoComplete = ({
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [reload]);
 
   const loadData = async () => {
     let values: any[] = await onApi(searchText.current || "");
     setOptions(values);
   };
 
-  const handleInputChange = (
-    event: React.ChangeEvent<{}>,
-    newValue: string
-  ) => {
-    onSelection(newValue); // Update the input value state
-    searchText.current = newValue; // Update search text reference
-  };
-
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: any) => {
-    let updatedText = "";
-    if (typeof newValue === "string") {
-      updatedText = newValue;
-    } else if (newValue && newValue.inputValue) {
-      updatedText = newValue.inputValue;
-    } else {
-      updatedText = newValue?.name || "";
-    }
-    onSelection(updatedText);
-    newText(updatedText);
-  };
 
   return (
-    <div>
+    <Stack spacing={2} sx={{ }}>
       <Autocomplete
-        disableClearable
-        options={options}
+        id="free-solo-demo"
         freeSolo
-        getOptionLabel={(option: any) => option[displayFieldKey] || text}
-        onInputChange={handleInputChange}
-        onChange={handleChange}
-        renderInput={(params: any) => <TextField {...params} label={label} />}
-        renderOption={(props, option) => <li {...props}>{option.name}</li>}
+        onChange={(event, value) => {
+            let selectedOption = options.find((entry: any) => entry[displayFieldKey] === value)
+            onSelection(selectedOption, value); // Update the input value state
+        }}
+        onInputChange={(event, value) => {
+            onSelection(null, value); // Update the input value state
+        }}
+        options={options.map((option) => option[displayFieldKey])}
+        renderInput={(params) => <TextField {...params} label={label} />}
       />
-    </div>
+    </Stack>
   );
 };
 

@@ -41,7 +41,7 @@ const ApiMultiDropDown = ({
   let searchText = useRef("");
 
   useEffect(() => {
-  
+    setSelectedValues([])
     loadData();
   }, [reload]);
 
@@ -76,6 +76,20 @@ const ApiMultiDropDown = ({
         value={selectedValues ?? []}
         label={label}
         onChange={handleChange}
+        renderValue={(selected) => 
+             <div className="flex flex-wrap gap-1">
+            {selected.map((value: any) => {
+              const displayText = dropDownValues.find(
+                (entry) =>
+                  (valueFieldKey == null ? entry : entry[valueFieldKey!]) ===
+                  value
+              )?.[displayFieldKey];
+              return (
+                <Chip key={value} label={displayText} className="m-1" />
+              );
+            })}
+          </div>
+        }
       >
         <ListSubheader>
           <TextField
@@ -99,6 +113,10 @@ const ApiMultiDropDown = ({
           <MenuItem
             key={index}
             value={valueFieldKey == null ? entry : entry[valueFieldKey!]}
+            className="flex flex-row justify-between"
+            sx={{
+                borderWidth: 1,
+            }}
           >
             <Checkbox
               checked={

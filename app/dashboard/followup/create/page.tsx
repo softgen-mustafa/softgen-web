@@ -5,8 +5,7 @@ import {
   postAsync,
 } from "@/app/services/rest_services";
 import { DropDown } from "@/app/ui/drop_down";
-import { CardView, GridConfig, RenderGrid } from "@/app/ui/responsive_grid";
-import { Box, Grid } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import ApiAutoComplete from "@/app/ui/api_auto_complete";
 import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
@@ -22,8 +21,10 @@ import {
 import { GridColDef } from "@mui/x-data-grid";
 import { ApiDropDown } from "@/app/ui/api_drop_down";
 import { convertToDate } from "@/app/services/Local/helper";
+import  ResponsiveCardGrid  from "@/app/components/ResponsiveCardGrid"
 
 interface OsSettings {
+    pocId: string;
   pocEmail: string;
   pocMobile: string;
   pocName: string;
@@ -32,8 +33,25 @@ interface OsSettings {
   nextDate: string;
 }
 
+interface BillSelection {
+    billId: string
+    status: number
+}
+
+interface Bill {
+    BillNumber: string;
+    PartyName: string;
+    ParentGroup: string;
+    PendingAmount: number | null;
+    OpeningAmount: number;
+    BillDate: string;
+    DueDate: string;
+}
+
 const Page = () => {
+
   const initialDetails: OsSettings = {
+      pocId: "",
     pocEmail: "",
     pocMobile: "",
     pocName: "",
@@ -42,23 +60,15 @@ const Page = () => {
     nextDate: "",
   };
 
-  interface Bill {
-    BillNumber: string;
-    PartyName: string;
-    ParentGroup: string;
-    PendingAmount: number | null;
-    OpeningAmount: number;
-    BillDate: string;
-    DueDate: string;
-  }
+  const [key, refreshKey] = useState(0)
   const [pocDetails, setPocDetails] = useState<OsSettings>(initialDetails);
-  const [data, setData] = useState([]);
   const [refresh, triggerRefresh] = useState(false);
   const [refreshBills, triggerBillsRefresh] = useState(false);
+  const [refreshUsers, triggerUsers] = useState(false)
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
 
   let selectedBills = useRef<Bill[]>([]);
-  let selectedUser = useRef<string[]>([]);
+  let billSelections= useRef<BillSelection[]>([]);
   let selectedParty = useRef<string>("");
 
   const columns: GridColDef[] = [
@@ -96,10 +106,12 @@ const Page = () => {
   ];
 
   useEffect(() => {
-    loadParties("");
-    loadBills("");
-    loadUser();
-  }, []);
+      setPocDetails(initialDetails)
+      selectedBills.current = []
+      billSelections.current = []
+      triggerBillsRefresh(!refreshBills)
+  }, [key])
+
 
   const loadParties = async (searchValue: string) => {
     let values = [{ name: "None" }];
@@ -139,6 +151,7 @@ const Page = () => {
           OpeningAmount: entry.OpeningAmount.Value,
           BillDate: convertToDate(entry.BillDate),
           DueDate: convertToDate(entry.DueDate),
+          Status: 0,
         };
       });
       return values;
@@ -153,17 +166,13 @@ const Page = () => {
       let url = `${getSgBizBaseUrl()}/party/get/contact-person?partyName=${encodedPartyName}`;
 
       let response = await getAsync(url);
-      console.log("loadUser response", JSON.stringify(response));
 
       if (response && response.Data && response.Data.length > 0) {
-        return response.Data.map((entry: any) => ({
-          pocName: entry.Name,
-        }));
+        return response.Data
       } else {
         return [];
       }
     } catch (error) {
-      console.log("Error loading user data", error);
       return [];
     }
   };
@@ -193,36 +202,6 @@ const Page = () => {
     }
   };
 
-  // const loadUser = async () => {
-  //   try {
-  //     const encodedPartyName = encodeURIComponent(selectedParty.current);
-  //     let url = `${getSgBizBaseUrl()}/party/get/contact-person?partyName=${encodedPartyName}`;
-
-  //     let response = await getAsync(url);
-  //     console.log("loadUser response", JSON.stringify(response));
-
-  //     if (response && response.Data.length > 0) {
-  //       const userData = response.Data[0];
-  //       setPocDetails((prev) => ({
-  //         ...prev,
-  //         pocName: userData.Name,
-  //         pocEmail: userData.Email,
-  //         pocMobile: userData.PhoneNo,
-  //       }));
-
-  //       return response.Data.map((entry: any) => ({
-  //         pocName: entry.Name,
-  //         pocEmail: entry.Email,
-  //         pocMobile: entry.PhoneNo,
-  //       }));
-  //     } else {
-  //       return [];
-  //     }
-  //   } catch (error) {
-  //     console.log("Error loading user data", error);
-  //     return [];
-  //   }
-  // };
 
   const handleDateChange = (newDate: dayjs.Dayjs | null) => {
     if (newDate) {
@@ -234,8 +213,6 @@ const Page = () => {
     }
   };
   const submitFollowup = async () => {
-    console.log("Current pocDetails:", pocDetails);
-
     if (!pocDetails.pocName || pocDetails.pocName.trim() === "") {
       alert("Please select a valid user.");
       return;
@@ -250,113 +227,37 @@ const Page = () => {
           ContactPersonId: "",
           PartyName: selectedParty.current,
           Description: pocDetails.Notes,
-          FollowUpBills: selectedBills.current.map((bill: Bill) => ({
-            BillId: bill.BillNumber,
-            Status: 0,
+          FollowUpBills: billSelections.current.map((bill: BillSelection) => ({
+            BillId: bill.billId,
+            Status: bill.status,
           })),
         },
         PointOfContact: {
-          PersonId: "",
+          PersonId: pocDetails.pocId,
           Name: pocDetails.pocName,
           PartyName: selectedParty.current,
           Email: pocDetails.pocEmail,
           PhoneNo: pocDetails.pocMobile,
         },
       };
-      console.log("Request body:", JSON.stringify(requestBody));
       const response = await postAsync(url, requestBody);
-      console.log("Response:", response);
       alert("Follow-up created successfully");
     } catch (error) {
-      console.error("Error creating follow-up:", error);
       alert("Failed to create follow-up");
+    } finally {
+        refreshKey((key + 1) % 2)
     }
   };
-  // const submitFollowup = async () => {
-  //   console.log("Current pocDetails:", pocDetails); // Add this line
 
-  //   // Validation check
-  //   if (!pocDetails.pocName || pocDetails.pocName.trim() === "") {
-  //     alert("Please enter a valid name for the point of contact.");
-  //     return;
-  //   }
-
-  //   try {
-  //     const url = `${getSgBizBaseUrl()}/os/followup/create`;
-  //     const requestBody = {
-  //       Followup: {
-  //         RefPrevFollowUpId: null,
-  //         FollowUpId: "",
-  //         ContactPersonId: "",
-  //         PartyName: selectedParty.current,
-  //         Description: pocDetails.Notes,
-  //         FollowUpBills: selectedBills.current.map((bill: Bill) => ({
-  //           BillId: bill.BillNumber,
-  //           Status: 0,
-  //         })),
-  //       },
-  //       PointOfContact: {
-  //         PersonId: "",
-  //         Name: pocDetails.pocName,
-  //         PartyName: selectedParty.current,
-  //         Email: pocDetails.pocEmail,
-  //         PhoneNo: pocDetails.pocMobile,
-  //       },
-  //     };
-  //     console.log("Request body:", JSON.stringify(requestBody)); // Add this line
-  //     const response = await postAsync(url, requestBody);
-  //     console.log("Response:", response);
-  //     alert("Follow-up created successfully");
-  //   } catch (error) {
-  //     console.error("Error creating follow-up:", error);
-  //     alert("Failed to create follow-up");
-  //   }
-  // };
-  // const submitFollowup = async () => {
-  //   try {
-  //     const url = `${getSgBizBaseUrl()}/os/followup/create`;
-  //     const requestBody = {
-  //       Followup: {
-  //         RefPrevFollowUpId: null,
-  //         FollowUpId: "",
-  //         ContactPersonId: "",
-  //         PartyName: selectedParty.current,
-  //         Description: pocDetails.Notes,
-  //         FollowUpBills: selectedBills.current.map((bill: Bill) => ({
-  //           BillId: bill.BillNumber,
-  //           Status: 0,
-  //         })),
-  //       },
-  //       PointOfContact: {
-  //         PersonId: "",
-  //         Name :"Aquib2",
-  //         // Name: pocDetails.pocName,
-  //         PartyName: selectedParty.current,
-  //         Email: pocDetails.pocEmail,
-  //         PhoneNo: pocDetails.pocMobile,
-  //       },
-  //     };
-  //     console.log("POC Name:", pocDetails.pocName);
-  //     alert(JSON.stringify(requestBody));
-  //     console.log(JSON.stringify(requestBody));
-  //     const response = await postAsync(url, requestBody);
-  //     console.log(response);
-  //   } catch (error) {
-  //     console.error("Error creating follow-up:", error);
-  //     alert("Failed to create follow-up");
-  //   }
-  // };
-
-  const gridConfig: GridConfig[] = [
+  const gridConfig: any[] = [
     {
-      type: "item",
-      className: "",
-      view: (
-        <CardView
-          title={"Overview"}
-          permissionCode="CustomerPartySearch"
-          className="h-fit"
-        >
+        id:1, 
+        weight: 1,
+      content: (
+        <div className="flex flex-col">
+          <Typography className="mt-2 mb-6 text-xl">
+          Create new Followup
+          </Typography>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <ApiDropDown
               label="Party"
@@ -367,6 +268,7 @@ const Page = () => {
               onSelection={async (selection) => {
                 selectedParty.current = selection.name;
                 triggerBillsRefresh(!refreshBills);
+                triggerUsers(!refreshUsers);
                 const userData = await loadUser();
 
                 if (userData.length > 0) {
@@ -392,43 +294,9 @@ const Page = () => {
                 triggerRefresh(!refresh);
               }}
             />
-            {/* <ApiDropDown
-              label="Party"
-              displayFieldKey={"name"}
-              valueFieldKey={null}
-              onApi={loadParties}
-              helperText={""}
-              onSelection={async (selection) => {
-                selectedParty.current = selection.name;
-                triggerBillsRefresh(!refreshBills);
-                const userData = await loadUser();
-                // If user data is available, update the state with contact info
-                if (userData.length > 0) {
-                  const { pocName, pocEmail, pocMobile } = userData[0];
-                  setPocDetails((prev) => ({
-                    ...prev,
-                    pocName,
-                    pocEmail,
-                    pocMobile,
-                    Notes: "",
-                    nextDate: "",
-                  }));
-                } else {
-                  // Reset the contact details if no user is found
-                  setPocDetails((prev) => ({
-                    ...prev,
-                    pocName: "",
-                    pocEmail: "",
-                    pocMobile: "",
-                    Notes: "",
-                    nextDate: "",
-                  }));
-                }
-                triggerRefresh(!refresh);
-              }}
-            /> */}
 
-            <br></br>
+            <div className="mt-4" />
+
             <ApiMultiDropDown
               reload={refreshBills}
               label="Bills"
@@ -442,66 +310,32 @@ const Page = () => {
                 triggerRefresh(!refresh);
               }}
             />
-            <br></br>
+            <div className="mt-4" />
             <ApiAutoComplete
+            reload={refreshUsers}
               label="Select User"
-              displayFieldKey="pocName"
+              displayFieldKey="Name"
               onApi={loadUser}
-              onSelection={async (userData) => {
-                const userDetails = await fetchUserDetails(userData.pocName);
-                if (userDetails) {
-                  setPocDetails((prev) => ({
-                    ...prev,
-                    pocName: userDetails.pocName,
-                    pocEmail: userDetails.pocEmail,
-                    pocMobile: userDetails.pocMobile,
-                  }));
-                  console.log("Selected user details:", userDetails);
-                } else {
-                  setPocDetails((prev) => ({
-                    ...prev,
-                    pocName: userData.pocName,
-                    pocEmail: "",
-                    pocMobile: "",
-                  }));
-                  console.log("No details found for selected user");
-                }
-                selectedUser.current = userData.pocName;
-                triggerRefresh(!refresh);
+              onSelection={async (userData, newValue) => {
+                  if (userData) {
+                      setPocDetails((prev) => ({
+                          ...prev,
+                          pocId: userData.PersonId ?? "",
+                          pocName: userData.Name ?? "",
+                          pocEmail: userData.Email ?? "",
+                          pocMobile: userData.PhoneNo ?? "",
+                      }));
+                  } else {
+
+                      setPocDetails((prev) => ({
+                          ...prev,
+                          pocName: newValue,
+                      }));
+                  }
               }}
             />
-            {/* <ApiAutoComplete
-              label="Select User"
-              displayFieldKey="pocName"
-              onApi={loadUser}
-              onSelection={(userData) => {
-                setPocDetails((prev) => ({
-                  ...prev,
-                  pocName: userData.pocName,
-                  pocEmail: userData.pocEmail,
-                  pocMobile: userData.pocMobile,
-                }));
-                selectedUser.current = userData.pocName;
-                triggerRefresh(!refresh);
-              }}
-            /> */}
-            {/* <ApiAutoComplete
-              label="Select User"
-              displayFieldKey={"pocName"}
-              onApi={loadUser}
-              onSelection={(userData) => {
-                setPocDetails((prev) => ({
-                  ...prev,
-                  pocName: userData.pocName,
-                  pocEmail: userData.pocEmail,
-                  pocMobile: userData.pocMobile,
-                }));
-                selectedUser.current = userData.pocName;
-                triggerRefresh(!refresh);
-              }}
-            /> */}
 
-            <br></br>
+            <div className="mt-4" />
             <TextInput
               mode="text"
               placeHolder="Email"
@@ -510,7 +344,7 @@ const Page = () => {
               }}
               defaultValue={pocDetails.pocEmail}
             />
-            <br></br>
+            <div className="mt-4" />
             <TextInput
               mode="text"
               placeHolder="Mobile Number"
@@ -522,7 +356,7 @@ const Page = () => {
               }}
               defaultValue={pocDetails.pocMobile}
             />
-            <br></br>
+            <div className="mt-4" />
             <TextInput
               multiline={true}
               mode="text"
@@ -532,7 +366,7 @@ const Page = () => {
               }}
               defaultValue={pocDetails.Notes}
             />
-            <br></br>
+            <div className="mt-4" />
             <DatePicker
               label="Select Date"
               value={selectedDate}
@@ -547,17 +381,19 @@ const Page = () => {
                 ),
               }}
             />
+          <Button className="min-h-[45px] mt-8" variant="contained" onClick={submitFollowup}>Create Follow-up</Button>
           </LocalizationProvider>
-          <button onClick={submitFollowup}>Create Follow-up</button>
-        </CardView>
+        </div>
       ),
-      children: [],
     },
     {
-      type: "item",
-      className: "",
-      view: (
-        <CardView title="Status Table">
+        id: 2,
+        weight: 1,
+     content: (
+        <div className="flex flex-col">
+          <Typography className="mt-2 mb-6 text-xl">
+          Selected Bills
+          </Typography>
           <PeriodicTable
             useSearch={true}
             reload={refresh}
@@ -573,26 +409,13 @@ const Page = () => {
               return column;
             })}
             rows={selectedBills.current}
-            // onApi={loadBills}
-            checkBoxSelection={true}
-            renderCheckedView={(values: any) => {
-              return (
-                <div>
-                  {values.map((entry: any, index: number) => {
-                    return <div key={index}>{entry[0].value}</div>;
-                  })}
-                </div>
-              );
-            }}
+            checkBoxSelection={false}
             actionViews={[
               {
                 label: "Status",
                 renderView: (row: any[]) => {
-                  let BillNumber = row.find(
+                  let billNumber = row.find(
                     (entry: any) => entry.field === "BillNumber"
-                  );
-                  let selected = row.find(
-                    (entry: any) => entry.field === "selected"
                   );
                   let statusOptions = [
                     { id: 0, name: "Pending" },
@@ -608,9 +431,21 @@ const Page = () => {
                         valueFieldKey="id"
                         selectionValues={statusOptions}
                         onSelection={(selection) => {
-                          console.log(
-                            `Status for BillNumber ${BillNumber.value} changed to ${selection.id}`
-                          );
+                            let foundIndex = -1;
+                            billSelections.current.map((entry: BillSelection, index: number) => {
+                                if (entry.billId === billNumber) {
+                                    foundIndex = index
+                                }
+                            })
+                            if (foundIndex > -1) {
+                                billSelections.current[foundIndex] = selection
+                            } else {
+                                let newEntry: BillSelection = {
+                                    billId: billNumber.value,
+                                    status: selection
+                                }
+                                billSelections.current.push(newEntry)
+                            }
                         }}
                         helperText="Select status"
                       />
@@ -620,23 +455,15 @@ const Page = () => {
               },
             ]}
           />
-        </CardView>
+        </div>
       ),
-      children: [],
     },
   ];
+
   return (
-    <Box>
-      <Grid
-        container
-        sx={{
-          flexGrow: 1,
-          height: "100vh",
-        }}
-      >
-        {RenderGrid(gridConfig)}
-      </Grid>
-    </Box>
+    <div className="w-full" key={key}>
+        <ResponsiveCardGrid screenName="followUpCreation" initialCards={gridConfig}/>
+    </div>
   );
 };
 export default Page;
