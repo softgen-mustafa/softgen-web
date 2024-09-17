@@ -1,26 +1,23 @@
 "use client";
-import { CustomerDetailsCard } from "./cards/customer_card";
-import { Button, Box, Stack, Typography, useTheme } from "@mui/material";
+import { Box, Stack, Typography, useTheme } from "@mui/material";
 import { OutstandingCard } from "./cards/outstanding_card";
 import { OutstandingTask } from "./cards/outstanding_task_card";
 import { Weight } from "../ui/responsive_grid";
-import { DropDown } from "../ui/drop_down";
 import {
   getAsync,
   getBmrmBaseUrl,
   getSgBizBaseUrl,
+  postAsync
 } from "../services/rest_services";
 import { useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
 import { inspiredPalette } from "../ui/theme";
 import { GridColDef } from "@mui/x-data-grid";
-import { convertToDate, numericToString } from "../services/Local/helper";
+import {  numericToString } from "../services/Local/helper";
 import { useRouter } from "next/navigation";
 import RankedPartyOutstandingCard from "./cards/ranked_party";
 import { AgingView } from "./cards/aging_card";
-import { DataTable } from "@/app/ui/data_grid";
-import { PeriodicTable, TableColumn } from "../ui/periodic_table/period_table";
-import Loading from "./loading";
+import { ApiProps, PeriodicTable, TableColumn } from "../ui/periodic_table/period_table";
 import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
 
 const DashboardPage = () => {
@@ -120,7 +117,10 @@ const DashboardPage = () => {
       id: 1,
       weight: Weight.Medium,
       content: (
-        <div title={"Payable vs Receivable"}>
+        <div>
+                <Typography className="text-xl mb-2">
+                Payable vs Receivable
+                </Typography>
           <OutstandingCard
             companyId={Cookies.get("companyId") ?? ""}
             title="Outstanding Overview"
@@ -133,6 +133,9 @@ const DashboardPage = () => {
       weight: Weight.Medium,
       content: (
         <div>
+        <Typography className="text-xl mb-2">
+        Outstanding Aging Overview
+        </Typography>
           <AgingView
             billType={selectedType.current.code}
             companyId={Cookies.get("companyId") ?? ""}
@@ -145,16 +148,92 @@ const DashboardPage = () => {
       id: 3,
       weight: Weight.High,
       content: (
-        <div title="Today's O/S" className="overflow-scroll">
-          <OutstandingTask companyId={Cookies.get("companyId") ?? ""} />
+        <div>
+        <Typography className="text-xl mb-2">
+        Party Overview
+        </Typography>
+          <PeriodicTable 
+          reload={true}
+          useSearch={true}
+          columns={[
+              {
+                  header: "Party Name",
+                  field: "PartyName",
+                  type: "text",
+                  pinned: false,
+                  hideable: false,
+                  rows: [],
+              },
+              {
+                  header: "Total Bills",
+                  field: "TotalBills",
+                  type: "number",
+                  pinned: false,
+                  hideable: false,
+                  rows: [],
+              },
+              {
+                  header: "Opening Amount",
+                  field: "TotalOpening",
+                  type: "number",
+                  pinned: false,
+                  hideable: false,
+                  rows: [],
+              },
+              {
+                  header: "Closing Amount",
+                  field: "TotalClosing",
+                  type: "number",
+                  pinned: false,
+                  hideable: false,
+                  rows: [],
+              }
+          ]}
+          onApi={async (api: ApiProps) => {
+              try {
+                  let url = `${getSgBizBaseUrl()}/os/get/party-overview`;
+                  let requestBody = {
+                      "SearchText": api.searchText ?? "",
+                      "Batch": {
+                          "Apply": true, 
+                          "Limit": api.limit,
+                          "Offset": api.offset,
+                      }
+                  }
+                  let response = await postAsync(url, requestBody)
+                  if (response != null && response.Data != null) {
+                      return response.Data
+                  }
+                  return []
+              } catch {
+                  return [];
+              }
+          }}
+          />
         </div>
       ),
+      children: [],
     },
     {
       id: 4,
       weight: Weight.High,
       content: (
+        <div className="overflow-scroll">
+        <Typography className="text-xl mb-2">
+        Todays Outstanding
+        </Typography>
+          <OutstandingTask companyId={Cookies.get("companyId") ?? ""} />
+        </div>
+      ),
+    },
+    {
+      id: 5,
+      weight: Weight.High,
+      content: (
         <div title="Ranked Parties" className="overflow-scroll">
+        <Typography className="text-xl mb-2">
+        Ranked Parties
+        </Typography>
           <RankedPartyOutstandingCard
             companyId={Cookies.get("companyId") ?? ""}
             billType={selectedType.current.code}
@@ -163,10 +242,13 @@ const DashboardPage = () => {
       ),
     },
     {
-      id: 5,
+      id: 6,
       weight: Weight.High,
       content: (
         <div title="Upcoming Collections" className="overflow-scroll">
+        <Typography className="text-xl mb-2">
+        Upcoming Collections
+        </Typography>
           <Stack
             flexDirection="row"
             gap={1}

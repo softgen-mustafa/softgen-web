@@ -40,9 +40,15 @@ const adminReportPaths: any[] = [
         selected: true,
     },
     {
-        title: "Receivables",
+        title: "Outstanding Report",
         destination: "/dashboard/outstanding/report",
         icon: <PendingActions />,
+        selected: false,
+    },
+    {
+        title: "Follow Up",
+        destination: "/dashboard/followup",
+        icon: <Receipt />,
         selected: false,
     },
     {
@@ -73,12 +79,6 @@ const adminReportPaths: any[] = [
         title: "Settings",
         destination: "/dashboard/settings",
         icon: <Settings />,
-        selected: false,
-    },
-    {
-        title: "Follow Up",
-        destination: "/dashboard/followup",
-        icon: <Receipt />,
         selected: false,
     },
 ];

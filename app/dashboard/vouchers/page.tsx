@@ -2,29 +2,23 @@
 import {
   getAsync,
   getBmrmBaseUrl,
+  getSgBizBaseUrl,
   postAsync,
 } from "@/app/services/rest_services";
-import { DataTable } from "@/app/ui/data_grid";
 import { DropDown } from "@/app/ui/drop_down";
 import {
   CardView,
   GridConfig,
-  RenderGrid,
   Weight,
 } from "@/app/ui/responsive_grid";
 import { ChevronLeftRounded } from "@mui/icons-material";
 import {
-  Button,
-  CircularProgress,
-  Grid,
-  Icon,
   IconButton,
   Typography,
 } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
 import { numericToString } from "@/app/services/Local/helper";
 import {
@@ -39,25 +33,11 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [refresh, triggerRefresh] = useState(false);
-  // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-
-  // useEffect(() => {
-  //   loadData();
-  // }, [voucherType]);
 
   useEffect(() => {
-    // FeatureControl("CustomerPartySearch").then((permission) => {
-    //   setHasPermission(permission);
-    //   if (permission) {
     loadData();
-    //   }
-    // });
   }, [voucherType]);
 
-  // interface TableSearchKey {
-  //   title: string;
-  //   value: string;
-  // }
 
   const columns: GridColDef<any[number]>[] = [
     {
@@ -813,49 +793,8 @@ const CustomerSalesCard = ({ voucherType }: { voucherType: string }) => {
     }
   };
 
-  // if (hasPermission === null) {
-  //   return <CircularProgress />;
-  // }
-
-  // if (hasPermission === false) {
-  //   return (
-  //     <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-  //       Get the Premium For this Service Or Contact Admin - 7977662924
-  //     </Typography>
-  //   );
-  // }
   return (
     <div className="flex flex-col">
-      {/* {loading && (
-        <div className="flex justify-center">
-          <CircularProgress />
-        </div>
-      )} */}
-      {/* <DataGrid
-        columns={columns}
-        rows={data}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 5,
-            },
-          },
-        }}
-        onRowClick={(params) => {}}
-        pageSizeOptions={[5, 10, 25, 50, 75, 100]}
-        disableRowSelectionOnClick
-        onPaginationModelChange={(value) => {}}
-      /> */}
-      {/* <DataTable
-        columns={columns}
-        refresh={refresh}
-        onApi={async (page, pageSize, searchText) => {
-          return await loadData();
-        }}
-        useSearch={false}
-        useServerPagination={false}
-        onRowClick={() => {}}
-      /> */}
       <PeriodicTable
         chartKeyFields={[
           {
@@ -1007,22 +946,6 @@ const Page = () => {
       id: 1,
       weight: Weight.High,
       content: (
-        // <CardView
-        //   title={"Overview"}
-        //   permissionCode="CustomerPartySearch"
-        //   className="h-fit"
-        //   actions={[
-        //     <IconButton
-        //       key={1}
-        //       onClick={() => {
-        //         router.back();
-        //       }}
-        //     >
-        //       <ChevronLeftRounded />
-        //       <Typography>Go Back</Typography>
-        //     </IconButton>,
-        //   ]}
-        // >
         <div title="Overview">
           <DropDown
             label="Select Type"
@@ -1100,15 +1023,6 @@ const Page = () => {
 
   return (
     <div className="w-full" style={{}}>
-      {/* <Grid
-        container
-        sx={{
-          flexGrow: 1,
-          height: "100vh",
-        }}
-      >
-        {RenderGrid(gridConfig)}
-      </Grid> */}
       <ResponsiveCardGrid screenName="vouchers" initialCards={views} />
     </div>
   );
