@@ -67,11 +67,11 @@ const Page = () => {
   const [refreshUsers, triggerUsers] = useState(false)
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
 
-  let selectedBills = useRef<Bill[]>([]);
+  let selectedBills = useRef<any[]>([]);
   let billSelections= useRef<BillSelection[]>([]);
   let selectedParty = useRef<string>("");
 
-  const columns: GridColDef[] = [
+  const columns: any[] = [
     {
       field: "BillNumber",
       headerName: "Bill Number",
@@ -147,7 +147,7 @@ const Page = () => {
           BillNumber: entry.BillNumber,
           PartyName: entry.PartyName,
           ParentGroup: entry.ParentGroup,
-          PendingAmount: entry.PendingAmount,
+          PendingAmount: entry.PendingAmount != null ? entry.PendingAmount.Value : 0,
           OpeningAmount: entry.OpeningAmount.Value,
           BillDate: convertToDate(entry.BillDate),
           DueDate: convertToDate(entry.DueDate),
@@ -305,7 +305,8 @@ const Page = () => {
               valueFieldKey={null}
               onApi={loadBills}
               helperText={""}
-              onSelection={(selection) => {
+              onSelection={(selection: any[]) => {
+                  alert(JSON.stringify(selection))
                 selectedBills.current = selection;
                 triggerRefresh(!refresh);
               }}
@@ -391,11 +392,9 @@ const Page = () => {
         weight: 1,
      content: (
         <div className="flex flex-col">
-          <Typography className="mt-2 mb-6 text-xl">
-          Selected Bills
-          </Typography>
+          <Typography className="mt-2 mb-6 text-xl">Selected Bills</Typography>
           <PeriodicTable
-            useSearch={true}
+            useSearch={false}
             reload={refresh}
             columns={columns.map((col: any) => {
               let column: TableColumn = {
@@ -424,7 +423,6 @@ const Page = () => {
                   ];
                   return (
                     <Box sx={{ minWidth: 120, maxWidth: "100%" }}>
-                      {" "}
                       <DropDown
                         label="Status"
                         displayFieldKey="name"
@@ -447,7 +445,7 @@ const Page = () => {
                                 billSelections.current.push(newEntry)
                             }
                         }}
-                        helperText="Select status"
+                        helperText=""
                       />
                     </Box>
                   );

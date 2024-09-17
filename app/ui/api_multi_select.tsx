@@ -31,7 +31,7 @@ const ApiMultiDropDown = ({
   onApi: (searchValue: string) => Promise<any[]>;
   helperText: string | null;
   defaultSelections?: any[];
-  onSelection: (selected: any) => void;
+  onSelection: (selected: any[]) => void;
   onSearchUpdate?: (value: string) => void;
   useSearch?: boolean;
 }) => {
@@ -59,10 +59,7 @@ const ApiMultiDropDown = ({
   };
 
   const handleChange = (event: any) => {
-
-    
     const value = event.target.value as any[];
-    // alert(JSON.stringify(value))
     setSelectedValues(value);
     onSelection(value);
   };
