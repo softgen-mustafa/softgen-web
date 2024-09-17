@@ -27,6 +27,8 @@ const ResponsiveCardGrid: React.FC<ResponsiveCardGridProps> = ({ screenName, ini
                 return card;
             })
             setCards(sequencedCards)
+        } else {
+            setCards(initialCards);
         }
     } else {
         setCards(initialCards);
