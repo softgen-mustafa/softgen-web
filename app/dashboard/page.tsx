@@ -115,7 +115,7 @@ const DashboardPage = () => {
     },
   ];
 
-  const views = [
+  const initialCards = [
     {
       id: 1,
       weight: Weight.Medium,
@@ -249,10 +249,7 @@ const DashboardPage = () => {
 
   return (
     <Box className="bg-red-200 w-full h-full">
-
-    <Button>Some other samples</Button>
-
-    {/*<ResponsiveCardGrid screenName="dashboard" initialCards={views} />*/}
+    <ResponsiveCardGrid screenName="dashboard" initialCards={initialCards}/>
     </Box>
   );
 };
