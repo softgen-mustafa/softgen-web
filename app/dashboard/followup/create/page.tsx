@@ -21,10 +21,10 @@ import {
 import { GridColDef } from "@mui/x-data-grid";
 import { ApiDropDown } from "@/app/ui/api_drop_down";
 import { convertToDate } from "@/app/services/Local/helper";
-import  ResponsiveCardGrid  from "@/app/components/ResponsiveCardGrid"
+import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
 
 interface OsSettings {
-    pocId: string;
+  pocId: string;
   pocEmail: string;
   pocMobile: string;
   pocName: string;
@@ -34,24 +34,23 @@ interface OsSettings {
 }
 
 interface BillSelection {
-    billId: string
-    status: number
+  billId: string;
+  status: number;
 }
 
 interface Bill {
-    BillNumber: string;
-    PartyName: string;
-    ParentGroup: string;
-    PendingAmount: number | null;
-    OpeningAmount: number;
-    BillDate: string;
-    DueDate: string;
+  BillNumber: string;
+  PartyName: string;
+  ParentGroup: string;
+  PendingAmount: number | null;
+  OpeningAmount: number;
+  BillDate: string;
+  DueDate: string;
 }
 
 const Page = () => {
-
   const initialDetails: OsSettings = {
-      pocId: "",
+    pocId: "",
     pocEmail: "",
     pocMobile: "",
     pocName: "",
@@ -60,15 +59,15 @@ const Page = () => {
     nextDate: "",
   };
 
-  const [key, refreshKey] = useState(0)
+  const [key, refreshKey] = useState(0);
   const [pocDetails, setPocDetails] = useState<OsSettings>(initialDetails);
   const [refresh, triggerRefresh] = useState(false);
   const [refreshBills, triggerBillsRefresh] = useState(false);
-  const [refreshUsers, triggerUsers] = useState(false)
+  const [refreshUsers, triggerUsers] = useState(false);
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
 
   let selectedBills = useRef<Bill[]>([]);
-  let billSelections= useRef<BillSelection[]>([]);
+  let billSelections = useRef<BillSelection[]>([]);
   let selectedParty = useRef<string>("");
 
   const columns: GridColDef[] = [
@@ -106,12 +105,11 @@ const Page = () => {
   ];
 
   useEffect(() => {
-      setPocDetails(initialDetails)
-      selectedBills.current = []
-      billSelections.current = []
-      triggerBillsRefresh(!refreshBills)
-  }, [key])
-
+    setPocDetails(initialDetails);
+    selectedBills.current = [];
+    billSelections.current = [];
+    triggerBillsRefresh(!refreshBills);
+  }, [key]);
 
   const loadParties = async (searchValue: string) => {
     let values = [{ name: "None" }];
@@ -168,7 +166,7 @@ const Page = () => {
       let response = await getAsync(url);
 
       if (response && response.Data && response.Data.length > 0) {
-        return response.Data
+        return response.Data;
       } else {
         return [];
       }
@@ -201,7 +199,6 @@ const Page = () => {
       return null;
     }
   };
-
 
   const handleDateChange = (newDate: dayjs.Dayjs | null) => {
     if (newDate) {
@@ -245,18 +242,18 @@ const Page = () => {
     } catch (error) {
       alert("Failed to create follow-up");
     } finally {
-        refreshKey((key + 1) % 2)
+      refreshKey((key + 1) % 2);
     }
   };
 
   const gridConfig: any[] = [
     {
-        id:1, 
-        weight: 1,
+      id: 1,
+      weight: 1,
       content: (
         <div className="flex flex-col">
           <Typography className="mt-2 mb-6 text-xl">
-          Create new Followup
+            Create new Followup
           </Typography>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <ApiDropDown
@@ -312,26 +309,25 @@ const Page = () => {
             />
             <div className="mt-4" />
             <ApiAutoComplete
-            reload={refreshUsers}
+              reload={refreshUsers}
               label="Select User"
               displayFieldKey="Name"
               onApi={loadUser}
               onSelection={async (userData, newValue) => {
-                  if (userData) {
-                      setPocDetails((prev) => ({
-                          ...prev,
-                          pocId: userData.PersonId ?? "",
-                          pocName: userData.Name ?? "",
-                          pocEmail: userData.Email ?? "",
-                          pocMobile: userData.PhoneNo ?? "",
-                      }));
-                  } else {
-
-                      setPocDetails((prev) => ({
-                          ...prev,
-                          pocName: newValue,
-                      }));
-                  }
+                if (userData) {
+                  setPocDetails((prev) => ({
+                    ...prev,
+                    pocId: userData.PersonId ?? "",
+                    pocName: userData.Name ?? "",
+                    pocEmail: userData.Email ?? "",
+                    pocMobile: userData.PhoneNo ?? "",
+                  }));
+                } else {
+                  setPocDetails((prev) => ({
+                    ...prev,
+                    pocName: newValue,
+                  }));
+                }
               }}
             />
 
@@ -381,19 +377,23 @@ const Page = () => {
                 ),
               }}
             />
-          <Button className="min-h-[45px] mt-8" variant="contained" onClick={submitFollowup}>Create Follow-up</Button>
+            <Button
+              className="min-h-[45px] mt-8"
+              variant="contained"
+              onClick={submitFollowup}
+            >
+              Create Follow-up
+            </Button>
           </LocalizationProvider>
         </div>
       ),
     },
     {
-        id: 2,
-        weight: 1,
-     content: (
+      id: 2,
+      weight: 1,
+      content: (
         <div className="flex flex-col">
-          <Typography className="mt-2 mb-6 text-xl">
-          Selected Bills
-          </Typography>
+          <Typography className="mt-2 mb-6 text-xl">Selected Bills</Typography>
           <PeriodicTable
             useSearch={true}
             reload={refresh}
@@ -431,21 +431,23 @@ const Page = () => {
                         valueFieldKey="id"
                         selectionValues={statusOptions}
                         onSelection={(selection) => {
-                            let foundIndex = -1;
-                            billSelections.current.map((entry: BillSelection, index: number) => {
-                                if (entry.billId === billNumber) {
-                                    foundIndex = index
-                                }
-                            })
-                            if (foundIndex > -1) {
-                                billSelections.current[foundIndex] = selection
-                            } else {
-                                let newEntry: BillSelection = {
-                                    billId: billNumber.value,
-                                    status: selection
-                                }
-                                billSelections.current.push(newEntry)
+                          let foundIndex = -1;
+                          billSelections.current.map(
+                            (entry: BillSelection, index: number) => {
+                              if (entry.billId === billNumber) {
+                                foundIndex = index;
+                              }
                             }
+                          );
+                          if (foundIndex > -1) {
+                            billSelections.current[foundIndex] = selection;
+                          } else {
+                            let newEntry: BillSelection = {
+                              billId: billNumber.value,
+                              status: selection,
+                            };
+                            billSelections.current.push(newEntry);
+                          }
                         }}
                         helperText="Select status"
                       />
@@ -462,7 +464,10 @@ const Page = () => {
 
   return (
     <div className="w-full" key={key}>
-        <ResponsiveCardGrid screenName="followUpCreation" initialCards={gridConfig}/>
+      <ResponsiveCardGrid
+        screenName="followUpCreation"
+        initialCards={gridConfig}
+      />
     </div>
   );
 };

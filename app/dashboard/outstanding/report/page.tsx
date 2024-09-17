@@ -673,52 +673,51 @@ const Page = () => {
       weight: 1,
       content: (
         <div>
-                <PeriodicTable
-                chartKeyFields={[
-                    {
-                        label: "Location Name",
-                        value: "LocationName",
-                    },
-                ]}
-                chartValueFields={[
-                    {
-                        label: "Opening Amount",
-                        value: "OpeningAmount",
-                    },
-                    {
-                        label: "Closing Amount",
-                        value: "ClosingAmount",
-                    },
-                ]}
-                refreshFilterView={refresh}
-                RenderAdditionalView={renderFilterViewMaps()}
-                useSearch={true}
-                // searchKeys={osSearchKeys}
-                reload={refresh}
-                columns={columns.map((col: any) => {
-                    let columnsMap: TableColumn = {
-                        header: col.headerName,
-                        field: col.field,
-                        type: col.type,
-                        pinned: false,
-                        hideable: col.hideable,
-                        rows: [],
-                    };
-                    return columnsMap;
-                })}
-                onApi={loadMapsData}
-                onRowClick={(row: any) => {
-                }}
-                checkBoxSelection={true}
-                renderCheckedView={(values: any) => {
-                    return (
-                        <div>
-                        {values.map((entry: any, index: number) => {
-                            return <div key={index}>{entry[0].value}</div>;
-                        })}
-                        </div>
-                    );
-                }}
+          <PeriodicTable
+            chartKeyFields={[
+              {
+                label: "Location Name",
+                value: "LocationName",
+              },
+            ]}
+            chartValueFields={[
+              {
+                label: "Opening Amount",
+                value: "OpeningAmount",
+              },
+              {
+                label: "Closing Amount",
+                value: "ClosingAmount",
+              },
+            ]}
+            refreshFilterView={refresh}
+            RenderAdditionalView={renderFilterViewMaps()}
+            useSearch={false}
+            // searchKeys={osSearchKeys}
+            reload={refresh}
+            columns={columnsMap.map((col: any) => {
+              let columnsMap: TableColumn = {
+                header: col.headerName,
+                field: col.field,
+                type: col.type,
+                pinned: false,
+                hideable: col.hideable,
+                rows: [],
+              };
+              return columnsMap;
+            })}
+            onApi={loadMapsData}
+            onRowClick={(row: any) => {}}
+            checkBoxSelection={true}
+            renderCheckedView={(values: any) => {
+              return (
+                <div>
+                  {values.map((entry: any, index: number) => {
+                    return <div key={index}>{entry[0].value}</div>;
+                  })}
+                </div>
+              );
+            }}
           />
         </div>
       ),
