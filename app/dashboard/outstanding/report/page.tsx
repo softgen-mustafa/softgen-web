@@ -389,54 +389,6 @@ const Page = () => {
         },
     ];
 
-    const columnsMap: any[] = [
-        {
-            field: "LocationName",
-            headerName: "Location Name",
-            editable: false,
-            sortable: true,
-            flex: 1,
-            minWidth: 200,
-            hideable: false,
-            mobileFullView: true,
-        },
-        {
-            field: "OpeningAmount",
-            headerName: "Opening Amount",
-            editable: false,
-            sortable: true,
-            flex: 1,
-            minWidth: 200,
-            hideable: true,
-        },
-        {
-            field: "ClosingAmountstr",
-            headerName: "Closing Amount",
-            editable: false,
-            sortable: true,
-            flex: 1,
-            minWidth: 200,
-            hideable: false,
-        },
-        {
-            field: "OpeningAmountstr",
-            headerName: "Opening Amount",
-            editable: false,
-            sortable: true,
-            flex: 1,
-            minWidth: 200,
-            hideable: false,
-        },
-        {
-            field: "ClosingAmount",
-            headerName: "Closing Amount",
-            editable: false,
-            sortable: true,
-            flex: 1,
-            minWidth: 200,
-            hideable: true,
-        },
-    ];
 
     const osSearchKeys: TableSearchKey[] = [
         {
@@ -695,7 +647,7 @@ const Page = () => {
                 useSearch={true}
                 // searchKeys={osSearchKeys}
                 reload={refresh}
-                columns={columnsMap.map((col: any) => {
+                columns={columns.map((col: any) => {
                     let columnsMap: TableColumn = {
                         header: col.headerName,
                         field: col.field,
