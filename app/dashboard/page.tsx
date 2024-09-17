@@ -248,7 +248,7 @@ const DashboardPage = () => {
   ];
 
   return (
-    <Box >
+    <Box className="bg-red-200 w-full h-full">
       <ResponsiveCardGrid screenName="dashboard" initialCards={views} />
     </Box>
   );
