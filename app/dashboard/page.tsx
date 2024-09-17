@@ -1,6 +1,6 @@
 "use client";
 import { CustomerDetailsCard } from "./cards/customer_card";
-import { Box, Stack, Typography, useTheme } from "@mui/material";
+import { Button, Box, Stack, Typography, useTheme } from "@mui/material";
 import { OutstandingCard } from "./cards/outstanding_card";
 import { OutstandingTask } from "./cards/outstanding_task_card";
 import { Weight } from "../ui/responsive_grid";
@@ -249,7 +249,10 @@ const DashboardPage = () => {
 
   return (
     <Box className="bg-red-200 w-full h-full">
-      <ResponsiveCardGrid screenName="dashboard" initialCards={views} />
+
+    <Button>Some other samples</Button>
+
+    {/*<ResponsiveCardGrid screenName="dashboard" initialCards={views} />*/}
     </Box>
   );
 };
