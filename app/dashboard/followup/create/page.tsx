@@ -22,6 +22,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import { ApiDropDown } from "@/app/ui/api_drop_down";
 import { convertToDate } from "@/app/services/Local/helper";
 import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
+import { useSnackbar } from "@/app/ui/snack_bar_provider";
 
 interface OsSettings {
   pocId: string;
@@ -59,6 +60,8 @@ const Page = () => {
     nextDate: "",
   };
 
+  const snackbar = useSnackbar();
+
   const [key, refreshKey] = useState(0);
   const [pocDetails, setPocDetails] = useState<OsSettings>(initialDetails);
   const [refresh, triggerRefresh] = useState(false);
@@ -67,7 +70,7 @@ const Page = () => {
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
 
   let selectedBills = useRef<any[]>([]);
-  let billSelections= useRef<BillSelection[]>([]);
+  let billSelections = useRef<BillSelection[]>([]);
   let selectedParty = useRef<string>("");
 
   const columns: any[] = [
@@ -145,7 +148,8 @@ const Page = () => {
           BillNumber: entry.BillNumber,
           PartyName: entry.PartyName,
           ParentGroup: entry.ParentGroup,
-          PendingAmount: entry.PendingAmount != null ? entry.PendingAmount.Value : 0,
+          PendingAmount:
+            entry.PendingAmount != null ? entry.PendingAmount.Value : 0,
           OpeningAmount: entry.OpeningAmount.Value,
           BillDate: convertToDate(entry.BillDate),
           DueDate: convertToDate(entry.DueDate),
@@ -211,7 +215,10 @@ const Page = () => {
   };
   const submitFollowup = async () => {
     if (!pocDetails.pocName || pocDetails.pocName.trim() === "") {
-      alert("Please select a valid user.");
+      snackbar.showSnackbar(
+        "Please enter or select a valid contact person",
+        "error"
+      );
       return;
     }
 
@@ -238,9 +245,9 @@ const Page = () => {
         },
       };
       const response = await postAsync(url, requestBody);
-      alert("Follow-up created successfully");
+      snackbar.showSnackbar("Follow Up Created", "success");
     } catch (error) {
-      alert("Failed to create follow-up");
+      snackbar.showSnackbar("Could not create follow up", "error");
     } finally {
       refreshKey((key + 1) % 2);
     }
@@ -303,7 +310,6 @@ const Page = () => {
               onApi={loadBills}
               helperText={""}
               onSelection={(selection: any[]) => {
-                  alert(JSON.stringify(selection))
                 selectedBills.current = selection;
                 triggerRefresh(!refresh);
               }}
