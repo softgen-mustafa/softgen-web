@@ -18,9 +18,9 @@ import { MailOutline, Settings } from "@mui/icons-material";
 import { numericToString } from "@/app/services/Local/helper";
 import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
 import { OsSettingsView } from "./outstanding_setings";
-
 import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
+import GridCardView from "@/app/ui/grid_card";
 
 const isDebitType = [
   {
@@ -470,7 +470,7 @@ const Page = () => {
 
   const renderFilterView = () => {
     return (
-      <div>
+      <GridCardView>
         <Stack flexDirection={"column"} gap={2}>
           <DropDown
             label="View Report By"
@@ -530,13 +530,13 @@ const Page = () => {
                 /> */}
         </Stack>
         <div className="mt-4" />
-      </div>
+      </GridCardView>
     );
   };
 
   const renderFilterViewMaps = () => {
     return (
-      <div>
+      <GridCardView permissionCode="OutstandingReport">
         <Stack flexDirection={"column"} gap={2}>
           <ApiDropDown
             label="States"
@@ -563,7 +563,7 @@ const Page = () => {
           />
         </Stack>
         <div className="mt-4" />
-      </div>
+      </GridCardView>
     );
   };
 
