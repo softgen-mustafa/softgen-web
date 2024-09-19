@@ -536,7 +536,7 @@ const Page = () => {
 
   const renderFilterViewMaps = () => {
     return (
-      <GridCardView permissionCode="OutstandingReport">
+      <div>
         <Stack flexDirection={"column"} gap={2}>
           <ApiDropDown
             label="States"
@@ -563,7 +563,7 @@ const Page = () => {
           />
         </Stack>
         <div className="mt-4" />
-      </GridCardView>
+      </div>
     );
   };
 
@@ -572,7 +572,7 @@ const Page = () => {
       id: 1,
       weight: 1,
       content: (
-        <div>
+        <GridCardView permissionCode="OutstandingReport">
           <Stack flexDirection={"column"} gap={2}>
             <DropDown
               label="View"
@@ -665,14 +665,14 @@ const Page = () => {
           />
 
           <IconButton> </IconButton>
-        </div>
+        </GridCardView>
       ),
     },
     {
       id: 2,
       weight: 1,
       content: (
-        <div>
+        <GridCardView permissionCode="LocationWiseReport">
           <PeriodicTable
             chartKeyFields={[
               {
@@ -719,7 +719,7 @@ const Page = () => {
               );
             }}
           />
-        </div>
+        </GridCardView>
       ),
     },
   ];
