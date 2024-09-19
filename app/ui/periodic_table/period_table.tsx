@@ -1040,10 +1040,12 @@ const PeriodicTable = (props: PeriodicTableProps) => {
             />
           )}
         </Stack>
-        {/* {checkedValues &&
+        <div className="w-full flex justify-end">
+         {checkedValues &&
             checkedValues.length > 0 &&
             props.renderCheckedView !== null &&
-            props.renderCheckedView!(checkedValues)} */}
+            props.renderCheckedView!(checkedValues)}
+        </div>
         <Stack flexDirection={"row"} alignItems={"baseline"} gap={1}>
           <DropDown
             label={"Select View"}

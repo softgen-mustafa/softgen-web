@@ -13,7 +13,7 @@ import {
   getSgBizBaseUrl,
   postAsync,
 } from "@/app/services/rest_services";
-import { Box, IconButton, Stack, Modal } from "@mui/material";
+import { Box, Button, IconButton, Stack, Modal } from "@mui/material";
 import { MailOutline, Settings } from "@mui/icons-material";
 import { numericToString } from "@/app/services/Local/helper";
 import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
@@ -654,13 +654,28 @@ const Page = () => {
             }}
             checkBoxSelection={true}
             renderCheckedView={(values: any) => {
-              return (
-                <div>
-                  {values.map((entry: any, index: number) => {
-                    return <div key={index}>{entry[0].value}</div>;
-                  })}
-                </div>
-              );
+                return (
+                    <div>
+                    { values !== null && values.length > 0 &&                 
+                        <Button variant="contained" className="h-full"
+                        onClick={() => {
+
+                            let parties: string[] = []
+                            values.map((row: any[]) => {
+                                let party = row.find((entry: any) => entry.field == "LedgerName") 
+                                if (party) {
+                                    parties.push(party.value)
+                                }
+                            })
+                            sendMail(parties)
+                        }}
+                        >
+                        Send Email
+                        </Button>
+                    }
+
+                    </div>
+                )
             }}
           />
 
@@ -708,16 +723,7 @@ const Page = () => {
             })}
             onApi={loadMapsData}
             onRowClick={(row: any) => {}}
-            checkBoxSelection={true}
-            renderCheckedView={(values: any) => {
-              return (
-                <div>
-                  {values.map((entry: any, index: number) => {
-                    return <div key={index}>{entry[0].value}</div>;
-                  })}
-                </div>
-              );
-            }}
+            checkBoxSelection={false}
           />
         </GridCardView>
       ),
