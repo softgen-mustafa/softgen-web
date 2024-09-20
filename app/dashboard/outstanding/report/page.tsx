@@ -65,6 +65,10 @@ const dueTypes = [
 
 const locationTypes = [
   {
+    name: "Pincode",
+    value: "Pincode",
+  },
+  {
     name: "District",
     value: "District",
   },
@@ -72,10 +76,7 @@ const locationTypes = [
     name: "Region",
     value: "Region",
   },
-  {
-    name: "Pincode",
-    value: "Pincode",
-  },
+ 
 ];
 
 const Page = () => {
