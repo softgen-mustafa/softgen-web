@@ -24,6 +24,7 @@ import {
 } from "../ui/periodic_table/period_table";
 import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
 import GridCardView from "../ui/grid_card";
+import { CollectionPrompts } from "./cards/collection_prompts";
 
 const DashboardPage = () => {
   const [filters, updateFilters] = useState([
@@ -118,6 +119,15 @@ const DashboardPage = () => {
   ];
 
   const initialCards = [
+    {
+      id: 7,
+      weight: Weight.Low,
+      content: (
+        <div>
+            <CollectionPrompts />
+        </div>
+      ),
+    },
     {
       id: 1,
       weight: Weight.Medium,
