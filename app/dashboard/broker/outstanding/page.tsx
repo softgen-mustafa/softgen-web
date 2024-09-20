@@ -89,6 +89,7 @@ const Page = () => {
     {
       type: "item",
       className: "",
+    
       view: (
         <CardView
           title={"Overview"}

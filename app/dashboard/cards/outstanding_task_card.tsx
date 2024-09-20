@@ -114,7 +114,7 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
       console.log("Error fetching tasks:", error);
     } finally {
       setIsLoading(false);
-      triggerRefresh(false)
+      triggerRefresh(false);
     }
   };
 
@@ -143,7 +143,6 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
   );
 
   return (
-    // hasPermission && (
     <Box
       onClick={() => {
         localStorage.setItem("party_filter_value", durationKey);
@@ -152,24 +151,6 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
         localStorage.setItem("party_filter_type", "daily");
       }}
     >
-      {/* {isLoading ? (
-        <CircularProgress />
-      ) : ( */}
-      {/* // <div className="flex flex-col justify-between mb-4">
-        //   {tasks.map(renderTask)}
-        //   <br />
-        // </div> */}
-      {/* <DataTable
-        columns={columns}
-        refresh={refresh}
-        useSearch={false}
-        useServerPagination={false}
-        onApi={async (page, pageSize, searchText) => {
-          return await fetchTasks();
-        }}
-        onRowClick={() => {}}
-      /> */}
-
       <PeriodicTable
         chartKeyFields={[
           {
@@ -198,10 +179,7 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
         onApi={fetchTasks}
         reload={refresh}
       />
-
-      {/* )} */}
     </Box>
-    // )
   );
 };
 

@@ -12,9 +12,7 @@ import { ReactNode, useEffect, useState } from "react";
 import {
   FeatureControl,
   PermissionKeys,
-  Permission,
 } from "@/app/components/featurepermission/permission_helper";
-import { useRef } from "react";
 
 interface GridConfig {
   type: string;
