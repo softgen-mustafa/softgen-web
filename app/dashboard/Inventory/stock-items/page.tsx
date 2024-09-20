@@ -29,6 +29,8 @@ import {
 import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
 import { Box, Stack } from "@mui/material";
 import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
+import GridCardView from "@/app/ui/grid_card";
+
 const Page = () => {
   const [refresh, setRefresh] = useState(false);
   const [groups, setGroups] = useState<any>([]);
@@ -208,7 +210,7 @@ const Page = () => {
       id: 1,
       weight: 1,
       content: (
-        <div>
+        <GridCardView title="Stock Items" permissionCode="StockItemReport">
           <PeriodicTable
             chartKeyFields={[
               {
@@ -253,7 +255,7 @@ const Page = () => {
             sortKeys={sortKeys}
             onRowClick={handleRowClick}
           />
-        </div>
+        </GridCardView>
       ),
     },
   ];

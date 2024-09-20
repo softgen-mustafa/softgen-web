@@ -13,7 +13,13 @@ import { useRouter } from "next/navigation";
 import { GridColDef } from "@mui/x-data-grid";
 import { ChevronLeftRounded } from "@mui/icons-material";
 import { postAsync } from "@/app/services/rest_services";
-import { CardView, GridConfig, DynGrid, Weight, GridDirection } from "@/app/ui/responsive_grid";
+import {
+  CardView,
+  GridConfig,
+  DynGrid,
+  Weight,
+  GridDirection,
+} from "@/app/ui/responsive_grid";
 import { numericToString } from "@/app/services/Local/helper";
 import { DataTable } from "@/app/ui/data_grid";
 import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
@@ -36,7 +42,7 @@ const InventoryDetailScreen = () => {
     checkPermissionAndInitialize();
   }, []);
   const checkPermissionAndInitialize = async () => {
-    const permission = await FeatureControl("InventoryDetailScreen");
+    const permission = await FeatureControl("InventoryOverview");
     setHasPermission(permission);
     if (permission) {
       const itemString = localStorage.getItem("record") || "{}";
@@ -127,9 +133,9 @@ const InventoryDetailScreen = () => {
     },
   ];
 
-  const gridConfig= [
+  const gridConfig = [
     {
-        weight: Weight.High,
+      weight: Weight.High,
       view: (
         <CardView>
           <div className="flex flex-row items-center">
@@ -138,7 +144,9 @@ const InventoryDetailScreen = () => {
             </IconButton>
             <Typography>Go Back</Typography>
           </div>
-          <Typography className="mt-4 text-md">{viewType?.toUpperCase()}</Typography>
+          <Typography className="mt-4 text-md">
+            {viewType?.toUpperCase()}
+          </Typography>
           <Typography className="text-xl md:text-2xl mt-2">
             {item?.name}
           </Typography>
@@ -158,7 +166,7 @@ const InventoryDetailScreen = () => {
     },
 
     {
-        weight: Weight.Medium,
+      weight: Weight.Medium,
       view: (
         <CardView>
           <DataTable
@@ -185,15 +193,15 @@ const InventoryDetailScreen = () => {
 
   return (
     <div>
-        {hasPermission === null ? (
-          <CircularProgress />
-        ) : hasPermission ? (
+      {hasPermission === null ? (
+        <CircularProgress />
+      ) : hasPermission ? (
         <DynGrid views={gridConfig} direction={GridDirection.Column} />
-        ) : (
-          <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-            Get the Premium For this Service Or Contact Admin - 7977662924
-          </Typography>
-        )}
+      ) : (
+        <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+          Get the Premium For this Service Or Contact Admin - 7977662924
+        </Typography>
+      )}
     </div>
   );
 };

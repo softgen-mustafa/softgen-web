@@ -23,6 +23,7 @@ import { ApiDropDown } from "@/app/ui/api_drop_down";
 import { convertToDate } from "@/app/services/Local/helper";
 import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
+import GridCardView from "@/app/ui/grid_card";
 
 interface OsSettings {
   pocId: string;
@@ -258,10 +259,13 @@ const Page = () => {
       id: 1,
       weight: 1,
       content: (
-        <div className="flex flex-col">
-          <Typography className="mt-2 mb-6 text-xl">
+        <GridCardView
+          title="Create new Followup"
+          permissionCode="CreateNewFollowUp"
+        >
+          {/* <Typography className="mt-2 mb-6 text-xl">
             Create new Followup
-          </Typography>
+          </Typography> */}
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <ApiDropDown
               label="Party"
@@ -392,15 +396,15 @@ const Page = () => {
               Create Follow-up
             </Button>
           </LocalizationProvider>
-        </div>
+        </GridCardView>
       ),
     },
     {
       id: 2,
       weight: 1,
       content: (
-        <div className="flex flex-col">
-          <Typography className="mt-2 mb-6 text-xl">Selected Bills</Typography>
+        <GridCardView title="Selected Bills" permissionCode="SelectedBills">
+          {/* <Typography className="mt-2 mb-6 text-xl">Selected Bills</Typography> */}
           <PeriodicTable
             useSearch={false}
             reload={refresh}
@@ -463,7 +467,7 @@ const Page = () => {
               },
             ]}
           />
-        </div>
+        </GridCardView>
       ),
     },
   ];

@@ -470,7 +470,7 @@ const Page = () => {
 
   const renderFilterView = () => {
     return (
-      <GridCardView>
+      <div>
         <Stack flexDirection={"column"} gap={2}>
           <DropDown
             label="View Report By"
@@ -530,7 +530,7 @@ const Page = () => {
                 /> */}
         </Stack>
         <div className="mt-4" />
-      </GridCardView>
+      </div>
     );
   };
 
@@ -572,7 +572,10 @@ const Page = () => {
       id: 1,
       weight: 1,
       content: (
-        <GridCardView permissionCode="OutstandingReport">
+        <GridCardView
+          title="Outstanding Report"
+          permissionCode="OutstandingReport"
+        >
           <Stack flexDirection={"column"} gap={2}>
             <DropDown
               label="View"
@@ -654,28 +657,30 @@ const Page = () => {
             }}
             checkBoxSelection={true}
             renderCheckedView={(values: any) => {
-                return (
-                    <div>
-                    { values !== null && values.length > 0 &&                 
-                        <Button variant="contained" className="h-full"
-                        onClick={() => {
-
-                            let parties: string[] = []
-                            values.map((row: any[]) => {
-                                let party = row.find((entry: any) => entry.field == "LedgerName") 
-                                if (party) {
-                                    parties.push(party.value)
-                                }
-                            })
-                            sendMail(parties)
-                        }}
-                        >
-                        Send Email
-                        </Button>
-                    }
-
-                    </div>
-                )
+              return (
+                <div>
+                  {values !== null && values.length > 0 && (
+                    <Button
+                      variant="contained"
+                      className="h-full"
+                      onClick={() => {
+                        let parties: string[] = [];
+                        values.map((row: any[]) => {
+                          let party = row.find(
+                            (entry: any) => entry.field == "LedgerName"
+                          );
+                          if (party) {
+                            parties.push(party.value);
+                          }
+                        });
+                        sendMail(parties);
+                      }}
+                    >
+                      Send Email
+                    </Button>
+                  )}
+                </div>
+              );
             }}
           />
 
@@ -687,7 +692,10 @@ const Page = () => {
       id: 2,
       weight: 1,
       content: (
-        <GridCardView permissionCode="LocationWiseReport">
+        <GridCardView
+          title="Location Wise Report"
+          permissionCode="LocationWiseReport"
+        >
           <PeriodicTable
             chartKeyFields={[
               {

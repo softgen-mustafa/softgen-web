@@ -5,28 +5,15 @@ import {
   getBmrmBaseUrl,
   postAsync,
 } from "@/app/services/rest_services";
-import { DataTable } from "@/app/ui/data_grid";
 import {
   CardView,
-  GridConfig,
   DynGrid,
   Weight,
   GridDirection,
 } from "@/app/ui/responsive_grid";
-import { SearchInput } from "@/app/ui/text_inputs";
-import { ChevronLeftRounded } from "@mui/icons-material";
-import {
-  CircularProgress,
-  Container,
-  Grid,
-  IconButton,
-  Typography,
-} from "@mui/material";
-import { PieChart } from "@mui/x-charts";
 import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 import { DropDown } from "@/app/ui/drop_down";
 import {
   ApiProps,
@@ -34,6 +21,8 @@ import {
   TableColumn,
   TableSearchKey,
 } from "@/app/ui/periodic_table/period_table";
+import GridCardView from "@/app/ui/grid_card";
+import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
 
 const Page = () => {
   const router = useRouter();
@@ -161,11 +150,12 @@ const Page = () => {
     },
   ];
 
-  const gridConfig = [
+  const view = [
     {
+      id: 1,
       weight: Weight.High,
-      view: (
-        <CardView title="Outstanding Overview">
+      content: (
+        <div title=" Outstanding Overview">
           <DropDown
             label="Select Type"
             displayFieldKey={"label"}
@@ -205,51 +195,57 @@ const Page = () => {
               router.push("/dashboard/outstanding/bill-detail");
             }}
           /> */}
-          <PeriodicTable
-            chartKeyFields={[
-              {
-                label: "Party Name",
-                value: "partyName",
-              },
-            ]}
-            chartValueFields={[
-              {
-                label: "Amount",
-                value: "amount",
-              },
-              {
-                label: "Bill Count",
-                value: "billCount",
-              },
-            ]}
-            useSearch={true}
-            columns={columns.map((col: any) => {
-              let column: TableColumn = {
-                header: col.headerName,
-                field: col.field,
-                type: "text",
-                pinned: false,
-                rows: [],
-                hideable: col.hideable,
-              };
-              return column;
-            })}
-            onApi={onApi}
-            sortKeys={sortKeys}
-            reload={refresh}
-          />
-        </CardView>
+
+          <GridCardView
+            title="Outstanding Aging Overview"
+            permissionCode="OutstandingOverview"
+          >
+            <PeriodicTable
+              chartKeyFields={[
+                {
+                  label: "Party Name",
+                  value: "partyName",
+                },
+              ]}
+              chartValueFields={[
+                {
+                  label: "Amount",
+                  value: "amount",
+                },
+                {
+                  label: "Bill Count",
+                  value: "billCount",
+                },
+              ]}
+              useSearch={true}
+              columns={columns.map((col: any) => {
+                let column: TableColumn = {
+                  header: col.headerName,
+                  field: col.field,
+                  type: "text",
+                  pinned: false,
+                  rows: [],
+                  hideable: col.hideable,
+                };
+                return column;
+              })}
+              onApi={onApi}
+              sortKeys={sortKeys}
+              reload={refresh}
+            />
+          </GridCardView>
+        </div>
       ),
     },
   ];
 
   return (
     <div className="w-full" style={{}}>
-      <DynGrid
-        views={gridConfig}
-        direction={GridDirection.Column}
-        width="100%"
+      <ResponsiveCardGrid
+        screenName="aging_outstanding"
+        initialCards={view}
       />
+     
     </div>
   );
 };

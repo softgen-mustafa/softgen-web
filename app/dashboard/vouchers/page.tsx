@@ -6,16 +6,9 @@ import {
   postAsync,
 } from "@/app/services/rest_services";
 import { DropDown } from "@/app/ui/drop_down";
-import {
-  CardView,
-  GridConfig,
-  Weight,
-} from "@/app/ui/responsive_grid";
+import { CardView, GridConfig, Weight } from "@/app/ui/responsive_grid";
 import { ChevronLeftRounded } from "@mui/icons-material";
-import {
-  IconButton,
-  Typography,
-} from "@mui/material";
+import { IconButton, Typography } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -28,6 +21,7 @@ import {
   TableSearchKey,
 } from "@/app/ui/periodic_table/period_table";
 import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
+import GridCardView from "@/app/ui/grid_card";
 
 const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
   const [loading, setLoading] = useState(false);
@@ -37,7 +31,6 @@ const ItemGroupCard = ({ voucherType }: { voucherType: string }) => {
   useEffect(() => {
     loadData();
   }, [voucherType]);
-
 
   const columns: GridColDef<any[number]>[] = [
     {
@@ -856,91 +849,6 @@ const Page = () => {
     }
   };
 
-  const gridConfig: GridConfig[] = [
-    {
-      type: "item",
-      className: "",
-      view: (
-        <CardView
-          title={"Overview"}
-          permissionCode="CustomerPartySearch"
-          className="h-fit"
-          actions={[
-            <IconButton
-              key={1}
-              onClick={() => {
-                router.back();
-              }}
-            >
-              <ChevronLeftRounded />
-              <Typography>Go Back</Typography>
-            </IconButton>,
-          ]}
-        >
-          <DropDown
-            label="Select Type"
-            displayFieldKey={"name"}
-            valueFieldKey={null}
-            selectionValues={voucherTypes}
-            helperText={"Select Outstanding Type"}
-            onSelection={(selection) => {
-              setVoucherType(selection.name);
-            }}
-            useSearch={true}
-          />
-          <br />
-          <Typography>Monthly Review</Typography>
-          <br />
-          <MonthlySalesCard voucherType={selectedVoucherType} />
-        </CardView>
-      ),
-      children: [],
-    },
-    {
-      type: "item",
-      className: "",
-      view: (
-        <CardView
-          title="Monthly Party Sales"
-          permissionCode="CustomerPartySearch"
-        >
-          <MonthlyCustomerSalesCard voucherType={selectedVoucherType} />
-        </CardView>
-      ),
-      children: [],
-    },
-    {
-      type: "item",
-      className: "",
-      view: (
-        <CardView title="Party Wise Sales" permissionCode="CustomerPartySearch">
-          <CustomerSalesCard voucherType={selectedVoucherType} />
-        </CardView>
-      ),
-      children: [],
-    },
-    {
-      type: "item",
-      className: "",
-      view: (
-        <CardView title="Item Group Sales" permissionCode="CustomerPartySearch">
-          <ItemGroupCard voucherType={selectedVoucherType} />
-        </CardView>
-      ),
-      children: [],
-    },
-    {
-      type: "item",
-      className: "",
-      view: (
-        <CardView title="Bill Wise Review" permissionCode="CustomerPartySearch">
-          <BillsCard voucherType={selectedVoucherType} />
-        </CardView>
-      ),
-      children: [],
-    },
-  ];
-
   const views = [
     {
       id: 1,
@@ -959,9 +867,9 @@ const Page = () => {
             useSearch={true}
           />
           <br />
-          <Typography>Monthly Review</Typography>
-          <br />
-          <MonthlySalesCard voucherType={selectedVoucherType} />
+          <GridCardView title="Monthly Review" permissionCode="MonthlyReview">
+            <MonthlySalesCard voucherType={selectedVoucherType} />
+          </GridCardView>
         </div>
         // </CardView>
       ),
@@ -971,12 +879,12 @@ const Page = () => {
       id: 2,
       weight: Weight.High,
       content: (
-        <div
+        <GridCardView
           title="Monthly Party Sales"
-          // permissionCode="CustomerPartySearch"
+          permissionCode="MonthlyPartySales"
         >
           <MonthlyCustomerSalesCard voucherType={selectedVoucherType} />
-        </div>
+        </GridCardView>
       ),
       children: [],
     },
@@ -984,12 +892,9 @@ const Page = () => {
       id: 3,
       weight: Weight.High,
       content: (
-        <div
-          title="Party Wise Sales"
-          // permissionCode="CustomerPartySearch"
-        >
+        <GridCardView title="Party Wise Sales" permissionCode="PartyWiseSales">
           <CustomerSalesCard voucherType={selectedVoucherType} />
-        </div>
+        </GridCardView>
       ),
       children: [],
     },
@@ -997,12 +902,9 @@ const Page = () => {
       id: 4,
       weight: Weight.High,
       content: (
-        <div
-          title="Item Group Sales"
-          // permissionCode="CustomerPartySearch"
-        >
+        <GridCardView title="Item Group Sales" permissionCode="ItemGroupSales">
           <ItemGroupCard voucherType={selectedVoucherType} />
-        </div>
+        </GridCardView>
       ),
       children: [],
     },
@@ -1010,12 +912,9 @@ const Page = () => {
       id: 5,
       weight: Weight.High,
       content: (
-        <div
-          title="Bill Wise Review"
-          // permissionCode="CustomerPartySearch"
-        >
+        <GridCardView title="Bill Wise Review" permissionCode="BillWiseReview">
           <BillsCard voucherType={selectedVoucherType} />
-        </div>
+        </GridCardView>
       ),
       children: [],
     },

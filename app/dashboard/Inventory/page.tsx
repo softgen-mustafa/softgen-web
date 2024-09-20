@@ -32,6 +32,7 @@ import {
 } from "@/app/ui/periodic_table/period_table";
 import Loading from "../loading";
 import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
+import GridCardView from "@/app/ui/grid_card";
 
 const InventoryOverviewScreen = () => {
   const router = useRouter();
@@ -69,8 +70,6 @@ const InventoryOverviewScreen = () => {
 
   let searchText = useRef("");
 
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-
   // const selectedMovementType = useRef(movementTypes[0]);
   const selectedMovementType = useRef(
     movementTypes.find((m) => m.code === movementCycle) || movementTypes[0]
@@ -80,20 +79,11 @@ const InventoryOverviewScreen = () => {
   const selectedRateByType = useRef(rateByTypes[0]);
 
   useEffect(() => {
-    FeatureControl("InventoryOverviewScreen").then((permission) => {
-      setHasPermission(permission);
-      if (permission) {
-        fetchDetails();
-        fetchInventoryItems({
-          limit: 5,
-          offset: 0 + 1,
-          searchText: "",
-        });
-      }
-      // else {
-      //   router.back();
-      //   // Toast("Access Denied for Customer Overview");
-      // }
+    fetchDetails();
+    fetchInventoryItems({
+      limit: 5,
+      offset: 0 + 1,
+      searchText: "",
     });
   }, []);
 
@@ -334,7 +324,10 @@ const InventoryOverviewScreen = () => {
       id: 3,
       weight: Weight.High,
       content: (
-        <div title={selectedListType.current.label} className="overflow-scroll">
+        <GridCardView
+          title={selectedListType.current.label}
+          permissionCode="InventoryOverview"
+        >
           {/* <DataTable
             refresh={refresh}
             columns={columns}
@@ -386,7 +379,7 @@ const InventoryOverviewScreen = () => {
               }
             }}
           />
-        </div>
+        </GridCardView>
       ),
     },
   ];
@@ -394,18 +387,7 @@ const InventoryOverviewScreen = () => {
   return (
     // <Container sx={{ overflowX: "hidden" }}>
     <div className="w-full" style={{}}>
-      {hasPermission === null ? (
-        <Loading />
-      ) : hasPermission ? (
-        // <DynGrid views={gridConfig} />
-        <ResponsiveCardGrid screenName="inventory" initialCards={views} />
-      ) : (
-        <Typography className="text-2xl text-center font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-          Check Your Internet Access Or This Feature is not included in your
-          Subscription package. Kindly get the Premium package to utilize this
-          feature.
-        </Typography>
-      )}
+      <ResponsiveCardGrid screenName="inventory" initialCards={views} />
     </div>
     // </Container>
   );

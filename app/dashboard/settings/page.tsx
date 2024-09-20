@@ -16,6 +16,7 @@ import MasterPermissions from "./master_permissions";
 import MovementConfig from "./movement_config";
 import { OsSettingsView } from "../outstanding/report/outstanding_setings";
 import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
+import GridCardView from "@/app/ui/grid_card";
 
 const Page = () => {
   const views = [
@@ -23,66 +24,59 @@ const Page = () => {
       id: 1,
       weight: 1,
       content: (
-        <div className="max-h-fit h-fit" title="Date Range Setting">
+        <GridCardView
+          title="Date Range Setting"
+          permissionCode="DateRangeSettings"
+        >
           <DateRangePicker
             onDateChange={(fromDate, toDate) => {
               Cookies.set("fromDate", fromDate ?? "", { expires: 365 });
               Cookies.set("toDate", toDate ?? "", { expires: 365 });
             }}
           />
-        </div>
+        </GridCardView>
       ),
     },
     {
       id: 2,
       weight: Weight.Low,
       content: (
-        <div
-          className="max-h-fit h-fit"
+        <GridCardView
           title="Company Configuration"
-          // permissionCode="MasterConfigButton"
+          permissionCode="MovementConfig"
         >
           <MovementConfig />
-        </div>
+        </GridCardView>
       ),
     },
     {
       id: 3,
       weight: Weight.Low,
       content: (
-        <div
-          className="max-h-fit h-fit overflow-scroll"
-          title="User Permissions"
-          // permissionCode="MasterConfigButton"
-        >
+        <GridCardView title="User Permissions" permissionCode="UserPermission">
           <UserPermissions />
-        </div>
+        </GridCardView>
       ),
     },
     {
       id: 4,
       weight: Weight.Low,
       content: (
-        <div
-          className="max-h-fit h-fit overflow-scroll"
+        <GridCardView
           title="Master Permissions"
-          // permissionCode="MasterConfigButton"
+          permissionCode="MasterPermission"
         >
           <MasterPermissions />
-        </div>
+        </GridCardView>
       ),
     },
     {
       id: 5,
       weight: Weight.Medium,
       content: (
-        <div
-          className="h-fit overflow-scroll"
-          title="Aging Settings"
-          // permissionCode="MasterConfigButton"
-        >
+        <GridCardView title="Aging Settings" permissionCode="AgingConfig">
           <AgingSettings />
-        </div>
+        </GridCardView>
       ),
     },
   ];

@@ -42,11 +42,9 @@ const GridCardView: React.FC<CardViewProps> = ({
         <CardHeader
           title={title}
           titleTypographyProps={{
-            fontSize: 20,
-            fontWeight: "bold",
-            letterSpacing: 0.8,
+            className: "text-xl mb-2",
           }}
-        ></CardHeader>
+        />
       )}
       {!hasAccess && (
         <Typography>

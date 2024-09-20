@@ -15,7 +15,12 @@ import { DropDown } from "@/app/ui/drop_down";
 import { inspiredPalette } from "@/app/ui/theme";
 import { ChevronLeftRounded } from "@mui/icons-material";
 import { postAsync } from "@/app/services/rest_services";
-import { CardView, GridDirection, DynGrid, Weight } from "@/app/ui/responsive_grid";
+import {
+  CardView,
+  GridDirection,
+  DynGrid,
+  Weight,
+} from "@/app/ui/responsive_grid";
 import { numericToString } from "@/app/services/Local/helper";
 import { DataTable } from "@/app/ui/data_grid";
 import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
@@ -61,7 +66,7 @@ const ItemDetailScreen = () => {
   }, []);
 
   const checkPermissionAndInitialize = async () => {
-    const permission = await FeatureControl("ItemDetailScreen");
+    const permission = await FeatureControl("InventoryDetails");
     setHasPermission(permission);
     if (permission) {
       const itemString = localStorage.getItem("record") || "{}";
@@ -194,7 +199,7 @@ const ItemDetailScreen = () => {
 
   const gridConfig = [
     {
-        weight: Weight.Low,
+      weight: Weight.Low,
       view: (
         <CardView className="">
           <div className="flex flex-row items-center">
@@ -228,24 +233,24 @@ const ItemDetailScreen = () => {
           <Typography className="mb-4 text-2lg md:text-xl mt-2 flex">
             {item?.currency} {numericToString(item?.amount)}
           </Typography>
-              <DropDown
-                label="Select Basis"
-                displayFieldKey={"label"}
-                valueFieldKey={null}
-                selectionValues={listTypes}
-                helperText={"Select  Type"}
-                onSelection={(selection) => {
-                  selectedListType.current = selection;
-                  triggerRefresh(!refresh);
-                  onApi(1, 10);
-                }}
-              />
-              <br />
+          <DropDown
+            label="Select Basis"
+            displayFieldKey={"label"}
+            valueFieldKey={null}
+            selectionValues={listTypes}
+            helperText={"Select  Type"}
+            onSelection={(selection) => {
+              selectedListType.current = selection;
+              triggerRefresh(!refresh);
+              onApi(1, 10);
+            }}
+          />
+          <br />
         </CardView>
       ),
     },
     {
-        weight: Weight.High,
+      weight: Weight.High,
       view: (
         <CardView>
           <DataTable
@@ -264,15 +269,15 @@ const ItemDetailScreen = () => {
 
   return (
     <div className="w-full">
-        {hasPermission === null ? (
-          <CircularProgress />
-        ) : hasPermission ? (
-            <DynGrid views={gridConfig} direction={GridDirection.Column}/>
-        ) : (
-          <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-            Get the Premium For this Service Or Contact Admin - 7977662924
-          </Typography>
-        )}
+      {hasPermission === null ? (
+        <CircularProgress />
+      ) : hasPermission ? (
+        <DynGrid views={gridConfig} direction={GridDirection.Column} />
+      ) : (
+        <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
+          Get the Premium For this Service Or Contact Admin - 7977662924
+        </Typography>
+      )}
     </div>
   );
 };

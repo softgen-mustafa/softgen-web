@@ -23,6 +23,7 @@ import {
   TableColumn,
 } from "../ui/periodic_table/period_table";
 import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
+import GridCardView from "../ui/grid_card";
 
 const DashboardPage = () => {
   const [filters, updateFilters] = useState([
@@ -121,39 +122,48 @@ const DashboardPage = () => {
       id: 1,
       weight: Weight.Medium,
       content: (
-        <div>
-          <Typography className="text-xl mb-2">
+        <GridCardView
+          permissionCode="PayableReceivable"
+          title="Payable vs Receivable"
+        >
+          {/* <Typography className="text-xl mb-2">
             Payable vs Receivable
-          </Typography>
+          </Typography> */}
           <OutstandingCard
             companyId={Cookies.get("companyId") ?? ""}
             title="Outstanding Overview"
           />
-        </div>
+        </GridCardView>
       ),
     },
     {
       id: 2,
       weight: Weight.Medium,
       content: (
-        <div>
-          <Typography className="text-xl mb-2">
+        <GridCardView
+          permissionCode="OutstandingAgingOverview"
+          title=" Outstanding Aging Overview"
+        >
+          {/* <Typography className="text-xl mb-2">
             Outstanding Aging Overview
-          </Typography>
+          </Typography> */}
           <AgingView
             billType={selectedType.current.code}
             companyId={Cookies.get("companyId") ?? ""}
             title="Aging-Wise O/S"
           />
-        </div>
+        </GridCardView>
       ),
     },
     {
       id: 3,
       weight: Weight.High,
       content: (
-        <div>
-          <Typography className="text-xl mb-2">Party Overview</Typography>
+        <GridCardView
+          title="Party Overview"
+          permissionCode="PartyWiseOutstanding"
+        >
+          {/* <Typography className="text-xl mb-2">Party Overview</Typography> */}
           <PeriodicTable
             reload={true}
             useSearch={true}
@@ -214,7 +224,7 @@ const DashboardPage = () => {
               }
             }}
           />
-        </div>
+        </GridCardView>
       ),
       children: [],
     },
@@ -222,30 +232,36 @@ const DashboardPage = () => {
       id: 4,
       weight: Weight.High,
       content: (
-        <div className="overflow-scroll">
-          <Typography className="text-xl mb-2">Todays Outstanding</Typography>
+        <GridCardView
+          permissionCode="TodaysOutstanding"
+          title="Todays Outstanding"
+        >
+          {/* <Typography className="text-xl mb-2">Todays Outstanding</Typography> */}
           <OutstandingTask companyId={Cookies.get("companyId") ?? ""} />
-        </div>
+        </GridCardView>
       ),
     },
     {
       id: 5,
       weight: Weight.High,
       content: (
-        <div title="Ranked Parties" className="overflow-scroll">
-          <Typography className="text-xl mb-2">Ranked Parties</Typography>
+        <GridCardView permissionCode="TopRankedParties" title=" Ranked Parties">
+          {/* <Typography className="text-xl mb-2">Ranked Parties</Typography> */}
           <RankedPartyOutstandingCard
             companyId={Cookies.get("companyId") ?? ""}
             billType={selectedType.current.code}
           />
-        </div>
+        </GridCardView>
       ),
     },
     {
       id: 6,
       weight: Weight.High,
       content: (
-        <div title="Upcoming Collections" className="overflow-scroll">
+        <GridCardView
+          permissionCode="UpcomingCollections"
+          title="Upcoming Collections"
+        >
           <Typography className="text-xl mb-2">Upcoming Collections</Typography>
           <Stack
             flexDirection="row"
@@ -322,7 +338,7 @@ const DashboardPage = () => {
             rows={rows}
             reload={refresh}
           />
-        </div>
+        </GridCardView>
       ),
     },
   ];

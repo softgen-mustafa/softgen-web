@@ -51,7 +51,7 @@
 
 const permission_config = {
   PayableReceivable: "P0000001",
-  OutstandingAgingOverview: "P0000003",
+  OutstandingAgingOverview: "P0000002",
   PartyWiseOutstanding: "P0000003",
   TodaysOutstanding: "P0000004",
   TopRankedParties: "P0000005",

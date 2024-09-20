@@ -151,6 +151,7 @@ const OutstandingTask: React.FC<OutstandingTaskProps> = ({ companyId }) => {
         localStorage.setItem("party_filter_type", "daily");
       }}
     >
+      
       <PeriodicTable
         chartKeyFields={[
           {
