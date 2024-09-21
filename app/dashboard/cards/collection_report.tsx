@@ -114,76 +114,75 @@ const CollectionReport = () => {
   };
 
   return (
-    <Card className="max-w-2xl mx-auto">
-      <CardContent>
-        <div className="flex justify-between items-center mb-4">
-          <Typography variant="h5">Collection Report</Typography>
-          <IconButton onClick={loadPrompts}>
-            <Sync />
-          </IconButton>
-        </div>
+    <CardContent>
+      <div className="flex justify-between items-center mb-4">
+        <Typography variant="h5">Collection Report</Typography>
+        <IconButton onClick={loadPrompts}>
+          <Sync />
+        </IconButton>
+      </div>
 
-        {loading ? (
-          <CircularProgress />
-        ) : (
-          <div className="max-h-[500px] overflow-y-auto">
-            {prompts.map((entry: any, index: number) => (
-              <div key={index} className="mb-4">
-                <div className="flex justify-end">
-                  <Typography
-                    variant="h6"
-                    style={{
-                      color: theme.palette.primary.dark,
-                    }}
-                  >
-                    {entry.Task.Title}
-                  </Typography>
-                </div>
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <div className="max-h-[500px] overflow-y-auto">
+          {prompts.map((entry: any, index: number) => (
+            <div key={index} className="mb-4">
+              <div className="flex justify-end">
                 <Typography
-                  variant="body2"
-                  color="textSecondary"
-                  className="mt-2"
+                  variant="h6"
+                  style={{
+                    color: theme.palette.primary.dark,
+                  }}
                 >
-                  {entry.Task.Description}
+                  {entry.Task.Title}
                 </Typography>
-                <div className="mt-4">
-                  <Typography>
-                    <strong>Assigned To:</strong> {entry.AssignedToName}
-                  </Typography>
-                  <Typography>
-                    <strong>Created By:</strong> {entry.CreatedByName}
-                  </Typography>
-                  <Typography>
-                    <strong>Status:</strong> {entry.StatusName}
-                  </Typography>
-
-                  <div className="flex mt-4">
-                    <Button
-                      variant="contained"
-                      onClick={() => handleAction(entry, index)}
-                    >
-                      {`Assigned To -${userid}`}
-                    </Button>
-                    <div className="ml-10 flex flex-grow "></div>
-                    <DropDown
-                      label="View"
-                      displayFieldKey={"name"}
-                      valueFieldKey={null}
-                      selectionValues={statusTypes}
-                      helperText={""}
-                      onSelection={(selection) => {
-                        selectedStatusTypes.current[index] = selection.value;
-                      }}
-                    />
-                  </div>
-                </div>
-                {index < prompts.length - 1 && <Divider className="mt-4" />}
               </div>
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                className="mt-2"
+              >
+                {entry.Task.Description}
+              </Typography>
+              <div className="mt-4">
+                <Typography>
+                  <strong>Assigned To:</strong> {entry.AssignedToName}
+                </Typography>
+                <Typography>
+                  <strong>Created By:</strong> {entry.CreatedByName}
+                </Typography>
+                <Typography>
+                  <strong>Status:</strong> {entry.StatusName}
+                </Typography>
+
+                <div className="flex mt-4">
+                  <Button
+                    variant="contained"
+                    onClick={() => handleAction(entry, index)}
+                  >
+                    {/* {`Assigned To -${userid}`} */}
+                    {`Assigned To Me`}
+                  </Button>
+                  <div className="ml-10 flex flex-grow "></div>
+                  <DropDown
+                    label="View"
+                    displayFieldKey={"name"}
+                    valueFieldKey={null}
+                    selectionValues={statusTypes}
+                    helperText={""}
+                    onSelection={(selection) => {
+                      selectedStatusTypes.current[index] = selection.value;
+                    }}
+                  />
+                </div>
+              </div>
+              {index < prompts.length - 1 && <Divider className="mt-4" />}
+            </div>
+          ))}
+        </div>
+      )}
+    </CardContent>
   );
 };
 
