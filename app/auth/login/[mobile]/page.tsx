@@ -217,8 +217,9 @@ const Page = ({ params }: { params: any }) => {
       try {
         let getCompanies = `${getUmsBaseUrl()}/info/user-tenant/get/companies`;
         let response = await getAsync(getCompanies);
-        console.log(response);
+        // console.log("220", response);
         Cookies.set("companyId", response[0]?.company_id);
+        Cookies.set("user_id", response[0]?.user_id);
       } catch (error) {}
       return true;
     } catch {
