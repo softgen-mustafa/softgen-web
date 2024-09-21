@@ -6,13 +6,12 @@ import { useSnackbar } from "@/app/ui/snack_bar_provider";
 import { Sync } from "@mui/icons-material";
 import {
   Button,
-  Card,
   CardContent,
   CircularProgress,
   IconButton,
   Typography,
   useTheme,
-  Divider,
+  Grid,
 } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 import Cookies from "js-cookie";
@@ -38,9 +37,7 @@ const CollectionReport = () => {
   const [prompts, setPrompts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const selectedStatusTypes = useRef<{ [key: number]: number }>({});
-
   let userid = parseInt(Cookies.get("user_id") || "0", 10);
-
   const dateRange = useRef({
     startDate: "01-01-2024",
     endDate: "01-01-2025",
@@ -115,58 +112,51 @@ const CollectionReport = () => {
 
   return (
     <CardContent>
-      <div className="flex justify-between items-center mb-4">
+      <Grid container justifyContent="space-between" alignItems="center" mb={4}>
         <Typography variant="h5">Collection Report</Typography>
         <IconButton onClick={loadPrompts}>
           <Sync />
         </IconButton>
-      </div>
+      </Grid>
 
       {loading ? (
         <CircularProgress />
       ) : (
         <div className="max-h-[500px] overflow-y-auto">
           {prompts.map((entry: any, index: number) => (
-            <div key={index} className="mb-4">
-              <div className="flex justify-end">
-                <Typography
-                  variant="h6"
-                  style={{
-                    color: theme.palette.primary.dark,
-                  }}
-                >
-                  {entry.Task.Title}
-                </Typography>
-              </div>
+            <div key={index} className="mb-6 p-4 border rounded shadow-sm">
+              <Typography
+                variant="h6"
+                style={{
+                  color: theme.palette.primary.dark,
+                }}
+              >
+                {entry.Task.Title}
+              </Typography>
+
               <Typography
                 variant="body2"
                 color="textSecondary"
-                className="mt-2"
+                className="mt-1"
               >
                 {entry.Task.Description}
               </Typography>
-              <div className="mt-4">
-                <Typography>
-                  <strong>Assigned To:</strong> {entry.AssignedToName}
-                </Typography>
-                <Typography>
-                  <strong>Created By:</strong> {entry.CreatedByName}
-                </Typography>
-                <Typography>
-                  <strong>Status:</strong> {entry.StatusName}
-                </Typography>
+              <Typography mt={2}>
+                <strong>Assigned To:</strong> {entry.AssignedToName}
+              </Typography>
+              <Typography>
+                <strong>Created By:</strong> {entry.CreatedByName}
+              </Typography>
+              <Typography>
+                <strong>Status:</strong> {entry.StatusName}
+              </Typography>
 
-                <div className="flex mt-4">
-                  <Button
-                    variant="contained"
-                    onClick={() => handleAction(entry, index)}
-                  >
-                    {/* {`Assigned To -${userid}`} */}
-                    {`Assigned To Me`}
-                  </Button>
-                  <div className="ml-10 flex flex-grow "></div>
+              <Grid container spacing={2} alignItems="center" mt={2}>
+                <Grid item xs>
+                 
+
                   <DropDown
-                    label="View"
+                    label="Change Status"
                     displayFieldKey={"name"}
                     valueFieldKey={null}
                     selectionValues={statusTypes}
@@ -175,9 +165,19 @@ const CollectionReport = () => {
                       selectedStatusTypes.current[index] = selection.value;
                     }}
                   />
-                </div>
-              </div>
-              {index < prompts.length - 1 && <Divider className="mt-4" />}
+                </Grid>
+                <Grid item xs>
+                <Button
+                    variant="contained"
+                    onClick={() => handleAction(entry, index)}
+                  >
+                    Assigned To Me
+                  </Button>
+                
+                </Grid>
+              </Grid>
+
+              {/* {index < prompts.length - 1 && <Divider className="mt-4" />} */}
             </div>
           ))}
         </div>
