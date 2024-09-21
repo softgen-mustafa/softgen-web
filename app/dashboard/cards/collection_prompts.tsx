@@ -1,136 +1,184 @@
-"use client"
+"use client";
 
-import { getSgBizBaseUrl, postAsync } from "@/app/services/rest_services"
-import { DateRangePicker } from "@/app/ui/date_ui"
-import { useSnackbar } from "@/app/ui/snack_bar_provider"
-import { Cancel, Sync } from "@mui/icons-material"
-import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, CircularProgress, IconButton, Typography, useTheme } from "@mui/material"
-import { GridExpandMoreIcon } from "@mui/x-data-grid"
-import { useEffect, useState, useRef } from "react"
+import { getSgBizBaseUrl, postAsync } from "@/app/services/rest_services";
+import { useSnackbar } from "@/app/ui/snack_bar_provider";
+import { Cancel, Sync } from "@mui/icons-material";
+import {
+  Accordion,
+  AccordionActions,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  CircularProgress,
+  IconButton,
+  Typography,
+  useTheme,
+  Switch,
+  FormControlLabel,
+} from "@mui/material";
+import { GridExpandMoreIcon } from "@mui/x-data-grid";
+import { useEffect, useState, useRef } from "react";
 
 const CollectionPrompts = () => {
-    const snackbar = useSnackbar();
-    const theme = useTheme()
-    const [prompts, setPrompts] = useState<any[]>([])
-    const [loading, setLoading] = useState(false)
-    let dateRange = useRef({
-        startDate: "01-01-2024",
-        endDate: "01-01-2025"
-    });
+  const snackbar = useSnackbar();
+  const theme = useTheme();
+  const [prompts, setPrompts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const partyWiseRef = useRef(false);
+  const dateRange = useRef({
+    startDate: "01-01-2024",
+    endDate: "01-01-2025",
+  });
 
-    useEffect(() => {
-        loadPrompts()
-    }, [])
+  useEffect(() => {
+    loadPrompts();
+  }, []);
 
-    const loadPrompts = async () => {
-        try {
-            setLoading(true)
-            let url = `${getSgBizBaseUrl()}/prompts/get/collection`
-            let requestBody = {
-                "StartDateStr": dateRange.current.startDate,
-                "EndDateStr": dateRange.current.endDate,
-                "Filter": {
-                    "Batch": {
-                        "Apply": true,
-                        "Limit": 30,
-                        "Offset": 0
-                    }
-                }
-            }
-            let response = await postAsync(url, requestBody)
-            if (response && response.Data && response.Data.length > 0) {
-                setPrompts(response.Data)
-                return
-            }
-                setPrompts([])
-
-        } catch {
-            snackbar.showSnackbar("Could not load collection prompts", "error")
-        } finally {
-            setLoading(false)
-        }
+  const loadPrompts = async () => {
+    try {
+      setLoading(true);
+      let url = `${getSgBizBaseUrl()}/prompts/get/collection?partyWise=${
+        partyWiseRef.current
+      }`;
+      let requestBody = {
+        StartDateStr: dateRange.current.startDate,
+        EndDateStr: dateRange.current.endDate,
+        Filter: {
+          Batch: {
+            Apply: true,
+            Limit: 30,
+            Offset: 0,
+          },
+        },
+      };
+      let response = await postAsync(url, requestBody);
+      if (response && response.Data && response.Data.length > 0) {
+        setPrompts(response.Data);
+        return;
+      }
+      setPrompts([]);
+    } catch {
+      snackbar.showSnackbar("Could not load collection prompts", "error");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    return (
-        <div className="flex flex-col w-auto max-h-[500px] overflow-y-auto">
-        {
-            loading
-            &&
-                <CircularProgress />
-        }
+  const handleAction = async (
+    action: string,
+    partyName: string,
+    billNumber: string,
+    amountStr: string
+  ) => {
+    try {
+      setLoading(true);
+      const url = `${getSgBizBaseUrl()}/prompts/set-decision/collection?partyWise=${
+        partyWiseRef.current
+      }`;
 
-        <div className="flex flex-row justify-between">
-        {/*
-        <DateRangePicker 
-            onDateChange={(fromDate?: string, toDate?:string) => {
-                if (fromDate != null) {
-                    dateRange.current.startDate = fromDate
-                }
-                if (toDate != null) {
-                    dateRange.current.endDate = toDate
-                }
-                loadPrompts()
-            }}
-        /> */}
-            <IconButton onClick={() => {
-                loadPrompts()
-            }}>
-                <Sync/>
-            </IconButton>
-        </div>
-        {
+      const requestBody = {
+        ActionCode: action,
+        PartyName: partyName,
+        BillNumber: billNumber,
+        AmountStr: amountStr,
+      };
+      const response = await postAsync(url, requestBody);
 
-            prompts.map((entry: any, index: number) => {
-                return (
-                    <div key={index} className="flex flex-col p-1" style={{
-                    }}>
-                        <Accordion className="h-auto mb-4">
-                            <AccordionSummary
-                                expandIcon={<GridExpandMoreIcon />}
-                                aria-controls="panel1-content"
-                                id="panel1-header"
-                                >
-                                <Typography className="text-md mb-4">{entry.Message}</Typography>
-                            </AccordionSummary>
-                            <AccordionDetails className="h-auto">
-                                <Typography
-                                style={{
-                                    whiteSpace: 'pre-line', // This preserves line breaks from \n
-                                }}
-                                >{entry.SummaryProfile}</Typography>
-                            </AccordionDetails>
-                            <AccordionActions>
-                                {
-                                    entry.Actions
-                                    &&
-                                    entry.Actions.map((action: any, actionIndex: number) => {
-                                        if (action.Title === "Ignore") {
-                                            return (
-                                                <IconButton size="medium">
-                                                    <Cancel/>
-                                                </IconButton>
-                                            )
-                                        }
-                                        return (
-                                            <Button style={{
-                                                background: theme.palette.primary.dark,
-                                            }} className="m-2 flex flex-grow" variant="contained" key={actionIndex}>{action.Title}</Button>
-                                        );
-                                    })
-                                }
-                            </AccordionActions>
-                        </Accordion>
-                        {
-                            entry.Suggestion
-                            &&
-                            <Typography>{entry.Suggestion}</Typography>
+      if (response === null || response === "") {
+        snackbar.showSnackbar("Action completed successfully", "success");
+        loadPrompts();
+      }
+    } catch (error) {
+      snackbar.showSnackbar("Error performing action", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePartyWiseToggle = () => {
+    partyWiseRef.current = !partyWiseRef.current;
+    loadPrompts();
+  };
+  return (
+    <div className="flex flex-col w-auto max-h-[500px] overflow-y-auto">
+      {loading && <CircularProgress />}
+
+      <div className="flex flex-row justify-between items-center mb-4">
+        <IconButton onClick={loadPrompts}>
+          <Sync />
+        </IconButton>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={partyWiseRef.current}
+              onChange={handlePartyWiseToggle}
+              color="primary"
+            />
+          }
+          label="Party Wise"
+        />
+      </div>
+      {prompts.map((entry: any, index: number) => {
+        return (
+          <div key={index} className="flex flex-col p-1">
+            <Accordion className="h-auto mb-4">
+              <AccordionSummary
+                expandIcon={<GridExpandMoreIcon />}
+                aria-controls="panel1-content"
+                id="panel1-header"
+              >
+                <Typography className="text-md mb-4">
+                  {entry.Message}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails className="h-auto">
+                <Typography
+                  style={{
+                    whiteSpace: "pre-line",
+                  }}
+                >
+                  {entry.SummaryProfile}
+                </Typography>
+              </AccordionDetails>
+              <AccordionActions>
+                {entry.Actions &&
+                  entry.Actions.map((action: any, actionIndex: number) => {
+                    if (action.Title === "Ignore") {
+                      return (
+                        <IconButton key={actionIndex} size="medium">
+                          <Cancel />
+                        </IconButton>
+                      );
+                    }
+                    return (
+                      <Button
+                        style={{
+                          background: theme.palette.primary.dark,
+                        }}
+                        className="m-2 flex flex-grow"
+                        variant="contained"
+                        key={actionIndex}
+                        onClick={() =>
+                          handleAction(
+                            action.Title,
+                            entry.PartyName,
+                            entry.BillNumber,
+                            entry.AmountStr
+                          )
                         }
-                    </div>
-                )
-            })
-        }
-        </div>
-    )
-}
+                      >
+                        {action.Title}
+                      </Button>
+                    );
+                  })}
+              </AccordionActions>
+            </Accordion>
+            {entry.Suggestion && <Typography>{entry.Suggestion}</Typography>}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
-export {CollectionPrompts};
+export { CollectionPrompts };

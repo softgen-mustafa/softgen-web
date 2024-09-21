@@ -25,6 +25,7 @@ import {
 import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
 import GridCardView from "../ui/grid_card";
 import { CollectionPrompts } from "./cards/collection_prompts";
+import { CollectionReport } from "./cards/collection_report";
 
 const DashboardPage = () => {
   const [filters, updateFilters] = useState([
@@ -124,7 +125,16 @@ const DashboardPage = () => {
       weight: Weight.Low,
       content: (
         <div>
-            <CollectionPrompts />
+          <CollectionPrompts />
+        </div>
+      ),
+    },
+    {
+      id: 8,
+      weight: Weight.Low,
+      content: (
+        <div>
+          <CollectionReport />
         </div>
       ),
     },
