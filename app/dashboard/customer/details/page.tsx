@@ -19,7 +19,7 @@ const CustomerDetailsScreen = ({}) => {
   let filterValue: any = "";
 
   useEffect(() => {
-    FeatureControl("CustomerDetailsScreen").then((permission) => {
+    /*    FeatureControl("CustomerDetailsScreen").then((permission) => {
       setHasPermission(permission);
       if (permission) {
         filterValue = localStorage.getItem("party_filter_value") || "";
@@ -28,7 +28,7 @@ const CustomerDetailsScreen = ({}) => {
       // else {
       //   // Toast("Access Denied for Customer Overview");
       // }
-    });
+    }); */
   }, []);
 
   // useEffect(() => {
@@ -48,7 +48,7 @@ const CustomerDetailsScreen = ({}) => {
       // url = `${getBmrmBaseUrl()}/bill/customer-outstanding/${filterValue}`;
       url = `${getBmrmBaseUrl()}/bill/customer-outstanding/${filterValue.replace(
         /"/g,
-        ""
+        "",
       )}`;
 
       response = await getAsync(url);
@@ -110,7 +110,7 @@ const CustomerDetailsScreen = ({}) => {
                   <InfoItem
                     label={"Opening Balance"}
                     value={`${ledgerDetail.currency} ${numericToString(
-                      ledgerDetail.openingBal?.amount ?? "0"
+                      ledgerDetail.openingBal?.amount ?? "0",
                     )}`}
                     align="right"
                   />
@@ -148,7 +148,7 @@ const CustomerDetailsScreen = ({}) => {
                       handleCall(
                         ledgerDetail.landlineNo
                           ?.split(/[&/,]/)
-                          .map((num: string) => num.trim())
+                          .map((num: string) => num.trim()),
                       )
                     }
                   >
@@ -164,7 +164,7 @@ const CustomerDetailsScreen = ({}) => {
                     handleEmail(
                       ledgerDetail.email
                         ?.split(/[,&/\s;]+/)
-                        .map((email: string) => email.trim())
+                        .map((email: string) => email.trim()),
                     )
                   }
                 >
@@ -178,7 +178,7 @@ const CustomerDetailsScreen = ({}) => {
                     handleEmail(
                       ledgerDetail.emailcc
                         ?.split(/[,&\s;]+/)
-                        .map((email: string) => email.trim())
+                        .map((email: string) => email.trim()),
                     )
                   }
                 >
