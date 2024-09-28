@@ -19,7 +19,7 @@ const CustomerPartySearch = () => {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   useEffect(() => {
-    FeatureControl("CustomerPartySearch").then((permission) => {
+    /*FeatureControl("CustomerPartySearch").then((permission) => {
       setHasPermission(permission);
       // if (permission) {
       //   onApi(1, 10);
@@ -30,7 +30,7 @@ const CustomerPartySearch = () => {
       //   // router.back();
       //   // Toast("Access Denied for Customer Overview");
       // }
-    });
+    }); */
   }, []);
 
   const columns: GridColDef<any[number]>[] = [
@@ -138,7 +138,7 @@ const CustomerPartySearch = () => {
             onRowClick={(rowData) => {
               localStorage.setItem(
                 "party_filter_value",
-                JSON.stringify(rowData.id)
+                JSON.stringify(rowData.id),
               );
               router.push("/dashboard/customer/details");
             }}

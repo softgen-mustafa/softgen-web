@@ -66,11 +66,12 @@ const AgingView = ({ billType }: { billType: string }) => {
   }, [billType]);
 
   const checkPermissionAndLoadData = async () => {
-    const permission = await FeatureControl("AgingOutstandingCard");
+    /*const permission = await FeatureControl("AgingOutstandingCard");
     setHasPermission(permission);
     if (permission) {
-      loadData();
     }
+      */
+    loadData();
   };
 
   const loadData = async () => {
