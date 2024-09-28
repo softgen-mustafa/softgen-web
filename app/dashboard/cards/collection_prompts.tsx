@@ -145,17 +145,47 @@ const CollectionPrompts = () => {
                   entry.Actions.map((action: any, actionIndex: number) => {
                     if (action.Title === "Ignore") {
                       return (
-                        <IconButton key={actionIndex} size="medium">
-                          <Cancel />
+                        <IconButton
+                          key={actionIndex}
+                          size="medium"
+                          sx={{
+                            backgroundColor: "transparent", // Default background
+                            boxShadow: 2, // Subtle shadow for depth
+                            "&:focus": {
+                              outline: "none",
+                              boxShadow: `0 0 0 2px ${theme.palette.primary.main}`, // Focus ring with main error color
+                            },
+                            transition:
+                              "background-color 0.3s ease, box-shadow 0.3s ease", // Smooth transitions
+                          }}
+                        >
+                          <Cancel sx={{ color: theme.palette.primary.dark }} />
                         </IconButton>
                       );
                     }
                     return (
                       <Button
-                        style={{
+                        sx={{
                           background: theme.palette.primary.dark,
+                          margin: 2,
+                          flexGrow: 1,
+                          borderRadius: "10px", // Rounded corners
+                          boxShadow: 3, // Medium shadow
+                          color: "white", // Text color
+                          fontWeight: { xs: 200, md: 400 },
+                          fontSize: { xs: "0.825rem", md: "1rem" },
+                          "&:hover": {
+                            background: theme.palette.primary.dark, // Use dark color on hover
+                            boxShadow: 6, // Optional: elevate shadow on hover
+                          },
+                          "&:focus": {
+                            outline: "none",
+                            boxShadow: `0 0 0 2px ${theme.palette.primary.light}`, // Focus ring
+                          },
+                          transition:
+                            "background-color 0.3s ease, box-shadow 0.3s ease", // Smooth transitions
+                          textTransform: "capitalize",
                         }}
-                        className="m-2 flex flex-grow"
                         variant="contained"
                         key={actionIndex}
                         onClick={() =>

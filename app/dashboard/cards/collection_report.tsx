@@ -124,7 +124,10 @@ const CollectionReport = () => {
       ) : (
         <div className="max-h-[500px] overflow-y-auto">
           {prompts.map((entry: any, index: number) => (
-            <div key={index} className="mb-6 p-4 border rounded shadow-sm">
+            <div
+              key={index}
+              className="mb-6 p-4 border rounded-[10px] shadow-md"
+            >
               <Typography
                 variant="h6"
                 style={{
@@ -153,8 +156,6 @@ const CollectionReport = () => {
 
               <Grid container spacing={2} alignItems="center" mt={2}>
                 <Grid item xs>
-                 
-
                   <DropDown
                     label="Change Status"
                     displayFieldKey={"name"}
@@ -167,13 +168,27 @@ const CollectionReport = () => {
                   />
                 </Grid>
                 <Grid item xs>
-                <Button
+                  <Button
+                    sx={{
+                      color: "white",
+                      fontWeight: { xs: "500", md: "600" },
+                      paddingY: "8px",
+                      paddingX: "16px",
+                      borderRadius: "13px",
+                      "&:hover": {
+                        backgroundColor: "primary.dark", // Change color on hover
+                      },
+                      "&:focus": {
+                        outline: "none",
+                        boxShadow: "0 0 0 2px rgba(0, 0, 0, 0.3)", // Custom focus ring
+                      },
+                      fontSize: { xs: "0.775rem", md: "0.9rem" }, // Responsive font sizes
+                    }}
                     variant="contained"
                     onClick={() => handleAction(entry, index)}
                   >
                     Assigned To Me
                   </Button>
-                
                 </Grid>
               </Grid>
 

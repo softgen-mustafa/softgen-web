@@ -439,7 +439,7 @@ export default function DashboardLayout({
                 }}
               />
             </div>
-            <Typography className="text-base justify-center text-slate-950 mx-3 pt-1">
+            <Typography className="text-md font-semibold text-slate-900 text-left mx-1 py-1 border-b border-slate-300">
               {`Last Sync: ${syncInfo}`}
             </Typography>
             <Suspense fallback={<Loading />}>
