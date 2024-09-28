@@ -416,7 +416,7 @@ const Table = ({
             .filter((entry) => !entry.hideable)
             .map((column: TableColumn, colIndex: number) => {
               let cellWidth = fieldWidths.find(
-                (entry: any) => entry.field === column.field
+                (entry: any) => entry.field === column.field,
               );
               if (cellWidth === null) {
                 cellWidth = 200;
@@ -499,7 +499,7 @@ const Table = ({
                       let selectedValues = selectedRow;
                       if (selectedValues.includes(rowIndex)) {
                         selectedValues = selectedValues.filter(
-                          (i) => i !== rowIndex
+                          (i) => i !== rowIndex,
                         );
                       } else {
                         selectedValues.push(rowIndex);
@@ -522,7 +522,7 @@ const Table = ({
                 })
                 .map((cell: any, cellIndex: number) => {
                   let cellWidth = fieldWidths.find(
-                    (entry: any) => entry.field === cell.field
+                    (entry: any) => entry.field === cell.field,
                   );
                   if (cellWidth === null) {
                     cellWidth = 200;
@@ -636,7 +636,7 @@ const TablePagination = ({ refresh, onChange }: TablePaginationProps) => {
     setLimit("5");
   }, [refresh]);
 
-  const limits = [5, 10, 15, 20, 25, 50, 75, 100, 500,800];
+  const limits = [5, 10, 15, 20, 25, 50, 75, 100, 500, 800];
 
   const [offSet, setOffSet] = useState<number>(0);
   const [limit, setLimit] = useState("5");
@@ -649,8 +649,8 @@ const TablePagination = ({ refresh, onChange }: TablePaginationProps) => {
           value={limit}
           onChange={(event) => {
             let selectedValue = event.target.value ?? "";
-            setOffSet(0); 
-            onChange(0, parseInt(selectedValue)); 
+            setOffSet(0);
+            onChange(0, parseInt(selectedValue));
             setLimit(selectedValue);
           }}
         >
@@ -680,7 +680,6 @@ const TablePagination = ({ refresh, onChange }: TablePaginationProps) => {
             );
           })}
         </Select> */}
-
       </FormControl>
 
       <IconButton
@@ -982,7 +981,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
       console.log(props.rows);
       let rows = props.rows.slice(
         apiParams.offset * apiParams.limit,
-        apiParams.offset * apiParams.limit + apiParams.limit
+        apiParams.offset * apiParams.limit + apiParams.limit,
       );
       loadColumns(rows);
     }

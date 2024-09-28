@@ -5,12 +5,18 @@ import "grapesjs/dist/css/grapes.min.css";
 import { outstandingBlocks } from "./html_template_builder/outstanding_blocks";
 
 const WebBuilder = ({
+  initialTemplate = null,
   onExtract,
 }: {
+  initialTemplate?: string | null;
   onExtract: (htmlTemplate: string) => void;
 }) => {
   // Type the useRef to either be 'null' or a GrapesJS Editor instance
   const editorRef = useRef<any | null>(null);
+
+  useEffect(() => {
+    //editorRef.current.setCurrent
+  }, [initialTemplate]);
 
   useEffect(() => {
     // Initialize the GrapesJS editor only if it hasn't been initialized
@@ -71,6 +77,10 @@ const WebBuilder = ({
           ],
         },
       });
+
+      if (initialTemplate) {
+        editor.setComponents(initialTemplate);
+      }
 
       editor.Panels.addPanel({
         id: "panel-top",
