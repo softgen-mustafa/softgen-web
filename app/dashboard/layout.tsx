@@ -404,14 +404,17 @@ export default function DashboardLayout({
       <CssBaseline />
       <SnackbarProvider>
         <div
-          className="w-full h-[100vh] flex flex-col md:flex-row "
+          className="w-full h-[100vh] flex flex-row md:flex-row "
           style={{ background: "rgb(247, 249, 252)" }}
         >
           <SideNav onThemeChange={changeTheme} />
-          <div className="flex flex-col w-full">
+
+          <div className="flex flex-col w-full ">
             <div
-              className="bg-gray-100 min-h-[70px] flex flex-row justify-end items-center py-4 pr-3"
+              className="bg-gray-100 min-h-[85px] flex flex-row justify-end items-center py-4 pr-3 shadow-md"
               style={{
+                marginTop: 1,
+                marginBottom: 1,
                 borderBottomWidth: 2,
                 borderBottomColor: theme.palette.primary.main,
               }}
@@ -439,7 +442,7 @@ export default function DashboardLayout({
                 }}
               />
             </div>
-            <Typography className="text-md font-semibold text-slate-900 text-left mx-1 py-1 border-b border-slate-300">
+            <Typography className="text-md font-semibold text-slate-900 text-center md:text-left  mx-1 py-1  border-slate-300 mb-1 ">
               {`Last Sync: ${syncInfo}`}
             </Typography>
             <Suspense fallback={<Loading />}>

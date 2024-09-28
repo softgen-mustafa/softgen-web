@@ -140,7 +140,7 @@ const CollectionPrompts = () => {
                   {entry.SummaryProfile}
                 </Typography>
               </AccordionDetails>
-              <AccordionActions>
+              <AccordionActions className="flex flex-col md:flex-row justify-between md:items-center">
                 {entry.Actions &&
                   entry.Actions.map((action: any, actionIndex: number) => {
                     if (action.Title === "Ignore") {
@@ -166,17 +166,19 @@ const CollectionPrompts = () => {
                     return (
                       <Button
                         sx={{
+                          display: "flex",
                           background: theme.palette.primary.dark,
-                          margin: 2,
+                          margin: 0.5,
                           flexGrow: 1,
-                          borderRadius: "10px", // Rounded corners
-                          boxShadow: 3, // Medium shadow
+                          borderRadius: "15px", // Rounded corners
+                          boxShadow: 2, // Medium shadow
+                          width: "90%",
                           color: "white", // Text color
                           fontWeight: { xs: 200, md: 400 },
                           fontSize: { xs: "0.825rem", md: "1rem" },
                           "&:hover": {
                             background: theme.palette.primary.dark, // Use dark color on hover
-                            boxShadow: 6, // Optional: elevate shadow on hover
+                            boxShadow: 10, // Optional: elevate shadow on hover
                           },
                           "&:focus": {
                             outline: "none",
