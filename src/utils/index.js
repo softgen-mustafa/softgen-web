@@ -1,11 +1,11 @@
 import hmv from "../../public/assets/videos/hero.mp4";
 import smallmv from "../../public/assets/videos/smallHero1.mp4";
-import highlightFirstmv from "../../public/assets/videos/highlight-first5.mp4";
-import highlightSectmv from "../../public/assets/videos/hightlight-third2.mp4";
+import highlightFirstmv from "../../public/assets/videos/highlight-first2.mp4";
+import highlightSectmv from "../../public/assets/videos/hightlight-third1.mp4";
 import highlightThirdmv from "../../public/assets/videos/hightlight-sec3.mp4";
 import highlightFourthmv from "../../public/assets/videos/hightlight-fourth1.mp4";
-import exploremv from "../../public/assets/videos/explore2.mp4";
-import framemv from "../../public/assets/videos/frame2.mp4";
+import exploremv from "../../public/assets/videos/explore.mp4";
+import framemv from "../../public/assets/videos/frame3.mp4";
 
 // import search from "../../public/assets/images/search1.svg";
 // import watch from "../../public/assets/images/watch.svg";
@@ -23,8 +23,8 @@ import play from "../../public/assets/images/play.png";
 import pause from "../../public/assets/images/pause.png";
 
 import apple from "../../public/assets/images/fevicon.png";
-import explore1 from "../../public/assets/images/explore3.png";
-import explore2 from "../../public/assets/images/explore13.png";
+import explore1 from "../../public/assets/images/explore.png";
+import explore2 from "../../public/assets/images/explore10.png";
 import chip from "../../public/assets/images/fevicon.png";
 import frame from "../../public/assets/images/frame.png";
 
