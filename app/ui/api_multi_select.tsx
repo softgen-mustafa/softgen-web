@@ -73,7 +73,7 @@ const ApiMultiDropDown = ({
         value={selectedValues ?? []}
         label={label}
         onChange={handleChange}
-        renderValue={(selected) => 
+        renderValue={(selected) =>
              <div className="flex flex-wrap gap-1">
             {selected.map((value: any) => {
               const displayText = dropDownValues.find(

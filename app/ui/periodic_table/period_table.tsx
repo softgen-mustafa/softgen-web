@@ -636,7 +636,7 @@ const TablePagination = ({ refresh, onChange }: TablePaginationProps) => {
     setLimit("5");
   }, [refresh]);
 
-  const limits = [5, 10, 15, 20, 25, 50, 75, 100, 500];
+  const limits = [5, 10, 15, 20, 25, 50, 75, 100, 500,800];
 
   const [offSet, setOffSet] = useState<number>(0);
   const [limit, setLimit] = useState("5");
@@ -645,6 +645,25 @@ const TablePagination = ({ refresh, onChange }: TablePaginationProps) => {
     <Box className="flex flex-row items-center" style={{}}>
       <FormControl className="w-full mr-5">
         <Select
+          className="w-full"
+          value={limit}
+          onChange={(event) => {
+            let selectedValue = event.target.value ?? "";
+            setOffSet(0); 
+            onChange(0, parseInt(selectedValue)); 
+            setLimit(selectedValue);
+          }}
+        >
+          {limits.map((entry: number, index: number) => {
+            return (
+              <MenuItem key={index} value={entry}>
+                {entry}
+              </MenuItem>
+            );
+          })}
+        </Select>
+
+        {/* <Select
           className="w-full"
           value={limit}
           onChange={(event) => {
@@ -660,7 +679,8 @@ const TablePagination = ({ refresh, onChange }: TablePaginationProps) => {
               </MenuItem>
             );
           })}
-        </Select>
+        </Select> */}
+
       </FormControl>
 
       <IconButton
@@ -1013,7 +1033,6 @@ const PeriodicTable = (props: PeriodicTableProps) => {
     };
   }, []);
 
-
   return (
     <div className="flex flex-col w-full h-auto">
       {/* <div>width: {dimensions.width}</div> */}
@@ -1041,7 +1060,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
           )}
         </Stack>
         <div className="w-full flex justify-end">
-         {checkedValues &&
+          {checkedValues &&
             checkedValues.length > 0 &&
             props.renderCheckedView !== null &&
             props.renderCheckedView!(checkedValues)}

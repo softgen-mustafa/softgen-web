@@ -6,18 +6,16 @@ import {
   TableColumn,
 } from "@/app/ui/periodic_table/period_table";
 import { ApiProps } from "@/app/ui/periodic_table/period_table";
-import { getSgBizBaseUrl , postAsync} from "@/app/services/rest_services";
-import { convertToDate } from "@/app/services/Local/helper"
+import { getSgBizBaseUrl, postAsync } from "@/app/services/rest_services";
+import { convertToDate } from "@/app/services/Local/helper";
 
 const DateWiseFollowup = () => {
   const [refresh, triggerRefresh] = useState(false);
 
-
   let dateRange = useRef({
-      startDate: "01-01-2024",
-      endDate: "01-01-2025",
+    startDate: "01-01-2024",
+    endDate: "01-01-2025",
   });
-
 
   const columns: any[] = [
     {
@@ -133,74 +131,73 @@ const DateWiseFollowup = () => {
   ];
 
   const onApi = async (props: ApiProps) => {
-      try {
-          let url = `${getSgBizBaseUrl()}/os/followup/get/day-wise`
-          let requestBody = {
-              "StartDateStr": dateRange.current.startDate,
-              "EndDateStr": dateRange.current.endDate,
-              "Filter": {
-                  "Batch": {
-                      "Apply": true, 
-                      "Limit": props.limit,
-                      "Offset": props.offset,
-                  }
-              }
-          }
-          let response = await postAsync(url, requestBody)
-          let values =  response.Data.map((entry: any) => {
-              return {
-                  ...entry,
-                  CreationDate: convertToDate(entry.CreationDate),
-                  UpdationDate: convertToDate(entry.UpdationDate),
-                  NextFollowUpDate: entry.NextFollowUpDate === null ? "" : convertToDate(entry.NextFollowUpDate),
-           
-              }
-          });
-          return values;
-
-      } catch {
-          return []
-      }
-  }
+    try {
+      let url = `${getSgBizBaseUrl()}/os/followup/get/day-wise`;
+      let requestBody = {
+        StartDateStr: dateRange.current.startDate,
+        EndDateStr: dateRange.current.endDate,
+        Filter: {
+          Batch: {
+            Apply: true,
+            Limit: props.limit,
+            Offset: props.offset,
+          },
+        },
+      };
+      let response = await postAsync(url, requestBody);
+      let values = response.Data.map((entry: any) => {
+        return {
+          ...entry,
+          CreationDate: convertToDate(entry.CreationDate),
+          UpdationDate: convertToDate(entry.UpdationDate),
+          NextFollowUpDate:
+            entry.NextFollowUpDate === null
+              ? ""
+              : convertToDate(entry.NextFollowUpDate),
+        };
+      });
+      return values;
+    } catch {
+      return [];
+    }
+  };
 
   const renderFilterView = () => {
-      return (
-          <div>
-          <DateRangePicker
+    return (
+      <div>
+        <DateRangePicker
           defaultStart={dateRange.current.startDate}
           defaultEnd={dateRange.current.endDate}
           onDateChange={(fromDate, toDate) => {
-              dateRange.current = {
-                  startDate: fromDate ?? "",
-                  endDate: toDate ?? "",
-              }
-              triggerRefresh(!refresh)
+            dateRange.current = {
+              startDate: fromDate ?? "",
+              endDate: toDate ?? "",
+            };
+            triggerRefresh(!refresh);
           }}
-          />
-          </div>
-      );
-
-  }
-
+        />
+      </div>
+    );
+  };
 
   return (
-      <PeriodicTable
-        useSearch={false}
-        reload={refresh}
-        RenderAdditionalView={renderFilterView()}
-        columns={columns.map((col: any) => {
-          let column: TableColumn = {
-            header: col.headerName,
-            field: col.field,
-            type: "text",
-            pinned: false,
-            hideable: col.hideable,
-            rows: [],
-          };
-          return column;
-        })}
-        onApi={onApi}
-      />
+    <PeriodicTable
+      useSearch={false}
+      reload={refresh}
+      RenderAdditionalView={renderFilterView()}
+      columns={columns.map((col: any) => {
+        let column: TableColumn = {
+          header: col.headerName,
+          field: col.field,
+          type: "text",
+          pinned: false,
+          hideable: col.hideable,
+          rows: [],
+        };
+        return column;
+      })}
+      onApi={onApi}
+    />
   );
 };
 

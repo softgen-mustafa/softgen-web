@@ -38,6 +38,7 @@ const CollectionReport = () => {
   const [loading, setLoading] = useState(false);
   const selectedStatusTypes = useRef<{ [key: number]: number }>({});
   let userid = parseInt(Cookies.get("user_id") || "0", 10);
+
   const dateRange = useRef({
     startDate: "01-01-2024",
     endDate: "01-01-2025",
@@ -62,17 +63,16 @@ const CollectionReport = () => {
           },
         },
       };
-      console.log("Request Body ", JSON.stringify(requestBody));
+      // console.log("Request Body ", JSON.stringify(requestBody));
       let response = await postAsync(url, requestBody);
-      console.log("Response: ", JSON.stringify(response));
+      // console.log("Response: ", JSON.stringify(response));
 
       if (response && response.Data && response.Data.length > 0) {
         setPrompts(response.Data);
       } else {
         setPrompts([]);
       }
-    } catch (error) {
-      console.error("Error loading prompts: ", error);
+    } catch {
       snackbar.showSnackbar("Could not load collection prompts", "error");
     } finally {
       setLoading(false);
@@ -82,7 +82,7 @@ const CollectionReport = () => {
   const handleAction = async (entry: any, index: number) => {
     try {
       setLoading(true);
-      console.log("Action parameters: ", entry.Task);
+      // console.log("Action parameters: ", entry.Task);
       const url = `${getSgBizBaseUrl()}/tasks/update/collection`;
       const requestBody = {
         Title: entry.Task.Title,
@@ -95,7 +95,7 @@ const CollectionReport = () => {
             ? selectedStatusTypes.current[index]
             : 0,
       };
-      console.log("Request body: ", requestBody);
+      // console.log("Request body: ", requestBody);
 
       const response = await postAsync(url, requestBody);
 
@@ -153,8 +153,6 @@ const CollectionReport = () => {
 
               <Grid container spacing={2} alignItems="center" mt={2}>
                 <Grid item xs>
-                 
-
                   <DropDown
                     label="Change Status"
                     displayFieldKey={"name"}
@@ -167,13 +165,12 @@ const CollectionReport = () => {
                   />
                 </Grid>
                 <Grid item xs>
-                <Button
+                  <Button
                     variant="contained"
                     onClick={() => handleAction(entry, index)}
                   >
                     Assigned To Me
                   </Button>
-                
                 </Grid>
               </Grid>
 
