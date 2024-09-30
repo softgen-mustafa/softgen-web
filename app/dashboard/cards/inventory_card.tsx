@@ -45,14 +45,14 @@ const InventoryCard: React.FC<InventoryCardProps> = ({ companyId }) => {
   const router = useRouter();
 
   useEffect(() => {
-    FeatureControl("InventoryCard").then((permission) => {
+    /*FeatureControl("InventoryCard").then((permission) => {
       setHasPermission(permission);
       if (permission && companyId) {
         inventoryDashboardApi(companyId).then((_) => {});
       } else {
         // Toast("Access Denied for Inventory Overview");
       }
-    });
+    });*/
   }, []);
 
   // useEffect(() => {
@@ -71,7 +71,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({ companyId }) => {
 
       const totalStockCount = response.reduce(
         (acc, cur) => acc + cur.totalItems,
-        0
+        0,
       );
       const unitValue = totalStockCount / 10;
 

@@ -13,9 +13,17 @@ import {
   getSgBizBaseUrl,
   postAsync,
 } from "@/app/services/rest_services";
-import { Box, Button, IconButton, Stack, Modal } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  Stack,
+  Modal,
+  Switch,
+  useTheme,
+} from "@mui/material";
 import { MailOutline, Settings } from "@mui/icons-material";
-import { numericToString } from "@/app/services/Local/helper";
+import { convertToDate, numericToString } from "@/app/services/Local/helper";
 import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
 import { OsSettingsView } from "./outstanding_setings";
 import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
@@ -76,22 +84,34 @@ const locationTypes = [
     name: "Region",
     value: "Region",
   },
- 
 ];
 
 const Page = () => {
+  // const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
+  // const [selectedParty, setSelectedParty] = useState<string>("None");
+  // let selectedReportType = useRef<number>(0); //0 - Party Wise, 1 - Bill Wise
+  // let selectedDueType = useRef<number>(0);
+  // const [selectedisDebitType, setSelectedisDebitType] = useState<boolean>(true);
+  // let selectedlocationTypes = useRef<string>("");
+  const theme = useTheme();
+  const [selectedReportType, setSelectedReportType] = useState<number>(0); // 0 - Party Wise, 1 - Bill Wise
+  const [selectedDueType, setSelectedDueType] = useState<number>(0);
+  const [deductAdvancePayment, setDeductAdvancePayment] =
+    useState<boolean>(true); // Default true
+
   let selectedGroups = useRef<string[]>([]);
-  let selectedParty = useRef<string>("");
-  let selectedReportType = useRef<number>(0); //0 - Party Wise, 1 - Bill Wise
-  let selectedDueType = useRef<number>(0);
+  let selectedParty = useRef<string[]>([]);
+
   let selectedisDebitType = useRef<boolean>(true);
   let selectedUser = useRef<string>("");
-  let selectedlocationTypes = useRef<string>("");
+
+  const [selectedlocationTypes, setSelectedLocationTypes] = useState<string>();
   let selectedStateType = useRef<string>("");
 
   const [showSettings, toggleSetting] = useState(false);
   const [refresh, triggerRefresh] = useState(false);
   const [refreshGroups, triggerGroupRefresh] = useState(false);
+  const [refreshParties, triggerRefrehParties] = useState(false);
   const [groups, setGroups] = useState<any[]>([]);
 
   const snackbar = useSnackbar();
@@ -157,54 +177,65 @@ const Page = () => {
   };
 
   const loadData = async (apiProps: ApiProps) => {
-    let url = `${getSgBizBaseUrl()}/os/get/report?isDebit=${
-      selectedisDebitType.current
-    }`;
-    console.log("load DAta", url);
-    let groupNames = selectedGroups.current.map((entry: any) => {
-      return entry.name;
-    });
+    let url =
+      selectedReportType === 0
+        ? `${getSgBizBaseUrl()}/os/overview`
+        : `${getSgBizBaseUrl()}/os/bill-overview`;
+
+    console.log("load Data", url);
+    let groupNames = selectedGroups.current.map((entry: any) => entry.name);
+    let partyNames = selectedParty.current.map((entry: any) => entry.name);
     let requestBody = {
-      Limit: apiProps.limit,
-      Offset: apiProps.offset,
-      PartyName: selectedParty.current === "None" ? "" : selectedParty.current,
-      SearchText: apiProps.searchText ?? "",
+      Filter: {
+        Batch: {
+          Limit: apiProps.limit,
+          Offset: apiProps.offset,
+          Apply: true,
+        },
+        SearchKey: apiProps.searchKey,
+        SearchText: apiProps.searchText ?? "",
+        SortKey: apiProps.sortKey,
+        SortOrder: apiProps.sortOrder,
+      },
+      DeductAdvancePayment: deductAdvancePayment,
+      IsDebit: selectedisDebitType.current,
+      DueType: "",
       Groups: groupNames ?? [],
-      DueDays: 30,
-      OverDueDays: 90,
-      SearchKey: apiProps.searchKey, //;selectedSearchKey.current ?? "Party"
-      SortKey: apiProps.sortKey,
-      SortOrder: apiProps.sortOrder,
-      ReportOnType: selectedReportType.current ?? 0,
-      DueFilter: selectedDueType.current ?? 0,
+      Parties: partyNames ?? [],
     };
+
+    console.log(JSON.stringify(requestBody));
+
     let res = await postAsync(url, requestBody);
     if (!res || !res.Data) {
       return [];
     }
 
-    let values = res.Data.map((entry: any, index: number) => {
-      return {
-        id: index + 1,
-        ...entry,
-        BillDate: entry.BillDate.substring(0, 10),
-        DueDate: entry.DueDate.substring(0, 10),
-        //Amount: `${entry.currency ?? "₹"} ${numericToString(entry.Amount)}`,
-        Amount: entry.Amount,
-        DueAmount: entry.DueAmount,
-        OverDueAmount: entry.OverDueAmount,
-        PendingPercentage: parseFloat(entry.PendingPercentage.toFixed(2)),
-        PaidPercentage: parseFloat(entry.PaidPercentage.toFixed(2)),
-        //DueAmount: `${entry.currency ?? "₹"} ${numericToString(
-        //entry.DueAmount
-        //)}`,
-        //OverDueAmount: `${entry.currency ?? "₹"} ${numericToString(
-        // entry.OverDueAmount
-        //)}`,
-        currency: entry.currency ?? "₹",
-      };
-    });
-    // console.log(values);
+    let values = res.Data.map((entry: any, index: number) => ({
+      id: index + 1,
+      PartyName: entry.PartyName,
+      LedgerGroup: entry.LedgerGroup,
+      CreditLimit: entry.CreditLimit,
+      CreditDays: entry.CreditDays,
+      TotalBills: entry.TotalBills,
+      BillNumber: entry.BillNumber,
+      BillDate: convertToDate(entry.BillDate),
+      DueDate: convertToDate(entry.DueDate),
+      DelayDays: entry.DelayDays,
+      OpeningAmount: entry.OpeningAmount,
+      ClosingAmount: entry.ClosingAmount,
+      DueAmount: entry.DueAmount,
+      OverDueAmount: entry.OverDueAmount,
+      ReceivedPercentage: entry.ReceivedPercentage,
+      PendingPercentage: entry.PendingPercentage,
+      IsAdvance: entry.IsAdvance,
+    }));
+    // let values = res.Data.map((entry: any, index: number) => ({
+    //   id: index + 1,
+    //   ...entry,
+
+    // }));
+    // console.log(JSON.stringify(values));
     triggerRefresh(false);
     return values;
   };
@@ -235,7 +266,7 @@ const Page = () => {
     console.log("load DAta", url);
     let requestBody = {
       State: selectedStateType.current ?? "",
-      LocationType: selectedlocationTypes.current ?? "",
+      LocationType: selectedlocationTypes ?? "",
     };
     console.log(requestBody);
     let res = await postAsync(url, requestBody);
@@ -261,7 +292,7 @@ const Page = () => {
 
   const columns: any[] = [
     {
-      field: "LedgerName",
+      field: "PartyName",
       headerName: "Party",
       editable: false,
       sortable: true,
@@ -271,16 +302,26 @@ const Page = () => {
       mobileFullView: true,
     },
     {
-      field: "BillName",
+      field: "BillNumber",
       headerName: "Bill No",
       editable: false,
       sortable: true,
       flex: 1,
       minWidth: 200,
-      hideable: selectedReportType.current === 0,
+      hideable: selectedReportType === 0,
     },
     {
-      field: "LedgerGroupName",
+      field: "TotalBills",
+      headerName: "Total Bills",
+      editable: false,
+      sortable: true,
+      type: "number",
+      flex: 1,
+      minWidth: 150,
+      hideable: selectedReportType === 1,
+    },
+    {
+      field: "LedgerGroup",
       headerName: "Parent",
       editable: false,
       sortable: true,
@@ -294,7 +335,7 @@ const Page = () => {
       editable: false,
       sortable: true,
       flex: 1,
-      hideable: selectedReportType.current === 0,
+      hideable: selectedReportType === 0,
     },
     {
       field: "DueDate",
@@ -302,7 +343,7 @@ const Page = () => {
       editable: false,
       sortable: true,
       flex: 1,
-      hideable: selectedReportType.current === 0,
+      hideable: selectedReportType === 0,
     },
     {
       field: "DelayDays",
@@ -312,20 +353,9 @@ const Page = () => {
       type: "number",
       flex: 1,
       minWidth: 150,
-      hideable: selectedReportType.current === 0,
+      hideable: selectedReportType === 0,
     },
-    {
-      field: "Amount",
-      headerName: "No Due",
-      editable: false,
-      sortable: true,
-      type: "number",
-      flex: 1,
-      minWidth: 150,
-      hideable: !(
-        selectedDueType.current === 0 || selectedDueType.current === 1
-      ),
-    },
+
     {
       field: "DueAmount",
       headerName: "Due Amount",
@@ -334,9 +364,7 @@ const Page = () => {
       type: "number",
       flex: 1,
       minWidth: 150,
-      hideable: !(
-        selectedDueType.current === 0 || selectedDueType.current === 2
-      ),
+      hideable: !(selectedDueType === 0 || selectedDueType === 2),
     },
     {
       field: "OverDueAmount",
@@ -346,9 +374,7 @@ const Page = () => {
       type: "number",
       flex: 1,
       minWidth: 150,
-      hideable: !(
-        selectedDueType.current === 0 || selectedDueType.current === 3
-      ),
+      hideable: !(selectedDueType === 0 || selectedDueType === 3),
     },
     {
       field: "OpeningAmount",
@@ -377,16 +403,16 @@ const Page = () => {
       sortable: true,
       flex: 1,
       minWidth: 200,
-      hideable: selectedReportType.current === 1,
+      hideable: selectedReportType === 1,
     },
     {
-      field: "PaidPercentage",
-      headerName: "Paid Percentage",
+      field: "ReceivedPercentage",
+      headerName: "Received Percentage",
       editable: false,
       sortable: true,
       flex: 1,
       minWidth: 200,
-      hideable: selectedReportType.current === 1,
+      hideable: selectedReportType === 1,
     },
   ];
 
@@ -454,33 +480,63 @@ const Page = () => {
     },
   ];
 
-  const osSortKeys: TableSearchKey[] = [
-    {
-      title: "Party Name",
-      value: "Party",
-    },
-    {
-      title: "Ledger Group",
-      value: "Group",
-    },
-    {
-      title: "Bill Number",
-      value: "Bill",
-    },
+  // Common sort keys for both Party Wise and Bill Wise
+  const osCommonSortKeys: TableSearchKey[] = [
+    { title: "Party Name", value: "party-wise" },
+    { title: "Ledger Group", value: "group-wise" },
+    { title: "Credit Limit", value: "credit-limit-wise" },
+    { title: "Credit Period", value: "credit-period-wise" },
+    { title: "Opening Amount", value: "opening-wise" },
+    { title: "Closing Amount", value: "closing-wise" },
+    { title: "Due Amount", value: "due-wise" },
+    { title: "Overdue Amount", value: "over-due-wise" },
   ];
+
+  // Specific sort keys for Party Wise report
+  const osSortKeysPartyWise: TableSearchKey[] = [
+    ...osCommonSortKeys,
+    { title: "Total Bills", value: "bill-count-wise" },
+  ];
+
+  // Specific sort keys for Bill Wise report
+  const osSortKeysBillWise: TableSearchKey[] = [
+    ...osCommonSortKeys,
+    { title: "Bill Number", value: "bill-wise" },
+    { title: "Bill Date", value: "bill-date-wise" },
+    { title: "Due Date", value: "due-date-wise" },
+    { title: "Delay Days", value: "delay-days-wise" },
+  ];
+
+  
 
   const renderFilterView = () => {
     return (
       <div>
         <Stack flexDirection={"column"} gap={2}>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <span>Deduct Advance Payment</span>
+            <Switch
+              checked={deductAdvancePayment}
+              onChange={(event) => {
+                setDeductAdvancePayment(event.target.checked);
+                triggerRefresh(!refresh);
+              }}
+              style={{
+                color: theme.palette.primary.dark,
+              }}
+            />
+          </Stack>
           <DropDown
             label="View Report By"
             displayFieldKey={"name"}
             valueFieldKey={null}
             selectionValues={reportTypes}
             helperText={""}
+            defaultSelectionIndex={reportTypes.findIndex(
+              (item) => item.value === selectedReportType
+            )}
             onSelection={(selection) => {
-              selectedReportType.current = selection.value;
+              setSelectedReportType(selection.value);
               triggerRefresh(!refresh);
             }}
           />
@@ -490,8 +546,11 @@ const Page = () => {
             valueFieldKey={null}
             selectionValues={dueTypes}
             helperText={""}
+            defaultSelectionIndex={dueTypes.findIndex(
+              (item) => item.value === selectedDueType
+            )} // Pass index of the current selection
             onSelection={(selection) => {
-              selectedDueType.current = selection.value;
+              setSelectedDueType(selection.value);
               triggerRefresh(!refresh);
             }}
           />
@@ -509,26 +568,21 @@ const Page = () => {
               triggerRefresh(!refresh);
             }}
           />
-          <ApiDropDown
-            label="Party"
+
+          <ApiMultiDropDown
+            reload={refreshParties}
+            label="Parties"
             displayFieldKey={"name"}
+            defaultSelections={selectedParty.current}
             valueFieldKey={null}
             onApi={loadParties}
             helperText={""}
             onSelection={(selection) => {
-              selectedParty.current = selection.name;
+              selectedParty.current = selection;
               loadParties("");
               triggerRefresh(!refresh);
             }}
           />
-          {/* <ApiAutoComplete
-                displayFieldKey={"name"}
-                label="Select User"
-                onApi={loadParties}
-                onSelection={(selection) => {
-                    selectedUser.current = selection;
-                }}
-                /> */}
         </Stack>
         <div className="mt-4" />
       </div>
@@ -557,8 +611,11 @@ const Page = () => {
             valueFieldKey={null}
             selectionValues={locationTypes}
             helperText={""}
+            defaultSelectionIndex={locationTypes.findIndex(
+              (item) => item.value === selectedlocationTypes
+            )}
             onSelection={(selection) => {
-              selectedlocationTypes.current = selection.value;
+              setSelectedLocationTypes(selection.value);
               triggerRefresh(!refresh);
             }}
           />
@@ -652,7 +709,11 @@ const Page = () => {
               return column;
             })}
             onApi={loadData}
-            sortKeys={osSortKeys}
+            sortKeys={
+              selectedReportType === 0
+                ? osSortKeysPartyWise
+                : osSortKeysBillWise
+            }
             onRowClick={() => {
               // (row)
             }}

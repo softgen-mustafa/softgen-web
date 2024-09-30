@@ -141,12 +141,13 @@ const OutstandingPage = () => {
   }, []);
 
   const checkPermission = async () => {
-    const permission = await FeatureControl("OutstandingDashboardScreen");
+    /*const permission = await FeatureControl("OutstandingDashboardScreen");
     setHasPermission(permission);
     if (permission) {
-      loadAmount();
-      loadUpcoming();
     }
+        */
+    loadAmount();
+    loadUpcoming();
   };
 
   // useEffect(() => {
@@ -237,7 +238,7 @@ const OutstandingPage = () => {
                     localStorage.setItem("party_view_type", "all");
                     localStorage.setItem(
                       "party_bill_type",
-                      selectedType.current.code
+                      selectedType.current.code,
                     );
                     localStorage.setItem("party_filter_type", "");
                   }}
@@ -285,7 +286,7 @@ const OutstandingPage = () => {
     {
       type: "item",
       view: (
-        <CardView title="Aging-Wise O/S" permissionCode="AgingOutstandingCard">
+        <CardView title="Aging-Wise O/S">
           <AgingView billType={selectedType.current.code} />
         </CardView>
       ),
@@ -351,14 +352,14 @@ const OutstandingPage = () => {
               localStorage.setItem("party_view_type", "upcoming");
               localStorage.setItem(
                 "party_bill_type",
-                selectedType.current.code
+                selectedType.current.code,
               );
               localStorage.setItem(
                 "party_filter_type",
-                selectedFilter.current.value
+                selectedFilter.current.value,
               );
             }}
-           pageSizeOptions={[5, 10, 25, 50, 75, 100]}
+            pageSizeOptions={[5, 10, 25, 50, 75, 100]}
             disableRowSelectionOnClick
             onPaginationModelChange={(value) => {
               alert(`page model:  ${JSON.stringify(value)}`);
