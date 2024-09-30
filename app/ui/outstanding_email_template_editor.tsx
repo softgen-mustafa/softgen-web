@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import grapesjs from "grapesjs";
 import "grapesjs/dist/css/grapes.min.css";
 import { outstandingBlocks } from "./html_template_builder/outstanding_blocks";
+import { useTheme } from "@mui/material";
 
 const WebBuilder = ({
   initialTemplate = null,
@@ -11,15 +12,12 @@ const WebBuilder = ({
   initialTemplate?: string | null;
   onExtract: (htmlTemplate: string) => void;
 }) => {
-  // Type the useRef to either be 'null' or a GrapesJS Editor instance
   const editorRef = useRef<any | null>(null);
 
-  useEffect(() => {
-    //editorRef.current.setCurrent
-  }, [initialTemplate]);
+  useEffect(() => {}, [initialTemplate]);
+  const appTheme = useTheme();
 
   useEffect(() => {
-    // Initialize the GrapesJS editor only if it hasn't been initialized
     if (!editorRef.current) {
       const editor = grapesjs.init({
         container: "#gjs",
@@ -38,19 +36,15 @@ const WebBuilder = ({
             {
               name: "Dimension",
               open: false,
-              // Use built-in properties
               buildProps: ["width", "min-height", "padding"],
-              // Use `properties` to define/override single property
               properties: [
                 {
-                  // Type of the input,
-                  // options: integer | radio | select | color | slider | file | composite | stack
                   type: "integer",
-                  name: "The width", // Label for the property
-                  property: "width", // CSS property (if buildProps contains it will be extended)
-                  units: ["px", "%"], // Units, available only for 'integer' types
-                  defaults: "auto", // Default value
-                  min: 0, // Min value, available only for 'integer' types
+                  name: "The width",
+                  property: "width",
+                  units: ["px", "%"],
+                  defaults: "auto",
+                  min: 0,
                 },
               ],
             },
@@ -65,7 +59,6 @@ const WebBuilder = ({
                   property: "font-size",
                   type: "select",
                   defaults: "32px",
-                  // List of options, available only for 'select' and 'radio'  types
                   options: [
                     { id: "1", value: "12px", name: "Tiny" },
                     { id: "2", value: "18px", name: "Medium" },
@@ -92,32 +85,30 @@ const WebBuilder = ({
         buttons: [
           {
             id: "visibility",
-            active: true, // active by default
+            active: true,
             label: "<u>View</u>",
-            command: "sw-visibility", // Built-in command
+            command: "sw-visibility",
           },
           {
             id: "export",
             label: "Code",
             command: "export-template",
-            context: "export-template", // For grouping context of buttons from the same panel
+            context: "export-template",
           },
         ],
       });
-      // Store the editor instance in the ref to persist it across renders
       editorRef.current = editor;
 
-      // Listen to component updates and trigger refresh
       editor.on("component:update", () => {
         editor.refresh();
       });
     }
-  }, []); // Empty dependency array ensures this runs only once after mount
+  }, []);
 
   const extractHtml = () => {
     if (editorRef.current) {
-      const html = editorRef.current.getHtml(); // Get HTML as a string
-      const css = editorRef.current.getCss(); // Optionally get CSS
+      const html = editorRef.current.getHtml();
+      const css = editorRef.current.getCss();
       console.log("HTML Content:", html);
       console.log("CSS Content:", css);
       if (onExtract) {
@@ -128,36 +119,86 @@ const WebBuilder = ({
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="panel__top">
-        <div className="panel__basic-actions"></div>
-        <div className="panel__switcher"></div>
-      </div>
-      <div
-        id="gjs"
-        className="h-full"
-        style={{
-          borderWidth: 3,
-        }}
-      >
-        <h1>Hello World Component!</h1>
-      </div>
+    <div
+      className="flex flex-row h-screen"
+      style={{ backgroundColor: "green" }}
+    >
+      {/* Sidebar for the Blocks */}
       <div
         id="blocks"
-        className="w-full h-auto"
+        className="h-full"
         style={{
-          border: "1px solid #ccc",
-          overflow: "auto",
+          width: "300px",
+          borderRight: "1px solid #ccc",
+          overflowY: "auto",
+          padding: "10px",
+          // backgroundColor: "red",
         }}
       ></div>
-      <div className="styles-container"></div>
 
-      <button
-        onClick={extractHtml}
-        className="bg-blue-500 text-red-700 p-2 rounded mb-4"
+      {/* Editor Container */}
+      <div
+        className="flex flex-col flex-grow"
+        style={{ backgroundColor: "green" }}
       >
-        Extract HTML
-      </button>
+        <div
+          className="panel__top"
+          // style={{ backgroundColor: "pink" }}
+        >
+          <div
+            className="panel__basic-actions"
+            // style={{ backgroundColor: "red" }}
+          ></div>
+        </div>
+        <div
+          id="gjs"
+          className="h-full"
+          style={{
+            borderWidth: 3,
+            position: "relative",
+          }}
+        >
+          <h1>Hello World Component!</h1>
+        </div>
+        <div
+          className="styles-container"
+          // style={{ backgroundColor: "orange", color: "red" }}
+        ></div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "16px",
+          }}
+        >
+          <button
+            onClick={extractHtml}
+            className="bg-blue-500 text-white p-4 rounded-lg hover:bg-blue-700 transition duration-300"
+            style={{
+              backgroundColor: appTheme.palette.primary.main,
+              color: "#fff",
+              fontSize: "16px",
+              cursor: "pointer",
+              display: "inline-block",
+              padding: "12px 24px",
+              borderRadius: "8px",
+              border: "none",
+              transition: "background-color 0.3s ease",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor =
+                appTheme.palette.primary.dark)
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor =
+                appTheme.palette.primary.main)
+            }
+          >
+            Save Template
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
