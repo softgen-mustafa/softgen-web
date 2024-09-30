@@ -123,11 +123,22 @@ const CollectionPrompts = () => {
           <div key={index} className="flex flex-col p-1">
             <Accordion className="h-auto mb-4">
               <AccordionSummary
-                expandIcon={<GridExpandMoreIcon />}
+                expandIcon={
+                  <GridExpandMoreIcon
+                    sx={{
+                      color: theme.palette.primary.main, // Change icon color
+                      fontSize: "2rem", // Adjust the icon size
+                      "&:hover": {
+                        color: theme.palette.primary.dark, // Change color on hover
+                      },
+                      transition: "color 0.3s", // Smooth transition effect for hover
+                    }}
+                  />
+                }
                 aria-controls="panel1-content"
                 id="panel1-header"
               >
-                <Typography className="text-md mb-4">
+                <Typography className=" text-md mb-4">
                   {entry.Message}
                 </Typography>
               </AccordionSummary>
@@ -136,31 +147,37 @@ const CollectionPrompts = () => {
                   style={{
                     whiteSpace: "pre-line",
                   }}
+                  className="font-semibold"
                 >
                   {entry.SummaryProfile}
                 </Typography>
               </AccordionDetails>
-              <AccordionActions className="flex flex-col md:flex-row justify-between md:items-center">
+              <AccordionActions className="flex flex-col justify-between  md:flex-row md:items-center">
                 {entry.Actions &&
                   entry.Actions.map((action: any, actionIndex: number) => {
                     if (action.Title === "Ignore") {
                       return (
-                        <IconButton
-                          key={actionIndex}
-                          size="medium"
-                          sx={{
-                            backgroundColor: "transparent", // Default background
-                            boxShadow: 2, // Subtle shadow for depth
-                            "&:focus": {
-                              outline: "none",
-                              boxShadow: `0 0 0 2px ${theme.palette.primary.main}`, // Focus ring with main error color
-                            },
-                            transition:
-                              "background-color 0.3s ease, box-shadow 0.3s ease", // Smooth transitions
-                          }}
-                        >
-                          <Cancel sx={{ color: theme.palette.primary.dark }} />
-                        </IconButton>
+                        <div key={actionIndex}>
+                          <IconButton
+                            key={actionIndex}
+                            size="medium"
+                            sx={{
+                              backgroundColor: "transparent", // Default background
+                              boxShadow: 2, // Subtle shadow for depth
+                              "&:focus": {
+                                outline: "none",
+                                boxShadow: `0 0 0 2px ${theme.palette.primary.main}`, // Focus ring with main error color
+                              },
+                              transition:
+                                "background-color 0.3s ease, box-shadow 0.3s ease", // Smooth transitions
+                              mb: { xs: 1, md: 2 },
+                            }}
+                          >
+                            <Cancel
+                              sx={{ color: theme.palette.primary.dark }}
+                            />
+                          </IconButton>
+                        </div>
                       );
                     }
                     return (
@@ -187,6 +204,7 @@ const CollectionPrompts = () => {
                           transition:
                             "background-color 0.3s ease, box-shadow 0.3s ease", // Smooth transitions
                           textTransform: "capitalize",
+                          mb: { xs: 0.7, md: 2 },
                         }}
                         variant="contained"
                         key={actionIndex}

@@ -99,7 +99,14 @@ const MovementConfig = () => {
         )}
       </Stack>
       <Button
-        sx={{ height: "50px" }}
+        sx={{
+          height: "50px",
+          borderRadius: "12px", // Rounded corners
+          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)", // Add shadow
+          "&:hover": {
+            boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.3)", // Increase shadow on hover
+          },
+        }}
         variant="contained"
         disabled={
           data.textInput1.length == 0 || data.textInput2.length == 0

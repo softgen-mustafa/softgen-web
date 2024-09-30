@@ -171,10 +171,10 @@ const CollectionReport = () => {
                   <Button
                     sx={{
                       color: "white",
-                      fontWeight: { xs: "500", md: "600" },
+                      fontWeight: { xs: "400", md: "500" },
                       paddingY: "8px",
                       paddingX: "16px",
-                      borderRadius: "13px",
+                      borderRadius: "9px",
                       "&:hover": {
                         backgroundColor: "primary.dark", // Change color on hover
                       },
@@ -182,7 +182,7 @@ const CollectionReport = () => {
                         outline: "none",
                         boxShadow: "0 0 0 2px rgba(0, 0, 0, 0.3)", // Custom focus ring
                       },
-                      fontSize: { xs: "0.775rem", md: "0.9rem" }, // Responsive font sizes
+                      fontSize: { xs: "0.875rem", md: "0.8rem" }, // Responsive font sizes
                     }}
                     variant="contained"
                     onClick={() => handleAction(entry, index)}

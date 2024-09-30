@@ -389,7 +389,7 @@ const Page = () => {
               }}
             />
             <Button
-              className="min-h-[45px] mt-8"
+              className="min-h-[45px] mt-8 text-white font-semibold rounded-xl shadow-lg  transition duration-200 ease-in-out"
               variant="contained"
               onClick={submitFollowup}
             >

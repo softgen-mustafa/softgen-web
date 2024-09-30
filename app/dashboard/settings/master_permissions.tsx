@@ -369,7 +369,14 @@ const MasterPermissions = () => {
           <Button
             variant="contained"
             onClick={handleMapAll}
-            sx={{ height: 50 }}
+            sx={{
+              height: 50,
+              borderRadius: "12px", // Add rounded corners
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Add subtle shadow
+              "&:hover": {
+                boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.3)", // Increase shadow on hover
+              },
+            }}
           >
             <Typography textTransform={"capitalize"} letterSpacing={0.8}>
               Map All
@@ -378,7 +385,14 @@ const MasterPermissions = () => {
           <Button
             variant="contained"
             onClick={handleRemoveAll}
-            sx={{ height: 50 }}
+            sx={{
+              height: 50,
+              borderRadius: "12px", // Add rounded corners
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Add subtle shadow
+              "&:hover": {
+                boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.3)", // Increase shadow on hover
+              },
+            }}
           >
             <Typography textTransform={"capitalize"} letterSpacing={0.8}>
               Remove All

@@ -260,11 +260,11 @@ const MobileView = ({ columns, rows }: MobileViewProps) => {
         view: (
           <Box
             sx={{
-              borderWidth: 1,
-              borderRadius: 2,
-              padding: 2,
+              borderWidth: 1.9,
+              borderRadius: 3.5,
+              padding: 1.3,
               borderColor: theme.palette.primary.light,
-              borderLeftWidth: 8,
+              borderLeftWidth: 8.5,
               borderLeftColor: theme.palette.primary.main,
             }}
             className="flex flex-row flex-wrap justify-between"
@@ -1013,7 +1013,6 @@ const PeriodicTable = (props: PeriodicTableProps) => {
     };
   }, []);
 
-
   return (
     <div className="flex flex-col w-full h-auto">
       {/* <div>width: {dimensions.width}</div> */}
@@ -1041,7 +1040,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
           )}
         </Stack>
         <div className="w-full flex justify-end">
-         {checkedValues &&
+          {checkedValues &&
             checkedValues.length > 0 &&
             props.renderCheckedView !== null &&
             props.renderCheckedView!(checkedValues)}

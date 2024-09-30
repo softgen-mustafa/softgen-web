@@ -126,7 +126,8 @@ const DrawerContent = ({
             color="#232323"
             sx={{ mt: 2 }}
           >
-            Are you sure you want to log out?
+            Are you sure you want to{" "}
+            <strong className="font-black">log out ?</strong>
           </Typography>
           <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
             <Button
@@ -142,6 +143,7 @@ const DrawerContent = ({
                 background: inspiredPalette.darkRed,
                 textTransform: "capitalize",
                 color: "#FFFFFF",
+                borderRadius: "9px", // Adjust the value as needed
               }}
             >
               Logout
@@ -151,8 +153,20 @@ const DrawerContent = ({
       </Modal>
 
       <Box className="ml-6 mt-5 mb-1">
-        <Typography color={theme.palette.primary.contrastText} fontSize={20}>
-          Hello, {userName} 👋🏻
+        <Typography
+          color={theme.palette.primary.contrastText}
+          fontSize={20}
+          className="font-medium"
+        >
+          Hello, {userName}
+          <span
+            style={{
+              textShadow: "2px 2px 5px rgba(0, 0, 0, 0.3)", // Apply shadow to emoji
+              display: "inline-block",
+            }}
+          >
+            👋🏻
+          </span>
         </Typography>
       </Box>
       <DrawerList userType={userType.current} onRoute={onRoute} />
