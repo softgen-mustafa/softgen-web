@@ -58,15 +58,15 @@ const Page = ({ params }: { params: any }) => {
       error.current.push("Password must be between 8 and 15 characters.");
     } else if (!/[a-z]/.test(text)) {
       error.current.push(
-        "Password must contain at least one lowercase letter."
+        "Password must contain at least one lowercase letter.",
       );
     } else if (!/[A-Z]/.test(text)) {
       error.current.push(
-        "Password must contain at least one uppercase letter."
+        "Password must contain at least one uppercase letter.",
       );
     } else if (!/[\d#$%&*@!_]/.test(text)) {
       error.current.push(
-        "Password must contain at least one of the allowed symbols (# $ % & * @ ! _) or a number."
+        "Password must contain at least one of the allowed symbols (# $ % & * @ ! _) or a number.",
       );
     }
 
@@ -250,17 +250,6 @@ const Page = ({ params }: { params: any }) => {
 
   return (
     <div className="flex flex-col justify-center items-center h-full">
-      {/* <Grid
-        container
-        sx={{
-          flexGrow: 1,
-          // height: "100vh",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {RenderGrid(gridConfig)}
-      </Grid> */}
       <Box
         className="shadow-lg"
         display={"flex"}

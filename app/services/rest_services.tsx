@@ -13,11 +13,14 @@ const postAsync = async (url: string, requestBody: any) => {
   const encryptedBody = _wrap(requestBody);
   let appHeaders = {
     "Content-Type": "application/json; charset=utf-8",
-    token: Cookies.get("authToken") ?? "",
-    companyid: Cookies.get("companyId") ?? 1,
+    token: Cookies.get("authToken") ?? "empty",
+    companyid: Cookies.get("companyId") ?? "default",
   };
 
-  //  console.log("----------- This is my Headers Value look. ----------------",appHeaders)
+  console.log(
+    "----------- This is my Headers Value look. ----------------",
+    appHeaders,
+  );
   //  console.log("----------- This is my url Value look. ----------------",url)
 
   return axios
@@ -82,6 +85,7 @@ const getAsync = async (url: string) => {
     });
 };
 
+/*
 const _wrap = (serializedData: string) => {
   const serializedString = JSON.stringify(serializedData);
   const parsedKey = CryptoJS.enc.Base64.parse(_key);
@@ -92,6 +96,23 @@ const _wrap = (serializedData: string) => {
   });
 
   const encodedData = CryptoJS.enc.Base64.stringify(encryptedData.ciphertext);
+
+  return JSON.stringify({
+    data: encodedData,
+  });
+};
+*/
+const _wrap = (serializedData: any) => {
+  const serializedString = JSON.stringify(serializedData);
+  const parsedKey = CryptoJS.enc.Base64.parse(_key);
+  const parsedIv = CryptoJS.enc.Base64.parse(_iv);
+
+  const encryptedData = CryptoJS.AES.encrypt(serializedString, parsedKey, {
+    iv: parsedIv,
+  });
+
+  // Use the built-in toString method
+  const encodedData = encryptedData.toString();
 
   return JSON.stringify({
     data: encodedData,
@@ -117,7 +138,7 @@ const _unwrap = (encryptedData: any) => {
     parsedKey,
     {
       iv: parsedIv,
-    }
+    },
   );
   if (!decryptedData) {
     return null;
@@ -139,6 +160,10 @@ const getSgBizBaseUrl = () => {
   return `${getBaseUrl()}/sg-bizz/api`;
 };
 
+const getPortalUrl = () => {
+  return "http://localhost:45080/api/portal";
+};
+
 const getBaseUrl = () => {
   //Local
   // return "http://192.168.1.2:5000"
@@ -156,4 +181,5 @@ export {
   getUmsBaseUrl,
   getSgBizBaseUrl,
   putAsync,
+  getPortalUrl,
 };

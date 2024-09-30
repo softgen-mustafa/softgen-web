@@ -1,5 +1,5 @@
 const KeyStore = {
-  "secret_key": "sx4RQqBbguuVpEgrT6MInSmeFLloqukBJWeuxptxc8g=",
-  "iv": "575/UnKpV0EPpBaECbAcdQ=="
-}
+  secret_key: "8I2NqmjK5LOMitTBYyaj6+AETXaKAaW32jEbhlSiGv8=",
+  iv: "KqFbI3VCGPwq+371ffNn2Q==",
+};
 export default KeyStore;
