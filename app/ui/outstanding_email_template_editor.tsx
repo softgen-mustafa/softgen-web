@@ -154,7 +154,7 @@ const WebBuilder = ({
 
       <button
         onClick={extractHtml}
-        className="bg-blue-500 text-white p-2 rounded mb-4"
+        className="bg-blue-500 text-red-700 p-2 rounded mb-4"
       >
         Extract HTML
       </button>
