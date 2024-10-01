@@ -182,7 +182,7 @@ const CollectionReport = () => {
                         outline: "none",
                         boxShadow: "0 0 0 2px rgba(0, 0, 0, 0.3)", // Custom focus ring
                       },
-                      fontSize: { xs: "0.875rem", md: "0.8rem" }, // Responsive font sizes
+                      fontSize: { xs: "0.695rem", md: "0.8rem" }, // Responsive font sizes
                     }}
                     variant="contained"
                     onClick={() => handleAction(entry, index)}
