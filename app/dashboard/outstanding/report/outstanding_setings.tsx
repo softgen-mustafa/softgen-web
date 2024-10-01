@@ -9,12 +9,10 @@ import {
   getAsync,
   getSgBizBaseUrl,
   postAsync,
-  putAsync,
 } from "@/app/services/rest_services";
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
 import { useRouter } from "next/navigation";
 import React from "react";
-import theme from "@/app/ui/mui_theme";
 import { ApiDropDown } from "@/app/ui/api_drop_down";
 
 interface EmailSettings {
@@ -239,29 +237,6 @@ const OsSettingsView = ({ onClose }: { onClose: () => void }) => {
               variant={"contained"}
               onClick={() => {
                 toggleEmailConfig(!showEmailConfig);
-              }}
-              sx={{
-                color: "white",
-                fontSize: { xs: "0.730rem", md: "0.9rem" },
-                fontWeight: "normal",
-                paddingX: 2, // Equivalent to px-4
-                paddingY: 1, // Equivalent to py-2
-                borderRadius: 3, // Equivalent to rounded-md
-                boxShadow: 4, // Equivalent to shadow
-                "&:hover": {
-                  boxShadow: 10, // Equivalent to hover:shadow-lg
-                },
-                "&:focus": {
-                  outline: "none",
-                  ring: 2,
-                  // Equivalent to focus:ring-2 focus:ring-gray-400
-                },
-                transition: "box-shadow 0.2s", // Smooth transition for the box shadow
-                textTransform: "capitalize",
-                width: "100%", // Full width
-                display: "flex", // Use flexbox for alignment
-                justifyContent: "center", // Center align items
-                alignItems: "center", // Center align items vertically
               }}
             >
               {showEmailConfig ? "Hide" : "Show"} Email Config
