@@ -15,6 +15,7 @@ import { useSnackbar } from "@/app/ui/snack_bar_provider";
 import { useRouter } from "next/navigation";
 import React from "react";
 import theme from "@/app/ui/mui_theme";
+import { ApiDropDown } from "@/app/ui/api_drop_down";
 
 interface EmailSettings {
   SmtpServer: string;
@@ -38,6 +39,7 @@ interface OsSettings {
   SendDueOnly: boolean;
   AutoReminderInterval: number;
   ReminderIntervalDays: number;
+  TemplateName: string;
   EmailSetting: EmailSettings;
 }
 
@@ -52,6 +54,7 @@ const OsSettingsView = ({ onClose }: { onClose: () => void }) => {
     SendDueOnly: false,
     AutoReminderInterval: 0,
     ReminderIntervalDays: 10,
+    TemplateName: "",
     EmailSetting: {
       SmtpServer: "",
       SmtpPort: "",
@@ -67,6 +70,7 @@ const OsSettingsView = ({ onClose }: { onClose: () => void }) => {
 
   const [settings, setSettings] = useState<OsSettings>(initialSettings);
   const [showEmailConfig, toggleEmailConfig] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("");
   const isSettingsLoaded = useRef(false);
   const router = useRouter();
 
@@ -76,13 +80,17 @@ const OsSettingsView = ({ onClose }: { onClose: () => void }) => {
     const loadData = async () => {
       try {
         let url = `${getSgBizBaseUrl()}/os-setting/get`;
+
+        console.log("--loadData--", url);
         let response = await getAsync(url);
+
         if (response.Data && response.Data.length > 0) {
           setSettings(response.Data[0]);
           isSettingsLoaded.current = true;
         } else {
           isSettingsLoaded.current = false;
         }
+        console.log(JSON.stringify(response));
       } catch (error) {
         console.error("Error loading data:", error);
         isSettingsLoaded.current = false;
@@ -96,15 +104,26 @@ const OsSettingsView = ({ onClose }: { onClose: () => void }) => {
       let url = `${getSgBizBaseUrl()}/os-setting/create`;
       console.log("Create URL hit:", url);
 
-      let requestBody = { ...settings };
+      let requestBody = {
+        ...settings,
+        TemplateName: selectedTemplate || settings.TemplateName,
+      };
+
+      if (!selectedTemplate) {
+        console.error("TemplateName is not selected!");
+        snackbar.showSnackbar("Please select a template.", "error");
+        return;
+      }
+
       console.log("Create request body:", requestBody);
 
       let response = await postAsync(url, requestBody);
       console.log("Create response:", response);
 
-      //   onClose();
+      snackbar.showSnackbar("Settings Created", "success");
     } catch (error) {
       console.error("Error creating data:", error);
+      snackbar.showSnackbar("Error creating settings", "error");
     }
   };
 
@@ -112,12 +131,38 @@ const OsSettingsView = ({ onClose }: { onClose: () => void }) => {
     try {
       let url = `${getSgBizBaseUrl()}/os-setting/update`;
 
-      let requestBody = { ...settings };
+      let updatedSettings = {
+        ...settings,
+        TemplateName: selectedTemplate || settings.TemplateName,
+      };
 
-      let response = await postAsync(url, requestBody);
+      console.log("----requestBody-----", JSON.stringify(updatedSettings)); // Add log to verify request body
+
+      let response = await postAsync(url, updatedSettings);
       snackbar.showSnackbar("Settings Updated", "success");
     } catch (error) {
       snackbar.showSnackbar("Could not Update Settings", "error");
+    }
+  };
+
+  const fetchTemplateData = async () => {
+    try {
+      const url = `${getSgBizBaseUrl()}/template/os/get/all`;
+      const response = await getAsync(url);
+
+      if (response?.Data) {
+        console.log("Template data fetched:", response.Data);
+        const values = response.Data.map((entry: any) => ({
+          name: entry.TemplateName,
+          ...entry,
+        }));
+
+        return values;
+      }
+      return [];
+    } catch (error) {
+      console.error("Error fetching template data: ", error);
+      return [];
     }
   };
 
@@ -169,6 +214,28 @@ const OsSettingsView = ({ onClose }: { onClose: () => void }) => {
 
             <div className="mt-5 sm:mt-4" />
             <Button
+              sx={{
+                color: "white",
+                fontSize: { xs: "0.730rem", md: "0.9rem" },
+                fontWeight: "normal",
+                paddingX: 2,
+                paddingY: 1,
+                borderRadius: 3,
+                boxShadow: 4,
+                "&:hover": {
+                  boxShadow: 10,
+                },
+                "&:focus": {
+                  outline: "none",
+                  ring: 2,
+                },
+                transition: "box-shadow 0.2s",
+                textTransform: "capitalize",
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
               variant={"contained"}
               onClick={() => {
                 toggleEmailConfig(!showEmailConfig);
@@ -202,6 +269,24 @@ const OsSettingsView = ({ onClose }: { onClose: () => void }) => {
 
             {showEmailConfig && (
               <Box>
+                <div className="mt-5 sm:mt-4" />
+                <ApiDropDown
+                  label="Select Template"
+                  displayFieldKey="name"
+                  valueFieldKey="name"
+                  onApi={fetchTemplateData}
+                  helperText=""
+                  defaultSelectionIndex={Number(settings.TemplateName)}
+                  onSelection={(selectedItem) => {
+                    console.log("Template selected:", selectedItem);
+                    setSelectedTemplate(selectedItem);
+                    setSettings((prevSettings) => ({
+                      ...prevSettings,
+                      TemplateName: selectedItem,
+                    }));
+                  }}
+                />
+
                 <div className="mt-5 sm:mt-4" />
                 <TextInput
                   mode="text"
@@ -299,11 +384,10 @@ const OsSettingsView = ({ onClose }: { onClose: () => void }) => {
               </Box>
             )}
 
-            <div className="mt-2 " />
-            <div className="mt-1 flex flex-row sm:flex-row justify-between gap-1">
+            <div className="mt-5" />
+            <div className="mt-1 flex flex-row sm:flex-row justify-between gap-4">
               <Button
                 variant={"contained"}
-                onClick={handleUpdate}
                 sx={{
                   color: "white",
                   fontSize: { xs: "0.687rem", md: "0.9rem" }, // Reduced font size for mobile
@@ -327,6 +411,7 @@ const OsSettingsView = ({ onClose }: { onClose: () => void }) => {
                   justifyContent: "center", // Center align items
                   alignItems: "center",
                 }}
+                onClick={handleUpdate}
               >
                 Update
               </Button>
