@@ -10,7 +10,8 @@ let _key = KeyStore.secret_key;
 let _iv = KeyStore.iv;
 
 const postAsync = async (url: string, requestBody: any) => {
-  const encryptedBody = _wrap(requestBody);
+  //const encryptedBody = _wrap(requestBody);
+  const encryptedBody = requestBody;
   let appHeaders = {
     "Content-Type": "application/json; charset=utf-8",
     token: Cookies.get("authToken") ?? "empty",
@@ -31,15 +32,16 @@ const postAsync = async (url: string, requestBody: any) => {
       // console.log("received from server ", response.status);
 
       return response.data;
-    })
-    .then((data) => {
+    });
+  /*.then((data) => {
       // console.log("data is ", data);
       return _unwrap(data);
-    });
+    });*/
 };
 
 const putAsync = async (url: string, requestBody: any) => {
-  const encryptedBody = _wrap(requestBody);
+  //const encryptedBody = _wrap(requestBody);
+  const encryptedBody = requestBody;
   let appHeaders = {
     "Content-Type": "application/json; charset=utf-8",
     token: Cookies.get("authToken") ?? "",
@@ -57,11 +59,11 @@ const putAsync = async (url: string, requestBody: any) => {
       // console.log("received from server ", response.status);
 
       return response.data;
-    })
-    .then((data) => {
+    });
+  /*.then((data) => {
       // console.log("data is ", data);
       return _unwrap(data);
-    });
+    });*/
 };
 
 const getAsync = async (url: string) => {
@@ -79,10 +81,10 @@ const getAsync = async (url: string) => {
     })
     .catch((error) => {
       return null;
-    })
-    .then((data) => {
-      return _unwrap(data);
     });
+  /*.then((data) => {
+      return _unwrap(data);
+    });*/
 };
 
 /*
@@ -161,15 +163,15 @@ const getSgBizBaseUrl = () => {
 };
 
 const getPortalUrl = () => {
-  return "http://localhost:45080/api/portal";
+  return "https://softgensolutions.com/api/portal";
 };
 
 const getBaseUrl = () => {
   //Local
   // return "http://192.168.1.2:5000"
   //GoDadddddddy
-  // return "https://118.139.167.125:45400";
-  return "http://118.139.167.125:45400";
+  return "http://localhost:45080";
+  //return "http://118.139.167.125:45400";
 
   // return "https://softgensolutions.in/service";
 };
