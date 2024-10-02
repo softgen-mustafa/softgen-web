@@ -264,7 +264,7 @@ const Page = ({ params }: { params: any }) => {
           maxWidth: "100%", // Ensures it doesn't exceed the screen width
           maxHeight: 650,
         }}
-        overflow="hidden"
+        // overflow="hidden"
       >
         <Box
           sx={{

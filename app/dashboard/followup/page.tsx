@@ -51,9 +51,9 @@ const Page = () => {
   ];
 
   return (
-    <div className="w-full ">
+    <div className="w-full">
       <Box
-        width={50}
+        width={55}
         height={50}
         borderRadius={2}
         border={2}

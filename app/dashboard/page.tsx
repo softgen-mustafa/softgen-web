@@ -313,17 +313,17 @@ const DashboardPage = () => {
           permissionCode="UpcomingCollections"
           title="Upcoming Collections"
         >
-          <Typography className="text-xl mb-2">Upcoming Collections</Typography>
+          {/* <Typography className="text-xl mb-2">Upcoming Collections</Typography> */}
           <Stack
             flexDirection="row"
             gap={1}
-            pb={1}
+            pb={2}
             sx={{ overflowX: "scroll" }}
           >
             {filters.map((card, index) => (
               <Box
                 key={index}
-                className="rounded-3xl"
+                className="ml-2 mt-2 rounded-3xl shadow-lg transition-transform duration-200 ease-in-out transform hover:scale-105"
                 sx={{
                   minWidth: 100,
                   justifyContent: "center",
@@ -336,6 +336,9 @@ const DashboardPage = () => {
                     ? theme.palette.primary.contrastText
                     : inspiredPalette.dark,
                   cursor: "pointer",
+                  border: card.isSelected
+                    ? `1px solid ${theme.palette.primary.contrastText}`
+                    : "none", // Optional: Add border for selected state
                 }}
                 onClick={(event) => {
                   let values: any[] = filters;

@@ -109,7 +109,8 @@ const DrawerContent = ({
             color="#232323"
             sx={{ mt: 2 }}
           >
-            Are you sure you want to log out?
+            Are you sure you want to{" "}
+            <strong className="font-black">log out ?</strong>
           </Typography>
           <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
             <Button
@@ -125,6 +126,7 @@ const DrawerContent = ({
                 background: inspiredPalette.darkRed,
                 textTransform: "capitalize",
                 color: "#FFFFFF",
+                borderRadius: "9px", // Adjust the value as needed
               }}
             >
               Logout
@@ -134,8 +136,20 @@ const DrawerContent = ({
       </Modal>
 
       <Box className="ml-6 mt-5 mb-1">
-        <Typography color={theme.palette.primary.contrastText} fontSize={20}>
-          Hello, {userName} 👋🏻
+        <Typography
+          color={theme.palette.primary.contrastText}
+          fontSize={20}
+          className="font-medium"
+        >
+          Hello, {userName}
+          <span
+            style={{
+              textShadow: "2px 2px 5px rgba(0, 0, 0, 0.3)", // Apply shadow to emoji
+              display: "inline-block",
+            }}
+          >
+            👋🏻
+          </span>
         </Typography>
       </Box>
       <DrawerList userType={userType.current} onRoute={onRoute} />
@@ -362,14 +376,17 @@ export default function DashboardLayout({
       <CssBaseline />
       <SnackbarProvider>
         <div
-          className="w-full h-[100vh] flex flex-col md:flex-row "
+          className="w-full h-[100vh] flex flex-row md:flex-row "
           style={{ background: "rgb(247, 249, 252)" }}
         >
           <SideNav onThemeChange={changeTheme} />
-          <div className="flex flex-col w-full">
+
+          <div className="flex flex-col w-full ">
             <div
-              className="bg-gray-100 min-h-[70px] flex flex-row justify-end items-center py-4 pr-3"
+              className="bg-gray-100 min-h-[85px] flex flex-row justify-end items-center py-4 pr-3 shadow-md"
               style={{
+                marginTop: 1,
+                marginBottom: 1,
                 borderBottomWidth: 2,
                 borderBottomColor: theme.palette.primary.main,
               }}
@@ -397,7 +414,7 @@ export default function DashboardLayout({
                 }}
               />
             </div>
-            <Typography className="text-base justify-center text-slate-950 mx-3 pt-1">
+            <Typography className="text-md font-semibold text-slate-900 text-center md:text-left  mx-1 py-1  border-slate-300 mb-1 ">
               {`Last Sync: ${syncInfo}`}
             </Typography>
             <Suspense fallback={<Loading />}>

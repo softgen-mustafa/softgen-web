@@ -123,11 +123,22 @@ const CollectionPrompts = () => {
           <div key={index} className="flex flex-col p-1">
             <Accordion className="h-auto mb-4">
               <AccordionSummary
-                expandIcon={<GridExpandMoreIcon />}
+                expandIcon={
+                  <GridExpandMoreIcon
+                    sx={{
+                      color: theme.palette.primary.main, // Change icon color
+                      fontSize: "2rem", // Adjust the icon size
+                      "&:hover": {
+                        color: theme.palette.primary.dark, // Change color on hover
+                      },
+                      transition: "color 0.3s", // Smooth transition effect for hover
+                    }}
+                  />
+                }
                 aria-controls="panel1-content"
                 id="panel1-header"
               >
-                <Typography className="text-md mb-4">
+                <Typography className=" text-md mb-4">
                   {entry.Message}
                 </Typography>
               </AccordionSummary>
@@ -136,26 +147,65 @@ const CollectionPrompts = () => {
                   style={{
                     whiteSpace: "pre-line",
                   }}
+                  className="font-semibold"
                 >
                   {entry.SummaryProfile}
                 </Typography>
               </AccordionDetails>
-              <AccordionActions>
+              <AccordionActions className="flex flex-col justify-between  md:flex-row md:items-center">
                 {entry.Actions &&
                   entry.Actions.map((action: any, actionIndex: number) => {
                     if (action.Title === "Ignore") {
                       return (
-                        <IconButton key={actionIndex} size="medium">
-                          <Cancel />
-                        </IconButton>
+                        <div key={actionIndex}>
+                          <IconButton
+                            key={actionIndex}
+                            size="medium"
+                            sx={{
+                              backgroundColor: "transparent", // Default background
+                              boxShadow: 2, // Subtle shadow for depth
+                              "&:focus": {
+                                outline: "none",
+                                boxShadow: `0 0 0 2px ${theme.palette.primary.main}`, // Focus ring with main error color
+                              },
+                              transition:
+                                "background-color 0.3s ease, box-shadow 0.3s ease", // Smooth transitions
+                              mb: { xs: 1, md: 2 },
+                            }}
+                          >
+                            <Cancel
+                              sx={{ color: theme.palette.primary.dark }}
+                            />
+                          </IconButton>
+                        </div>
                       );
                     }
                     return (
                       <Button
-                        style={{
+                        sx={{
+                          display: "flex",
                           background: theme.palette.primary.dark,
+                          margin: 0.5,
+                          flexGrow: 1,
+                          borderRadius: "15px", // Rounded corners
+                          boxShadow: 2, // Medium shadow
+                          width: "90%",
+                          color: "white", // Text color
+                          fontWeight: { xs: 200, md: 400 },
+                          fontSize: { xs: "0.825rem", md: "1rem" },
+                          "&:hover": {
+                            background: theme.palette.primary.dark, // Use dark color on hover
+                            boxShadow: 10, // Optional: elevate shadow on hover
+                          },
+                          "&:focus": {
+                            outline: "none",
+                            boxShadow: `0 0 0 2px ${theme.palette.primary.light}`, // Focus ring
+                          },
+                          transition:
+                            "background-color 0.3s ease, box-shadow 0.3s ease", // Smooth transitions
+                          textTransform: "capitalize",
+                          mb: { xs: 0.7, md: 2 },
                         }}
-                        className="m-2 flex flex-grow"
                         variant="contained"
                         key={actionIndex}
                         onClick={() =>
