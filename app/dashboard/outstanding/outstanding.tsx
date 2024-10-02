@@ -185,7 +185,7 @@ const OutstandingPage = () => {
       });
       setRows(entries);
     } catch {
-      alert("Could not load upcoming outstanding");
+      // alert("Could not load upcoming outstanding");
     }
   };
 
@@ -238,7 +238,7 @@ const OutstandingPage = () => {
                     localStorage.setItem("party_view_type", "all");
                     localStorage.setItem(
                       "party_bill_type",
-                      selectedType.current.code,
+                      selectedType.current.code
                     );
                     localStorage.setItem("party_filter_type", "");
                   }}
@@ -352,11 +352,11 @@ const OutstandingPage = () => {
               localStorage.setItem("party_view_type", "upcoming");
               localStorage.setItem(
                 "party_bill_type",
-                selectedType.current.code,
+                selectedType.current.code
               );
               localStorage.setItem(
                 "party_filter_type",
-                selectedFilter.current.value,
+                selectedFilter.current.value
               );
             }}
             pageSizeOptions={[5, 10, 25, 50, 75, 100]}

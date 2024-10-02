@@ -334,6 +334,33 @@ export default function DashboardLayout({
     } catch (error) {}
   };
 
+  const getUserFeatures = async () => {
+    // let url = `${getPortalUrl()}/features/user?userId=${selectedUser.current}`;
+    let url = `${getPortalUrl()}/features/user?userId=2`;
+    console.log("getUserFeatures", url);
+    try {
+      let response = await getAsync(url);
+      console.log(`Resposne: ${JSON.stringify(response)}`);
+      if (response && response.length > 0) {
+        let entries = response.map((_data: any) => {
+          return {
+            id: _data.ID ?? _data.id,
+            name: _data?.Name,
+            code: _data?.Permission,
+          };
+        });
+        console.log(`Resposne: ${JSON.stringify(entries)}`);
+        let permissionStr = JSON.stringify(entries);
+        Cookies.set("permission", permissionStr);
+        return entries;
+      }
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+      return [];
+    } finally {
+    }
+  };
+
   const loadData = async () => {
     try {
       const userInfo = getUserInfo();
@@ -364,6 +391,7 @@ export default function DashboardLayout({
           setCompanyId(exisitngIndex);
         }
         Cookies.set("companyId", guid);
+        getUserFeatures();
       }
     } catch (error) {
       console.error("Failed to load companies", error);

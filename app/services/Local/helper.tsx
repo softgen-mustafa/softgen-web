@@ -1,6 +1,7 @@
 "use client";
 
 import Cookies from "js-cookie";
+
 const getUserInfo = () => {
   // Fetch the userName and userid  from cookies
   const cookieUserInfo = Cookies.get("user_info") ?? null;
@@ -10,6 +11,32 @@ const getUserInfo = () => {
 
   return JSON.parse(cookieUserInfo);
 };
+
+const getPermissions = () => {
+  // Fetch the userName and userid  from cookies
+  const cookieUserInfo = Cookies.get("permission") ?? null;
+  if (cookieUserInfo === null || cookieUserInfo.length < 1) {
+    return null;
+  }
+
+  return JSON.parse(cookieUserInfo);
+};
+
+const hasPermission = (code: string) => {
+  const permissions = getPermissions();
+  if (permissions === null) {
+    return false;
+  }
+  console.log("chekc permissions", permissions);
+  let permission =
+    permissions.find((entry: any) => entry.code === code) ?? null;
+  console.log("chekc permission", permission);
+  if (permission === null) {
+    return false;
+  }
+  return true;
+};
+
 const numericToString = (value: number | null | undefined | string): string => {
   if (value === null || value === undefined || value === "") {
     return "0";
@@ -90,4 +117,6 @@ export {
   getPreviousMonths,
   convertToDate,
   getUserInfo,
+  getPermissions,
+  hasPermission,
 };

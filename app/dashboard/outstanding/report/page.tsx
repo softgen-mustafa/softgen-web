@@ -285,6 +285,7 @@ const Page = () => {
         ClosingAmount: entry.ClosingAmount,
         OpeningAmountstr: `\u20B9 ${numericToString(entry.OpeningAmount)}`,
         ClosingAmountstr: `\u20B9 ${numericToString(entry.ClosingAmount)}`,
+
         // ...entry,
       };
     });
@@ -303,6 +304,22 @@ const Page = () => {
       minWidth: 200,
       hideable: false,
       mobileFullView: true,
+    },
+    {
+      field: "CreditLimit",
+      headerName: "Credit Limit",
+      editable: false,
+      sortable: true,
+      flex: 1,
+      minWidth: 200,
+    },
+    {
+      field: "CreditDays",
+      headerName: "Credit Days",
+      editable: false,
+      sortable: true,
+      flex: 1,
+      minWidth: 200,
     },
     {
       field: "BillNumber",
@@ -633,7 +650,7 @@ const Page = () => {
       content: (
         <GridCardView
           title="Outstanding Report"
-          // permissionCode="OutstandingReport"
+          permissionCode="OutstandingReport"
         >
           <Stack flexDirection={"column"} gap={2}>
             <DropDown
