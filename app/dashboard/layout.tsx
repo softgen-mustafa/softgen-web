@@ -335,8 +335,9 @@ export default function DashboardLayout({
   };
 
   const getUserFeatures = async () => {
+    let userInfo = getUserInfo();
     // let url = `${getPortalUrl()}/features/user?userId=${selectedUser.current}`;
-    let url = `${getPortalUrl()}/features/user?userId=2`;
+    let url = `${getPortalUrl()}/features/user?userId=${userInfo.id}`;
     console.log("getUserFeatures", url);
     try {
       let response = await getAsync(url);
