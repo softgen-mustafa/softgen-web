@@ -14,6 +14,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { getPortalUrl, postAsync } from "@/app/services/rest_services";
+import Cookies from "js-cookie";
 
 interface ILoginInfo {
   credential: string;
@@ -82,14 +83,21 @@ const LoginPage = () => {
       let url = `${getPortalUrl()}/login`;
       let response = await postAsync(url, loginDetails);
 
-      toggleMessageVisibility({
-        visible: true,
-        message: "Login successful!",
-        isError: false,
-      });
+      // Check if login was successful and response contains user_info and token
+      if (response && response.user_info && response.token) {
+        Cookies.set("user_info", JSON.stringify(response.user_info));
+        Cookies.set("token", response.user_info.token); // Store the Token
+        toggleMessageVisibility({
+          visible: true,
+          message: "Login successful!",
+          isError: false,
+        });
 
-      // Redirect to dashboard or homepage after login
-      //router.push("/dashboard");
+        // Optionally redirect to another page, such as a dashboard
+        router.push("/dashboard");
+      } else {
+        throw new Error("Invalid response from the server");
+      }
     } catch (error) {
       toggleMessageVisibility({
         visible: true,

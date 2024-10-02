@@ -1,7 +1,11 @@
 "use client";
 import { Logout } from "@mui/icons-material";
 import { DropDown } from "../ui/drop_down";
-import { convertToDate, numericToString } from "../services/Local/helper";
+import {
+  convertToDate,
+  getUserInfo,
+  numericToString,
+} from "../services/Local/helper";
 import {
   Box,
   ButtonBase,
@@ -23,6 +27,7 @@ import Cookies from "js-cookie";
 import {
   getAsync,
   getBmrmBaseUrl,
+  getPortalUrl,
   getSgBizBaseUrl,
   getUmsBaseUrl,
 } from "../services/rest_services";
@@ -52,46 +57,24 @@ const DrawerContent = ({
   let userType = useRef("");
 
   useEffect(() => {
-    let token = Cookies.get("authToken") ?? null;
+    let token = Cookies.get("token") ?? null;
     if (token === null || token!.length < 1) {
-      router.push("/auth");
+      router.push("/auth/login");
       return;
     }
-    fetchUserName();
-    fetchUserType();
+
+    // Fetch the userName and userid  from cookies
+    const userInfo = getUserInfo();
+    if (userInfo === null) {
+      router.push("/auth/login");
+      return;
+    }
+    setUserName(userInfo.name);
   }, []);
 
   const handleLogout = () => {
-    Cookies.set("authToken", "", { expires: 400 });
-    router.push("/auth");
-  };
-
-  const fetchUserName = async () => {
-    try {
-      let url = `${getBmrmBaseUrl()}/user-info/get/self-id`;
-      let response = await getAsync(url);
-      console.log(response);
-      if (response) {
-        try {
-          let baseUrl = `${getUmsBaseUrl()}/users/get?userId=${response}`;
-          let res = await getAsync(baseUrl);
-          setUserName(res.name);
-        } catch (error) {
-          console.log("Something went wrong...");
-        }
-      }
-    } catch {}
-  };
-  const fetchUserType = async () => {
-    try {
-      let url = `${getBmrmBaseUrl()}/user-info/get/user-details`;
-      let response = await getAsync(url);
-      let userTypeResponse = response["user_type"];
-      Cookies.set("userType", userTypeResponse ?? "");
-      userType.current = userTypeResponse ?? "";
-    } catch (e) {
-    } finally {
-    }
+    Cookies.set("token", "", { expires: 400 });
+    router.push("/auth/login");
   };
 
   const theme = useTheme();
@@ -157,18 +140,6 @@ const DrawerContent = ({
       </Box>
       <DrawerList userType={userType.current} onRoute={onRoute} />
 
-      {/* <div className="mx-3 p-2 bg-white rounded-md">
-            <DropDown
-            label={"Change theme"}
-            displayFieldKey={"name"}
-            valueFieldKey={null}
-            selectionValues={appThemes}
-            helperText={""}
-            onSelection={(selection) => {
-                onThemeChange(selection.theme);
-            }}
-            />
-            </div> */}
       <Stack
         className="ml-4"
         flexDirection={"row"}
@@ -223,25 +194,6 @@ const DrawerContent = ({
           <ListItemText color={inspiredPalette.darker} primary={"Logout"} />
         </ListItem>
       </ButtonBase>
-      {/* <Button
-            variant="contained"
-            sx={{
-                color: inspiredPalette.darker,
-                bgcolor: "#FFFFFF",
-                textTransform: "capitalize",
-                p: 1.2,
-                mx: 2,
-                mt: 1,
-                mb: 2,
-                boxShadow: "none",
-                "&:hover": {
-                    bgcolor: "#FFFFFF",
-                },
-            }}
-            startIcon={<Logout />}
-            >
-            Logout
-            </Button> */}
     </div>
   );
 };
@@ -370,13 +322,19 @@ export default function DashboardLayout({
 
   const loadData = async () => {
     try {
-      let url = `${getBmrmBaseUrl()}/info/user-tenant/get/companies`;
+      const userInfo = getUserInfo();
+      if (userInfo === null) {
+        return;
+      }
+      let url = `${getPortalUrl()}/companies?id=${userInfo.id}`;
+      console.log("Company url", url);
       let response = await getAsync(url);
+
       let values = response.map((entry: any) => {
         return {
-          id: entry["company_id"],
-          name: entry["company_name"],
-          user_id: entry.user_id,
+          id: entry["CompanyGuid"],
+          name: entry["CompanyName"],
+          // user_id: entry.user_id,
         };
       });
       setCompanyData(values);

@@ -1,5 +1,15 @@
 "use client";
 
+import Cookies from "js-cookie";
+const getUserInfo = () => {
+  // Fetch the userName and userid  from cookies
+  const cookieUserInfo = Cookies.get("user_info") ?? null;
+  if (cookieUserInfo === null || cookieUserInfo.length < 1) {
+    return null;
+  }
+
+  return JSON.parse(cookieUserInfo);
+};
 const numericToString = (value: number | null | undefined | string): string => {
   if (value === null || value === undefined || value === "") {
     return "0";
@@ -10,7 +20,7 @@ const numericToString = (value: number | null | undefined | string): string => {
 };
 
 const convertToDecimal = (
-  value: number | null | undefined | string,
+  value: number | null | undefined | string
 ): string => {
   if (value === null || value === undefined || value === "") {
     return "0";
@@ -74,4 +84,10 @@ const convertToDate = (dateString: string): string => {
   return `${day}-${month}-${year}`;
 };
 
-export { numericToString, convertToDecimal, getPreviousMonths, convertToDate };
+export {
+  numericToString,
+  convertToDecimal,
+  getPreviousMonths,
+  convertToDate,
+  getUserInfo,
+};

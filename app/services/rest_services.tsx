@@ -20,7 +20,7 @@ const postAsync = async (url: string, requestBody: any) => {
 
   console.log(
     "----------- This is my Headers Value look. ----------------",
-    appHeaders,
+    appHeaders
   );
   //  console.log("----------- This is my url Value look. ----------------",url)
 
@@ -69,7 +69,6 @@ const putAsync = async (url: string, requestBody: any) => {
 const getAsync = async (url: string) => {
   let appHeaders = {
     "Content-Type": "application/json; charset=utf-8",
-    "Access-Control-Allow-Origin": "*",
     token: Cookies.get("authToken") ?? "",
     companyid: Cookies.get("companyId") ?? 1,
   };
@@ -140,7 +139,7 @@ const _unwrap = (encryptedData: any) => {
     parsedKey,
     {
       iv: parsedIv,
-    },
+    }
   );
   if (!decryptedData) {
     return null;
@@ -151,26 +150,27 @@ const _unwrap = (encryptedData: any) => {
   return JSON.parse(output);
 };
 const getBmrmBaseUrl = () => {
-  return `${getBaseUrl()}/bmrm/api`;
+  return `${getBaseUrl()}/api/bmrm`;
 };
 
 const getUmsBaseUrl = () => {
-  return `${getBaseUrl()}/ums/api`;
+  return `${getBaseUrl()}/api/ums`;
 };
 
 const getSgBizBaseUrl = () => {
-  return `${getBaseUrl()}/sg-bizz/api`;
+  return `${getBaseUrl()}/api/biz`;
 };
 
 const getPortalUrl = () => {
-  return "https://softgensolutions.com/api/portal";
+  // return "https://softgensolutions.com/api/portal";
+  return `${getBaseUrl()}/api/portal`;
 };
 
 const getBaseUrl = () => {
   //Local
   // return "http://192.168.1.2:5000"
   //GoDadddddddy
-  return "http://localhost:45080";
+  return "http://192.168.1.36:45080";
   //return "http://118.139.167.125:45400";
 
   // return "https://softgensolutions.in/service";

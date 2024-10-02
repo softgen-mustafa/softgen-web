@@ -161,6 +161,7 @@ const Page = () => {
         selectedisDebitType.current ?? true
       }`;
       let response = await getAsync(url);
+      console.log(JSON.stringify(response));
       if (response == null || response.Data == null) {
         return [];
       }
@@ -210,6 +211,7 @@ const Page = () => {
     if (!res || !res.Data) {
       return [];
     }
+    alert(JSON.stringify(res));
 
     let values = res.Data.map((entry: any, index: number) => ({
       id: index + 1,
@@ -230,6 +232,7 @@ const Page = () => {
       PendingPercentage: entry.PendingPercentage,
       IsAdvance: entry.IsAdvance,
     }));
+
     // let values = res.Data.map((entry: any, index: number) => ({
     //   id: index + 1,
     //   ...entry,
@@ -507,8 +510,6 @@ const Page = () => {
     { title: "Delay Days", value: "delay-days-wise" },
   ];
 
-  
-
   const renderFilterView = () => {
     return (
       <div>
@@ -632,7 +633,7 @@ const Page = () => {
       content: (
         <GridCardView
           title="Outstanding Report"
-          permissionCode="OutstandingReport"
+          // permissionCode="OutstandingReport"
         >
           <Stack flexDirection={"column"} gap={2}>
             <DropDown
@@ -756,7 +757,7 @@ const Page = () => {
       content: (
         <GridCardView
           title="Location Wise Report"
-          permissionCode="LocationWiseReport"
+          // permissionCode="LocationWiseReport"
         >
           <PeriodicTable
             chartKeyFields={[
