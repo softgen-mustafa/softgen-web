@@ -359,7 +359,8 @@ const Table = ({
     let columnWidths = columns.map((column: TableColumn) => {
       return {
         field: column,
-        width: 150,
+        // width: 150,
+        width: column.width || 150, // Default column width to 150 if not provided
       };
     });
     changeFieldWidths(columnWidths);
@@ -382,20 +383,26 @@ const Table = ({
   const handleMouseDown = (index: number, event: React.MouseEvent) => {};
 
   return (
-    <Box className="w-full max-w-[100vw] flex flex-row max-h-[600px] overflow-x-auto overflow-y-auto">
+    // <Box className="w-full max-w-[100vw] flex flex-row max-h-[600px] overflow-x-auto overflow-y-auto">
+    <Box className="w-full" sx={{ overflowX: "auto" }}>
       <Box
         className="w-full flex flex-col p-2 overflow-x-scroll"
         style={{
           borderWidth: 1,
           borderRadius: 2,
+          minWidth: columns.length * 100, // Ensure enough width for columns
         }}
       >
-        <Box className="flex flex-row justify-between">
+        <Box
+          //  className="flex flex-row justify-between">
+          className="flex flex-row justify-between sticky top-0 bg-white"
+          sx={{
+            borderBottomWidth: 2,
+            borderBottomColor: theme.palette.primary.main,
+          }}
+        >
           {checkBox && (
-            <Box
-              className="flex p-0"
-              sx={{ borderRightWidth: 2, borderBottomWidth: 2 }}
-            >
+            <Box className="flex p-0" sx={{ borderRightWidth: 2 }}>
               <Checkbox
                 onChange={(event, checked: boolean) => {
                   let values: any[] = [];
@@ -416,7 +423,7 @@ const Table = ({
             .filter((entry) => !entry.hideable)
             .map((column: TableColumn, colIndex: number) => {
               let cellWidth = fieldWidths.find(
-                (entry: any) => entry.field === column.field,
+                (entry: any) => entry.field === column.field
               );
               if (cellWidth === null) {
                 cellWidth = 200;
@@ -429,6 +436,7 @@ const Table = ({
                     minWidth: 100,
                     maxWidth: cellWidth,
                     borderBottomWidth: 2,
+                    flex: `1 0 ${cellWidth}px`, // Allow flexing with minimum width
                     borderRightWidth: colIndex === columns.length - 1 ? 0 : 2,
                   }}
                 >
@@ -445,7 +453,7 @@ const Table = ({
                   className="w-full flex p-2"
                   sx={{
                     minWidth: 100,
-                    borderBottomWidth: 2,
+                    // borderBottomWidth: 2,
                     borderRightWidth: 2,
                   }}
                 >
@@ -462,7 +470,7 @@ const Table = ({
                   className="w-full flex p-2"
                   sx={{
                     minWidth: 100,
-                    borderBottomWidth: 2,
+                    // borderBottomWidth: 2,
                     borderRightWidth: 2,
                   }}
                 >
@@ -499,7 +507,7 @@ const Table = ({
                       let selectedValues = selectedRow;
                       if (selectedValues.includes(rowIndex)) {
                         selectedValues = selectedValues.filter(
-                          (i) => i !== rowIndex,
+                          (i) => i !== rowIndex
                         );
                       } else {
                         selectedValues.push(rowIndex);
@@ -522,7 +530,7 @@ const Table = ({
                 })
                 .map((cell: any, cellIndex: number) => {
                   let cellWidth = fieldWidths.find(
-                    (entry: any) => entry.field === cell.field,
+                    (entry: any) => entry.field === cell.field
                   );
                   if (cellWidth === null) {
                     cellWidth = 200;
@@ -535,6 +543,7 @@ const Table = ({
                       sx={{
                         minWidth: 100,
                         maxWidth: cellWidth,
+                        flex: `1 0 ${cellWidth}px`, // Allow flexing
                         borderRightWidth: cellIndex === row.length - 1 ? 0 : 2,
                       }}
                     >
@@ -981,7 +990,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
       console.log(props.rows);
       let rows = props.rows.slice(
         apiParams.offset * apiParams.limit,
-        apiParams.offset * apiParams.limit + apiParams.limit,
+        apiParams.offset * apiParams.limit + apiParams.limit
       );
       loadColumns(rows);
     }
