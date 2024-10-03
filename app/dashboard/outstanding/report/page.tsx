@@ -103,7 +103,7 @@ const Page = () => {
   let selectedParty = useRef<string[]>([]);
 
   let selectedisDebitType = useRef<boolean>(true);
-  let selectedUser = useRef<string>("");
+  // let selectedUser = useRef<string>("");
 
   const [selectedlocationTypes, setSelectedLocationTypes] = useState<string>();
   let selectedStateType = useRef<string>("");
@@ -211,7 +211,7 @@ const Page = () => {
     if (!res || !res.Data) {
       return [];
     }
-    alert(JSON.stringify(res));
+    console.log(JSON.stringify(res));
 
     let values = res.Data.map((entry: any, index: number) => ({
       id: index + 1,
@@ -768,54 +768,54 @@ const Page = () => {
         </GridCardView>
       ),
     },
-    {
-      id: 2,
-      weight: 1,
-      content: (
-        <GridCardView
-          title="Location Wise Report"
-          // permissionCode="LocationWiseReport"
-        >
-          <PeriodicTable
-            chartKeyFields={[
-              {
-                label: "Location Name",
-                value: "LocationName",
-              },
-            ]}
-            chartValueFields={[
-              {
-                label: "Opening Amount",
-                value: "OpeningAmount",
-              },
-              {
-                label: "Closing Amount",
-                value: "ClosingAmount",
-              },
-            ]}
-            refreshFilterView={refresh}
-            RenderAdditionalView={renderFilterViewMaps()}
-            useSearch={false}
-            // searchKeys={osSearchKeys}
-            reload={refresh}
-            columns={columnsMap.map((col: any) => {
-              let columnsMap: TableColumn = {
-                header: col.headerName,
-                field: col.field,
-                type: col.type,
-                pinned: false,
-                hideable: col.hideable,
-                rows: [],
-              };
-              return columnsMap;
-            })}
-            onApi={loadMapsData}
-            onRowClick={(row: any) => {}}
-            checkBoxSelection={false}
-          />
-        </GridCardView>
-      ),
-    },
+    // {
+    //   id: 2,
+    //   weight: 1,
+    //   content: (
+    //     <GridCardView
+    //       title="Location Wise Report"
+    //       // permissionCode="LocationWiseReport"
+    //     >
+    //       <PeriodicTable
+    //         chartKeyFields={[
+    //           {
+    //             label: "Location Name",
+    //             value: "LocationName",
+    //           },
+    //         ]}
+    //         chartValueFields={[
+    //           {
+    //             label: "Opening Amount",
+    //             value: "OpeningAmount",
+    //           },
+    //           {
+    //             label: "Closing Amount",
+    //             value: "ClosingAmount",
+    //           },
+    //         ]}
+    //         refreshFilterView={refresh}
+    //         RenderAdditionalView={renderFilterViewMaps()}
+    //         useSearch={false}
+    //         // searchKeys={osSearchKeys}
+    //         reload={refresh}
+    //         columns={columnsMap.map((col: any) => {
+    //           let columnsMap: TableColumn = {
+    //             header: col.headerName,
+    //             field: col.field,
+    //             type: col.type,
+    //             pinned: false,
+    //             hideable: col.hideable,
+    //             rows: [],
+    //           };
+    //           return columnsMap;
+    //         })}
+    //         onApi={loadMapsData}
+    //         onRowClick={(row: any) => {}}
+    //         checkBoxSelection={false}
+    //       />
+    //     </GridCardView>
+    //   ),
+    // },
   ];
 
   return (

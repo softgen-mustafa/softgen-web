@@ -14,7 +14,7 @@ const postAsync = async (url: string, requestBody: any) => {
   const encryptedBody = requestBody;
   let appHeaders = {
     "Content-Type": "application/json; charset=utf-8",
-    token: Cookies.get("authToken") ?? "empty",
+    token: Cookies.get("token") ?? "empty",
     companyid: Cookies.get("companyId") ?? "default",
   };
 
@@ -44,7 +44,7 @@ const putAsync = async (url: string, requestBody: any) => {
   const encryptedBody = requestBody;
   let appHeaders = {
     "Content-Type": "application/json; charset=utf-8",
-    token: Cookies.get("authToken") ?? "",
+    token: Cookies.get("token") ?? "",
     companyid: Cookies.get("companyId") ?? 1,
   };
 
@@ -69,7 +69,7 @@ const putAsync = async (url: string, requestBody: any) => {
 const getAsync = async (url: string) => {
   let appHeaders = {
     "Content-Type": "application/json; charset=utf-8",
-    token: Cookies.get("authToken") ?? "",
+    token: Cookies.get("token") ?? "",
     companyid: Cookies.get("companyId") ?? 1,
   };
 
@@ -169,13 +169,14 @@ const getPortalUrl = () => {
 const getBaseUrl = () => {
   //Local
   // return "http://192.168.1.2:5000"
+
+  //Jayesh Local IP
+  return "http://192.168.1.36:45080";
+
+  // return "https://softgensolutions.com/gateway";
+
   //GoDadddddddy
-  // return "http://192.168.1.36:45080";
-  return "https://softgensolutions.com/gateway";
-
   //return "http://118.139.167.125:45400";
-
-  // return "https://softgensolutions.in/service";
 };
 
 export {

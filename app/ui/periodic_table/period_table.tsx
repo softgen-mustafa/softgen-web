@@ -386,11 +386,12 @@ const Table = ({
     // <Box className="w-full max-w-[100vw] flex flex-row max-h-[600px] overflow-x-auto overflow-y-auto">
     <Box className="w-full" sx={{ overflowX: "auto" }}>
       <Box
-        className="w-full flex flex-col p-2 overflow-x-scroll"
+        className="w-full flex flex-col p-2"
         style={{
+          minWidth: columns.length * 150, // Adjust the minimum width to fit all columns
+          overflowX: "auto", // Allow horizontal scrolling at the table level
           borderWidth: 1,
           borderRadius: 2,
-          minWidth: columns.length * 100, // Ensure enough width for columns
         }}
       >
         <Box
@@ -433,7 +434,7 @@ const Table = ({
                   key={colIndex}
                   className="w-full flex p-2"
                   sx={{
-                    minWidth: 100,
+                    minWidth: 150,
                     maxWidth: cellWidth,
                     borderBottomWidth: 2,
                     flex: `1 0 ${cellWidth}px`, // Allow flexing with minimum width
@@ -541,10 +542,11 @@ const Table = ({
                       key={cellIndex}
                       className={`w-full flex p-2`}
                       sx={{
-                        minWidth: 100,
+                        minWidth: 150,
                         maxWidth: cellWidth,
                         flex: `1 0 ${cellWidth}px`, // Allow flexing
                         borderRightWidth: cellIndex === row.length - 1 ? 0 : 2,
+                        overflowX: "auto", // Ensure the row can scroll horizontally
                       }}
                     >
                       <Typography className="overflow-x-auto">

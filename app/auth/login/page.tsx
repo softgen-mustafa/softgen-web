@@ -86,7 +86,7 @@ const LoginPage = () => {
       // Check if login was successful and response contains user_info and token
       if (response && response.user_info && response.token) {
         Cookies.set("user_info", JSON.stringify(response.user_info));
-        Cookies.set("token", response.user_info.token); // Store the Token
+        Cookies.set("token", response.token); // Store the Token
         toggleMessageVisibility({
           visible: true,
           message: "Login successful!",

@@ -80,7 +80,7 @@ const RankedPartyOutstandingCard = ({
       setRows(values);
       return values;
     } catch {
-      alert("Could not load Ranked Parties");
+      // alert("Could not load Ranked Parties");
     } finally {
       setLoading(false);
     }
@@ -136,7 +136,7 @@ const RankedPartyOutstandingCard = ({
               type: "text",
               pinned: false,
               rows: [],
-              hideable:col.hideable
+              hideable: col.hideable,
             };
             return column;
           })}
