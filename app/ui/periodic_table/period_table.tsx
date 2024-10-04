@@ -383,13 +383,13 @@ const Table = ({
   const handleMouseDown = (index: number, event: React.MouseEvent) => {};
 
   return (
-    // <Box className="w-full max-w-[100vw] flex flex-row max-h-[600px] overflow-x-auto overflow-y-auto">
+    // <Box className="w-full max-w-[100vw] flex flex-row max-h-[600px]">
     <Box className="w-full" sx={{ overflowX: "auto" }}>
       <Box
         className="w-full flex flex-col p-2"
         style={{
           minWidth: columns.length * 150, // Adjust the minimum width to fit all columns
-          overflowX: "auto", // Allow horizontal scrolling at the table level
+          // overflowX: "auto",
           borderWidth: 1,
           borderRadius: 2,
         }}
@@ -403,7 +403,10 @@ const Table = ({
           }}
         >
           {checkBox && (
-            <Box className="flex p-0" sx={{ borderRightWidth: 2 }}>
+            <Box
+              className="flex p-0"
+              sx={{ borderRightWidth: 2, borderBottomWidth: 2 }}
+            >
               <Checkbox
                 onChange={(event, checked: boolean) => {
                   let values: any[] = [];
@@ -437,7 +440,9 @@ const Table = ({
                     minWidth: 150,
                     maxWidth: cellWidth,
                     borderBottomWidth: 2,
+
                     flex: `1 0 ${cellWidth}px`, // Allow flexing with minimum width
+
                     borderRightWidth: colIndex === columns.length - 1 ? 0 : 2,
                   }}
                 >
@@ -454,7 +459,7 @@ const Table = ({
                   className="w-full flex p-2"
                   sx={{
                     minWidth: 100,
-                    // borderBottomWidth: 2,
+                    borderBottomWidth: 2,
                     borderRightWidth: 2,
                   }}
                 >
@@ -544,7 +549,8 @@ const Table = ({
                       sx={{
                         minWidth: 150,
                         maxWidth: cellWidth,
-                        flex: `1 0 ${cellWidth}px`, // Allow flexing
+                        // flex: `1 0 ${cellWidth}px`, // Allow flexing
+
                         borderRightWidth: cellIndex === row.length - 1 ? 0 : 2,
                         overflowX: "auto", // Ensure the row can scroll horizontally
                       }}

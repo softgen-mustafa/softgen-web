@@ -11,6 +11,7 @@ import {
 } from "@/app/services/rest_services";
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
 import { ApiDropDown } from "@/app/ui/api_drop_down";
+import React from "react";
 
 interface Template {
   ID: string;
