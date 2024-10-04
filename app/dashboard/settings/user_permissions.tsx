@@ -14,6 +14,7 @@ import Cookies from "js-cookie";
 import {
   getAsync,
   getBmrmBaseUrl,
+  getPortalUrl,
   getUmsBaseUrl,
   postAsync,
 } from "@/app/services/rest_services";
@@ -104,18 +105,18 @@ const UserPermissions = () => {
 
   const loadUser = async () => {
     try {
-      if (compId) {
-        const url = `${getUmsBaseUrl()}/users/company/${compId}`;
-        let response = await getAsync(url);
-        if (response && response.length > 0) {
-          let values = response.map((_data: UserProps) => ({
-            id: _data?.id,
-            name: _data?.name,
-          }));
-          setData(values);
-          selectedUser.current = response[0]?.id;
-        }
+      // if (compId) {
+      const url = `${getPortalUrl()}/companies/get/users`;
+      let response = await getAsync(url);
+      if (response && response.length > 0) {
+        let values = response.map((_data: UserProps) => ({
+          id: _data?.id,
+          name: _data?.name,
+        }));
+        setData(values);
+        selectedUser.current = response[0]?.id;
       }
+      // }
     } catch {
       console.log("Something went wrong...");
     }
