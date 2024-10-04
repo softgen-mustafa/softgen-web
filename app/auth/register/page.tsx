@@ -10,12 +10,18 @@ import {
   Alert,
   InputAdornment,
   IconButton,
+  Stack,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import logoImage from "@/public/logo.png";
+import { inspiredPalette } from "@/app/ui/theme";
+import LockIcon from "@mui/icons-material/Lock";
+import PersonIcon from "@mui/icons-material/Person";
+import EmailIcon from "@mui/icons-material/Email";
+import CallIcon from "@mui/icons-material/Call";
 
 interface IRegisterInfo {
   email: string;
@@ -118,24 +124,25 @@ const Page = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-100 p-[8.5px] md:p-0 overflow-hidden">
-      <div className="max-w-lg md:w-11/12 mx-auto scroll-m-0 justify-center items-center drop-shadow-lg  p-4 bg-white rounded-xl hover:-translate-y-1 duration-200 hover:rounded-3xl hover:drop-shadow-2xl">
-        <div className="justify-center flex">
+    <div className=" min-h-screen  flex justify-center items-center bg-gray-100 p-[8.5px] pl-4 pr-4 pb-5 md:p-0 overflow-y-auto bg-[url('/assets/images/loginbackgroundimage.jpeg')] bg-center h-screen bg-no-repeat  bg-cover md:bg-[length:100vw_130vh]">
+      <div className="max-w-lg md:w-10/12 mx-auto scroll-m-0 justify-center items-center drop-shadow-lg pb-6 pr-6 pl-6 bg-gradient-to-t from-white to-[#C5F6FC] rounded-xl hover:-translate-y-1 duration-200 hover:rounded-3xl hover:drop-shadow-2xl">
+        <div className="justify-center flex -mt-8">
           <Image
             src={logoImage}
             alt="SoftGen Logo"
-            width={250}
-            height={250}
+            width={240}
+            height={240}
             className="justify-center"
           />
         </div>
-        <Typography
-          variant="h4"
-          className="font-semibold text-xl mb-2 text-black flex justify-center"
-          gutterBottom
-        >
-          Register
-        </Typography>
+        <Stack alignItems={"center"} gap={0.2}>
+          <Typography
+            sx={{ fontSize: "2rem", fontWeight: 405 }}
+            color={inspiredPalette.darker}
+          >
+            Registration Form
+          </Typography>
+        </Stack>
         <TextField
           label="Name"
           value={userInfo.name}
@@ -144,6 +151,18 @@ const Page = () => {
           helperText={errors.name}
           fullWidth
           margin="normal"
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "18px",
+            },
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <PersonIcon aria-label="email or mobile icon" />
+              </InputAdornment>
+            ),
+          }}
         />
         <TextField
           label="Email Address"
@@ -153,6 +172,18 @@ const Page = () => {
           helperText={errors.email}
           fullWidth
           margin="normal"
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "18px",
+            },
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <EmailIcon aria-label="email or mobile icon" />
+              </InputAdornment>
+            ),
+          }}
         />
         <TextField
           label="Mobile Number"
@@ -162,6 +193,18 @@ const Page = () => {
           helperText={errors.mobile_number}
           fullWidth
           margin="normal"
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "18px",
+            },
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <CallIcon aria-label="email or mobile icon" />
+              </InputAdornment>
+            ),
+          }}
         />
         <TextField
           label="Password"
@@ -184,6 +227,16 @@ const Page = () => {
                 </IconButton>
               </InputAdornment>
             ),
+            startAdornment: (
+              <InputAdornment position="start">
+                <LockIcon aria-label="email or mobile icon" />
+              </InputAdornment>
+            ),
+          }}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "18px", // Customize the border radius
+            },
           }}
         />
         <div className="justify-center flex">
@@ -202,7 +255,8 @@ const Page = () => {
               },
               width: { xs: "90%", md: "100%" },
               borderRadius: "12px",
-              backgroundColor: "primary.main",
+              backgroundImage:
+                "linear-gradient(90deg, #42A5F5 0%, #1E88E5 100%)", // Gradient background
               color: "white",
               fontWeight: "1rem",
               fontSize: "1rem",
@@ -210,7 +264,8 @@ const Page = () => {
               transition: "all 0.3s ease-in-out",
               "&:hover": {
                 boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.2)",
-                backgroundColor: "primary.dark",
+                backgroundImage:
+                  "linear-gradient(90deg, #2196F3 0%, #1565C0 100%)", // Darker gradient on hover
                 transform: "translateY(-2px)",
               },
               textTransform: "capitalize",
