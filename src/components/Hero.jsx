@@ -107,11 +107,20 @@ const Hero = () => {
   }, []);
 
   const handleLogin = () => {
-    const token = Cookies.get("authToken") ?? null;
+    const token = Cookies.get("token") ?? null;
     if (token !== null && token.length > 0) {
       router.push("/dashboard");
     } else {
-      router.push("/auth");
+      router.push("/auth/login");
+    }
+  };
+
+  const handleRegistration = () => {
+    const token = Cookies.get("token") ?? null;
+    if (token !== null && token.length > 0) {
+      router.push("/dashboard");
+    } else {
+      router.push("/auth/register");
     }
   };
 
@@ -137,6 +146,9 @@ const Hero = () => {
       >
         <button onClick={handleLogin} className="btn">
           Login
+        </button>
+        <button onClick={handleRegistration} className="btn">
+          Register
         </button>
       </div>
     </section>
