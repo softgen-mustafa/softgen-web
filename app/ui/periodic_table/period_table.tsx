@@ -18,6 +18,8 @@ import {
   Sync,
   FilterAlt,
   FilterAltOff,
+  ArrowUpward,
+  ArrowDownward,
 } from "@mui/icons-material";
 import React, { useState, useRef, useEffect, ReactElement } from "react";
 import {
@@ -43,6 +45,8 @@ interface ApiProps {
 }
 
 interface PeriodicTableProps {
+  pivotKey?: string;
+  usePivot?: boolean;
   showSummationRow?: boolean;
   actionViews?: any[];
   iconActions?: any[];
@@ -107,6 +111,8 @@ interface TableRow {
 }
 
 interface TableProps {
+  pivotKey?: string;
+  usePivot?: boolean;
   columns: TableColumn[];
   rows: TableRow[][];
   onRowClick?: (rowData: any) => void;
@@ -325,6 +331,8 @@ const Table = ({
   iconActions = [],
   actionViews = [],
   reload,
+  usePivot = false,
+  pivotKey = "",
   showSummationRow = false,
 }: TableProps) => {
   const theme = useTheme();
@@ -333,6 +341,8 @@ const Table = ({
   const [tableRows, updateRows] = useState<any[][]>([]);
   const [selectedRow, setSelectedRow] = useState<any[]>([]);
   const resizingColumnIndex = useRef<number | null>(null);
+  const shownRowIndexes = useRef<number[]>([]);
+  const [refresh, triggerRefresh] = useState<number>(1);
 
   const handleRowClick = (rowData: any) => {
     // Call the callback function only if it is provided
@@ -376,9 +386,83 @@ const Table = ({
 
   const handleMouseDown = (index: number, event: React.MouseEvent) => {};
 
+  const renderPivotRows = (rowIndex: number) => {
+    if (!shownRowIndexes.current.includes(rowIndex)) {
+      return <></>;
+    }
+    let pivotColumn = tableRows[rowIndex].find(
+      (entry) => entry.field === pivotKey,
+    );
+    if (
+      pivotColumn === null ||
+      pivotColumn.value === null ||
+      pivotColumn.value.length < 1
+    ) {
+      return [];
+    }
+    0;
+    let firstRow = pivotColumn.value[0];
+    let keys = Object.keys(firstRow);
+
+    let rows = pivotColumn.value.map((row: any, rowIdx: number) => {
+      return (
+        <Box key={rowIdx} className="flex flex-row overflow-x-hidden">
+          {keys.map((column: string, index: number) => {
+            let value = row[column];
+            return (
+              <div>
+                <Box
+                  key={index}
+                  className="w-full flex p-2"
+                  sx={{
+                    minWidth: 150,
+                    maxWidth: 200,
+                    borderBottomWidth: 2,
+
+                    flex: `1 0 ${200}px`, // Allow flexing with minimum width
+
+                    borderRightWidth: index === keys.length - 1 ? 0 : 2,
+                  }}
+                >
+                  <Typography>{column}</Typography>
+                </Box>
+                <Box
+                  key={index}
+                  className={`w-full flex p-2`}
+                  sx={{
+                    minWidth: 150,
+                    maxWidth: 200,
+                    // flex: `1 0 ${cellWidth}px`, // Allow flexing
+
+                    borderRightWidth: index === row.length - 1 ? 0 : 2,
+                    overflowX: "auto", // Ensure the row can scroll horizontally
+                  }}
+                >
+                  <Typography className="overflow-x-auto">{value}</Typography>
+                </Box>
+              </div>
+            );
+          })}
+        </Box>
+      );
+    });
+
+    return (
+      <div
+        className="w-auto flex-col m-2 p-2"
+        style={{
+          borderWidth: 1,
+        }}
+      >
+        {rows}
+      </div>
+    );
+  };
+
   return (
     // <Box className="w-full max-w-[100vw] flex flex-row max-h-[600px]">
     <Box
+      key={refresh}
       className="w-full max-h-[600px]"
       sx={{ overflowX: "auto", overflowY: "auto" }}
     >
@@ -419,6 +503,25 @@ const Table = ({
                   setSelectedRow(values);
                 }}
               />
+            </Box>
+          )}
+          {usePivot && (
+            <Box key={1} className="flex p-0" sx={{ borderRightWidth: 2 }}>
+              <IconButton
+                onClick={() => {
+                  let hasContent = shownRowIndexes.current.length > 0;
+                  shownRowIndexes.current = hasContent
+                    ? []
+                    : shownRowIndexes.current;
+                  triggerRefresh(refresh == 1 ? 0 : 1);
+                }}
+              >
+                {shownRowIndexes.current.length > 0 ? (
+                  <ArrowUpward />
+                ) : (
+                  <ArrowDownward />
+                )}
+              </IconButton>
             </Box>
           )}
           {columns
@@ -492,117 +595,155 @@ const Table = ({
         {/* Data Rows*/}
         {tableRows.map((row: any[], rowIndex: number) => {
           return (
-            <div
-              key={rowIndex}
-              className="flex flex-row justify-between"
-              style={{
-                background: rowIndex % 2 === 0 ? "white" : "#F9F9F9",
-              }}
-              onClick={() => handleRowClick(row)}
-            >
-              {checkBox && (
-                <Box
-                  key={rowIndex}
-                  className="flex p-0"
-                  sx={{ borderRightWidth: 2 }}
-                >
-                  <Checkbox
-                    checked={selectedRow.includes(rowIndex)}
-                    onChange={() => {
-                      let selectedValues = selectedRow;
-                      if (selectedValues.includes(rowIndex)) {
-                        selectedValues = selectedValues.filter(
-                          (i) => i !== rowIndex,
-                        );
-                      } else {
-                        selectedValues.push(rowIndex);
-                      }
-                      setSelectedRow(selectedValues);
-                      if (onChecked) {
-                        onChecked(selectedValues);
-                      }
-                    }}
-                  />
-                </Box>
-              )}
-              {row
-                .filter((entry: any) => {
-                  let col = columns.find((c) => c.field === entry.field);
-                  if (col === null) {
-                    return false;
-                  }
-                  return !col?.hideable;
-                })
-                .map((cell: any, cellIndex: number) => {
-                  let cellWidth = fieldWidths.find(
-                    (entry: any) => entry.field === cell.field,
-                  );
-                  if (cellWidth === null) {
-                    cellWidth = 200;
-                  }
-
-                  return (
-                    <Box
-                      key={cellIndex}
-                      className={`w-full flex p-2`}
-                      sx={{
-                        minWidth: 150,
-                        maxWidth: cellWidth,
-                        // flex: `1 0 ${cellWidth}px`, // Allow flexing
-
-                        borderRightWidth: cellIndex === row.length - 1 ? 0 : 2,
-                        overflowX: "auto", // Ensure the row can scroll horizontally
+            <div className="flex flex-col ">
+              <div
+                key={rowIndex}
+                className="flex flex-row justify-between"
+                style={{
+                  background: rowIndex % 2 === 0 ? "white" : "#F9F9F9",
+                }}
+                onClick={() => {
+                  handleRowClick(row);
+                }}
+              >
+                {checkBox && (
+                  <Box
+                    key={rowIndex}
+                    className="flex p-0"
+                    sx={{ borderRightWidth: 2 }}
+                  >
+                    <Checkbox
+                      checked={selectedRow.includes(rowIndex)}
+                      onChange={() => {
+                        let selectedValues = selectedRow;
+                        if (selectedValues.includes(rowIndex)) {
+                          selectedValues = selectedValues.filter(
+                            (i) => i !== rowIndex,
+                          );
+                        } else {
+                          selectedValues.push(rowIndex);
+                        }
+                        setSelectedRow(selectedValues);
+                        if (onChecked) {
+                          onChecked(selectedValues);
+                        }
+                      }}
+                    />
+                  </Box>
+                )}
+                {usePivot && (
+                  <Box
+                    key={rowIndex}
+                    className="flex p-0"
+                    sx={{ borderRightWidth: 2 }}
+                  >
+                    <IconButton
+                      onClick={() => {
+                        let selectedValues = shownRowIndexes.current;
+                        if (selectedValues.includes(rowIndex)) {
+                          selectedValues = selectedValues.filter(
+                            (i) => i !== rowIndex,
+                          );
+                        } else {
+                          selectedValues.push(rowIndex);
+                        }
+                        shownRowIndexes.current = selectedValues;
+                        triggerRefresh(refresh == 1 ? 0 : 1);
                       }}
                     >
-                      <Typography className="overflow-x-auto">
-                        {cell.type == "number"
-                          ? numericToString(parseFloat(cell.value).toFixed(2))
-                          : cell.value}
-                      </Typography>
-                    </Box>
-                  );
-                })}
-              {iconActions &&
-                iconActions.length > 0 &&
-                iconActions.map((entry: any, index: number) => {
-                  return (
-                    <Box
-                      key={index}
-                      className={`w-full flex p-2 justify-center`}
-                      sx={{
-                        minWidth: 100,
-                        borderRightWidth: 2,
-                      }}
-                    >
-                      <IconButton
-                        key={index}
-                        onClick={() => {
-                          if (entry.onPress) {
-                            entry.onPress(row);
-                          }
+                      {shownRowIndexes.current.includes(rowIndex) ? (
+                        <ArrowUpward />
+                      ) : (
+                        <ArrowDownward />
+                      )}
+                    </IconButton>
+                  </Box>
+                )}
+                {row
+                  .filter((entry: any) => {
+                    let col = columns.find((c) => c.field === entry.field);
+                    if (col === null) {
+                      return false;
+                    }
+                    return !col?.hideable;
+                  })
+                  .map((cell: any, cellIndex: number) => {
+                    let cellWidth = fieldWidths.find(
+                      (entry: any) => entry.field === cell.field,
+                    );
+                    if (cellWidth === null) {
+                      cellWidth = 200;
+                    }
+
+                    return (
+                      <Box
+                        key={cellIndex}
+                        className={`w-full flex p-2`}
+                        sx={{
+                          minWidth: 150,
+                          maxWidth: cellWidth,
+                          // flex: `1 0 ${cellWidth}px`, // Allow flexing
+
+                          borderRightWidth:
+                            cellIndex === row.length - 1 ? 0 : 2,
+                          overflowX: "auto", // Ensure the row can scroll horizontally
                         }}
                       >
-                        {entry.icon}
-                      </IconButton>
-                    </Box>
-                  );
-                })}
-              {actionViews &&
-                actionViews.length > 0 &&
-                actionViews.map((entry: any, index: number) => {
-                  return (
-                    <Box
-                      key={index}
-                      className={`w-full flex p-2 justify-center`}
-                      sx={{
-                        minWidth: 100,
-                        borderRightWidth: 2,
-                      }}
-                    >
-                      {entry.renderView(row)}
-                    </Box>
-                  );
-                })}
+                        <Typography className="overflow-x-auto">
+                          {cell.type == "number"
+                            ? numericToString(parseFloat(cell.value).toFixed(2))
+                            : cell.value}
+                        </Typography>
+                      </Box>
+                    );
+                  })}
+                {iconActions &&
+                  iconActions.length > 0 &&
+                  iconActions.map((entry: any, index: number) => {
+                    return (
+                      <Box
+                        key={index}
+                        className={`w-full flex p-2 justify-center`}
+                        sx={{
+                          minWidth: 100,
+                          borderRightWidth: 2,
+                        }}
+                      >
+                        <IconButton
+                          key={index}
+                          onClick={() => {
+                            if (entry.onPress) {
+                              entry.onPress(row);
+                            }
+                          }}
+                        >
+                          {entry.icon}
+                        </IconButton>
+                      </Box>
+                    );
+                  })}
+                {actionViews &&
+                  actionViews.length > 0 &&
+                  actionViews.map((entry: any, index: number) => {
+                    return (
+                      <Box
+                        key={index}
+                        className={`w-full flex p-2 justify-center`}
+                        sx={{
+                          minWidth: 100,
+                          borderRightWidth: 2,
+                        }}
+                      >
+                        {entry.renderView(row)}
+                      </Box>
+                    );
+                  })}
+              </div>
+              {row &&
+                row.length > 0 &&
+                usePivot &&
+                pivotKey != null &&
+                renderPivotRows(rowIndex)}
             </div>
           );
         })}
@@ -1065,6 +1206,11 @@ const PeriodicTable = (props: PeriodicTableProps) => {
   const [loading, setLoading] = useState(false);
   const [refresh, toggleRefresh] = useState(false);
   const [mobileRows, setMobileRows] = useState<any[]>([]);
+  const [filterOpen, toggleFilter] = useState(false);
+  const [dataRows, updateRows] = useState<TableRow[][]>([]);
+  const [tableState, updateTableState] = useState<any>({
+    viewType: "table",
+  });
 
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,
@@ -1111,10 +1257,6 @@ const PeriodicTable = (props: PeriodicTableProps) => {
       loadColumns(rows);
     }
   };
-
-  const [filterOpen, toggleFilter] = useState(false);
-  const [dataRows, updateRows] = useState<TableRow[][]>([]);
-  const [viewType, toggleViewType] = useState("table");
 
   const loadColumns = (rows: any[]) => {
     if (dimensions.width <= maxPhoneWidth) {
@@ -1196,8 +1338,11 @@ const PeriodicTable = (props: PeriodicTableProps) => {
             valueFieldKey={null}
             selectionValues={viewTypeData}
             helperText={""}
+            defaultSelectionIndex={viewTypeData.findIndex(
+              (entry) => entry.value === tableState.viewType,
+            )}
             onSelection={(selection) => {
-              toggleViewType(selection.value);
+              updateTableState({ ...tableState, viewType: selection.value });
             }}
           />
           <TablePagination
@@ -1236,29 +1381,33 @@ const PeriodicTable = (props: PeriodicTableProps) => {
           />
         )}
 
-        {viewType === "table" && dimensions.width > maxPhoneWidth && (
-          <Table
-            showSummationRow={props.showSummationRow}
-            actionViews={props.actionViews}
-            iconActions={props.iconActions}
-            columns={props.columns}
-            rows={dataRows}
-            reload={loading}
-            onRowClick={props.onRowClick}
-            checkBox={props.checkBoxSelection}
-            onChecked={(selectedIndexes: any[]) => {
-              let selectedValues: any[] = [];
-              selectedIndexes.map((selectedIndex: number) => {
-                selectedValues.push(dataRows[selectedIndex]);
-              });
-              changeCheckedValues(selectedValues);
-            }}
-          />
-        )}
-        {viewType === "table" && dimensions.width <= maxPhoneWidth && (
-          <MobileView columns={props.columns} rows={mobileRows} />
-        )}
-        {viewType !== "table" &&
+        {tableState.viewType === "table" &&
+          dimensions.width > maxPhoneWidth && (
+            <Table
+              pivotKey={props.pivotKey}
+              usePivot={props.usePivot}
+              showSummationRow={props.showSummationRow}
+              actionViews={props.actionViews}
+              iconActions={props.iconActions}
+              columns={props.columns}
+              rows={dataRows}
+              reload={loading}
+              onRowClick={props.onRowClick}
+              checkBox={props.checkBoxSelection}
+              onChecked={(selectedIndexes: any[]) => {
+                let selectedValues: any[] = [];
+                selectedIndexes.map((selectedIndex: number) => {
+                  selectedValues.push(dataRows[selectedIndex]);
+                });
+                changeCheckedValues(selectedValues);
+              }}
+            />
+          )}
+        {tableState.viewType === "table" &&
+          dimensions.width <= maxPhoneWidth && (
+            <MobileView columns={props.columns} rows={mobileRows} />
+          )}
+        {tableState.viewType !== "table" &&
           props.chartKeyFields != null &&
           props.chartValueFields != null && (
             <Box
@@ -1280,4 +1429,4 @@ const PeriodicTable = (props: PeriodicTableProps) => {
   );
 };
 export { PeriodicTable };
-export type { TableColumn, TableSearchKey, TableSortKey, ApiProps };
+export type { TableColumn, TableSearchKey, TableSortKey, ApiProps, TableProps };

@@ -213,25 +213,44 @@ const Page = () => {
     }
     console.log(JSON.stringify(res));
 
-    let values = res.Data.map((entry: any, index: number) => ({
-      id: index + 1,
-      PartyName: entry.PartyName,
-      LedgerGroup: entry.LedgerGroup,
-      CreditLimit: entry.CreditLimit,
-      CreditDays: entry.CreditDays,
-      TotalBills: entry.TotalBills,
-      BillNumber: entry.BillNumber,
-      BillDate: convertToDate(entry.BillDate),
-      DueDate: convertToDate(entry.DueDate),
-      DelayDays: entry.DelayDays,
-      OpeningAmount: entry.OpeningAmount,
-      ClosingAmount: entry.ClosingAmount,
-      DueAmount: entry.DueAmount,
-      OverDueAmount: entry.OverDueAmount,
-      ReceivedPercentage: entry.ReceivedPercentage,
-      PendingPercentage: entry.PendingPercentage,
-      IsAdvance: entry.IsAdvance,
-    }));
+    let values = res.Data.map((entry: any, index: number) => {
+      let bills: any[] = [];
+      if (entry.Bills !== null) {
+        bills = entry.Bills.map((bill: any) => {
+          return {
+            BillNumber: bill.BillNumber,
+            BillDate: convertToDate(bill.BillDate),
+            DueDate: convertToDate(bill.DueDate),
+            DelayDays: bill.DelayDays,
+            OpeningAmount: bill.OpeningAmount,
+            ClosingAmount: bill.ClosingAmount,
+            DueAmount: bill.DueAmount,
+            OverDueAmount: bill.OverDueAmount,
+          };
+        });
+      }
+
+      return {
+        id: index + 1,
+        PartyName: entry.PartyName,
+        LedgerGroup: entry.LedgerGroup,
+        CreditLimit: entry.CreditLimit,
+        CreditDays: entry.CreditDays,
+        TotalBills: entry.TotalBills,
+        BillNumber: entry.BillNumber,
+        BillDate: convertToDate(entry.BillDate),
+        DueDate: convertToDate(entry.DueDate),
+        DelayDays: entry.DelayDays,
+        OpeningAmount: entry.OpeningAmount,
+        ClosingAmount: entry.ClosingAmount,
+        DueAmount: entry.DueAmount,
+        OverDueAmount: entry.OverDueAmount,
+        ReceivedPercentage: entry.ReceivedPercentage,
+        PendingPercentage: entry.PendingPercentage,
+        IsAdvance: entry.IsAdvance,
+        Bills: bills,
+      };
+    });
 
     // let values = res.Data.map((entry: any, index: number) => ({
     //   id: index + 1,
@@ -295,6 +314,16 @@ const Page = () => {
   };
 
   const columns: any[] = [
+    {
+      field: "Bills",
+      headerName: "Bills",
+      editable: false,
+      sortable: true,
+      flex: 1,
+      minWidth: 200,
+      hideable: true,
+      mobileFullView: true,
+    },
     {
       field: "PartyName",
       headerName: "Party",
@@ -672,6 +701,8 @@ const Page = () => {
           <div className="mt-4" />
 
           <PeriodicTable
+            pivotKey={"Bills"}
+            usePivot={true}
             showSummationRow={true}
             chartKeyFields={[
               {
