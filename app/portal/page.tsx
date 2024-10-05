@@ -1,171 +1,306 @@
 "use client";
-import WebBuilder from "../ui/outstanding_email_template_editor";
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  Collapse,
+  Box,
+  Typography,
+  Checkbox,
+  TextField,
+  InputAdornment,
+  TableSortLabel,
+} from "@mui/material";
+import {
+  KeyboardArrowDown,
+  KeyboardArrowUp,
+  Search,
+} from "@mui/icons-material";
 
-const initialTemplate = `   
-<!DOCTYPE html>
-<html lang="en">
+// Interfaces for the structure
+interface Bill {
+  billNo: string;
+  billDate: string;
+  dueDate: string;
+  delayDays: number;
+}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Outstanding Balance Notification</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-        }
+interface DataRow {
+  category: string;
+  region: string;
+  sales: number;
+  bills: Bill[];
+}
 
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+interface TableColumn {
+  header: string;
+  field: string;
+  sortable: boolean;
+  hideable?: boolean;
+}
 
-        h1 {
-            color: #4CAF50;
-            font-size: 24px;
-            text-align: center;
-        }
+interface PivotTableProps {
+  data: DataRow[];
+  columns: TableColumn[];
+  searchKeys: string[];
+}
 
-        p {
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
+const PivotTable = ({ data, columns, searchKeys }: PivotTableProps) => {
+  const [filteredData, setFilteredData] = useState<DataRow[]>(data);
+  const [openRows, setOpenRows] = useState<{ [key: string]: boolean }>({});
+  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [searchText, setSearchText] = useState("");
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: "asc" | "desc" | null;
+  }>({ key: "", direction: null });
 
-        .table-container {
-            overflow-x: auto;
-        }
+  // Toggle rows open/close
+  const toggleRow = (index: number) => {
+    setOpenRows((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
+  // Handle sorting
+  const handleSort = (column: TableColumn) => {
+    let direction = sortConfig.direction === "asc" ? "desc" : "asc";
+    setSortConfig({ key: column.field, direction });
+  };
 
-        table,
-        th,
-        td {
-            border: 1px solid #ddd;
-        }
+  // Apply sorting
+  const sortedData = [...filteredData].sort((a, b) => {
+    if (!sortConfig.key || !sortConfig.direction) return 0;
+    const aValue = a[sortConfig.key as keyof DataRow];
+    const bValue = b[sortConfig.key as keyof DataRow];
+    if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
+    if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
+    return 0;
+  });
 
-        th,
-        td {
-            padding: 12px;
-            text-align: left;
-        }
+  // Search Functionality
+  const handleSearch = (text: string) => {
+    const filtered = data.filter((row) =>
+      searchKeys.some((key) =>
+        row[key as keyof DataRow]
+          ?.toString()
+          .toLowerCase()
+          .includes(text.toLowerCase()),
+      ),
+    );
+    setFilteredData(filtered);
+  };
 
-        th {
-            background-color: #f2f2f2;
-        }
+  // Handle checkbox select
+  const handleCheckboxChange = (index: number) => {
+    const selectedIndex = selectedRows.indexOf(index);
+    let newSelected: number[] = [];
 
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selectedRows, index);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selectedRows.slice(1));
+    } else if (selectedIndex === selectedRows.length - 1) {
+      newSelected = newSelected.concat(selectedRows.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selectedRows.slice(0, selectedIndex),
+        selectedRows.slice(selectedIndex + 1),
+      );
+    }
+    setSelectedRows(newSelected);
+  };
 
-        .footer {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 14px;
-            color: #777;
-        }
+  useEffect(() => {
+    handleSearch(searchText);
+  }, [searchText]);
 
-        .footer a {
-            color: #4CAF50;
-            text-decoration: none;
-        }
-    </style>
-</head>
+  return (
+    <div>
+      {/* Search Field */}
+      <Box marginBottom={2}>
+        <TextField
+          label="Search"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <Search />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Box>
 
-<body>
-    <div class="container">
-        <h1>Outstanding Balance Notification</h1>
-        <p>To {{.PartyName}},</p>
-        <p>Address: {{.Address}}</p>
-        <p>This is a reminder that you have an outstanding balance with us. Please review the details below:</p>
-
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Bill Date</th>
-                        <th>Bill Number</th>
-                        <th>Bill Amount</th>
-                        <th>Due Date</th>
-                        <th>Delay Days</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{range .Bills}}
-                    <tr>
-                        <td class="date">{{.BillDate}}</td>
-                        <td>{{.BillName}}</td>
-                        <td class="amount">{{.AmountStr}}</td>
-                        <td class="date">{{.DueDate}}</td>
-                        <td class="amount">{{.DelayDays}}</td>
-                    </tr>
-                    {{end}}
-                </tbody>
-                <tfoot>
-                        <td></td>
-                        <td>Total</td>
-                        <td class="amount">{{.TotalAmountStr}}</td>
-                        <td></td>
-                        <td></td>
-                </tfoot>
-            </table>
-        </div>
-
-        <p>Please make the payment by the due date to avoid any late fees.</p>
-        <p>If you have already made the payment, please disregard this email.</p>
-
-        <p>Thank you for your prompt attention to this matter.</p>
-
-        <div class="footer">
-            <p>Best Regards,<br>SoftGen Solutions LLP</p>
-            <p><a href="https://softgensolution.in">Visit our website</a></p>
-        </div>
+      {/* Table with expandable rows and dynamic columns */}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell />
+              <TableCell padding="checkbox">
+                <Checkbox
+                  onChange={(event, checked) => {
+                    if (checked) {
+                      const newSelecteds = data.map((_, index) => index);
+                      setSelectedRows(newSelecteds);
+                    } else {
+                      setSelectedRows([]);
+                    }
+                  }}
+                />
+              </TableCell>
+              {columns.map((column, index) => (
+                <TableCell
+                  key={index}
+                  sortDirection={
+                    sortConfig.key === column.field
+                      ? sortConfig.direction
+                      : false
+                  }
+                >
+                  {column.sortable ? (
+                    <TableSortLabel
+                      active={sortConfig.key === column.field}
+                      direction={sortConfig.direction || "asc"}
+                      onClick={() => handleSort(column)}
+                    >
+                      {column.header}
+                    </TableSortLabel>
+                  ) : (
+                    column.header
+                  )}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {sortedData.map((row, index) => (
+              <React.Fragment key={index}>
+                <TableRow>
+                  <TableCell>
+                    <IconButton size="small" onClick={() => toggleRow(index)}>
+                      {openRows[index] ? (
+                        <KeyboardArrowUp />
+                      ) : (
+                        <KeyboardArrowDown />
+                      )}
+                    </IconButton>
+                  </TableCell>
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      checked={selectedRows.indexOf(index) !== -1}
+                      onChange={() => handleCheckboxChange(index)}
+                    />
+                  </TableCell>
+                  {columns.map((column) => (
+                    <TableCell key={column.field}>
+                      {row[column.field as keyof DataRow]}
+                    </TableCell>
+                  ))}
+                </TableRow>
+                <TableRow>
+                  <TableCell colSpan={columns.length + 2} padding="none">
+                    <Collapse in={openRows[index]} timeout="auto" unmountOnExit>
+                      <Box margin={1}>
+                        <Typography variant="h6" gutterBottom component="div">
+                          Bills
+                        </Typography>
+                        <Table size="small" aria-label="bills">
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>Bill No</TableCell>
+                              <TableCell>Bill Date</TableCell>
+                              <TableCell>Due Date</TableCell>
+                              <TableCell>Delay Days</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {row.bills.map((bill, billIndex) => (
+                              <TableRow key={billIndex}>
+                                <TableCell>{bill.billNo}</TableCell>
+                                <TableCell>{bill.billDate}</TableCell>
+                                <TableCell>{bill.dueDate}</TableCell>
+                                <TableCell>{bill.delayDays}</TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </Box>
+                    </Collapse>
+                  </TableCell>
+                </TableRow>
+              </React.Fragment>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
+  );
+};
 
-    <script>
+// Example usage
+const exampleData: DataRow[] = [
+  {
+    category: "Electronics",
+    sales: 100,
+    region: "North",
+    bills: [
+      {
+        billNo: "1",
+        billDate: "10-10-2024",
+        dueDate: "10-12-2024",
+        delayDays: 60,
+      },
+      {
+        billNo: "2",
+        billDate: "10-10-2024",
+        dueDate: "10-12-2024",
+        delayDays: 60,
+      },
+    ],
+  },
+  {
+    category: "Clothing",
+    sales: 150,
+    region: "South",
+    bills: [
+      {
+        billNo: "3",
+        billDate: "15-10-2024",
+        dueDate: "15-11-2024",
+        delayDays: 30,
+      },
+    ],
+  },
+];
 
-        // Apply date formatting to all elements with the class 'date'
-        document.querySelectorAll('.date').forEach(function (element) {
-            var dateStr = element.textContent;
-            element.textContent = formatDate(dateStr);
-        });
+const columns: TableColumn[] = [
+  { header: "Category", field: "category", sortable: true },
+  { header: "Region", field: "region", sortable: true },
+  { header: "Sales", field: "sales", sortable: true },
+];
 
-        // Function to format a number as currency in INR
-        function formatCurrency(amount) {
-            return '₹' + amount.toString().replace(/\B(?=(\d{2})+(?!\d))/g, ',');
-        }
-
-        // Apply formatting to all elements with the class 'amount'
-        document.querySelectorAll('.amount').forEach(function (element) {
-            var amount = parseFloat(element.textContent.replace(/₹|,/g, ''));
-            if (!isNaN(amount)) {
-                element.textContent = formatCurrency(amount);
-            }
-        });
-    </script>
-</body>
-
-</html>
-
-`;
+const searchKeys = ["category", "region", "sales"];
 
 const Page = () => {
   return (
-    <div className="w-full h-[100vh] p-1">
-      <WebBuilder
-        initialTemplate={initialTemplate}
-        onExtract={(htmlTemplate: string) => {}}
+    <div>
+      <Typography variant="h4" gutterBottom>
+        Dynamic Pivot Table with Expandable Rows
+      </Typography>
+      <PivotTable
+        data={exampleData}
+        columns={columns}
+        searchKeys={searchKeys}
       />
     </div>
   );
