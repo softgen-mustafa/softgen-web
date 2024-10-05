@@ -405,6 +405,7 @@ const Page = () => {
       flex: 1,
       minWidth: 150,
       hideable: false,
+      showSummation: true,
     },
     {
       field: "ClosingAmount",
@@ -415,6 +416,7 @@ const Page = () => {
       flex: 1,
       minWidth: 150,
       hideable: false,
+      showSummation: true,
     },
     {
       field: "PendingPercentage",
@@ -551,7 +553,7 @@ const Page = () => {
             selectionValues={reportTypes}
             helperText={""}
             defaultSelectionIndex={reportTypes.findIndex(
-              (item) => item.value === selectedReportType
+              (item) => item.value === selectedReportType,
             )}
             onSelection={(selection) => {
               setSelectedReportType(selection.value);
@@ -565,7 +567,7 @@ const Page = () => {
             selectionValues={dueTypes}
             helperText={""}
             defaultSelectionIndex={dueTypes.findIndex(
-              (item) => item.value === selectedDueType
+              (item) => item.value === selectedDueType,
             )} // Pass index of the current selection
             onSelection={(selection) => {
               setSelectedDueType(selection.value);
@@ -630,7 +632,7 @@ const Page = () => {
             selectionValues={locationTypes}
             helperText={""}
             defaultSelectionIndex={locationTypes.findIndex(
-              (item) => item.value === selectedlocationTypes
+              (item) => item.value === selectedlocationTypes,
             )}
             onSelection={(selection) => {
               setSelectedLocationTypes(selection.value);
@@ -670,6 +672,7 @@ const Page = () => {
           <div className="mt-4" />
 
           <PeriodicTable
+            showSummationRow={true}
             chartKeyFields={[
               {
                 label: "Party",
@@ -722,6 +725,7 @@ const Page = () => {
                 type: col.type,
                 pinned: false,
                 hideable: col.hideable,
+                showSummation: col.showSummation,
                 rows: [],
               };
               return column;
@@ -747,7 +751,7 @@ const Page = () => {
                         let parties: string[] = [];
                         values.map((row: any[]) => {
                           let party = row.find(
-                            (entry: any) => entry.field == "LedgerName"
+                            (entry: any) => entry.field == "LedgerName",
                           );
                           if (party) {
                             parties.push(party.value);

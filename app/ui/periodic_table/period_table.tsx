@@ -1,7 +1,6 @@
 "use client";
 import {
   Checkbox,
-  CircularProgress,
   InputAdornment,
   TextField,
   Box,
@@ -11,7 +10,6 @@ import {
   Radio,
   useTheme,
   Stack,
-  LinearProgress,
 } from "@mui/material";
 import {
   Search,
@@ -20,16 +18,8 @@ import {
   Sync,
   FilterAlt,
   FilterAltOff,
-  TableChart,
-  BarChart,
 } from "@mui/icons-material";
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  ReactNode,
-  ReactElement,
-} from "react";
+import React, { useState, useRef, useEffect, ReactElement } from "react";
 import {
   FormLabel,
   FormControlLabel,
@@ -53,6 +43,7 @@ interface ApiProps {
 }
 
 interface PeriodicTableProps {
+  showSummationRow?: boolean;
   actionViews?: any[];
   iconActions?: any[];
   columns: TableColumn[];
@@ -105,6 +96,7 @@ interface TableColumn {
   width?: number;
   hideable?: boolean;
   mobileFullView?: boolean;
+  showSummation?: boolean;
 }
 
 interface TableRow {
@@ -123,6 +115,7 @@ interface TableProps {
   iconActions?: any[];
   actionViews?: any[];
   reload: any;
+  showSummationRow?: boolean;
 }
 
 const ColumnColorPicker = ({
@@ -332,6 +325,7 @@ const Table = ({
   iconActions = [],
   actionViews = [],
   reload,
+  showSummationRow = false,
 }: TableProps) => {
   const theme = useTheme();
 
@@ -384,7 +378,10 @@ const Table = ({
 
   return (
     // <Box className="w-full max-w-[100vw] flex flex-row max-h-[600px]">
-    <Box className="w-full" sx={{ overflowX: "auto" }}>
+    <Box
+      className="w-full max-h-[600px]"
+      sx={{ overflowX: "auto", overflowY: "auto" }}
+    >
       <Box
         className="w-full flex flex-col p-2"
         style={{
@@ -394,9 +391,10 @@ const Table = ({
           borderRadius: 2,
         }}
       >
+        {/* Header Row*/}
         <Box
           //  className="flex flex-row justify-between">
-          className="flex flex-row justify-between sticky top-0 bg-white"
+          className="flex flex-row justify-between sticky top-0 bg-white z-10"
           sx={{
             borderBottomWidth: 2,
             borderBottomColor: theme.palette.primary.main,
@@ -404,7 +402,7 @@ const Table = ({
         >
           {checkBox && (
             <Box
-              className="flex p-0"
+              className="flex p-0 bg-white"
               sx={{ borderRightWidth: 2, borderBottomWidth: 2 }}
             >
               <Checkbox
@@ -427,7 +425,7 @@ const Table = ({
             .filter((entry) => !entry.hideable)
             .map((column: TableColumn, colIndex: number) => {
               let cellWidth = fieldWidths.find(
-                (entry: any) => entry.field === column.field
+                (entry: any) => entry.field === column.field,
               );
               if (cellWidth === null) {
                 cellWidth = 200;
@@ -491,6 +489,7 @@ const Table = ({
             <Typography>No Data Found</Typography>
           </Box>
         )}
+        {/* Data Rows*/}
         {tableRows.map((row: any[], rowIndex: number) => {
           return (
             <div
@@ -513,7 +512,7 @@ const Table = ({
                       let selectedValues = selectedRow;
                       if (selectedValues.includes(rowIndex)) {
                         selectedValues = selectedValues.filter(
-                          (i) => i !== rowIndex
+                          (i) => i !== rowIndex,
                         );
                       } else {
                         selectedValues.push(rowIndex);
@@ -536,7 +535,7 @@ const Table = ({
                 })
                 .map((cell: any, cellIndex: number) => {
                   let cellWidth = fieldWidths.find(
-                    (entry: any) => entry.field === cell.field
+                    (entry: any) => entry.field === cell.field,
                   );
                   if (cellWidth === null) {
                     cellWidth = 200;
@@ -607,6 +606,115 @@ const Table = ({
             </div>
           );
         })}
+        {/*Summation Row */}
+        {showSummationRow && (
+          <Box
+            //  className="flex flex-row justify-between">
+            className="flex flex-row justify-between sticky bottom-0 bg-gray-100 z-10"
+            sx={{
+              borderTopWidth: 2,
+              borderTopColor: theme.palette.primary.main,
+            }}
+          >
+            {checkBox && (
+              <Box
+                className="flex p-0 bg-white"
+                sx={{ borderRightWidth: 2, borderBottomWidth: 2 }}
+              >
+                <Checkbox
+                  className=""
+                  onChange={(event, checked: boolean) => {
+                    let values: any[] = [];
+                    if (checked) {
+                      tableRows.map((_items: any, index: number) => {
+                        values.push(index);
+                      });
+                    }
+                    if (onChecked) {
+                      onChecked(values);
+                    }
+                    setSelectedRow(values);
+                  }}
+                />
+              </Box>
+            )}
+            {columns
+              .filter((entry) => !entry.hideable)
+              .map((column: TableColumn, colIndex: number) => {
+                let cellWidth = fieldWidths.find(
+                  (entry: any) => entry.field === column.field,
+                );
+                if (cellWidth === null) {
+                  cellWidth = 200;
+                }
+                let summation = 0;
+                if (column.showSummation) {
+                  tableRows.map((row: any, rowIndex: number) => {
+                    let rowValue = row.find(
+                      (rowEntry: any) => rowEntry.field == column.field,
+                    );
+                    if (rowValue) {
+                      console.log(`row value: ${JSON.stringify(rowValue)}`);
+                      summation += rowValue.value;
+                    }
+                  });
+                }
+                return (
+                  <Box
+                    key={colIndex}
+                    className="w-full flex p-2"
+                    sx={{
+                      minWidth: 150,
+                      maxWidth: cellWidth,
+                      borderBottomWidth: 2,
+
+                      flex: `1 0 ${cellWidth}px`, // Allow flexing with minimum width
+
+                      borderRightWidth: colIndex === columns.length - 1 ? 0 : 2,
+                    }}
+                  >
+                    {column.showSummation && (
+                      <Typography>{numericToString(summation)}</Typography>
+                    )}
+                  </Box>
+                );
+              })}
+            {iconActions &&
+              iconActions.length > 0 &&
+              iconActions.map((entry: any, index: number) => {
+                return (
+                  <Box
+                    key={index}
+                    className="w-full flex p-2"
+                    sx={{
+                      minWidth: 100,
+                      borderBottomWidth: 2,
+                      borderRightWidth: 2,
+                    }}
+                  >
+                    <Typography>{entry.label}</Typography>
+                  </Box>
+                );
+              })}
+            {actionViews &&
+              actionViews.length > 0 &&
+              actionViews.map((entry: any, index: number) => {
+                return (
+                  <Box
+                    key={index}
+                    className="w-full flex p-2"
+                    sx={{
+                      minWidth: 100,
+                      // borderBottomWidth: 2,
+                      borderRightWidth: 2,
+                    }}
+                  >
+                    <Typography>{entry.label}</Typography>
+                  </Box>
+                );
+              })}
+          </Box>
+        )}
       </Box>
     </Box>
   );
@@ -998,7 +1106,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
       console.log(props.rows);
       let rows = props.rows.slice(
         apiParams.offset * apiParams.limit,
-        apiParams.offset * apiParams.limit + apiParams.limit
+        apiParams.offset * apiParams.limit + apiParams.limit,
       );
       loadColumns(rows);
     }
@@ -1050,7 +1158,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
   }, []);
 
   return (
-    <div className="flex flex-col w-full h-auto">
+    <div className="flex flex-col w-full h-auto max-h-[650px] pb-2">
       {/* <div>width: {dimensions.width}</div> */}
       <Box className="flex flex-col sm:flex-row w-full justify-between mb-4 gap-2">
         <Stack flexDirection={"row"} alignItems={"center"} gap={1}>
@@ -1130,6 +1238,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
 
         {viewType === "table" && dimensions.width > maxPhoneWidth && (
           <Table
+            showSummationRow={props.showSummationRow}
             actionViews={props.actionViews}
             iconActions={props.iconActions}
             columns={props.columns}
