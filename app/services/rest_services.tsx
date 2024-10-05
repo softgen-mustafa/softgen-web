@@ -20,7 +20,7 @@ const postAsync = async (url: string, requestBody: any) => {
 
   console.log(
     "----------- This is my Headers Value look. ----------------",
-    appHeaders,
+    appHeaders
   );
   //  console.log("----------- This is my url Value look. ----------------",url)
 
@@ -139,7 +139,7 @@ const _unwrap = (encryptedData: any) => {
     parsedKey,
     {
       iv: parsedIv,
-    },
+    }
   );
   if (!decryptedData) {
     return null;
@@ -173,7 +173,7 @@ const getBaseUrl = () => {
   //Jayesh Local IP
   return "http://192.168.1.36:45080";
 
-  //return "https://softgensolutions.com/gateway";
+  //// return "https://softgensolutions.com/gateway";
 
   //GoDadddddddy
   //return "http://118.139.167.125:45400";
