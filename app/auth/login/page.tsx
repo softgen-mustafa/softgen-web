@@ -150,62 +150,63 @@ const LoginPage = () => {
         >
           Login
         </Typography> */}
-
-        <TextField
-          label="Email or Mobile Number"
-          value={loginInfo.credential}
-          onChange={handleChange("credential")}
-          error={!!errors.credential}
-          helperText={errors.credential}
-          fullWidth
-          margin="normal"
-          className="w-full mb-4"
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "18px",
-            },
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <EmailIcon aria-label="email or mobile icon" />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <TextField
-          label="Password"
-          type={showPassword ? "text" : "password"}
-          value={loginInfo.password}
-          onChange={handleChange("password")}
-          error={!!errors.password}
-          helperText={errors.password}
-          fullWidth
-          margin="normal"
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={togglePasswordVisibility}
-                  aria-label="toggle password visibility"
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-            startAdornment: (
-              <InputAdornment position="start">
-                <LockIcon aria-label="email or mobile icon" />
-              </InputAdornment>
-            ),
-          }}
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "18px", // Customize the border radius
-            },
-          }}
-        />
+        <div className="pl-5 pr-5 md:pl-10 md:pr-10">
+          <TextField
+            label="Email or Mobile Number"
+            value={loginInfo.credential}
+            onChange={handleChange("credential")}
+            error={!!errors.credential}
+            helperText={errors.credential}
+            fullWidth
+            margin="normal"
+            className="w-full mb-4"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "18px",
+              },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <EmailIcon aria-label="email or mobile icon" />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <TextField
+            label="Password"
+            type={showPassword ? "text" : "password"}
+            value={loginInfo.password}
+            onChange={handleChange("password")}
+            error={!!errors.password}
+            helperText={errors.password}
+            fullWidth
+            margin="normal"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={togglePasswordVisibility}
+                    aria-label="toggle password visibility"
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockIcon aria-label="email or mobile icon" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "18px", // Customize the border radius
+              },
+            }}
+          />
+        </div>
         <div className="justify-center flex">
           <Button
             onClick={login}
@@ -220,7 +221,7 @@ const LoginPage = () => {
                 xs: "8px 12px",
                 sm: "10px 16px",
               },
-              width: { xs: "90%", md: "100%" },
+              width: { xs: "50%", md: "80%" },
               borderRadius: "12px",
               backgroundImage:
                 "linear-gradient(90deg, #42A5F5 0%, #1E88E5 100%)", // Gradient background
@@ -236,6 +237,7 @@ const LoginPage = () => {
                 transform: "translateY(-2px)",
               },
               textTransform: "capitalize",
+              marginTop: 4,
             }}
           >
             {isLoading ? (

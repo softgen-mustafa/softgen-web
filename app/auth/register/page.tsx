@@ -143,102 +143,104 @@ const Page = () => {
             Registration Form
           </Typography>
         </Stack>
-        <TextField
-          label="Name"
-          value={userInfo.name}
-          onChange={handleChange("name")}
-          error={!!errors.name}
-          helperText={errors.name}
-          fullWidth
-          margin="normal"
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "18px",
-            },
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <PersonIcon aria-label="email or mobile icon" />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <TextField
-          label="Email Address"
-          value={userInfo.email}
-          onChange={handleChange("email")}
-          error={!!errors.email}
-          helperText={errors.email}
-          fullWidth
-          margin="normal"
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "18px",
-            },
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <EmailIcon aria-label="email or mobile icon" />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <TextField
-          label="Mobile Number"
-          value={userInfo.mobile_number}
-          onChange={handleChange("mobile_number")}
-          error={!!errors.mobile_number}
-          helperText={errors.mobile_number}
-          fullWidth
-          margin="normal"
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "18px",
-            },
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <CallIcon aria-label="email or mobile icon" />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <TextField
-          label="Password"
-          type={showPassword ? "text" : "password"}
-          value={userInfo.password}
-          onChange={handleChange("password")}
-          error={!!errors.password}
-          helperText={errors.password}
-          fullWidth
-          margin="normal"
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={togglePasswordVisibility}
-                  aria-label="toggle password visibility"
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-            startAdornment: (
-              <InputAdornment position="start">
-                <LockIcon aria-label="email or mobile icon" />
-              </InputAdornment>
-            ),
-          }}
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "18px", // Customize the border radius
-            },
-          }}
-        />
+        <div className="pl-5 pr-5 md:pl-10 md:pr-10">
+          <TextField
+            label="Name"
+            value={userInfo.name}
+            onChange={handleChange("name")}
+            error={!!errors.name}
+            helperText={errors.name}
+            fullWidth
+            margin="normal"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "18px",
+              },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <PersonIcon aria-label="email or mobile icon" />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <TextField
+            label="Email Address"
+            value={userInfo.email}
+            onChange={handleChange("email")}
+            error={!!errors.email}
+            helperText={errors.email}
+            fullWidth
+            margin="normal"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "18px",
+              },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <EmailIcon aria-label="email or mobile icon" />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <TextField
+            label="Mobile Number"
+            value={userInfo.mobile_number}
+            onChange={handleChange("mobile_number")}
+            error={!!errors.mobile_number}
+            helperText={errors.mobile_number}
+            fullWidth
+            margin="normal"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "18px",
+              },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <CallIcon aria-label="email or mobile icon" />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <TextField
+            label="Password"
+            type={showPassword ? "text" : "password"}
+            value={userInfo.password}
+            onChange={handleChange("password")}
+            error={!!errors.password}
+            helperText={errors.password}
+            fullWidth
+            margin="normal"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={togglePasswordVisibility}
+                    aria-label="toggle password visibility"
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockIcon aria-label="email or mobile icon" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "18px", // Customize the border radius
+              },
+            }}
+          />
+        </div>
         <div className="justify-center flex">
           <Button
             onClick={register}
@@ -253,7 +255,7 @@ const Page = () => {
                 xs: "8px 12px",
                 sm: "10px 16px",
               },
-              width: { xs: "90%", md: "100%" },
+              width: { xs: "50%", md: "80%" },
               borderRadius: "12px",
               backgroundImage:
                 "linear-gradient(90deg, #42A5F5 0%, #1E88E5 100%)", // Gradient background
