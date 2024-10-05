@@ -2,85 +2,44 @@
 
 import { useEffect, useRef, useState } from "react";
 import { DropDown } from "@/app/ui/drop_down";
-import { SearchInput } from "@/app/ui/text_inputs";
-import {
-  Box,
-  CircularProgress,
-  Stack,
-  Switch,
-  Typography,
-} from "@mui/material";
-import Cookies from "js-cookie";
+import { Box, Button, Stack, Switch, Typography } from "@mui/material";
 import {
   getAsync,
-  getBmrmBaseUrl,
   getPortalUrl,
-  getUmsBaseUrl,
   postAsync,
 } from "@/app/services/rest_services";
-import { DataTable } from "@/app/ui/data_grid";
-import { GridColDef } from "@mui/x-data-grid";
-import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 import {
   ApiProps,
   PeriodicTable,
   TableColumn,
 } from "@/app/ui/periodic_table/period_table";
+import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
+import { useSnackbar } from "@/app/ui/snack_bar_provider";
 
 interface UserProps {
   id: number;
   name: string;
 }
 
-const filterData = [
-  {
-    id: 1,
-    name: "All",
-    value: "all",
-  },
-  {
-    id: 2,
-    name: "Active",
-    value: "active",
-  },
-  {
-    id: 3,
-    name: "In-active",
-    value: "inactive",
-  },
-];
-
 const UserPermissions = () => {
   const [data, setData] = useState([]);
   const [refresh, triggerRefresh] = useState(false);
-  // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   let selectedUser = useRef(null);
-  let selectedFilter = useRef(null);
+  let selectedPermission = useRef<any>();
 
-  const compId = Cookies.get("companyId");
+  const snackbar = useSnackbar();
 
   useEffect(() => {
-    // FeatureControl("MasterConfigButton").then((permission) => {
-    //   setHasPermission(permission);
-    //   if (permission) {
     loadUser().then((_) => {
       triggerRefresh(!refresh);
     });
-    //   }
-    // });
   }, []);
-
-  // useEffect(() => {
-  //   loadUser().then((_) => {
-  //     triggerRefresh(!refresh);
-  //   });
-  // }, []);
 
   const columns: any[] = [
     {
-      field: "code",
-      headerName: "Code",
+      field: "permission",
+      headerName: "Permission",
       editable: false,
       sortable: true,
       hideable: true,
@@ -93,19 +52,10 @@ const UserPermissions = () => {
       sortable: true,
       flex: 2,
     },
-    {
-      field: "status",
-      hideable: true,
-      headerName: "Status",
-      editable: false,
-      sortable: false,
-      flex: 1,
-    },
   ];
 
   const loadUser = async () => {
     try {
-      // if (compId) {
       const url = `${getPortalUrl()}/companies/get/users`;
       let response = await getAsync(url);
       if (response && response.length > 0) {
@@ -116,32 +66,68 @@ const UserPermissions = () => {
         setData(values);
         selectedUser.current = response[0]?.id;
       }
-      // }
     } catch {
       console.log("Something went wrong...");
     }
   };
 
-  const onApi = async (apiProps: ApiProps) => {
-    let url = `${getBmrmBaseUrl()}/user-info/get/permission?userId=${
-      selectedUser.current
-    }`;
-
-    let requestBody = {
-      page_number: apiProps.offset + 1,
-      page_size: apiProps.limit,
-      search_text: apiProps.searchText ?? "",
-      filter: selectedFilter.current,
-    };
+  const loadFeatures = async () => {
     try {
-      let response = await postAsync(url, requestBody);
+      let url = `${getPortalUrl()}/features`;
+      let response = await getAsync(url);
+      if (response == null) {
+        return [];
+      }
+      let values = response.map((entry: any) => {
+        return {
+          Permission: entry.Permission,
+          ...entry,
+        };
+      });
+      console.log(JSON.stringify(values));
+      return values;
+    } catch {
+      return [];
+    }
+  };
+
+  const mapFeatures = async () => {
+    try {
+      if (
+        !selectedPermission.current ||
+        selectedPermission.current.length === 0
+      ) {
+        return;
+      }
+
+      let groupPermissions = selectedPermission.current;
+
+      let url = `${getPortalUrl()}/features/map/bulk?userId=${
+        selectedUser.current
+      }`;
+
+      let requestBody = {
+        groupPermissions,
+      };
+      console.log("mapFeatures RequestBody", JSON.stringify(requestBody));
+
+      await postAsync(url, requestBody);
+      snackbar.showSnackbar("Permissions mapped successfully");
+    } catch {
+      snackbar.showSnackbar("Failed to map permissions");
+    }
+  };
+  const onApi = async (apiProps: ApiProps) => {
+    let url = `${getPortalUrl()}/features/user?userId=${selectedUser.current}`;
+
+    try {
+      let response = await getAsync(url);
       if (response && response.length > 0) {
         let entries = response.map((_data: any, index: number) => {
           return {
-            id: index,
-            name: _data?.name,
-            status: _data?.is_active,
-            code: _data?.code,
+            id: index ?? _data?.ID,
+            name: _data?.Name,
+            permission: _data?.Permission,
           };
         });
         return entries;
@@ -154,35 +140,6 @@ const UserPermissions = () => {
     }
   };
 
-  const updateUserStatus = async (
-    code: string | number,
-    currentStatus: boolean
-  ) => {
-    try {
-      let status = currentStatus ? "revoke" : "assign";
-      const url = `${getBmrmBaseUrl()}/user-info/${status}-permission?userId=${
-        selectedUser.current
-      }&code=${code}`;
-      const requestBody = { isActive: currentStatus };
-      const response = await postAsync(url, requestBody);
-      triggerRefresh(!refresh);
-    } catch (error) {
-      console.log("Something went wrong...");
-    }
-  };
-
-  // if (hasPermission === null) {
-  //   return <CircularProgress />;
-  // }
-
-  // if (hasPermission === false) {
-  //   return (
-  //     <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-  //       Get the Premium For this Service Or Contact Admin - 7977662924
-  //     </Typography>
-  //   );
-  // }
-
   return (
     <Box>
       <Stack flexDirection={"row"} gap={1.5} mb={1}>
@@ -193,52 +150,72 @@ const UserPermissions = () => {
           selectionValues={data}
           helperText={""}
           onSelection={(_data) => {
-            // setSelectedUser(_data?.id);
             selectedUser.current = _data?.id;
             triggerRefresh(!refresh);
           }}
           useSearch={true}
         />
-        <Box sx={{ width: "20%" }}>
-          <DropDown
-            label={"Filter"}
-            displayFieldKey={"name"}
-            valueFieldKey={null}
-            selectionValues={filterData}
-            helperText={""}
-            onSelection={(_data) => {
-              selectedFilter.current = _data?.value;
-              triggerRefresh(!refresh);
-            }}
-          />
-        </Box>
+
+        <ApiMultiDropDown
+          reload={false}
+          label="Feature Permission List"
+          displayFieldKey={"Name"}
+          defaultSelections={selectedPermission.current}
+          valueFieldKey={null}
+          onApi={loadFeatures}
+          helperText={""}
+          onSelection={(selection) => {
+            selectedPermission.current =
+              selection.map((entry: any) => entry.Permission) ?? [];
+          }}
+        />
+
+        <Button
+          variant="contained"
+          onClick={mapFeatures}
+          sx={{
+            height: 50,
+            borderRadius: "12px",
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+            "&:hover": {
+              boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.3)",
+            },
+          }}
+        >
+          <Typography textTransform={"capitalize"} letterSpacing={0.8}>
+            Map
+          </Typography>
+        </Button>
+
+        <Button
+          variant="contained"
+          onClick={() => {}}
+          sx={{
+            height: 50,
+            borderRadius: "12px",
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+            "&:hover": {
+              boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.3)",
+            },
+          }}
+        >
+          <Typography textTransform={"capitalize"} letterSpacing={0.8}>
+            Remove
+          </Typography>
+        </Button>
       </Stack>
-      {/*<DataTable
-        columns={columns}
-        refresh={refresh}
-        onApi={async (page, pageSize, searchText) => {
-          return await onApi(page, pageSize, searchText);
-        }}
-        useSearch={true}
-        onRowClick={(params) => {}}
-      /> */}
+
       <PeriodicTable
         actionViews={[
           {
             label: "Status",
             renderView: (row: any[]) => {
-              let code = row.find((entry: any) => entry.field === "code");
               let status = row.find((entry: any) => entry.field === "status");
               return (
                 <div>
                   <Switch
                     checked={status != null && status.value ? true : false}
-                    onChange={() =>
-                      updateUserStatus(
-                        code != null ? code.value : "",
-                        status != null ? status.value : "false"
-                      )
-                    }
+                    onChange={() => ""}
                   />
                 </div>
               );
