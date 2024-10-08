@@ -13,7 +13,7 @@ import {
   postAsync,
 } from "@/app/services/rest_services";
 import { IconButton, Stack, Switch, useTheme } from "@mui/material";
-import { convertToDate } from "@/app/services/Local/helper";
+import { convertToDate, numericToString } from "@/app/services/Local/helper";
 import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
 
@@ -136,18 +136,18 @@ const UpcomingOverview = () => {
             bills = party["bills"].map((bill: any) => {
               return {
                 BillNumber: bill.BillNumber,
-                BillDate: bill.BillDate,
-                DueDate: bill.DueDate,
+                BillDate: convertToDate(bill.BillDate),
+                DueDate: convertToDate(bill.DueDate),
                 Opening:
-                  bill.OpeningBalance == null ? 0 : bill.OpeningBalance.Value,
+                  numericToString(bill.OpeningBalance == null ? 0 : bill.OpeningBalance.Value),
                 Closing:
-                  bill.ClosingBalance == null ? 0 : bill.ClosingBalance.Value,
+                  numericToString(bill.ClosingBalance == null ? 0 : bill.ClosingBalance.Value),
               };
             });
           }
           return {
             Party: party.party_name,
-            Amount: party.total_amount,
+            Amount: numericToString(party.total_amount),
             Bills: bills,
           };
         });
@@ -156,7 +156,7 @@ const UpcomingOverview = () => {
       return {
         id: index + 1,
         Duration: entry.duration_key,
-        Amount: entry.total_amount,
+        Amount: numericToString(entry.total_amount),
         Parties: parties,
       };
     });

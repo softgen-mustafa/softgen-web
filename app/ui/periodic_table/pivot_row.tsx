@@ -33,7 +33,7 @@ const PivotRow = ({
     return (
       <div
         key={`pivot-${rowIndex}`}
-        className="w-auto flex-col m-2 p-2 bg-gray-200 h-[60px]"
+        className="w-auto flex-col"
         style={{
           borderWidth: 1,
         }}
@@ -44,14 +44,16 @@ const PivotRow = ({
   };
 
   return (
-    <div key={refresh}>
+    <div key={refresh} className="ml-5">
       {data.map((row: any, rowIdx: number) => {
         return (
           <div key={rowIdx}>
             <Box className="flex flex-row overflow-x-hidden">
-              <div className="flex flex-col">
+              <div className="flex flex-col" style={{
+                borderRightWidth: 1,
+              }}>
                 {rowIdx === 0 && (
-                  <IconButton
+                  <IconButton className=""
                     onClick={() => {
                       if (selectedIndexes.current.length > 0) {
                         selectedIndexes.current = [];
@@ -67,6 +69,8 @@ const PivotRow = ({
                   </IconButton>
                 )}
                 <IconButton
+                  sx={{
+                  }}
                   onClick={() => {
                     if (selectedIndexes.current.includes(rowIdx)) {
                       selectedIndexes.current = selectedIndexes.current.filter(
@@ -90,13 +94,15 @@ const PivotRow = ({
                 .map((column: string, index: number) => {
                   const value = row[column];
                   return (
-                    <div className="flex flex-col">
+                    <div className="flex flex-col" style={{
+                      borderRightWidth: 1,
+                    }}>
                       {rowIdx === 0 && (
                         <Box
                           key={index}
-                          className="w-full flex p-2"
+                          className="w-full flex p-2 bg-gray-200"
                           sx={{
-                            minWidth: 150,
+                            minWidth: 200,
                             maxWidth: 200,
                             borderRightWidth: index === keys.length - 1 ? 0 : 2,
                             overflowX: "auto",
@@ -111,7 +117,7 @@ const PivotRow = ({
                         key={index}
                         className="w-full flex p-2"
                         sx={{
-                          minWidth: 150,
+                          minWidth: 200,
                           maxWidth: 200,
                           borderRightWidth: index === keys.length - 1 ? 0 : 2,
                           overflowX: "auto",

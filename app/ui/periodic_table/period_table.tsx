@@ -410,7 +410,7 @@ const Table = ({
 
     return (
       <div
-        className="w-auto flex-col m-2 p-2"
+        className="w-auto flex-col"
         style={{
           borderWidth: 1,
         }}
