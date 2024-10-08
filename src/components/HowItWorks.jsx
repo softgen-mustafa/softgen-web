@@ -32,8 +32,8 @@ const HowItWorks = () => {
 
   return (
     <section className="common-padding">
-      <div className="screen-max-width">
-        <div id="chip" className="flex-center w-full my-20">
+      <div className="screen-max-width overflow-hidden">
+        <div id="chip" className="flex-center w-full my-20 overflow-hidden">
           <Image src={chipImg} alt="chip" width={180} height={180} />
         </div>
 
@@ -44,8 +44,8 @@ const HowItWorks = () => {
           </h2>
 
           <p className="hiw-subtitle">
-           
-             Our most innovative design to date.  
+
+            Our most innovative design to date.
 
           </p>
         </div>
@@ -57,44 +57,44 @@ const HowItWorks = () => {
                 src={frameImg}
                 alt="frame"
                 className=" bg-transparent relative z-10  "
-                
+
               />
             </div>
             <div className="hiw-video sm:rounded-[56px] ">
-                <video className="pointer-events-none" playsInline preload="none" muted autoPlay ref={videoRef}>
-                  <source src={frameVideo} type="video/mp4"   />
-                </video>
-              </div>
+              <video className="pointer-events-none" playsInline preload="none" muted autoPlay ref={videoRef}>
+                <source src={frameVideo} type="video/mp4" />
+              </video>
+            </div>
           </div>
           <p className="text-black font-semibold text-center mt-3">web: dashboard </p>
+        </div>
+
+        <div className="hiw-text-container">
+          <div className="flex flex-1 justify-center flex-col">
+            <p className="hiw-text g_fadeIn">
+              Our  innovation sets a new benchmark for{' '}
+              <span className="text-black">
+                performance, offering unprecedented graphics
+              </span>.
+            </p>
+
+            <p className="hiw-text g_fadeIn">
+              power that elevates our web and app development projects with superior  {' '}
+              <span className="text-black">
+                speed, efficiency, and visual excellence.
+              </span>
+
+            </p>
           </div>
 
-          <div className="hiw-text-container">
-                <div className="flex flex-1 justify-center flex-col">
-                  <p className="hiw-text g_fadeIn">
-                  Our  innovation sets a new benchmark for{' '}
-                    <span className="text-black">
-                     performance, offering unprecedented graphics 
-                    </span>.
-                  </p>
 
-                  <p className="hiw-text g_fadeIn">
-                   power that elevates our web and app development projects with superior  {' '}
-                    <span className="text-black">
-                     speed, efficiency, and visual excellence.
-                    </span>
-                    
-                  </p>
-                </div>
-              
-
-              <div className="flex-1 flex justify-center flex-col g_fadeIn">
-                <p className="hiw-text">New</p>
-                <p className="hiw-bigtext ">BIZZ-opp</p>
-                <p className="hiw-text">available in  app and web </p>
-              </div>
-              </div>
-            </div>
+          <div className="flex-1 flex justify-center flex-col g_fadeIn">
+            <p className="hiw-text">New</p>
+            <p className="hiw-bigtext ">BIZZ-opp</p>
+            <p className="hiw-text">available in  app and web </p>
+          </div>
+        </div>
+      </div>
     </section>
   )
 }

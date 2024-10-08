@@ -4,7 +4,13 @@ import { getAsync, getBmrmBaseUrl } from "@/app/services/rest_services";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Box, CircularProgress, IconButton, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { FeatureControl } from "@/app/components/featurepermission/permission_helper";
 import {
@@ -123,16 +129,45 @@ const AgingSettings = () => {
           marginBottom: "10px",
         }}
       >
-        <Typography variant="button" sx={{ marginRight: "10px" }}>
-          Create New Aging
-        </Typography>
-        <IconButton
+        {" "}
+        <Button
           onClick={handleAddClick}
-          color="primary"
           aria-label="add aging setting"
+          sx={{
+            padding: { xs: "8px", sm: "10px", md: "8px" }, // Adjusted padding for desktop
+            height: { xs: 40, sm: 50, md: 45 }, // Reduced height for desktop
+            borderRadius: "12px",
+            backgroundColor: "primary.main", // Green background color
+            color: "white", // White text color
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+            width: { xs: "100%", sm: "auto" }, // Full width on small screens, auto on larger
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center", // Center both text and icon
+            "&:hover": {
+              backgroundColor: "primary.dark", // Darker green on hover
+              boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.3)",
+            },
+          }}
         >
-          <AddIcon />
-        </IconButton>
+          <Typography
+            variant="button"
+            textTransform={"capitalize"}
+            letterSpacing={0.8}
+            fontSize={{ xs: "0.8rem", sm: "1rem", md: "0.9rem" }} // Slightly smaller text size for desktop
+          >
+            Create New Aging
+          </Typography>
+          <IconButton
+            color="inherit"
+            sx={{
+              padding: { xs: "4px", sm: "6px", md: "4px" }, // Reduced padding for desktop
+              marginLeft: 0, // Removed margin left
+            }}
+          >
+            <AddIcon fontSize="small" />
+          </IconButton>
+        </Button>
       </Box>
       {/* <DataGrid
         columns={columns}
@@ -153,7 +188,6 @@ const AgingSettings = () => {
         onPaginationModelChange={(value) => {}}
       /> */}
       <PeriodicTable
-
         useSearch={false}
         columns={columns.map((col: any) => {
           let column: TableColumn = {

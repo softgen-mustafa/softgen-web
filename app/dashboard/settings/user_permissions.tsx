@@ -222,6 +222,8 @@ const UserPermissions = () => {
           onClick={unmapallFeatures}
           sx={{
             height: 50,
+
+            width: { xs: "100%", md: "200px" },
             borderRadius: "12px",
             boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
             "&:hover": {
