@@ -30,6 +30,7 @@ import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
 import GridCardView from "@/app/ui/grid_card";
 import { AgingOverview } from "./aging_overview";
+import { UpcomingOverview } from "./upcoming_overview";
 
 const isDebitType = [
   {
@@ -810,6 +811,15 @@ const Page = () => {
       content: (
         <GridCardView title="Aging Overview">
           <AgingOverview />
+        </GridCardView>
+      ),
+    },
+    {
+      id: 3,
+      weight: 1,
+      content: (
+        <GridCardView title="Upcoming Overview">
+          <UpcomingOverview />
         </GridCardView>
       ),
     },
