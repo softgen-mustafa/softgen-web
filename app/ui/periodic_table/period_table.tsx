@@ -10,6 +10,7 @@ import {
   Radio,
   useTheme,
   Stack,
+  CircularProgress,
 } from "@mui/material";
 import {
   Search,
@@ -391,7 +392,7 @@ const Table = ({
       return <></>;
     }
     let pivotColumn = tableRows[rowIndex].find(
-      (entry) => entry.field === pivotKey,
+      (entry) => entry.field === pivotKey
     );
     if (
       pivotColumn === null ||
@@ -410,7 +411,7 @@ const Table = ({
           {keys.map((column: string, index: number) => {
             let value = row[column];
             return (
-              <div>
+              <div key={index}>
                 <Box
                   key={index}
                   className="w-full flex p-2"
@@ -528,7 +529,7 @@ const Table = ({
             .filter((entry) => !entry.hideable)
             .map((column: TableColumn, colIndex: number) => {
               let cellWidth = fieldWidths.find(
-                (entry: any) => entry.field === column.field,
+                (entry: any) => entry.field === column.field
               );
               if (cellWidth === null) {
                 cellWidth = 200;
@@ -595,7 +596,7 @@ const Table = ({
         {/* Data Rows*/}
         {tableRows.map((row: any[], rowIndex: number) => {
           return (
-            <div className="flex flex-col ">
+            <div className="flex flex-col " key={rowIndex}>
               <div
                 key={rowIndex}
                 className="flex flex-row justify-between"
@@ -618,7 +619,7 @@ const Table = ({
                         let selectedValues = selectedRow;
                         if (selectedValues.includes(rowIndex)) {
                           selectedValues = selectedValues.filter(
-                            (i) => i !== rowIndex,
+                            (i) => i !== rowIndex
                           );
                         } else {
                           selectedValues.push(rowIndex);
@@ -642,7 +643,7 @@ const Table = ({
                         let selectedValues = shownRowIndexes.current;
                         if (selectedValues.includes(rowIndex)) {
                           selectedValues = selectedValues.filter(
-                            (i) => i !== rowIndex,
+                            (i) => i !== rowIndex
                           );
                         } else {
                           selectedValues.push(rowIndex);
@@ -669,7 +670,7 @@ const Table = ({
                   })
                   .map((cell: any, cellIndex: number) => {
                     let cellWidth = fieldWidths.find(
-                      (entry: any) => entry.field === cell.field,
+                      (entry: any) => entry.field === cell.field
                     );
                     if (cellWidth === null) {
                       cellWidth = 200;
@@ -779,11 +780,30 @@ const Table = ({
                 />
               </Box>
             )}
+            {usePivot && (
+              <Box key={1} className="flex p-0" sx={{ borderRightWidth: 2 }}>
+                <IconButton
+                  onClick={() => {
+                    let hasContent = shownRowIndexes.current.length > 0;
+                    shownRowIndexes.current = hasContent
+                      ? []
+                      : shownRowIndexes.current;
+                    triggerRefresh(refresh == 1 ? 0 : 1);
+                  }}
+                >
+                  {shownRowIndexes.current.length > 0 ? (
+                    <ArrowUpward />
+                  ) : (
+                    <ArrowDownward />
+                  )}
+                </IconButton>
+              </Box>
+            )}
             {columns
               .filter((entry) => !entry.hideable)
               .map((column: TableColumn, colIndex: number) => {
                 let cellWidth = fieldWidths.find(
-                  (entry: any) => entry.field === column.field,
+                  (entry: any) => entry.field === column.field
                 );
                 if (cellWidth === null) {
                   cellWidth = 200;
@@ -792,7 +812,7 @@ const Table = ({
                 if (column.showSummation) {
                   tableRows.map((row: any, rowIndex: number) => {
                     let rowValue = row.find(
-                      (rowEntry: any) => rowEntry.field == column.field,
+                      (rowEntry: any) => rowEntry.field == column.field
                     );
                     if (rowValue) {
                       console.log(`row value: ${JSON.stringify(rowValue)}`);
@@ -1252,7 +1272,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
       console.log(props.rows);
       let rows = props.rows.slice(
         apiParams.offset * apiParams.limit,
-        apiParams.offset * apiParams.limit + apiParams.limit,
+        apiParams.offset * apiParams.limit + apiParams.limit
       );
       loadColumns(rows);
     }
@@ -1339,7 +1359,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
             selectionValues={viewTypeData}
             helperText={""}
             defaultSelectionIndex={viewTypeData.findIndex(
-              (entry) => entry.value === tableState.viewType,
+              (entry) => entry.value === tableState.viewType
             )}
             onSelection={(selection) => {
               updateTableState({ ...tableState, viewType: selection.value });
@@ -1353,11 +1373,11 @@ const PeriodicTable = (props: PeriodicTableProps) => {
           />
         </Stack>
       </Box>
-      {/*loading && (
-        <Box mb={1}>
-          <CircularProgress />
+      {loading && (
+        <Box className="z-30 flex justify-center items-center w-full">
+          {<CircularProgress className="flex" />}
         </Box>
-      )*/}
+      )}
       <Box
         display={"flex"}
         flexDirection={{ xs: "column", md: "row" }}

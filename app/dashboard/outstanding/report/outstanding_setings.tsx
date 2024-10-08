@@ -134,8 +134,7 @@ const OsSettingsView = ({ onClose }: { onClose: () => void }) => {
         TemplateName: selectedTemplate || settings.TemplateName,
       };
 
-      console.log("----requestBody-----", JSON.stringify(updatedSettings)); // Add log to verify request body
-
+      console.log("----requestBody-----", JSON.stringify(updatedSettings));
       let response = await postAsync(url, updatedSettings);
       snackbar.showSnackbar("Settings Updated", "success");
     } catch (error) {
