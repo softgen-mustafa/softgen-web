@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { DropDown } from "@/app/ui/drop_down";
-import { Box, Button, Stack, Switch, Typography } from "@mui/material";
+import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import {
   getAsync,
   getPortalUrl,
@@ -15,6 +15,7 @@ import {
 } from "@/app/ui/periodic_table/period_table";
 import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 
 interface UserProps {
   id: number;
@@ -64,10 +65,13 @@ const UserPermissions = () => {
           name: _data?.name,
         }));
         setData(values);
-        selectedUser.current = response[0]?.id;
+        selectedUser.current = response[0]?.id ?? null;
+      } else {
+        snackbar.showSnackbar("No users found");
       }
-    } catch {
-      console.log("Something went wrong...");
+    } catch (error) {
+      snackbar.showSnackbar("Failed to load users");
+      console.error("Error loading users:", error);
     }
   };
 
@@ -106,17 +110,43 @@ const UserPermissions = () => {
         selectedUser.current
       }`;
 
-      let requestBody = {
-        groupPermissions,
-      };
-      console.log("mapFeatures RequestBody", JSON.stringify(requestBody));
-
-      await postAsync(url, requestBody);
+      await postAsync(url, groupPermissions);
       snackbar.showSnackbar("Permissions mapped successfully");
     } catch {
       snackbar.showSnackbar("Failed to map permissions");
     }
   };
+
+  const unmapallFeatures = async () => {
+    try {
+      let url = `${getPortalUrl()}/features/un-map/all?userId=${
+        selectedUser.current
+      }`;
+
+      await getAsync(url);
+      snackbar.showSnackbar("Permissions Unmapped successfully");
+    } catch {
+      snackbar.showSnackbar("Failed to Unmapped permissions");
+    }
+  };
+
+  const unmapFeature = async (permissionCode: string) => {
+    try {
+      if (!selectedUser.current) {
+        snackbar.showSnackbar("Please select a user first.");
+        return;
+      }
+
+      let url = `${getPortalUrl()}/features/un-map?userId=${
+        selectedUser.current
+      }&code=${permissionCode}`;
+      await getAsync(url);
+      snackbar.showSnackbar("Permission unmapped successfully");
+    } catch (error) {
+      snackbar.showSnackbar("Failed to unmap permission");
+    }
+  };
+
   const onApi = async (apiProps: ApiProps) => {
     let url = `${getPortalUrl()}/features/user?userId=${selectedUser.current}`;
 
@@ -189,7 +219,7 @@ const UserPermissions = () => {
 
         <Button
           variant="contained"
-          onClick={() => {}}
+          onClick={unmapallFeatures}
           sx={{
             height: 50,
 
@@ -202,7 +232,7 @@ const UserPermissions = () => {
           }}
         >
           <Typography textTransform={"capitalize"} letterSpacing={0.8}>
-            Remove
+            Remove All
           </Typography>
         </Button>
       </Stack>
@@ -210,16 +240,18 @@ const UserPermissions = () => {
       <PeriodicTable
         actionViews={[
           {
-            label: "Status",
+            label: "Actions",
             renderView: (row: any[]) => {
-              let status = row.find((entry: any) => entry.field === "status");
+              let permission = row.find(
+                (entry: any) => entry.field === "permission"
+              )?.value;
               return (
-                <div>
-                  <Switch
-                    checked={status != null && status.value ? true : false}
-                    onChange={() => ""}
-                  />
-                </div>
+                <IconButton
+                  color="error"
+                  onClick={() => unmapFeature(permission)}
+                >
+                  <HighlightOffIcon />
+                </IconButton>
               );
             },
           },
