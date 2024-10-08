@@ -55,7 +55,7 @@ const GradientSnackbar: React.FC<GradientSnackbarProps> = ({
     success: "from-green-400 to-green-600",
     error: "from-red-400 to-red-600",
     warning: "from-yellow-400 to-yellow-600",
-    info: "from-green-400 to-green-600",
+    info: "from-yellow-400 to-yellow-600",
   };
 
   useEffect(() => {
