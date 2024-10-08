@@ -117,6 +117,33 @@ const UserPermissions = () => {
       snackbar.showSnackbar("Failed to map permissions");
     }
   };
+
+  const unmapallFeatures = async () => {
+    try {
+      let url = `${getPortalUrl()}/features/un-map/all?userId=${
+        selectedUser.current
+      }`;
+
+      await getAsync(url);
+      snackbar.showSnackbar("Permissions Unmapped successfully");
+    } catch {
+      snackbar.showSnackbar("Failed to Unmapped permissions");
+    }
+  };
+
+  const unmapFeature = async () => {
+    try {
+      let url = `${getPortalUrl()}/features/un-map/?userId=${
+        selectedUser.current
+      }/code=${""}`;
+
+      await getAsync(url);
+      snackbar.showSnackbar("Permissions Unmapped successfully");
+    } catch {
+      snackbar.showSnackbar("Failed to Unmapped permissions");
+    }
+  };
+
   const onApi = async (apiProps: ApiProps) => {
     let url = `${getPortalUrl()}/features/user?userId=${selectedUser.current}`;
 
@@ -189,7 +216,7 @@ const UserPermissions = () => {
 
         <Button
           variant="contained"
-          onClick={() => {}}
+          onClick={unmapallFeatures}
           sx={{
             height: 50,
             borderRadius: "12px",
@@ -200,7 +227,7 @@ const UserPermissions = () => {
           }}
         >
           <Typography textTransform={"capitalize"} letterSpacing={0.8}>
-            Remove
+            Remove All
           </Typography>
         </Button>
       </Stack>

@@ -41,7 +41,7 @@ const masterTypes = [
     mapUrl: "/table-mapping/map/ledger",
     mapAllUrl: "/table-mapping/map/ledger/all",
     removeUrl: "/table-mapping/remove/ledger",
-    removeAllUrl: "/table-mapping/remove/ledger/all",
+    removeAllUrl: "/table-mapping/remove/all/Ledger",
   },
   {
     title: "Stock Item",
@@ -50,7 +50,7 @@ const masterTypes = [
     mapUrl: "/table-mapping/map/item",
     mapAllUrl: "/table-mapping/map/item/all",
     removeUrl: "/table-mapping/remove/item",
-    removeAllUrl: "/table-mapping/remove/item/all",
+    removeAllUrl: "/table-mapping/remove/all/Item",
   },
   {
     title: "Stock Group",
@@ -59,7 +59,7 @@ const masterTypes = [
     mapUrl: "/table-mapping/map/itemGroup",
     mapAllUrl: "/table-mapping/map/itemGroup/all",
     removeUrl: "/table-mapping/remove/itemGroup",
-    removeAllUrl: "/table-mapping/remove/itemGroup/all",
+    removeAllUrl: "/table-mapping/remove/all/ItemGroup",
   },
   {
     title: "Stock Category",
@@ -68,7 +68,7 @@ const masterTypes = [
     mapUrl: "/table-mapping/map/itemCategory",
     mapAllUrl: "/table-mapping/map/itemCategory/all",
     removeUrl: "/table-mapping/remove/category",
-    removeAllUrl: "/table-mapping/remove/itemCategory/all",
+    removeAllUrl: "/table-mapping/remove/all/ItemCategory",
   },
   {
     title: "Group",
@@ -77,7 +77,7 @@ const masterTypes = [
     mapUrl: "/table-mapping/map/group",
     mapAllUrl: "/table-mapping/map/group/all",
     removeUrl: "/table-mapping/remove/group",
-    removeAllUrl: "/table-mapping/remove/group/all",
+    removeAllUrl: "/table-mapping/remove/all/Group",
   },
   {
     title: "Godown",
@@ -86,7 +86,7 @@ const masterTypes = [
     mapUrl: "/table-mapping/map/godown",
     mapAllUrl: "/table-mapping/map/godown/all",
     removeUrl: "/table-mapping/map/godown",
-    removeAllUrl: "/table-mapping/remove/godown/all",
+    removeAllUrl: "/table-mapping/remove/all/Godown",
   },
   {
     title: "Voucher Type",
@@ -95,7 +95,7 @@ const masterTypes = [
     mapUrl: "/table-mapping/map/vouchertype",
     mapAllUrl: "/table-mapping/map/vouchertypes/all",
     removeUrl: "/table-mapping/remove/vouchertype",
-    removeAllUrl: "/table-mapping/remove/voucherType/all",
+    removeAllUrl: "/table-mapping/remove/all/VoucherType",
   },
   {
     title: "User",
@@ -104,7 +104,7 @@ const masterTypes = [
     mapUrl: "/table-mapping/map/user",
     mapAllUrl: "/table-mapping/map/users/all",
     removeUrl: "/table-mapping/remove/user",
-    removeAllUrl: "/table-mapping/remove/user/all",
+    removeAllUrl: "/table-mapping/remove/all/User",
   },
 ];
 
@@ -255,6 +255,7 @@ const MasterPermissions = () => {
       }
     });
     setRows(entries);
+    console.log("Master Permission data", JSON.stringify(entries));
     triggerRefresh(false);
     return entries ?? [];
   };
