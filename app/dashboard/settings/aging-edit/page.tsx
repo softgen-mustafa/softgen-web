@@ -108,69 +108,73 @@ const Page = () => {
       children: [],
       view: (
         <CardView>
-          <TextInput
-            mode="text"
-            placeHolder="Enter Aging Name"
-            defaultValue={agingData.title}
-            onTextChange={(value: string) => {
-              setAgingData({ ...agingData, title: value });
-              setErrors({ ...errors, title: "" });
-            }}
-          />
-          {errors.title && (
-            <Typography color="error">{errors.title}</Typography>
-          )}
-
-          <br />
-          <TextInput
-            mode="number"
-            placeHolder="Enter Minimum Days"
-            defaultValue={agingData.minDays.toString()}
-            onTextChange={(value: string) => {
-              setAgingData({ ...agingData, minDays: parseInt(value) });
-              setErrors({ ...errors, minDays: "" });
-            }}
-          />
+          <div style={{ marginTop: "16px" }}>
+            <TextInput
+              mode="text"
+              placeHolder="Enter Aging Name"
+              defaultValue={agingData.title}
+              onTextChange={(value: string) => {
+                setAgingData({ ...agingData, title: value });
+                setErrors({ ...errors, title: "" });
+              }}
+            />
+            {errors.title && (
+              <Typography className="text-red-600">{errors.title}</Typography>
+            )}
+          </div>
+          <div style={{ marginTop: "16px" }}>
+            <TextInput
+              mode="number"
+              placeHolder="Enter Minimum Days"
+              defaultValue={agingData.minDays.toString()}
+              onTextChange={(value: string) => {
+                setAgingData({ ...agingData, minDays: parseInt(value) });
+                setErrors({ ...errors, minDays: "" });
+              }}
+            />
+          </div>
           {errors.minDays && (
-            <Typography color="error">{errors.minDays}</Typography>
+            <Typography className="text-red-600">{errors.minDays}</Typography>
           )}
+          <div style={{ marginTop: "16px" }}>
+            <TextInput
+              mode="text"
+              placeHolder="Enter Tag Name"
+              defaultValue={agingData.tagName}
+              onTextChange={(value: string) => {
+                setAgingData({ ...agingData, tagName: value });
+              }}
+            />
+          </div>
 
-          <br />
-          <TextInput
-            mode="text"
-            placeHolder="Enter Tag Name"
-            defaultValue={agingData.tagName}
-            onTextChange={(value: string) => {
-              setAgingData({ ...agingData, tagName: value });
-            }}
-          />
-          <br />
-          <div className="flex flex-row gap-2 justify-end">
+          <div className="flex flex-row gap-2 justify-end mt-4">
+            {" "}
+            {/* Add margin top here for the button container */}
             {mode === "edit" ? (
               <>
                 <Button
-                  style={{ background: inspiredPalette.dark }}
+                  className="bg-dark hover:shadow-lg rounded-lg"
                   variant="contained"
                   onClick={update}
-                  sx={{ textTransform: "capitalize" }}
+                  sx={{ textTransform: "none" }} // Use "none" to avoid capitalization
                 >
                   Update
                 </Button>
                 <Button
-                  style={{ background: inspiredPalette.darkRed }}
+                  className="bg-darkRed hover:shadow-lg rounded-lg"
                   variant="contained"
                   onClick={deleteEntry}
-                  sx={{ textTransform: "capitalize" }}
+                  sx={{ textTransform: "none" }} // Use "none" to avoid capitalization
                 >
                   Delete
                 </Button>
               </>
             ) : (
               <Button
-                style={{ background: inspiredPalette.dark }}
+                className="bg-dark hover:shadow-lg rounded-lg w-full sm:w-auto px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base mx-auto sm:mx-0"
                 variant="contained"
                 onClick={create}
-                sx={{ textTransform: "capitalize" }}
+                sx={{ textTransform: "none" }} // Use "none" to avoid capitalization
               >
                 Create
               </Button>

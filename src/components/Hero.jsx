@@ -140,7 +140,7 @@ const Hero = () => {
         </div>
       </div>
 
-      <div
+      {/* <div
         id="cta"
         className="flex flex-col items-center opacity-0 translate-y-20"
       >
@@ -150,7 +150,7 @@ const Hero = () => {
         <button onClick={handleRegistration} className="btn">
           Register
         </button>
-      </div>
+      </div> */}
     </section>
   );
 };
