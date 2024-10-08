@@ -97,7 +97,7 @@ const Page = ({ params }: { params: any }) => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center h-full">
+    <div className=" min-h-screen  flex justify-center items-center bg-gray-100 p-[8.5px] pl-4 pr-4 pb-5 md:p-0 overflow-y-auto bg-[url('/assets/images/loginbackgroundimage.jpeg')] bg-center h-screen bg-no-repeat  bg-cover md:bg-[length:100vw_130vh]">
       <Box
         className="shadow-lg"
         display={"flex"}
@@ -106,20 +106,43 @@ const Page = ({ params }: { params: any }) => {
         bgcolor={"#FFFFFF"}
         borderRadius={3}
         sx={{
-          p: { xs: 2, sm: 3, md: 5 },
-          width: { xs: 380, sm: 400, md: 500 },
-          height: { xs: 550, sm: 550, md: 650 },
-          maxWidth: "100%",
-          maxHeight: 650,
+          maxWidth: "32rem", // max-w-lg in Tailwind
+          width: {
+            md: "83.333333%", // w-10/12 in Tailwind
+          },
+          mx: "auto", // mx-auto (centers horizontally)
+          scrollMargin: 0, // scroll-m-0
+          display: "flex", // flex layout
+          justifyContent: "center", // justify-center in Tailwind
+          alignItems: "center", // items-center in Tailwind
+          boxShadow: "0 10px 15px rgba(0, 0, 0, 0.1)", // drop-shadow-lg in Tailwind
+          paddingBottom: "1.5rem", // pb-6 in Tailwind
+          paddingRight: "1.5rem", // pr-6 in Tailwind
+          paddingLeft: "1.5rem", // pl-6 in Tailwind
+          backgroundImage: "linear-gradient(to top, #ffffff, #C5F6FC)", // bg-gradient-to-t from-white to-[#C5F6FC]
+          borderRadius: "1rem", // rounded-xl in Tailwind
+          transition: "transform 0.2s, border-radius 0.2s, box-shadow 0.2s", // duration-200 for hover effects
+          "&:hover": {
+            transform: "translateY(-0.25rem)", // hover:-translate-y-1 in Tailwind
+            borderRadius: "1.5rem", // hover:rounded-3xl in Tailwind
+            boxShadow: "0 15px 25px rgba(0, 0, 0, 0.2)", // hover:drop-shadow-2xl in Tailwind
+          },
         }}
       >
         <Box
           sx={{
-            width: { xs: 200, sm: 250, md: 300 },
-            // height: { xs: 200, sm: 250, md: 300 },
+            justifyContent: "center", // justify-center in Tailwind
+            display: "flex", // flex layout
+            marginTop: "-2rem", // -mt-8 in Tailwind (negative margin-top)
           }}
         >
-          <Image src={logoImage} alt="SoftGen Logo" className="" />
+          <Image
+            src={logoImage}
+            alt="SoftGen Logo"
+            width={240}
+            height={240}
+            className="justify-center"
+          />
         </Box>
         <Stack
           alignItems={"center"}
@@ -129,7 +152,11 @@ const Page = ({ params }: { params: any }) => {
           }}
         >
           <Stack alignItems={"center"} gap={0.2} mb={3}>
-            <Typography variant="h5" color={inspiredPalette.darker}>
+            <Typography
+              variant="h5"
+              color={inspiredPalette.darker}
+              sx={{ fontSize: "1.7rem", fontWeight: 400 }}
+            >
               Reset Password
             </Typography>
             <Typography
@@ -140,23 +167,43 @@ const Page = ({ params }: { params: any }) => {
               Enter new password
             </Typography>
           </Stack>
-          <Box className="w-full px-5 flex flex-col gap-2.5">
+          <Box className="pl-5 pr-5 md:pl-10 md:pr-10">
             <TextInput
               mode="password"
               placeHolder="Enter New Password"
               onTextChange={handlePasswordChange}
             />
+
             {error.current.length > 0 && (
               <p className="text-red-500">{error.current.join(", ")}</p>
             )}
-            <div className="mt-3">
+            <div className="justify-center flex">
               <Button
                 variant="contained"
                 sx={{
-                  width: "100%",
-                  height: 40,
-                  background: theme.palette.primary.main,
-                  boxShadow: "none",
+                  mt: 2,
+                  mb: 2,
+                  padding: {
+                    xs: "8px 12px",
+                    sm: "10px 16px",
+                  },
+                  width: { xs: "50%", md: "80%" },
+                  borderRadius: "12px",
+                  backgroundImage:
+                    "linear-gradient(90deg, #42A5F5 0%, #1E88E5 100%)", // Gradient background
+                  color: "white",
+                  fontWeight: "1rem",
+                  fontSize: "1rem",
+                  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+                  transition: "all 0.3s ease-in-out",
+                  "&:hover": {
+                    boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.2)",
+                    backgroundImage:
+                      "linear-gradient(90deg, #2196F3 0%, #1565C0 100%)", // Darker gradient on hover
+                    transform: "translateY(-2px)",
+                  },
+                  textTransform: "capitalize",
+                  marginTop: 4,
                 }}
                 onClick={() => handleSubmit()}
               >
