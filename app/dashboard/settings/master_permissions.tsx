@@ -118,27 +118,21 @@ const MasterPermissions = () => {
   const [data, setData] = useState([]);
   const [refresh, triggerRefresh] = useState(false);
   const [rows, setRows] = useState<any[]>([]);
-  // const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   let selectedMasterType = useRef(masterTypes[0]);
   let selectedUser = useRef(null);
   let selectedFilter = useRef(filterData[0]?.title);
 
-  // useEffect(() => {
-  //   loadUser().then((_) => {
-  //     triggerRefresh(!refresh);
-  //   });
-  // }, []);
   useEffect(() => {
-    // FeatureControl("MasterConfigButton").then((permission) => {
-    //   setHasPermission(permission);
-    //   if (permission) {
+    loadUser().then((_) => {
+      triggerRefresh(!refresh);
+    });
+  }, []);
+  useEffect(() => {
     loadUser().then((_) => {
       triggerRefresh(!refresh);
       onApi();
     });
-    //   }
-    // });
   }, []);
 
   const columns: GridColDef<any[number]>[] = [
@@ -267,6 +261,7 @@ const MasterPermissions = () => {
   ) => {
     try {
       let selection = selectedMasterType.current;
+
       let url = `${getBmrmBaseUrl()}${
         currentStatus ? selection.removeUrl : selection.mapUrl
       }`;
@@ -312,18 +307,6 @@ const MasterPermissions = () => {
       triggerRefresh(false);
     }
   };
-
-  // if (hasPermission === null) {
-  //   return <CircularProgress />;
-  // }
-
-  // if (hasPermission === false) {
-  //   return (
-  //     <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-  //       Get the Premium For this Service Or Contact Admin - 7977662924
-  //     </Typography>
-  //   );
-  // }
 
   return (
     <Box>

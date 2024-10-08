@@ -29,6 +29,7 @@ import { OsSettingsView } from "./outstanding_setings";
 import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
 import GridCardView from "@/app/ui/grid_card";
+import { AgingOverview } from "./aging_overview";
 
 const isDebitType = [
   {
@@ -97,7 +98,7 @@ const Page = () => {
   const [selectedReportType, setSelectedReportType] = useState<number>(0); // 0 - Party Wise, 1 - Bill Wise
   const [selectedDueType, setSelectedDueType] = useState<number>(0);
   const [deductAdvancePayment, setDeductAdvancePayment] =
-    useState<boolean>(true); // Default true
+    useState<boolean>(false); // Default true
 
   let selectedGroups = useRef<string[]>([]);
   let selectedParty = useRef<string[]>([]);
@@ -582,7 +583,7 @@ const Page = () => {
             selectionValues={reportTypes}
             helperText={""}
             defaultSelectionIndex={reportTypes.findIndex(
-              (item) => item.value === selectedReportType,
+              (item) => item.value === selectedReportType
             )}
             onSelection={(selection) => {
               setSelectedReportType(selection.value);
@@ -596,7 +597,7 @@ const Page = () => {
             selectionValues={dueTypes}
             helperText={""}
             defaultSelectionIndex={dueTypes.findIndex(
-              (item) => item.value === selectedDueType,
+              (item) => item.value === selectedDueType
             )} // Pass index of the current selection
             onSelection={(selection) => {
               setSelectedDueType(selection.value);
@@ -661,7 +662,7 @@ const Page = () => {
             selectionValues={locationTypes}
             helperText={""}
             defaultSelectionIndex={locationTypes.findIndex(
-              (item) => item.value === selectedlocationTypes,
+              (item) => item.value === selectedlocationTypes
             )}
             onSelection={(selection) => {
               setSelectedLocationTypes(selection.value);
@@ -782,7 +783,7 @@ const Page = () => {
                         let parties: string[] = [];
                         values.map((row: any[]) => {
                           let party = row.find(
-                            (entry: any) => entry.field == "LedgerName",
+                            (entry: any) => entry.field == "LedgerName"
                           );
                           if (party) {
                             parties.push(party.value);
@@ -803,6 +804,16 @@ const Page = () => {
         </GridCardView>
       ),
     },
+    {
+      id: 2,
+      weight: 1,
+      content: (
+        <GridCardView title="Aging Overview">
+          <AgingOverview />
+        </GridCardView>
+      ),
+    },
+
     // {
     //   id: 2,
     //   weight: 1,

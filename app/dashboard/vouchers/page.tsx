@@ -835,6 +835,7 @@ const Page = () => {
   const loadVoucherTypes = async () => {
     try {
       let url = `${getBmrmBaseUrl()}/meta-voucher/get/voucher-types`;
+      // alert(url);
       let response = await getAsync(url);
       setVoucherTypes(
         response.map((entry: any) => {
