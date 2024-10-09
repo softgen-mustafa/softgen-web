@@ -1,18 +1,22 @@
 "use client";
 import { useState, useRef } from "react";
 import { getSgBizBaseUrl, postAsync } from "@/app/services/rest_services";
-import { Box, Stack, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  CardContent,
+  CircularProgress,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { convertToDate, numericToString } from "@/app/services/Local/helper";
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
 import { inspiredPalette } from "@/app/ui/theme";
 import { SingleChartView } from "@/app/ui/graph_util";
 
 interface PartyReportOverview {
-  PartyName: string;
-  BillNumber: string;
-  TotalBills: number;
-  TotalOpening: number;
-  TotalClosing: number;
+  duration_key: any;
+  total_amount: any;
 }
 
 const UpcomingGraphOverview = () => {
@@ -27,83 +31,57 @@ const UpcomingGraphOverview = () => {
 
   const theme = useTheme();
 
-  let selectedisDebitType = useRef<boolean>(true);
-
   const [refresh, triggerRefresh] = useState(false);
   const [data, setData] = useState<PartyReportOverview[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const snackbar = useSnackbar();
 
   const loadUpcoming = async () => {
-    let url = `${getSgBizBaseUrl()}/upcoming/overview?durationType=${
-      selectedFilter.current.value
-    }`;
+    setIsLoading(true);
+    try {
+      let url = `${getSgBizBaseUrl()}/upcoming/overview?durationType=${
+        selectedFilter.current.value
+      }`;
 
-    console.log("load Data", url);
+      console.log("load Data", url);
 
-    let requestBody = {
-      Filter: {
-        Batch: {
-          Limit: 5,
-          Offset: 0,
-          Apply: true,
+      let requestBody = {
+        Filter: {
+          Batch: {
+            Limit: 5,
+            Offset: 0,
+            Apply: true,
+          },
+          SortKey: "Name",
+          SortOrder: "asc",
         },
-        SortKey: "Name",
-        SortOrder: "asc",
-      },
-      IsDebit: selectedisDebitType.current,
-    };
-
-    console.log(JSON.stringify(requestBody));
-
-    let res = await postAsync(url, requestBody);
-    if (!res || !res.Data) {
-      return [];
-    }
-    console.log(JSON.stringify(res));
-
-    let values = res.Data.map((entry: any, index: number) => {
-      let parties: any[] = [];
-      if (entry.parties != null && entry.parties.length > 0) {
-        parties = entry.parties.map((party: any, idx: number) => {
-          let bills: any[] = [];
-          if (party["bills"] != null && party["bills"].length > 0) {
-            bills = party["bills"].map((bill: any) => {
-              return {
-                BillNumber: bill.BillNumber,
-                BillDate: convertToDate(bill.BillDate),
-                DueDate: convertToDate(bill.DueDate),
-                Opening: numericToString(
-                  bill.OpeningBalance == null ? 0 : bill.OpeningBalance.Value
-                ),
-                Closing: numericToString(
-                  bill.ClosingBalance == null ? 0 : bill.ClosingBalance.Value
-                ),
-              };
-            });
-          }
-          return {
-            Party: party.party_name,
-            Amount: numericToString(party.total_amount),
-            Bills: bills,
-          };
-        });
-      }
-
-      return {
-        id: index + 1,
-        Duration: entry.duration_key,
-        Amount: numericToString(entry.total_amount),
-        Parties: parties,
       };
-    });
 
-    triggerRefresh(false);
-    return values;
+      console.log(JSON.stringify(requestBody));
+
+      let res = await postAsync(url, requestBody);
+      if (!res || !res.Data) {
+        return [];
+      }
+      console.log(JSON.stringify(res));
+
+      let response = await postAsync(url, requestBody);
+      if (response && response.Data) {
+        setData(response.Data);
+      } else {
+        setData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching party report overview:", error);
+      setData([]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <>
+    <div>
       <Stack flexDirection="row" gap={1} pb={2} sx={{ overflowX: "scroll" }}>
         {filters.map((card, index) => (
           <Box
@@ -150,8 +128,8 @@ const UpcomingGraphOverview = () => {
         {data && data.length > 0 ? (
           <SingleChartView
             values={data.map((item) => ({
-              label: item.PartyName,
-              value: item["selectedField" as keyof PartyReportOverview],
+              label: item.duration_key,
+              value: item.total_amount,
             }))}
             defaultChart="pie"
             title={""}
@@ -160,7 +138,7 @@ const UpcomingGraphOverview = () => {
           <div>No data available</div>
         )}
       </Stack>
-    </>
+    </div>
   );
 };
 

@@ -5,12 +5,7 @@ import {
   getBmrmBaseUrl,
   postAsync,
 } from "@/app/services/rest_services";
-import {
-  CardView,
-  DynGrid,
-  Weight,
-  GridDirection,
-} from "@/app/ui/responsive_grid";
+import { Weight } from "@/app/ui/responsive_grid";
 import { GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
