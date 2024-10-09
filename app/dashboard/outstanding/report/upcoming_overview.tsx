@@ -44,13 +44,11 @@ const durationTypes = [
   {
     name: "Year-Wise",
     value: "Yearly",
-  }
-]
+  },
+];
 
 const UpcomingOverview = () => {
   const theme = useTheme();
-  const [selectedReportType, setSelectedReportType] = useState<number>(0); // 0 - Party Wise, 1 - Bill Wise
-  const [selectedDueType, setSelectedDueType] = useState<number>(0);
   const [deductAdvancePayment, setDeductAdvancePayment] =
     useState<boolean>(false); // Default false
 
@@ -66,6 +64,8 @@ const UpcomingOverview = () => {
   const [refresh, triggerRefresh] = useState(false);
   const [refreshGroups, triggerGroupRefresh] = useState(false);
   const [refreshParties, triggerRefrehParties] = useState(false);
+  const [selectedfilterTypes, setSelectedFilterTypes] =
+    useState<string>("Daily");
 
   const snackbar = useSnackbar();
 
@@ -117,7 +117,9 @@ const UpcomingOverview = () => {
   };
 
   const loadData = async (apiProps: ApiProps) => {
-    let url = `${getSgBizBaseUrl()}/upcoming/overview?durationType=${selectedDurationType.current}`;
+    let url = `${getSgBizBaseUrl()}/upcoming/overview?durationType=${
+      selectedDurationType.current
+    }`;
 
     console.log("load Data", url);
     let groupNames = selectedGroups.current.map((entry: any) => entry.name);
@@ -159,10 +161,12 @@ const UpcomingOverview = () => {
                 BillNumber: bill.BillNumber,
                 BillDate: convertToDate(bill.BillDate),
                 DueDate: convertToDate(bill.DueDate),
-                Opening:
-                  numericToString(bill.OpeningBalance == null ? 0 : bill.OpeningBalance.Value),
-                Closing:
-                  numericToString(bill.ClosingBalance == null ? 0 : bill.ClosingBalance.Value),
+                Opening: numericToString(
+                  bill.OpeningBalance == null ? 0 : bill.OpeningBalance.Value
+                ),
+                Closing: numericToString(
+                  bill.ClosingBalance == null ? 0 : bill.ClosingBalance.Value
+                ),
               };
             });
           }
@@ -258,7 +262,7 @@ const UpcomingOverview = () => {
           selectionValues={durationTypes}
           onSelection={(selection) => {
             selectedDurationType.current = selection;
-            triggerRefresh(!refresh)
+            triggerRefresh(!refresh);
           }}
           helperText=""
         />
