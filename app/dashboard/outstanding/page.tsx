@@ -241,11 +241,7 @@ const Page = () => {
 
   return (
     <div className="w-full" style={{}}>
-      <ResponsiveCardGrid
-        screenName="aging_outstanding"
-        initialCards={view}
-      />
-     
+      <ResponsiveCardGrid screenName="aging_outstanding" initialCards={view} />
     </div>
   );
 };

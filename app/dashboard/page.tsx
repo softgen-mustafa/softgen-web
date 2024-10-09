@@ -27,6 +27,8 @@ import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
 import GridCardView from "../ui/grid_card";
 import { CollectionPrompts } from "./cards/collection_prompts";
 import { CollectionReport } from "./cards/collection_report";
+import { PartyReportGraph } from "./cards/party_report_graph";
+import { UpcomingGraphOverview } from "./cards/upcoming_wise_graph";
 
 const DashboardPage = () => {
   const [filters, updateFilters] = useState([
@@ -185,66 +187,9 @@ const DashboardPage = () => {
           permissionCode="PartyWiseOutstanding"
         >
           {/* <Typography className="text-xl mb-2">Party Overview</Typography> */}
-          <PeriodicTable
-            reload={true}
-            useSearch={true}
-            columns={[
-              {
-                header: "Party Name",
-                field: "PartyName",
-                type: "text",
-                pinned: false,
-                hideable: false,
-                rows: [],
-              },
-              {
-                header: "Total Bills",
-                field: "TotalBills",
-                type: "number",
-                pinned: false,
-                hideable: false,
-                rows: [],
-              },
-              {
-                header: "Opening Amount",
-                field: "TotalOpening",
-                type: "number",
-                pinned: false,
-                hideable: false,
-                rows: [],
-              },
-              {
-                header: "Closing Amount",
-                field: "TotalClosing",
-                type: "number",
-                pinned: false,
-                hideable: false,
-                rows: [],
-              },
-            ]}
-            onApi={async (api: ApiProps) => {
-              try {
-                let url = `${getSgBizBaseUrl()}/os/get/party-overview`;
-                let requestBody = {
-                  SearchText: api.searchText ?? "",
-                  Batch: {
-                    Apply: true,
-                    Limit: api.limit,
-                    Offset: api.offset,
-                  },
-                };
-
-                let response = await postAsync(url, requestBody);
-                // console.log("party Overview",JSON.stringify(response))
-                if (response != null && response.Data != null) {
-                  return response.Data;
-                }
-                return [];
-              } catch {
-                return [];
-              }
-            }}
-          />
+          <PartyReportGraph
+            companyId={Cookies.get("companyId") ?? ""}
+          ></PartyReportGraph>
         </GridCardView>
       ),
       children: [],
@@ -283,8 +228,9 @@ const DashboardPage = () => {
           permissionCode="UpcomingCollections"
           title="Upcoming Collections"
         >
+          <UpcomingGraphOverview></UpcomingGraphOverview>
           {/* <Typography className="text-xl mb-2">Upcoming Collections</Typography> */}
-          <Stack
+          {/* <Stack
             flexDirection="row"
             gap={1}
             pb={2}
@@ -331,9 +277,10 @@ const DashboardPage = () => {
                 </Typography>
               </Box>
             ))}
-          </Stack>
+          </Stack> */}
           <br />
-          <PeriodicTable
+
+          {/* <PeriodicTable
             chartKeyFields={[
               {
                 label: "Duration",
@@ -361,7 +308,7 @@ const DashboardPage = () => {
             // onApi={loadUpcoming}
             rows={rows}
             reload={refresh}
-          />
+          /> */}
         </GridCardView>
       ),
     },

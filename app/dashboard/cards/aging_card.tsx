@@ -75,11 +75,7 @@ const AgingView = ({
   }, [billType, companyId]);
 
   const checkPermissionAndLoadData = async () => {
-    // const permission = await FeatureControl("AgingOutstandingCard");
-    // setHasPermission(permission);
-    // if (permission) {
     loadData();
-    // }
   };
 
   const loadData = async () => {
@@ -112,16 +108,6 @@ const AgingView = ({
       setOpen(true);
     }
   };
-
-  // if (hasPermission === false) {
-  //   return (
-  //     <div className="flex flex-col items-center justify-center h-full">
-  //       <Typography className="text-2xl font-bold flex items-center justify-center flex-1 pl-2 pr-2">
-  //         Get the Premium For this Service Or Contact Admin - 7977662924
-  //       </Typography>
-  //     </div>
-  //   );
-  // }
 
   return (
     <Box className="p-0">
