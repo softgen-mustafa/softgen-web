@@ -13,7 +13,7 @@ import {
   postAsync,
 } from "@/app/services/rest_services";
 import { IconButton, Stack, Switch, useTheme } from "@mui/material";
-import { convertToDate } from "@/app/services/Local/helper";
+import { numericToString, convertToDate } from "@/app/services/Local/helper";
 import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
 
@@ -136,12 +136,12 @@ const AgingOverview = () => {
             BillDate: convertToDate(bill.BillDate),
             DueDate: convertToDate(bill.DueDate),
             DelayDays: bill.DelayDays,
-            OpeningAmount: bill.OpeningAmount,
-            ClosingAmount: bill.ClosingAmount,
-            Above30: bill.Above30,
-            Above60: bill.Above60,
-            Above90: bill.Above90,
-            Above120: bill.Above120,
+            OpeningAmount: numericToString(bill.OpeningAmount),
+            ClosingAmount: numericToString(bill.ClosingAmount),
+            Above30: numericToString(bill.Above30),
+            Above60: numericToString(bill.Above60),
+            Above90: numericToString(bill.Above90),
+            Above120: numericToString(bill.Above120),
           };
         });
       }
@@ -152,17 +152,17 @@ const AgingOverview = () => {
         LedgerGroup: entry.LedgerGroup,
         CreditLimit: entry.CreditLimit,
         CreditDays: entry.CreditDays,
-        TotalBills: entry.TotalBills,
+        TotalBills: numericToString(entry.TotalBills),
         BillNumber: entry.BillNumber,
         BillDate: convertToDate(entry.BillDate),
         DueDate: convertToDate(entry.DueDate),
         DelayDays: entry.DelayDays,
-        OpeningAmount: entry.OpeningAmount,
-        ClosingAmount: entry.ClosingAmount,
-        Above30: entry.Above30,
-        Above60: entry.Above60,
-        Above90: entry.Above90,
-        Above120: entry.Above120,
+        OpeningAmount: numericToString(entry.OpeningAmount),
+        ClosingAmount: numericToString(entry.ClosingAmount),
+        Above30: numericToString(entry.Above30),
+        Above60: numericToString(entry.Above60),
+        Above90: numericToString(entry.Above90),
+        Above120: numericToString(entry.Above120),
         IsAdvance: entry.IsAdvance,
         Bills: bills,
       };

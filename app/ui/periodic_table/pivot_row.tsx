@@ -45,6 +45,8 @@ const PivotRow = ({
 
   return (
     <Box key={refresh} className="flex flex-row pl-6 overflow-hidden overflow-x-auto" sx={{
+      borderBottomWidth: 1,
+      borderTopWidth: 1,
     }}>
       <div className="flex flex-col">
       {data.map((row: any, rowIdx: number) => {
