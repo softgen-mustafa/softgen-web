@@ -210,7 +210,7 @@ const CollectionPrompts = () => {
                         key={actionIndex}
                         onClick={() =>
                           handleAction(
-                            action.Title,
+                            action.Code,
                             entry.PartyName,
                             entry.BillNumber,
                             entry.AmountStr
