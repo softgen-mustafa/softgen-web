@@ -28,10 +28,16 @@ const isDebitType = [
   },
 ];
 
+const filters = [
+  { id: 1, name: "Daily", value: "Daily" },
+  { id: 2, name: "Weekly", value: "Weekly" },
+  { id: 3, name: "Montly", value: "Montly" },
+  { id: 4, name: "Quarterly", value: "Quarterly" },
+  { id: 5, name: "Yearly", value: "Yearly" },
+];
+
 const UpcomingOverview = () => {
   const theme = useTheme();
-  const [selectedReportType, setSelectedReportType] = useState<number>(0); // 0 - Party Wise, 1 - Bill Wise
-  const [selectedDueType, setSelectedDueType] = useState<number>(0);
   const [deductAdvancePayment, setDeductAdvancePayment] =
     useState<boolean>(false); // Default false
 
@@ -45,6 +51,8 @@ const UpcomingOverview = () => {
   const [refresh, triggerRefresh] = useState(false);
   const [refreshGroups, triggerGroupRefresh] = useState(false);
   const [refreshParties, triggerRefrehParties] = useState(false);
+  const [selectedfilterTypes, setSelectedFilterTypes] =
+    useState<string>("Daily");
 
   const snackbar = useSnackbar();
 
@@ -96,7 +104,7 @@ const UpcomingOverview = () => {
   };
 
   const loadData = async (apiProps: ApiProps) => {
-    let url = `${getSgBizBaseUrl()}/upcoming/overview?durationType=Monthly`;
+    let url = `${getSgBizBaseUrl()}/upcoming/overview?durationType=${selectedfilterTypes}`;
 
     console.log("load Data", url);
     let groupNames = selectedGroups.current.map((entry: any) => entry.name);
@@ -138,10 +146,12 @@ const UpcomingOverview = () => {
                 BillNumber: bill.BillNumber,
                 BillDate: convertToDate(bill.BillDate),
                 DueDate: convertToDate(bill.DueDate),
-                Opening:
-                  numericToString(bill.OpeningBalance == null ? 0 : bill.OpeningBalance.Value),
-                Closing:
-                  numericToString(bill.ClosingBalance == null ? 0 : bill.ClosingBalance.Value),
+                Opening: numericToString(
+                  bill.OpeningBalance == null ? 0 : bill.OpeningBalance.Value
+                ),
+                Closing: numericToString(
+                  bill.ClosingBalance == null ? 0 : bill.ClosingBalance.Value
+                ),
               };
             });
           }
@@ -255,6 +265,20 @@ const UpcomingOverview = () => {
               }}
             />
           </Stack>
+          <DropDown
+            label="Filters"
+            displayFieldKey={"name"}
+            valueFieldKey={null}
+            selectionValues={filters}
+            helperText={""}
+            defaultSelectionIndex={filters.findIndex(
+              (item) => item.value === selectedfilterTypes
+            )}
+            onSelection={(selection) => {
+              setSelectedFilterTypes(selection.value);
+              triggerRefresh(!refresh);
+            }}
+          />
 
           <ApiMultiDropDown
             reload={refreshGroups}
