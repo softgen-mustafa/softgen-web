@@ -44,7 +44,11 @@ const PivotRow = ({
   };
 
   return (
-    <div key={refresh} className="ml-5">
+    <Box key={refresh} className="pl-6 w-full" sx={{
+      overflowX: "auto", 
+      display:"block",
+      whiteSapce: "nowrap"
+    }}>
       {data.map((row: any, rowIdx: number) => {
         return (
           <div key={rowIdx}>
@@ -53,7 +57,9 @@ const PivotRow = ({
                 borderRightWidth: 1,
               }}>
                 {rowIdx === 0 && (
+                  <div className="bg-gray-200 min-h-[40px] max-h-[40px]">
                   <IconButton className=""
+                    size={"small"}
                     onClick={() => {
                       if (selectedIndexes.current.length > 0) {
                         selectedIndexes.current = [];
@@ -67,8 +73,10 @@ const PivotRow = ({
                       <ArrowDownward />
                     )}
                   </IconButton>
+                  </div>
                 )}
                 <IconButton
+                    size={"small"}
                   sx={{
                   }}
                   onClick={() => {
@@ -99,8 +107,8 @@ const PivotRow = ({
                     }}>
                       {rowIdx === 0 && (
                         <Box
+                          className="w-full flex p-2 bg-gray-200 min-h-[40px] max-h-[40px]"
                           key={index}
-                          className="w-full flex p-2 bg-gray-200"
                           sx={{
                             minWidth: 200,
                             maxWidth: 200,
@@ -139,8 +147,8 @@ const PivotRow = ({
           </div>
         );
       })}
-    </div>
+    </Box>
   );
 };
-
 export { PivotRow };
+

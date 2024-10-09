@@ -409,14 +409,7 @@ const Table = ({
     let keys = Object.keys(firstRow);
 
     return (
-      <div
-        className="w-auto flex-col"
-        style={{
-          borderWidth: 1,
-        }}
-      >
         <PivotRow data={pivotColumn.value} keys={keys} pivotKey={pivotKey2} />
-      </div>
     );
   };
 
