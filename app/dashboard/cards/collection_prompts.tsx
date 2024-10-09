@@ -107,6 +107,7 @@ const CollectionPrompts = () => {
         <IconButton onClick={loadPrompts}>
           <Sync />
         </IconButton>
+        <Typography variant="h5">Collection Summary</Typography>
         <FormControlLabel
           control={
             <Switch
