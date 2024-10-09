@@ -28,12 +28,33 @@ const isDebitType = [
   },
 ];
 
+const durationTypes = [
+  {
+    name: "Day-Wise",
+    value: "Daily",
+  },
+  {
+    name: "Week-Wise",
+    value: "Weekly",
+  },
+  {
+    name: "Month-Wise",
+    value: "Monthly",
+  },
+  {
+    name: "Year-Wise",
+    value: "Yearly",
+  }
+]
+
 const UpcomingOverview = () => {
   const theme = useTheme();
   const [selectedReportType, setSelectedReportType] = useState<number>(0); // 0 - Party Wise, 1 - Bill Wise
   const [selectedDueType, setSelectedDueType] = useState<number>(0);
   const [deductAdvancePayment, setDeductAdvancePayment] =
     useState<boolean>(false); // Default false
+
+  let selectedDurationType = useRef<string>("Daily");
 
   const [applyRangeFilter, setApplyRangeFilter] = useState<boolean>(true); // Default true
 
@@ -96,7 +117,7 @@ const UpcomingOverview = () => {
   };
 
   const loadData = async (apiProps: ApiProps) => {
-    let url = `${getSgBizBaseUrl()}/upcoming/overview?durationType=Monthly`;
+    let url = `${getSgBizBaseUrl()}/upcoming/overview?durationType=${selectedDurationType.current}`;
 
     console.log("load Data", url);
     let groupNames = selectedGroups.current.map((entry: any) => entry.name);
@@ -156,7 +177,7 @@ const UpcomingOverview = () => {
       return {
         id: index + 1,
         Duration: entry.duration_key,
-        Amount: numericToString(entry.total_amount),
+        Amount: entry.total_amount,
         Parties: parties,
       };
     });
@@ -230,62 +251,17 @@ const UpcomingOverview = () => {
   const renderFilterView = () => {
     return (
       <div>
-        <Stack flexDirection={"column"} gap={2}>
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <span>Deduct Advance Payment</span>
-            <Switch
-              checked={deductAdvancePayment}
-              onChange={(event) => {
-                setDeductAdvancePayment(event.target.checked);
-                triggerRefresh(!refresh);
-              }}
-              style={{
-                color: theme.palette.primary.dark,
-              }}
-            />
-            <span>Apply Range</span>
-            <Switch
-              checked={applyRangeFilter}
-              onChange={(event) => {
-                setApplyRangeFilter(event.target.checked);
-                triggerRefresh(!refresh);
-              }}
-              style={{
-                color: theme.palette.primary.dark,
-              }}
-            />
-          </Stack>
-
-          <ApiMultiDropDown
-            reload={refreshGroups}
-            label="Ledger Group"
-            displayFieldKey={"name"}
-            defaultSelections={selectedGroups.current}
-            valueFieldKey={null}
-            onApi={loadGroups}
-            helperText={""}
-            onSelection={(selection) => {
-              selectedGroups.current = selection;
-              loadGroups();
-              triggerRefresh(!refresh);
-            }}
-          />
-
-          <ApiMultiDropDown
-            reload={refreshParties}
-            label="Parties"
-            displayFieldKey={"name"}
-            defaultSelections={selectedParty.current}
-            valueFieldKey={null}
-            onApi={loadParties}
-            helperText={""}
-            onSelection={(selection) => {
-              selectedParty.current = selection;
-              loadParties("");
-              triggerRefresh(!refresh);
-            }}
-          />
-        </Stack>
+        <DropDown
+          label="Duration Type"
+          valueFieldKey="value"
+          displayFieldKey="name"
+          selectionValues={durationTypes}
+          onSelection={(selection) => {
+            selectedDurationType.current = selection;
+            triggerRefresh(!refresh)
+          }}
+          helperText=""
+        />
         <div className="mt-4" />
       </div>
     );
@@ -356,7 +332,6 @@ const UpcomingOverview = () => {
           return column;
         })}
         onApi={loadData}
-        sortKeys={osCommonSortKeys}
         onRowClick={() => {
           // (row)
         }}
