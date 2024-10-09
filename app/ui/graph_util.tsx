@@ -1,5 +1,10 @@
 "use client";
-import { PieChart, BarChart } from "@mui/x-charts";
+import {
+  PieChart,
+  BarChart,
+  DefaultizedPieValueType,
+  pieArcLabelClasses,
+} from "@mui/x-charts";
 import { useState } from "react";
 import { DropDown } from "./drop_down";
 import {
@@ -19,6 +24,8 @@ import MenuIcon from "@mui/icons-material/MoreVertOutlined";
 import CircleIcon from "@mui/icons-material/Circle";
 import { appThemes, getColorKey, themeWheelByHex } from "../theme";
 import Cookies from "js-cookie";
+import shadows from "@mui/material/styles/shadows";
+import theme from "./mui_theme";
 
 // const graphColors: string[] = [
 //   "#fdbf6f",
@@ -99,6 +106,15 @@ const Pie = (values: any[], title: string) => {
     appThemes.find((th: any) => th.code == Cookies.get("theme")) ??
     appThemes[0];
 
+  const TOTAL = values.reduce((acc, item) => acc + item.value, 0);
+
+  const getArcLabel = (
+    item: Omit<DefaultizedPieValueType, "label"> & { label?: string }
+  ) => {
+    const percent = item.value / TOTAL;
+    return `${(percent * 100).toFixed(0)}%`;
+  };
+
   return (
     <Box
       display={"flex"}
@@ -107,16 +123,20 @@ const Pie = (values: any[], title: string) => {
       justifyContent={"center"}
     >
       <PieChart
-        width={360}
-        height={300}
+        width={460}
+        height={400}
         margin={{ top: 0, left: 100, bottom: 0, right: 100 }}
         sx={{
           flex: 1,
-          // borderWidth: 2,
           borderRadius: 2,
           marginBottom: 2,
           justifyContent: "center",
           alignItems: "center",
+          [`& .${pieArcLabelClasses.root}`]: {
+            fill: "white",
+            fontSize: 18,
+            fontWeight: "bold",
+          },
         }}
         slotProps={{
           legend: {
@@ -134,14 +154,13 @@ const Pie = (values: any[], title: string) => {
               ...item,
               color: currentTheme.colors[index % currentTheme.colors.length],
             })),
-            innerRadius: 70,
+            innerRadius: 0,
             outerRadius: 120,
             paddingAngle: 0.5,
             cornerRadius: 1,
             startAngle: 0,
             endAngle: 360,
-            // cx: 150,
-            // cy: 150,
+            arcLabel: getArcLabel, // Use the updated getArcLabel function
           },
         ]}
       />
@@ -150,7 +169,6 @@ const Pie = (values: any[], title: string) => {
     </Box>
   );
 };
-
 const Bar = (values: any[], title: string) => {
   let currentTheme =
     appThemes.find((th: any) => th.code == Cookies.get("theme")) ??
@@ -177,8 +195,8 @@ const Bar = (values: any[], title: string) => {
           },
         ]}
         series={[{ dataKey: "value" }]}
-        width={360}
-        height={350}
+        width={460}
+        height={450}
       />
       <Divider orientation="horizontal" sx={{ width: "100%" }} />
       <Legends data={values} />
@@ -213,7 +231,7 @@ const HorizontalBar = (values: any[], title: string) => {
         series={[{ dataKey: "value" }]}
         layout="horizontal"
         grid={{ vertical: true }}
-        width={360}
+        width={370}
         height={350}
         borderRadius={10}
       />

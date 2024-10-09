@@ -101,14 +101,16 @@ const appThemes: any = [
     name: "Red",
     code: "red",
     colors: [
+      "#a2273e", // Darker Shade 3
+      "#f4879f", // Lighter Tint 2
       "#7a7a7a", // Neutral Gray
       "#63eb3d", // Triadic Color 2
       "#d13354", // Darker Shade 1
-      "#f4879f", // Lighter Tint 2
+      // "#f4879f", // Lighter Tint 2
       "#eb3d4d", // Analogous Color 3
       "#3db4eb", // Split Complementary 2
       "#eb1d53", // Monochromatic 2
-      "#a2273e", // Darker Shade 3
+      // "#a2273e", // Darker Shade 3
       "#f06281", // Lighter Tint 1
       "#eb3d63", // Primary Color
       "#3deb85", // Split Complementary 1
@@ -227,6 +229,8 @@ const appThemes: any = [
     name: "Yellow",
     code: "yellow",
     colors: [
+      "#995c00", // Darker Shade 4
+      "#e68a00", // Darker Shade 1
       "#ffce80", // Lighter Tint 2
       "#1d6bff", // Complementary Color
       "#cc7a00", // Darker Shade 2
@@ -236,12 +240,12 @@ const appThemes: any = [
       "#ffddaa", // Lighter Tint 3
       "#ff7e1d", // Analogous Color 3
       "#ffab1d", // Primary Color
-      "#995c00", // Darker Shade 4
+      // "#995c00", // Darker Shade 4
       "#ffbf57", // Triadic Color 1
       "#1d9eff", // Split Complementary 2
       "#ffbf4d", // Lighter Tint 1
       "#1dff57", // Split Complementary 1
-      "#e68a00", // Darker Shade 1
+      // "#e68a00", // Darker Shade 1
       "#ff851d", // Monochromatic 2
       "#ff6f1d", // Analogous Color 1
       "#b36d00", // Darker Shade 3

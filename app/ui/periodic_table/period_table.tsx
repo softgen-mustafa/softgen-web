@@ -266,6 +266,8 @@ const MobileView = ({ columns, rows }: MobileViewProps) => {
               borderColor: theme.palette.primary.light,
               borderLeftWidth: 8.5,
               borderLeftColor: theme.palette.primary.main,
+              display: "flex", // Flexbox for centering
+              ml: "-10%",
             }}
             className="flex flex-row flex-wrap justify-between"
           >

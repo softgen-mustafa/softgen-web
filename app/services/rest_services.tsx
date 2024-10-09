@@ -171,9 +171,9 @@ const getBaseUrl = () => {
   // return "http://192.168.1.2:5000"
 
   //Jayesh Local IP
-  // return "http://192.168.1.36:45080";
+  return "http://192.168.1.36:45080";
 
-  return "https://softgensolutions.com/gateway";
+  // return "https://softgensolutions.com/gateway";
 
   //GoDadddddddy
   //return "http://118.139.167.125:45400";

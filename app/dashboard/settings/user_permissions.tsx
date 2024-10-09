@@ -210,6 +210,7 @@ const UserPermissions = () => {
             "&:hover": {
               boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.3)",
             },
+            marginTop: { xs: 2, md: 0 },
           }}
         >
           <Typography textTransform={"capitalize"} letterSpacing={0.8}>
@@ -222,13 +223,13 @@ const UserPermissions = () => {
           onClick={unmapallFeatures}
           sx={{
             height: 50,
-
-            width: { xs: "100%", md: "200px" },
+            width: { xs: "100%", md: "300px" },
             borderRadius: "12px",
             boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
             "&:hover": {
               boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.3)",
             },
+            marginTop: { xs: 2, md: 0 },
           }}
         >
           <Typography textTransform={"capitalize"} letterSpacing={0.8}>
