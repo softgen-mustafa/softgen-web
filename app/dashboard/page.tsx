@@ -42,37 +42,37 @@ const DashboardPage = () => {
         </div>
       ),
     },
-    {
-      id: 1,
-      weight: Weight.Medium,
-      content: (
-        <GridCardView
-          permissionCode="PayableReceivable"
-          title="Payable vs Receivable"
-        >
-          <OutstandingCard
-            companyId={Cookies.get("companyId") ?? ""}
-            title="Outstanding Overview"
-          />
-        </GridCardView>
-      ),
-    },
-    {
-      id: 2,
-      weight: Weight.Medium,
-      content: (
-        <GridCardView
-          permissionCode="OutstandingAgingOverview"
-          title=" Outstanding Aging Overview"
-        >
-          <AgingView
-            billType={selectedType.current.code}
-            companyId={Cookies.get("companyId") ?? ""}
-            title="Aging-Wise O/S"
-          />
-        </GridCardView>
-      ),
-    },
+    // {
+    //   id: 1,
+    //   weight: Weight.Medium,
+    //   content: (
+    //     <GridCardView
+    //       permissionCode="PayableReceivable"
+    //       title="Payable vs Receivable"
+    //     >
+    //       <OutstandingCard
+    //         companyId={Cookies.get("companyId") ?? ""}
+    //         title="Outstanding Overview"
+    //       />
+    //     </GridCardView>
+    //   ),
+    // },
+    // {
+    //   id: 2,
+    //   weight: Weight.Medium,
+    //   content: (
+    //     <GridCardView
+    //       permissionCode="OutstandingAgingOverview"
+    //       title=" Outstanding Aging Overview"
+    //     >
+    //       <AgingView
+    //         billType={selectedType.current.code}
+    //         companyId={Cookies.get("companyId") ?? ""}
+    //         title="Aging-Wise O/S"
+    //       />
+    //     </GridCardView>
+    //   ),
+    // },
     {
       id: 3,
       weight: Weight.High,

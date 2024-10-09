@@ -3,16 +3,16 @@ import { useState, useRef } from "react";
 import { getSgBizBaseUrl, postAsync } from "@/app/services/rest_services";
 import {
   Box,
-  CardContent,
-  CircularProgress,
+  IconButton,
   Stack,
+  TextField,
   Typography,
   useTheme,
 } from "@mui/material";
-import { convertToDate, numericToString } from "@/app/services/Local/helper";
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
 import { inspiredPalette } from "@/app/ui/theme";
 import { SingleChartView } from "@/app/ui/graph_util";
+import { Sync } from "@mui/icons-material";
 
 interface PartyReportOverview {
   duration_key: any;
@@ -34,8 +34,7 @@ const UpcomingGraphOverview = () => {
   const [refresh, triggerRefresh] = useState(false);
   const [data, setData] = useState<PartyReportOverview[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  const snackbar = useSnackbar();
+  const [limit, setLimit] = useState<number>(5);
 
   const loadUpcoming = async () => {
     setIsLoading(true);
@@ -49,7 +48,7 @@ const UpcomingGraphOverview = () => {
       let requestBody = {
         Filter: {
           Batch: {
-            Limit: 5,
+            Limit: limit,
             Offset: 0,
             Apply: true,
           },
@@ -78,6 +77,14 @@ const UpcomingGraphOverview = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+  const handleRefresh = () => {
+    loadUpcoming();
+  };
+
+  const handleLimitChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newLimit = Math.min(Math.max(parseInt(event.target.value)), 20);
+    setLimit(newLimit);
   };
 
   return (
@@ -111,6 +118,7 @@ const UpcomingGraphOverview = () => {
                 return entry;
               });
               updateFilters(values);
+
               selectedFilter.current = card;
               loadUpcoming();
               triggerRefresh(!refresh);
@@ -124,6 +132,18 @@ const UpcomingGraphOverview = () => {
             </Typography>
           </Box>
         ))}
+        <div className="flex items-center  p-4">
+          <TextField
+            label="Limit"
+            type="number"
+            value={limit}
+            onChange={handleLimitChange}
+            className="mr-4"
+          />
+          <IconButton onClick={handleRefresh} aria-label="refresh">
+            <Sync />
+          </IconButton>
+        </div>
 
         {data && data.length > 0 ? (
           <SingleChartView

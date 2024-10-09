@@ -1,11 +1,16 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import { getSgBizBaseUrl, postAsync } from "@/app/services/rest_services";
-import { useRouter } from "next/navigation";
-import { CircularProgress, CardContent, Box } from "@mui/material"; // Assuming you're using MUI
+import {
+  CircularProgress,
+  CardContent,
+  Box,
+  TextField,
+  IconButton,
+} from "@mui/material";
 import { SingleChartView } from "@/app/ui/graph_util";
 import { DropDown } from "@/app/ui/drop_down";
+import { Sync } from "@mui/icons-material";
 
 interface PartyReportOverview {
   PartyName: string;
@@ -20,11 +25,10 @@ interface OutstandingCardProps {
 }
 
 const PartyReportGraph: React.FC<OutstandingCardProps> = ({ companyId }) => {
-  const router = useRouter();
   const [data, setData] = useState<PartyReportOverview[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedField, setSelectedField] = useState<string>("TotalOpening");
-  const [refresh, triggerRefresh] = useState(false);
+  const [limit, setLimit] = useState<number>(5);
 
   const fieldOptions = [
     { name: "Total Opening", value: "TotalOpening" },
@@ -45,11 +49,10 @@ const PartyReportGraph: React.FC<OutstandingCardProps> = ({ companyId }) => {
       let requestBody = {
         Batch: {
           Apply: true,
-          Limit: 5,
+          Limit: limit,
           Offset: 0,
         },
       };
-
       let response = await postAsync(url, requestBody);
       if (response && response.Data) {
         setData(response.Data);
@@ -64,14 +67,38 @@ const PartyReportGraph: React.FC<OutstandingCardProps> = ({ companyId }) => {
     }
   };
 
+  const handleRefresh = () => {
+    if (companyId) {
+      fetchPartyReportOverview(companyId);
+    }
+  };
+
+  const handleLimitChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newLimit = Math.min(Math.max(parseInt(event.target.value)), 20);
+    setLimit(newLimit);
+  };
+
   return (
     <div>
+      <div className="flex items-center  p-4">
+        <TextField
+          label="Limit"
+          type="number"
+          value={limit}
+          onChange={handleLimitChange}
+          className="mr-4"
+        />
+        <IconButton onClick={handleRefresh} aria-label="refresh">
+          <Sync />
+        </IconButton>
+      </div>
+
       {isLoading ? (
         <CardContent className="flex justify-center items-center h-40">
           <CircularProgress />
         </CardContent>
       ) : (
-        <Box className="p-0">
+        <Box className="p-4">
           <DropDown
             label="Select Field"
             displayFieldKey={"name"}
@@ -80,14 +107,12 @@ const PartyReportGraph: React.FC<OutstandingCardProps> = ({ companyId }) => {
             helperText="Choose a field to display"
             onSelection={(selection) => {
               setSelectedField(selection.value);
-              triggerRefresh(!refresh);
             }}
             defaultSelectionIndex={fieldOptions.findIndex(
               (item) => item.value === selectedField
             )}
             useSearch={false}
           />
-
           {data && data.length > 0 ? (
             <SingleChartView
               values={data.map((item) => ({
