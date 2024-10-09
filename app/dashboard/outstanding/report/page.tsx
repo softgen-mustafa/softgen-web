@@ -224,10 +224,10 @@ const Page = () => {
             BillDate: convertToDate(bill.BillDate),
             DueDate: convertToDate(bill.DueDate),
             DelayDays: bill.DelayDays,
-            OpeningAmount: bill.OpeningAmount,
-            ClosingAmount: bill.ClosingAmount,
-            DueAmount: bill.DueAmount,
-            OverDueAmount: bill.OverDueAmount,
+            OpeningAmount: numericToString(bill.OpeningAmount),
+            ClosingAmount: numericToString(bill.ClosingAmount),
+            DueAmount: numericToString(bill.DueAmount),
+            OverDueAmount: numericToString(bill.OverDueAmount),
           };
         });
       }

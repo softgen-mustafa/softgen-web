@@ -44,11 +44,11 @@ const PivotRow = ({
   };
 
   return (
-    <Box key={refresh} className="pl-6 w-full" sx={{
-      overflowX: "auto", 
-      display:"block",
-      whiteSapce: "nowrap"
+    <Box key={refresh} className="flex flex-row pl-6 overflow-hidden overflow-x-auto" sx={{
+      borderBottomWidth: 1,
+      borderTopWidth: 1,
     }}>
+      <div className="flex flex-col">
       {data.map((row: any, rowIdx: number) => {
         return (
           <div key={rowIdx}>
@@ -147,8 +147,9 @@ const PivotRow = ({
           </div>
         );
       })}
+</div>
     </Box>
   );
 };
-export { PivotRow };
 
+export { PivotRow };
