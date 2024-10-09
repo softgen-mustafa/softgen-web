@@ -185,6 +185,6 @@ export {
   getBmrmBaseUrl,
   getUmsBaseUrl,
   getSgBizBaseUrl,
-  putAsync,
   getPortalUrl,
+  putAsync,
 };

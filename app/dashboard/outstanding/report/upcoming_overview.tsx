@@ -13,7 +13,7 @@ import {
   postAsync,
 } from "@/app/services/rest_services";
 import { IconButton, Stack, Switch, useTheme } from "@mui/material";
-import { numericToString, convertToDate } from "@/app/services/Local/helper";
+import { convertToDate, numericToString } from "@/app/services/Local/helper";
 import { ApiMultiDropDown } from "@/app/ui/api_multi_select";
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
 
@@ -28,12 +28,31 @@ const isDebitType = [
   },
 ];
 
-const AgingOverview = () => {
+const durationTypes = [
+  {
+    name: "Day-Wise",
+    value: "Daily",
+  },
+  {
+    name: "Week-Wise",
+    value: "Weekly",
+  },
+  {
+    name: "Month-Wise",
+    value: "Monthly",
+  },
+  {
+    name: "Year-Wise",
+    value: "Yearly",
+  },
+];
+
+const UpcomingOverview = () => {
   const theme = useTheme();
-  const [selectedReportType, setSelectedReportType] = useState<number>(0); // 0 - Party Wise, 1 - Bill Wise
-  const [selectedDueType, setSelectedDueType] = useState<number>(0);
   const [deductAdvancePayment, setDeductAdvancePayment] =
     useState<boolean>(false); // Default false
+
+  let selectedDurationType = useRef<string>("Daily");
 
   const [applyRangeFilter, setApplyRangeFilter] = useState<boolean>(true); // Default true
 
@@ -45,6 +64,8 @@ const AgingOverview = () => {
   const [refresh, triggerRefresh] = useState(false);
   const [refreshGroups, triggerGroupRefresh] = useState(false);
   const [refreshParties, triggerRefrehParties] = useState(false);
+  const [selectedfilterTypes, setSelectedFilterTypes] =
+    useState<string>("Daily");
 
   const snackbar = useSnackbar();
 
@@ -96,7 +117,9 @@ const AgingOverview = () => {
   };
 
   const loadData = async (apiProps: ApiProps) => {
-    let url = `${getSgBizBaseUrl()}/aging/overview?applyRange=${applyRangeFilter}`;
+    let url = `${getSgBizBaseUrl()}/upcoming/overview?durationType=${
+      selectedDurationType.current
+    }`;
 
     console.log("load Data", url);
     let groupNames = selectedGroups.current.map((entry: any) => entry.name);
@@ -110,8 +133,8 @@ const AgingOverview = () => {
         },
         SearchKey: apiProps.searchKey,
         SearchText: apiProps.searchText ?? "",
-        SortKey: apiProps.sortKey,
-        SortOrder: apiProps.sortOrder,
+        SortKey: "Name",
+        SortOrder: "asc",
       },
       DeductAdvancePayment: deductAdvancePayment,
       IsDebit: selectedisDebitType.current,
@@ -128,43 +151,38 @@ const AgingOverview = () => {
     console.log(JSON.stringify(res));
 
     let values = res.Data.map((entry: any, index: number) => {
-      let bills: any[] = [];
-      if (entry.Bills !== null) {
-        bills = entry.Bills.map((bill: any) => {
+      let parties: any[] = [];
+      if (entry.parties != null && entry.parties.length > 0) {
+        parties = entry.parties.map((party: any, idx: number) => {
+          let bills: any[] = [];
+          if (party["bills"] != null && party["bills"].length > 0) {
+            bills = party["bills"].map((bill: any) => {
+              return {
+                BillNumber: bill.BillNumber,
+                BillDate: convertToDate(bill.BillDate),
+                DueDate: convertToDate(bill.DueDate),
+                Opening: numericToString(
+                  bill.OpeningBalance == null ? 0 : bill.OpeningBalance.Value
+                ),
+                Closing: numericToString(
+                  bill.ClosingBalance == null ? 0 : bill.ClosingBalance.Value
+                ),
+              };
+            });
+          }
           return {
-            BillNumber: bill.BillNumber,
-            BillDate: convertToDate(bill.BillDate),
-            DueDate: convertToDate(bill.DueDate),
-            DelayDays: bill.DelayDays,
-            OpeningAmount: numericToString(bill.OpeningAmount),
-            ClosingAmount: numericToString(bill.ClosingAmount),
-            Above30: numericToString(bill.Above30),
-            Above60: numericToString(bill.Above60),
-            Above90: numericToString(bill.Above90),
-            Above120: numericToString(bill.Above120),
+            Party: party.party_name,
+            Amount: numericToString(party.total_amount),
+            Bills: bills,
           };
         });
       }
 
       return {
         id: index + 1,
-        PartyName: entry.PartyName,
-        LedgerGroup: entry.LedgerGroup,
-        CreditLimit: entry.CreditLimit,
-        CreditDays: entry.CreditDays,
-        TotalBills: entry.TotalBills,
-        BillNumber: entry.BillNumber,
-        BillDate: convertToDate(entry.BillDate),
-        DueDate: convertToDate(entry.DueDate),
-        DelayDays: entry.DelayDays,
-        OpeningAmount: entry.OpeningAmount,
-        ClosingAmount: entry.ClosingAmount,
-        Above30: entry.Above30,
-        Above60: entry.Above60,
-        Above90: entry.Above90,
-        Above120: entry.Above120,
-        IsAdvance: entry.IsAdvance,
-        Bills: bills,
+        Duration: entry.duration_key,
+        Amount: entry.total_amount,
+        Parties: parties,
       };
     });
 
@@ -174,8 +192,8 @@ const AgingOverview = () => {
 
   const columns: any[] = [
     {
-      field: "Bills",
-      headerName: "Bills",
+      field: "Parties",
+      headerName: "Parties",
       editable: false,
       sortable: true,
       flex: 1,
@@ -184,8 +202,8 @@ const AgingOverview = () => {
       mobileFullView: true,
     },
     {
-      field: "PartyName",
-      headerName: "Party",
+      field: "Duration",
+      headerName: "Time Period",
       editable: false,
       sortable: true,
       flex: 1,
@@ -194,86 +212,13 @@ const AgingOverview = () => {
       mobileFullView: true,
     },
     {
-      field: "CreditLimit",
-      headerName: "Credit Limit",
+      field: "Amount",
+      headerName: "Total Amount",
       editable: false,
       sortable: true,
+      type: "number",
       flex: 1,
       minWidth: 200,
-    },
-    {
-      field: "CreditDays",
-      headerName: "Credit Days",
-      editable: false,
-      sortable: true,
-      flex: 1,
-      minWidth: 200,
-    },
-    {
-      field: "OpeningAmount",
-      headerName: "Opening Amount",
-      editable: false,
-      sortable: true,
-      type: "number",
-      flex: 1,
-      minWidth: 150,
-      hideable: false,
-      showSummation: true,
-    },
-    {
-      field: "ClosingAmount",
-      headerName: "Closing Amount",
-      editable: false,
-      sortable: true,
-      type: "number",
-      flex: 1,
-      minWidth: 150,
-      hideable: false,
-      showSummation: true,
-    },
-    {
-      field: "Above30",
-      headerName: "Above 30",
-      editable: false,
-      sortable: true,
-      type: "number",
-      flex: 1,
-      minWidth: 150,
-      hideable: false,
-      showSummation: true,
-    },
-    {
-      field: "Above60",
-      headerName: "Above 60",
-      editable: false,
-      sortable: true,
-      type: "number",
-      flex: 1,
-      minWidth: 150,
-      hideable: false,
-      showSummation: true,
-    },
-    {
-      field: "Above90",
-      headerName: "Above 90",
-      editable: false,
-      sortable: true,
-      type: "number",
-      flex: 1,
-      minWidth: 150,
-      hideable: false,
-      showSummation: true,
-    },
-    {
-      field: "Above120",
-      headerName: "Above 120",
-      editable: false,
-      sortable: true,
-      type: "number",
-      flex: 1,
-      minWidth: 150,
-      hideable: false,
-      showSummation: true,
     },
   ];
 
@@ -310,62 +255,17 @@ const AgingOverview = () => {
   const renderFilterView = () => {
     return (
       <div>
-        <Stack flexDirection={"column"} gap={2}>
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <span>Deduct Advance Payment</span>
-            <Switch
-              checked={deductAdvancePayment}
-              onChange={(event) => {
-                setDeductAdvancePayment(event.target.checked);
-                triggerRefresh(!refresh);
-              }}
-              style={{
-                color: theme.palette.primary.dark,
-              }}
-            />
-            <span>Apply Range</span>
-            <Switch
-              checked={applyRangeFilter}
-              onChange={(event) => {
-                setApplyRangeFilter(event.target.checked);
-                triggerRefresh(!refresh);
-              }}
-              style={{
-                color: theme.palette.primary.dark,
-              }}
-            />
-          </Stack>
-
-          <ApiMultiDropDown
-            reload={refreshGroups}
-            label="Ledger Group"
-            displayFieldKey={"name"}
-            defaultSelections={selectedGroups.current}
-            valueFieldKey={null}
-            onApi={loadGroups}
-            helperText={""}
-            onSelection={(selection) => {
-              selectedGroups.current = selection;
-              loadGroups();
-              triggerRefresh(!refresh);
-            }}
-          />
-
-          <ApiMultiDropDown
-            reload={refreshParties}
-            label="Parties"
-            displayFieldKey={"name"}
-            defaultSelections={selectedParty.current}
-            valueFieldKey={null}
-            onApi={loadParties}
-            helperText={""}
-            onSelection={(selection) => {
-              selectedParty.current = selection;
-              loadParties("");
-              triggerRefresh(!refresh);
-            }}
-          />
-        </Stack>
+        <DropDown
+          label="Duration Type"
+          valueFieldKey="value"
+          displayFieldKey="name"
+          selectionValues={durationTypes}
+          onSelection={(selection) => {
+            selectedDurationType.current = selection;
+            triggerRefresh(!refresh);
+          }}
+          helperText=""
+        />
         <div className="mt-4" />
       </div>
     );
@@ -390,7 +290,8 @@ const AgingOverview = () => {
       </Stack>
       <div className="mt-4" />
       <PeriodicTable
-        pivotKey={"Bills"}
+        pivotKey={"Parties"}
+        pivotKey2={"Bills"}
         usePivot={true}
         showSummationRow={true}
         chartKeyFields={[
@@ -435,7 +336,6 @@ const AgingOverview = () => {
           return column;
         })}
         onApi={loadData}
-        sortKeys={osCommonSortKeys}
         onRowClick={() => {
           // (row)
         }}
@@ -446,4 +346,4 @@ const AgingOverview = () => {
   );
 };
 
-export { AgingOverview };
+export { UpcomingOverview };

@@ -30,6 +30,7 @@ import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
 import GridCardView from "@/app/ui/grid_card";
 import { AgingOverview } from "./aging_overview";
+import { UpcomingOverview } from "./upcoming_overview";
 
 const isDebitType = [
   {
@@ -223,10 +224,10 @@ const Page = () => {
             BillDate: convertToDate(bill.BillDate),
             DueDate: convertToDate(bill.DueDate),
             DelayDays: bill.DelayDays,
-            OpeningAmount: bill.OpeningAmount,
-            ClosingAmount: bill.ClosingAmount,
-            DueAmount: bill.DueAmount,
-            OverDueAmount: bill.OverDueAmount,
+            OpeningAmount: numericToString(bill.OpeningAmount),
+            ClosingAmount: numericToString(bill.ClosingAmount),
+            DueAmount: numericToString(bill.DueAmount),
+            OverDueAmount: numericToString(bill.OverDueAmount),
           };
         });
       }
@@ -810,6 +811,15 @@ const Page = () => {
       content: (
         <GridCardView title="Aging Overview">
           <AgingOverview />
+        </GridCardView>
+      ),
+    },
+    {
+      id: 3,
+      weight: 1,
+      content: (
+        <GridCardView title="Upcoming Overview">
+          <UpcomingOverview />
         </GridCardView>
       ),
     },

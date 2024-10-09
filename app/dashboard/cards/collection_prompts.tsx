@@ -107,6 +107,7 @@ const CollectionPrompts = () => {
         <IconButton onClick={loadPrompts}>
           <Sync />
         </IconButton>
+        <Typography variant="h5">Collection Summary</Typography>
         <FormControlLabel
           control={
             <Switch
@@ -210,7 +211,7 @@ const CollectionPrompts = () => {
                         key={actionIndex}
                         onClick={() =>
                           handleAction(
-                            action.Title,
+                            action.Code,
                             entry.PartyName,
                             entry.BillNumber,
                             entry.AmountStr

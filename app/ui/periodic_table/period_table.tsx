@@ -35,6 +35,7 @@ import { DynGrid, Weight } from "../responsive_grid";
 import { DropDown } from "../drop_down";
 import { SingleChartView } from "@/app/ui/graph_util";
 import { numericToString } from "@/app/services/Local/helper";
+import { PivotRow } from "./pivot_row";
 
 interface ApiProps {
   offset: number;
@@ -47,6 +48,7 @@ interface ApiProps {
 
 interface PeriodicTableProps {
   pivotKey?: string;
+  pivotKey2?: string;
   usePivot?: boolean;
   showSummationRow?: boolean;
   actionViews?: any[];
@@ -113,6 +115,7 @@ interface TableRow {
 
 interface TableProps {
   pivotKey?: string;
+  pivotKey2?: string;
   usePivot?: boolean;
   columns: TableColumn[];
   rows: TableRow[][];
@@ -336,6 +339,7 @@ const Table = ({
   reload,
   usePivot = false,
   pivotKey = "",
+  pivotKey2 = "",
   showSummationRow = false,
 }: TableProps) => {
   const theme = useTheme();
@@ -403,62 +407,11 @@ const Table = ({
     ) {
       return [];
     }
-    0;
     let firstRow = pivotColumn.value[0];
     let keys = Object.keys(firstRow);
 
-    let rows = pivotColumn.value.map((row: any, rowIdx: number) => {
-      return (
-        <Box key={rowIdx} className="flex flex-row overflow-x-hidden">
-          {keys.map((column: string, index: number) => {
-            let value = row[column];
-            return (
-              <div key={index}>
-                <Box
-                  key={index}
-                  className="w-full flex p-2"
-                  sx={{
-                    minWidth: 150,
-                    maxWidth: 200,
-                    borderBottomWidth: 2,
-
-                    flex: `1 0 ${200}px`, // Allow flexing with minimum width
-
-                    borderRightWidth: index === keys.length - 1 ? 0 : 2,
-                  }}
-                >
-                  <Typography>{column}</Typography>
-                </Box>
-                <Box
-                  key={index}
-                  className={`w-full flex p-2`}
-                  sx={{
-                    minWidth: 150,
-                    maxWidth: 200,
-                    // flex: `1 0 ${cellWidth}px`, // Allow flexing
-
-                    borderRightWidth: index === row.length - 1 ? 0 : 2,
-                    overflowX: "auto", // Ensure the row can scroll horizontally
-                  }}
-                >
-                  <Typography className="overflow-x-auto">{value}</Typography>
-                </Box>
-              </div>
-            );
-          })}
-        </Box>
-      );
-    });
-
     return (
-      <div
-        className="w-auto flex-col m-2 p-2"
-        style={{
-          borderWidth: 1,
-        }}
-      >
-        {rows}
-      </div>
+        <PivotRow data={pivotColumn.value} keys={keys} pivotKey={pivotKey2} />
     );
   };
 
@@ -1407,6 +1360,7 @@ const PeriodicTable = (props: PeriodicTableProps) => {
           dimensions.width > maxPhoneWidth && (
             <Table
               pivotKey={props.pivotKey}
+              pivotKey2={props.pivotKey2}
               usePivot={props.usePivot}
               showSummationRow={props.showSummationRow}
               actionViews={props.actionViews}
