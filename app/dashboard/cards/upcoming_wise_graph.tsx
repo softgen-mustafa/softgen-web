@@ -13,6 +13,7 @@ import { useSnackbar } from "@/app/ui/snack_bar_provider";
 import { inspiredPalette } from "@/app/ui/theme";
 import { SingleChartView } from "@/app/ui/graph_util";
 import { Sync } from "@mui/icons-material";
+import Image from "next/image";
 
 interface PartyReportOverview {
   duration_key: any;
@@ -132,13 +133,15 @@ const UpcomingGraphOverview = () => {
             </Typography>
           </Box>
         ))}
-        <div className="flex items-center  p-4">
+      </Stack>
+      <div className="flex-col">
+        <div className="flex items-center p-4 mt-4">
           <TextField
             label="Limit"
             type="number"
             value={limit}
             onChange={handleLimitChange}
-            className="mr-4"
+            className=" mr-4"
           />
           <IconButton onClick={handleRefresh} aria-label="refresh">
             <Sync />
@@ -155,9 +158,18 @@ const UpcomingGraphOverview = () => {
             title={""}
           />
         ) : (
-          <div>No data available</div>
+          <div className="flex flex-col items-center justify-center h-full">
+            <Image
+              src="/assets/images/No data-cuate.png" // Adjust the path to your SVG file
+              alt="No Video Data"
+              width={300} // Specify the width
+              height={300} // Specify the height
+              className="mb-4" // Optional: Use Tailwind for styling
+            />
+            <p className="text-gray-600 text-2xl">No data available</p>
+          </div>
         )}
-      </Stack>
+      </div>
     </div>
   );
 };

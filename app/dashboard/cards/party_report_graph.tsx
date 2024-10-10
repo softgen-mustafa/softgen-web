@@ -7,6 +7,7 @@ import {
   Box,
   TextField,
   IconButton,
+  Grid,
 } from "@mui/material";
 import { SingleChartView } from "@/app/ui/graph_util";
 import { DropDown } from "@/app/ui/drop_down";
@@ -79,54 +80,60 @@ const PartyReportGraph: React.FC<OutstandingCardProps> = ({ companyId }) => {
   };
 
   return (
-    <div>
-      <div className="flex items-center  p-4">
-        <TextField
-          label="Limit"
-          type="number"
-          value={limit}
-          onChange={handleLimitChange}
-          className="mr-4"
-        />
-        <IconButton onClick={handleRefresh} aria-label="refresh">
-          <Sync />
-        </IconButton>
-      </div>
-
-      {isLoading ? (
-        <CardContent className="flex justify-center items-center h-40">
-          <CircularProgress />
-        </CardContent>
-      ) : (
-        <Box className="p-4">
-          <DropDown
-            label="Select Field"
-            displayFieldKey={"name"}
-            valueFieldKey={null}
-            selectionValues={fieldOptions}
-            helperText="Choose a field to display"
-            onSelection={(selection) => {
-              setSelectedField(selection.value);
-            }}
-            defaultSelectionIndex={fieldOptions.findIndex(
-              (item) => item.value === selectedField
-            )}
-            useSearch={false}
+    <div className=" md:mx-auto ">
+      <div className="max-w-lg ">
+        <div className="flex items-center ">
+          <TextField
+            label="Limit"
+            type="number"
+            value={limit}
+            onChange={handleLimitChange}
+            className="mr-4"
           />
-          {data && data.length > 0 ? (
-            <SingleChartView
-              values={data.map((item) => ({
-                label: item.PartyName,
-                value: item[selectedField as keyof PartyReportOverview],
-              }))}
-              defaultChart="pie"
-              title={""}
-            />
-          ) : (
-            <div>No data available</div>
-          )}
-        </Box>
-      )}
+          <IconButton onClick={handleRefresh} aria-label="refresh">
+            <Sync />
+          </IconButton>
+        </div>
+
+        {isLoading ? (
+          <CardContent className="flex justify-center items-center h-40">
+            <CircularProgress />
+          </CardContent>
+        ) : (
+          <Box className="p-4 ">
+            <Grid container spacing={2} alignItems="center" mr={10}>
+              <Grid item xs>
+                <DropDown
+                  label="Select Field"
+                  displayFieldKey={"name"}
+                  valueFieldKey={null}
+                  selectionValues={fieldOptions}
+                  helperText="Choose a field to display"
+                  onSelection={(selection) => {
+                    setSelectedField(selection.value);
+                  }}
+                  defaultSelectionIndex={fieldOptions.findIndex(
+                    (item) => item.value === selectedField
+                  )}
+                  useSearch={false}
+                />
+              </Grid>
+            </Grid>
+            {data && data.length > 0 ? (
+              <SingleChartView
+                values={data.map((item) => ({
+                  label: item.PartyName,
+                  value: item[selectedField as keyof PartyReportOverview],
+                }))}
+                defaultChart="pie"
+                title={""}
+              />
+            ) : (
+              <div>No data available</div>
+            )}
+          </Box>
+        )}
+      </div>
     </div>
   );
 };
