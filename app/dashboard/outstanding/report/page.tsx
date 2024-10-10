@@ -259,7 +259,7 @@ const Page = () => {
     //   ...entry,
 
     // }));
-    // console.log(JSON.stringify(values));
+    console.log(JSON.stringify(values));
     triggerRefresh(false);
     return values;
   };
@@ -449,6 +449,7 @@ const Page = () => {
       hideable: false,
       showSummation: true,
     },
+
     {
       field: "PendingPercentage",
       headerName: "Pending Percentage",
@@ -708,18 +709,14 @@ const Page = () => {
             showSummationRow={true}
             chartKeyFields={[
               {
-                label: "Party",
-                value: "LedgerName",
-              },
-              {
-                label: "Ledger Group",
-                value: "LedgerGroupName",
+                label: "Party Name",
+                value: "PartyName",
               },
             ]}
             chartValueFields={[
               {
-                label: "Pending Amount",
-                value: "Amount",
+                label: "Closing Amount",
+                value: "ClosingAmount",
               },
               {
                 label: "Due Amount",
