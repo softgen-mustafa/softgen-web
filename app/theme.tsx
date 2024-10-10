@@ -101,28 +101,38 @@ const appThemes: any = [
     name: "Red",
     code: "red",
     colors: [
-      "#a2273e", // Darker Shade 3
-      "#f4879f", // Lighter Tint 2
-      "#7a7a7a", // Neutral Gray
-      "#63eb3d", // Triadic Color 2
-      "#d13354", // Darker Shade 1
-      // "#f4879f", // Lighter Tint 2
-      "#eb3d4d", // Analogous Color 3
-      "#3db4eb", // Split Complementary 2
-      "#eb1d53", // Monochromatic 2
       // "#a2273e", // Darker Shade 3
-      "#f06281", // Lighter Tint 1
-      "#eb3d63", // Primary Color
-      "#3deb85", // Split Complementary 1
-      "#eb3d8f", // Analogous Color 1
-      "#3debcb", // Complementary Color
-      "#f8acbd", // Lighter Tint 3
-      "#b92d49", // Darker Shade 2
-      "#fcd1db", // Lighter Tint 4
-      "#eb3daf", // Analogous Color 2
-      "#8b2234", // Darker Shade 4
-      "#63eb3d", // Triadic Color 1
-      "#eb4d73", // Monochromatic 1
+      // "#f4879f", // Lighter Tint 2
+      // "#7a7a7a", // Neutral Gray
+      // "#63eb3d", // Triadic Color 2
+      // "#d13354", // Darker Shade 1
+      // // "#f4879f", // Lighter Tint 2
+      // "#eb3d4d", // Analogous Color 3
+      // "#3db4eb", // Split Complementary 2
+      // "#eb1d53", // Monochromatic 2
+      // // "#a2273e", // Darker Shade 3
+      // "#f06281", // Lighter Tint 1
+      // "#eb3d63", // Primary Color
+      // "#3deb85", // Split Complementary 1
+      // "#eb3d8f", // Analogous Color 1
+      // "#3debcb", // Complementary Color
+      // "#f8acbd", // Lighter Tint 3
+      // "#b92d49", // Darker Shade 2
+      // "#fcd1db", // Lighter Tint 4
+      // "#eb3daf", // Analogous Color 2
+      // "#8b2234", // Darker Shade 4
+      // "#63eb3d", // Triadic Color 1
+      // "#eb4d73", // Monochromatic 1
+      "#d10070", // Bright Fuchsia (Primary)
+      "#871f1e", // Very Dark Red
+      "#91253a", // Burgundy
+      "#eb5e00", // Bright Orange
+      "#ebb700", // Bright Golden Yellow (Primary)
+      "#f2a400", // Vibrant Yellow-Orange
+      "#4d2c91", // Indigo
+      "#ffeb3b", // Bright Yellow
+      "#f2c94c", // Light Golden Yellow
+      "#5b0606", // Blackish Red
     ],
     theme: createTheme({
       typography: {

@@ -12,6 +12,7 @@ import {
 import { useSnackbar } from "@/app/ui/snack_bar_provider";
 import { inspiredPalette } from "@/app/ui/theme";
 import { SingleChartView } from "@/app/ui/graph_util";
+import noDataFound from "@/public/noDataFound.png";
 import { Sync } from "@mui/icons-material";
 import Image from "next/image";
 
@@ -25,8 +26,7 @@ const UpcomingGraphOverview = () => {
     { id: 1, label: "Daily", value: "Daily", isSelected: true },
     { id: 2, label: "Weekly", value: "Weekly", isSelected: false },
     { id: 3, label: "Montly", value: "Monthly", isSelected: false },
-    { id: 4, label: "Quarterly", value: "Quarterly", isSelected: false },
-    { id: 5, label: "Yearly", value: "Yearly", isSelected: false },
+    { id: 4, label: "Yearly", value: "Yearly", isSelected: false },
   ]);
   let selectedFilter = useRef(filters[0]);
 
@@ -160,7 +160,7 @@ const UpcomingGraphOverview = () => {
         ) : (
           <div className="flex flex-col items-center justify-center h-full">
             <Image
-              src="/assets/images/No data-cuate.png" // Adjust the path to your SVG file
+              src={noDataFound} // Adjust the path to your SVG file
               alt="No Video Data"
               width={300} // Specify the width
               height={300} // Specify the height
