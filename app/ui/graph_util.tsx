@@ -106,14 +106,14 @@ const Pie = (values: any[], title: string) => {
     appThemes.find((th: any) => th.code == Cookies.get("theme")) ??
     appThemes[0];
 
-  const TOTAL = values.reduce((acc, item) => acc + item.value, 0);
+  // const TOTAL = values.reduce((acc, item) => acc + item.value, 0);
 
-  const getArcLabel = (
-    item: Omit<DefaultizedPieValueType, "label"> & { label?: string }
-  ) => {
-    const percent = item.value / TOTAL;
-    return `${(percent * 100).toFixed(0)}%`;
-  };
+  // const getArcLabel = (
+  //   item: Omit<DefaultizedPieValueType, "label"> & { label?: string }
+  // ) => {
+  //   const percent = item.value / TOTAL;
+  //   return `${(percent * 100).toFixed(0)}%`;
+  // };
 
   return (
     <Box
@@ -132,11 +132,11 @@ const Pie = (values: any[], title: string) => {
           marginBottom: 2,
           justifyContent: "center",
           alignItems: "center",
-          [`& .${pieArcLabelClasses.root}`]: {
-            fill: "white",
-            fontSize: 18,
-            fontWeight: "bold",
-          },
+          // [`& .${pieArcLabelClasses.root}`]: {
+          //   fill: "white",
+          //   fontSize: 18,
+          //   fontWeight: "bold",
+          // },
         }}
         slotProps={{
           legend: {
@@ -160,7 +160,7 @@ const Pie = (values: any[], title: string) => {
             cornerRadius: 1,
             startAngle: 0,
             endAngle: 360,
-            arcLabel: getArcLabel, // Use the updated getArcLabel function
+            // arcLabel: getArcLabel, // Use the updated getArcLabel function
           },
         ]}
       />
@@ -195,8 +195,9 @@ const Bar = (values: any[], title: string) => {
           },
         ]}
         series={[{ dataKey: "value" }]}
-        width={460}
+        width={600}
         height={450}
+        // margin={{ left: 200 }}
       />
       <Divider orientation="horizontal" sx={{ width: "100%" }} />
       <Legends data={values} />
@@ -231,9 +232,10 @@ const HorizontalBar = (values: any[], title: string) => {
         series={[{ dataKey: "value" }]}
         layout="horizontal"
         grid={{ vertical: true }}
-        width={370}
+        width={600}
         height={350}
         borderRadius={10}
+        margin={{ left: 200 }}
       />
       <Divider orientation="horizontal" sx={{ width: "100%" }} />
       <Legends data={values} />
