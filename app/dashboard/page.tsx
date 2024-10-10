@@ -13,6 +13,7 @@ import { CollectionPrompts } from "./cards/collection_prompts";
 import { CollectionReport } from "./cards/collection_report";
 import { PartyReportGraph } from "./cards/party_report_graph";
 import { UpcomingGraphOverview } from "./cards/upcoming_wise_graph";
+import { AgingReportGraph } from "./cards/aging_report_graph";
 
 const DashboardPage = () => {
   let incomingBillType = "Receivable"; // populate later
@@ -42,21 +43,16 @@ const DashboardPage = () => {
         </div>
       ),
     },
-    // {
-    //   id: 1,
-    //   weight: Weight.Medium,
-    //   content: (
-    //     <GridCardView
-    //       permissionCode="PayableReceivable"
-    //       title="Payable vs Receivable"
-    //     >
-    //       <OutstandingCard
-    //         companyId={Cookies.get("companyId") ?? ""}
-    //         title="Outstanding Overview"
-    //       />
-    //     </GridCardView>
-    //   ),
-    // },
+    {
+      id: 1,
+      weight: Weight.Medium,
+      content: (
+        <div>
+        <AgingReportGraph />
+      </div>
+       
+      ),
+    },
     // {
     //   id: 2,
     //   weight: Weight.Medium,
