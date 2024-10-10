@@ -1,7 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { getSgBizBaseUrl, postAsync } from "@/app/services/rest_services";
-import { Box, TextField, IconButton } from "@mui/material";
+import {
+  Box,
+  TextField,
+  IconButton,
+  CardContent,
+  CircularProgress,
+  Typography,
+} from "@mui/material";
 import { SingleChartView } from "@/app/ui/graph_util";
 import { Sync } from "@mui/icons-material";
 import { DropDown } from "@/app/ui/drop_down";
@@ -105,73 +112,88 @@ const AgingReportGraph = () => {
       </div>
 
       {/* First Graph: Overview */}
-      <Box className="p-4">
-        {!isLoading ? (
-          <SingleChartView
-            values={[
-              {
-                label: "Above 30",
-                value: data.Above30.length
-                  ? data.Above30.reduce((a: any, b: any) => a + b.value, 0)
-                  : 0,
-              },
-              {
-                label: "Above 60",
-                value: data.Above60.length
-                  ? data.Above60.reduce((a: any, b: any) => a + b.value, 0)
-                  : 0,
-              },
-              {
-                label: "Above 90",
-                value: data.Above90.length
-                  ? data.Above90.reduce((a: any, b: any) => a + b.value, 0)
-                  : 0,
-              },
-              {
-                label: "Above 120",
-                value: data.Above120.length
-                  ? data.Above120.reduce((a: any, b: any) => a + b.value, 0)
-                  : 0,
-              },
-            ]}
-            defaultChart="pie"
-            title="Aging Report Overview"
-          />
-        ) : (
-          <div>Loading...</div>
-        )}
-      </Box>
+      {isLoading ? (
+        <CardContent className="flex justify-center items-center h-40">
+          <CircularProgress />
+        </CardContent>
+      ) : (
+        <>
+          <Typography className="text-xl mb-2">Total Aging</Typography>
+          <Box className="p-4">
+            <SingleChartView
+              values={[
+                {
+                  label: "Above 30",
+                  value: data.Above30.length
+                    ? data.Above30.reduce((a: any, b: any) => a + b.value, 0)
+                    : 0,
+                },
+                {
+                  label: "Above 60",
+                  value: data.Above60.length
+                    ? data.Above60.reduce((a: any, b: any) => a + b.value, 0)
+                    : 0,
+                },
+                {
+                  label: "Above 90",
+                  value: data.Above90.length
+                    ? data.Above90.reduce((a: any, b: any) => a + b.value, 0)
+                    : 0,
+                },
+                {
+                  label: "Above 120",
+                  value: data.Above120.length
+                    ? data.Above120.reduce((a: any, b: any) => a + b.value, 0)
+                    : 0,
+                },
+              ]}
+              defaultChart="pie"
+              title=""
+            />
+          </Box>
+        </>
+      )}
 
       {/* Second Graph: Details based on selected group */}
-      <Box className="p-4">
-        <DropDown
-          label="Select Group"
-          displayFieldKey="label"
-          valueFieldKey="value"
-          selectionValues={[
-            { label: "Above 30", value: "Above30" },
-            { label: "Above 60", value: "Above60" },
-            { label: "Above 90", value: "Above90" },
-            { label: "Above 120", value: "Above120" },
-          ]}
-          helperText="Please select Aging"
-          onSelection={handleGroupChange}
-          defaultSelectionIndex={0}
-        />
 
-        {!isLoading ? (
-          <SingleChartView
-            values={selectedData.map((item: any) => ({
-              label: item.label,
-              value: item.value,
-            }))}
-            defaultChart="pie"
-            title=""
-          />
-        ) : (
-          <div>Loading...</div>
-        )}
-      </Box>
+      {isLoading ? (
+        <CardContent className="flex justify-center items-center h-40">
+          <CircularProgress />
+        </CardContent>
+      ) : (
+        <>
+          <Typography className="text-xl mb-2">Aging wise Graph</Typography>
+          <Box className="p-4">
+            <DropDown
+              label="Select Aging"
+              displayFieldKey="label"
+              valueFieldKey="value"
+              selectionValues={[
+                { label: "Above 30", value: "Above30" },
+                { label: "Above 60", value: "Above60" },
+                { label: "Above 90", value: "Above90" },
+                { label: "Above 120", value: "Above120" },
+              ]}
+              helperText=""
+              onSelection={handleGroupChange}
+              defaultSelectionIndex={0}
+            />
+
+            {selectedData && selectedData.length > 0 ? (
+              <SingleChartView
+                values={selectedData.map((item: any) => ({
+                  label: item.label,
+                  value: item.value,
+                }))}
+                defaultChart="pie"
+                title=""
+              />
+            ) : (
+              <div>No data available</div>
+            )}
+          </Box>
+        </>
+      )}
     </div>
   );
 };

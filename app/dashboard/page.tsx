@@ -47,10 +47,12 @@ const DashboardPage = () => {
       id: 1,
       weight: Weight.Medium,
       content: (
-        <div>
-        <AgingReportGraph />
-      </div>
-       
+        <GridCardView
+          permissionCode="OutstandingAgingOverview"
+          title="Aging Overview"
+        >
+          <AgingReportGraph></AgingReportGraph>
+        </GridCardView>
       ),
     },
     // {
