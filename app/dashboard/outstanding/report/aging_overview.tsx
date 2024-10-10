@@ -396,25 +396,25 @@ const AgingOverview = () => {
         chartKeyFields={[
           {
             label: "Party",
-            value: "LedgerName",
-          },
-          {
-            label: "Ledger Group",
-            value: "LedgerGroupName",
+            value: "PartyName",
           },
         ]}
         chartValueFields={[
           {
-            label: "Pending Amount",
-            value: "Amount",
+            label: "Above 30",
+            value: "Above30",
           },
           {
-            label: "Due Amount",
-            value: "DueAmount",
+            label: "Above 60",
+            value: "Above60",
           },
           {
-            label: "OverDue Amount",
-            value: "OverDueAmount",
+            label: "Above 90",
+            value: "Above90",
+          },
+          {
+            label: "Above 120",
+            value: "Above120",
           },
         ]}
         refreshFilterView={refresh}
