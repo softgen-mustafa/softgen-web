@@ -43,6 +43,7 @@ const GridCardView: React.FC<CardViewProps> = ({
           title={title}
           titleTypographyProps={{
             className: "text-xl mb-2",
+            variant: "h5",
           }}
         />
       )}

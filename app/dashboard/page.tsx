@@ -29,18 +29,18 @@ const DashboardPage = () => {
       id: 7,
       weight: Weight.Low,
       content: (
-        <div>
+        <GridCardView title="Collection Summary">
           <CollectionPrompts />
-        </div>
+        </GridCardView>
       ),
     },
     {
       id: 8,
       weight: Weight.Low,
       content: (
-        <div>
+        <GridCardView title="Collection Task">
           <CollectionReport />
-        </div>
+        </GridCardView>
       ),
     },
     {

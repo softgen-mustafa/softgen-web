@@ -114,8 +114,8 @@ const CollectionReport = () => {
 
   return (
     <CardContent>
-      <Grid container justifyContent="space-between" alignItems="center" mb={4}>
-        <Typography variant="h5">Collection Task</Typography>
+      <Grid container justifyContent="space-between" alignItems="center">
+        {/* <Typography variant="h5">Collection Task</Typography> */}
         <IconButton onClick={loadPrompts}>
           <Sync />
         </IconButton>
