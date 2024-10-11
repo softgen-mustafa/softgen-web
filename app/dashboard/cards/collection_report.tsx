@@ -12,6 +12,8 @@ import {
   Typography,
   useTheme,
   Grid,
+  Box,
+  Divider,
 } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 import Cookies from "js-cookie";
@@ -122,11 +124,25 @@ const CollectionReport = () => {
       {loading ? (
         <CircularProgress />
       ) : (
-        <div className="max-h-[500px] overflow-y-auto">
+        <div className="max-h-[500px]  overflow-y-auto">
           {prompts.map((entry: any, index: number) => (
-            <div
+            <Box
               key={index}
-              className="mb-6 p-4 border rounded-[10px] shadow-md"
+              sx={{
+                marginBottom: { xs: "1rem", md: "2rem" }, // Tailwind: mb-8 and md:mb-12
+                padding: { xs: "1.25rem", md: "1.5rem" }, // Tailwind: p-5 and md:p-6
+                borderColor: "white", // Tailwind: border-white
+                transition: "all 0.3s ease-in-out", // Tailwind: transition-all, duration-300, ease-in-out
+                "&:hover": {
+                  borderWidth: "2px", // Tailwind: border-2
+                  borderInlineStartWidth: "6px",
+                  boxShadow: "0 10px 15px rgba(0, 0, 0, 0.1)", // Tailwind: hover:shadow-lg
+                  borderColor: (theme) => theme.palette.primary.dark, // Tailwind: hover:border-gray-400
+                  transform: "translateY(5px)",
+                  borderRadius: "1.2rem", // Tailwind: rounded-xl
+                  mr: "4%",
+                },
+              }}
             >
               <Typography
                 variant="h6"
@@ -193,7 +209,7 @@ const CollectionReport = () => {
               </Grid>
 
               {/* {index < prompts.length - 1 && <Divider className="mt-4" />} */}
-            </div>
+            </Box>
           ))}
         </div>
       )}

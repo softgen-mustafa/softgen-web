@@ -12,6 +12,8 @@ import {
 import { SingleChartView } from "@/app/ui/graph_util";
 import { Sync } from "@mui/icons-material";
 import { DropDown } from "@/app/ui/drop_down";
+import Image from "next/image";
+import noDataFound from "@/public/noDataFound.png";
 
 const AgingReportGraph = () => {
   const [data, setData] = useState<any>({
@@ -189,7 +191,16 @@ const AgingReportGraph = () => {
                 title=""
               />
             ) : (
-              <div>No data available</div>
+              <div className="flex flex-col items-center justify-center h-full">
+                <Image
+                  src={noDataFound} // Adjust the path to your SVG file
+                  alt="No Video Data"
+                  width={300} // Specify the width
+                  height={300} // Specify the height
+                  className="mb-4" // Optional: Use Tailwind for styling
+                />
+                <p className="text-gray-600 text-2xl">No data available</p>
+              </div>
             )}
           </Box>
         </>

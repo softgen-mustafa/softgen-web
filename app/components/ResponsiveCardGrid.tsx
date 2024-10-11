@@ -94,11 +94,11 @@ const ResponsiveCardGrid: React.FC<ResponsiveCardGridProps> = ({
   };
 
   return (
-    <div className="flex flex-col md:flex-row md:flex-wrap gap-4 p-4">
+    <div className="flex flex-col md:bg-slate-50  md:flex-row md:flex-wrap gap-6 md:p-4 p-2">
       {cards.map((card, index) => (
         <div
           key={card.id}
-          className="flex flex-col p-4 rounded-lg shadow-lg overflow-hidden text-black overflow-y-auto"
+          className="flex flex-col p-4 bg-white rounded-xl md:rounded-2xl shadow-lg md:shadow-xl overflow-hidden text-black overflow-y-auto"
           // className="flex flex-col h-auto p-4 rounded-lg shadow-lg flex-shrink-0 min-h-[300px]  overflow-y-auto w-full md:w-auto mb-4 md:mb-0 bg-red-700 text-black"
           style={{ flexGrow: card.weight }}
           draggable
