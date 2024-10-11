@@ -1,22 +1,26 @@
 "use client";
-import { Box } from "@mui/material";
-import { OutstandingCard } from "./cards/outstanding_card";
-import { OutstandingTask } from "./cards/outstanding_task_card";
-import { Weight } from "../ui/responsive_grid";
+import {
+  Box,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useRef, useState } from "react";
 import Cookies from "js-cookie";
-import RankedPartyOutstandingCard from "./cards/ranked_party";
-import { AgingView } from "./cards/aging_card";
-import ResponsiveCardGrid from "@/app/components/ResponsiveCardGrid";
 import GridCardView from "../ui/grid_card";
 import { CollectionPrompts } from "./cards/collection_prompts";
 import { CollectionReport } from "./cards/collection_report";
 import { PartyReportGraph } from "./cards/party_report_graph";
 import { UpcomingGraphOverview } from "./cards/upcoming_wise_graph";
 import { AgingReportGraph } from "./cards/aging_report_graph";
+import { OutstandingTask } from "./cards/outstanding_task_card";
+import RankedPartyOutstandingCard from "./cards/ranked_party";
+import { Weight } from "../ui/responsive_grid";
 
 const DashboardPage = () => {
-  let incomingBillType = "Receivable"; // populate later
+  let incomingBillType = "Receivable";
   const [types, updateTypes] = useState([
     { id: 1, label: "Receivable", code: "receivable" },
     { id: 2, label: "Payable", code: "payable" },
@@ -55,22 +59,6 @@ const DashboardPage = () => {
         </GridCardView>
       ),
     },
-    // {
-    //   id: 2,
-    //   weight: Weight.Medium,
-    //   content: (
-    //     <GridCardView
-    //       permissionCode="OutstandingAgingOverview"
-    //       title=" Outstanding Aging Overview"
-    //     >
-    //       <AgingView
-    //         billType={selectedType.current.code}
-    //         companyId={Cookies.get("companyId") ?? ""}
-    //         title="Aging-Wise O/S"
-    //       />
-    //     </GridCardView>
-    //   ),
-    // },
     {
       id: 3,
       weight: Weight.High,
@@ -79,13 +67,9 @@ const DashboardPage = () => {
           title="Party Overview"
           permissionCode="PartyWiseOutstanding"
         >
-          {/* <Typography className="text-xl mb-2">Party Overview</Typography> */}
-          <PartyReportGraph
-            companyId={Cookies.get("companyId") ?? ""}
-          ></PartyReportGraph>
+          <PartyReportGraph companyId={Cookies.get("companyId") ?? ""} />
         </GridCardView>
       ),
-      children: [],
     },
     {
       id: 4,
@@ -93,9 +77,8 @@ const DashboardPage = () => {
       content: (
         <GridCardView
           permissionCode="TodaysOutstanding"
-          title="Todays Outstanding"
+          title="Today's Outstanding"
         >
-          {/* <Typography className="text-xl mb-2">Todays Outstanding</Typography> */}
           <OutstandingTask companyId={Cookies.get("companyId") ?? ""} />
         </GridCardView>
       ),
@@ -104,8 +87,7 @@ const DashboardPage = () => {
       id: 5,
       weight: Weight.High,
       content: (
-        <GridCardView permissionCode="TopRankedParties" title=" Ranked Parties">
-          {/* <Typography className="text-xl mb-2">Ranked Parties</Typography> */}
+        <GridCardView permissionCode="TopRankedParties" title="Ranked Parties">
           <RankedPartyOutstandingCard
             companyId={Cookies.get("companyId") ?? ""}
             billType={selectedType.current.code}
@@ -121,15 +103,51 @@ const DashboardPage = () => {
           permissionCode="UpcomingCollections"
           title="Upcoming Collections"
         >
-          <UpcomingGraphOverview></UpcomingGraphOverview>
+          <UpcomingGraphOverview />
         </GridCardView>
       ),
     },
   ];
 
+  const renderCard = (card: any) => (
+    <Accordion key={card.id} sx={{ mb: 2, borderRadius: 2, boxShadow: 3 }}>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        sx={{
+          backgroundColor: "primary.light",
+          color: "white",
+          "&:hover": { backgroundColor: "primary.dark" },
+          padding: "0 16px",
+        }}
+      >
+        <Typography variant="h6" sx={{ fontWeight: 600 }}>
+          {card.content.props.title}
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails
+        sx={{
+          backgroundColor: "background.paper",
+          padding: "16px",
+          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        {card.content}
+      </AccordionDetails>
+    </Accordion>
+  );
+
   return (
-    <Box className="w-full h-full">
-      <ResponsiveCardGrid screenName="dashboard" initialCards={initialCards} />
+    <Box
+      className="w-full h-full"
+      sx={{
+        padding: "20px",
+        backgroundColor: "background.default",
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+      }}
+    >
+      {initialCards.map(renderCard)}
     </Box>
   );
 };
