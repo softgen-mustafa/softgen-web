@@ -5,9 +5,11 @@ import {
   AccordionSummary,
   AccordionDetails,
   Typography,
+  Autocomplete,
+  TextField,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useRef, useState } from "react";
+import { useState, useRef } from "react";
 import Cookies from "js-cookie";
 import GridCardView from "../ui/grid_card";
 import { CollectionPrompts } from "./cards/collection_prompts";
@@ -20,7 +22,7 @@ import RankedPartyOutstandingCard from "./cards/ranked_party";
 import { Weight } from "../ui/responsive_grid";
 
 const DashboardPage = () => {
-  let incomingBillType = "Receivable";
+  let incomingBillType = "Receivable"; // populate later
   const [types, updateTypes] = useState([
     { id: 1, label: "Receivable", code: "receivable" },
     { id: 2, label: "Payable", code: "payable" },
@@ -32,6 +34,7 @@ const DashboardPage = () => {
     {
       id: 7,
       weight: Weight.Low,
+      label: "Collection Summary",
       content: (
         <GridCardView title="Collection Summary">
           <CollectionPrompts />
@@ -41,6 +44,7 @@ const DashboardPage = () => {
     {
       id: 8,
       weight: Weight.Low,
+      label: "Collection Task",
       content: (
         <GridCardView title="Collection Task">
           <CollectionReport />
@@ -50,18 +54,20 @@ const DashboardPage = () => {
     {
       id: 1,
       weight: Weight.Medium,
+      label: "Aging Overview",
       content: (
         <GridCardView
           permissionCode="OutstandingAgingOverview"
           title="Aging Overview"
         >
-          <AgingReportGraph></AgingReportGraph>
+          <AgingReportGraph />
         </GridCardView>
       ),
     },
     {
       id: 3,
       weight: Weight.High,
+      label: "Party Overview",
       content: (
         <GridCardView
           title="Party Overview"
@@ -74,6 +80,7 @@ const DashboardPage = () => {
     {
       id: 4,
       weight: Weight.High,
+      label: "Today's Outstanding",
       content: (
         <GridCardView
           permissionCode="TodaysOutstanding"
@@ -86,6 +93,7 @@ const DashboardPage = () => {
     {
       id: 5,
       weight: Weight.High,
+      label: "Ranked Parties",
       content: (
         <GridCardView permissionCode="TopRankedParties" title="Ranked Parties">
           <RankedPartyOutstandingCard
@@ -98,6 +106,7 @@ const DashboardPage = () => {
     {
       id: 6,
       weight: Weight.High,
+      label: "Upcoming Collections",
       content: (
         <GridCardView
           permissionCode="UpcomingCollections"
@@ -108,6 +117,10 @@ const DashboardPage = () => {
       ),
     },
   ];
+
+  const [visibleCards, setVisibleCards] = useState(
+    initialCards.map((card) => card.label)
+  );
 
   const renderCard = (card: any) => (
     <Accordion key={card.id} sx={{ mb: 2, borderRadius: 2, boxShadow: 3 }}>
@@ -147,7 +160,29 @@ const DashboardPage = () => {
         gap: "16px",
       }}
     >
-      {initialCards.map(renderCard)}
+      <Autocomplete
+        multiple
+        disableCloseOnSelect
+        options={initialCards.map((card) => card.label)}
+        value={visibleCards}
+        onChange={(event, newValue) => {
+          setVisibleCards(newValue);
+        }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="outlined"
+            label="Select Components"
+            placeholder="Choose Components"
+          />
+        )}
+        sx={{ mb: 3 }}
+      />
+
+      {/* Render visible cards */}
+      {initialCards
+        .filter((card) => visibleCards.includes(card.label))
+        .map(renderCard)}
     </Box>
   );
 };
