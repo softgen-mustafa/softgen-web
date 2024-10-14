@@ -107,7 +107,7 @@ const Page = () => {
       });
 
       // Redirect to login page or elsewhere
-      router.push("auth/login");
+      router.push("/login");
     } catch (error) {
       toggleMessageVisibility({
         visible: true,

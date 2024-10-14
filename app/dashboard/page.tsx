@@ -123,31 +123,35 @@ const DashboardPage = () => {
   );
 
   const renderCard = (card: any) => (
-    <Accordion key={card.id} sx={{ mb: 2, borderRadius: 4, boxShadow: 3 }}>
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon className="text-white" />}
-        sx={{
-          backgroundColor: "primary.light",
-          "&:hover": { backgroundColor: "primary.dark" },
-          padding: "0 16px",
-          borderRadius: 2,
-          transition: "background-color 0.3s",
-        }}
-      >
-        <Typography variant="h6" sx={{ fontWeight: 600 }}>
-          {card.content.props.title}
-        </Typography>
-      </AccordionSummary>
-      <AccordionDetails
-        sx={{
-          backgroundColor: "background.dark",
-          padding: "16px",
-          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        {card.content}
-      </AccordionDetails>
-    </Accordion>
+    <div>
+      <Accordion key={card.id} sx={{ mb: 2, borderRadius: 4, boxShadow: 3 }}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon className="text-white" />}
+          sx={{
+            backgroundColor: "primary.light",
+            "&:hover": { backgroundColor: "primary.dark" },
+            padding: "0 16px",
+            borderRadius: 4,
+            transition: "background-color 0.3s",
+          }}
+        >
+          <Typography variant="h6" sx={{ fontWeight: 600, color: "white" }}>
+            {card.content.props.title}
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails
+          sx={{
+            backgroundColor: "background.dark",
+            padding: "16px",
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+
+            borderRadius: 4,
+          }}
+        >
+          {card.content}
+        </AccordionDetails>
+      </Accordion>
+    </div>
   );
 
   return (
@@ -155,10 +159,12 @@ const DashboardPage = () => {
       className="w-full h-full"
       sx={{
         padding: "20px",
-        // backgroundColor: "background.default",
+        backgroundColor: "background.default",
         display: "flex",
         flexDirection: "column",
         gap: "16px",
+        // borderRadius: "10%",
+        marginBottom: "10%",
       }}
     >
       <Autocomplete
