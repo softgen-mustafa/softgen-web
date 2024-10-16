@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import { getSgBizBaseUrl, postAsync } from "@/app/services/rest_services";
 import { DropDown } from "@/app/ui/drop_down";
@@ -13,10 +13,12 @@ import {
   useTheme,
   Grid,
   Box,
-  Divider,
 } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 import Cookies from "js-cookie";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import dayjs, { Dayjs } from "dayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const statusTypes = [
   {
@@ -41,22 +43,30 @@ const CollectionReport = () => {
   const selectedStatusTypes = useRef<{ [key: number]: number }>({});
   let userid = parseInt(Cookies.get("user_id") || "0", 10);
 
-  const dateRange = useRef({
-    startDate: "01-01-2024",
-    endDate: "01-01-2025",
-  });
+  // Default date range
+  const defaultStartDate = dayjs().startOf("year");
+  const defaultEndDate = dayjs().add(1, "year").startOf("year");
+
+  // State for start date and end date
+  const [startDate, setStartDate] = useState<Dayjs | null>(defaultStartDate);
+  const [endDate, setEndDate] = useState<Dayjs | null>(defaultEndDate);
 
   useEffect(() => {
     loadPrompts();
-  }, []);
+  }, [startDate, endDate]); // Reload prompts whenever dates change
 
   const loadPrompts = async () => {
     try {
       setLoading(true);
       let url = `${getSgBizBaseUrl()}/tasks/get/collection`;
+
       let requestBody = {
-        StartDateStr: dateRange.current.startDate,
-        EndDateStr: dateRange.current.endDate,
+        StartDateStr: startDate
+          ? startDate.format("DD-MM-YYYY")
+          : defaultStartDate.format("DD-MM-YYYY"),
+        EndDateStr: endDate
+          ? endDate.format("DD-MM-YYYY")
+          : defaultEndDate.format("DD-MM-YYYY"),
         Filter: {
           Batch: {
             Apply: true,
@@ -65,9 +75,8 @@ const CollectionReport = () => {
           },
         },
       };
-      // console.log("Request Body ", JSON.stringify(requestBody));
+
       let response = await postAsync(url, requestBody);
-      // console.log("Response: ", JSON.stringify(response));
 
       if (response && response.Data && response.Data.length > 0) {
         setPrompts(response.Data);
@@ -84,7 +93,6 @@ const CollectionReport = () => {
   const handleAction = async (entry: any, index: number) => {
     try {
       setLoading(true);
-      // console.log("Action parameters: ", entry.Task);
       const url = `${getSgBizBaseUrl()}/tasks/update/collection`;
       const requestBody = {
         Title: entry.Task.Title,
@@ -97,7 +105,6 @@ const CollectionReport = () => {
             ? selectedStatusTypes.current[index]
             : 0,
       };
-      // console.log("Request body: ", requestBody);
 
       const response = await postAsync(url, requestBody);
 
@@ -115,10 +122,33 @@ const CollectionReport = () => {
   return (
     <CardContent>
       <Grid container justifyContent="space-between" alignItems="center">
-        {/* <Typography variant="h5">Collection Task</Typography> */}
         <IconButton onClick={loadPrompts}>
           <Sync />
         </IconButton>
+      </Grid>
+
+      {/* Date Pickers for selecting the date range */}
+      <Grid container spacing={2} mt={2}>
+        <Grid item xs={12} md={6}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="Start Date"
+              value={startDate}
+              onChange={(newValue) => setStartDate(newValue)}
+              slotProps={{ textField: { fullWidth: true } }}
+            />
+          </LocalizationProvider>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="End Date"
+              value={endDate}
+              onChange={(newValue) => setEndDate(newValue)}
+              slotProps={{ textField: { fullWidth: true } }}
+            />
+          </LocalizationProvider>
+        </Grid>
       </Grid>
 
       {loading ? (
@@ -129,17 +159,17 @@ const CollectionReport = () => {
             <Box
               key={index}
               sx={{
-                marginBottom: { xs: "1rem", md: "2rem" }, // Tailwind: mb-8 and md:mb-12
-                padding: { xs: "1.25rem", md: "1.5rem" }, // Tailwind: p-5 and md:p-6
-                borderColor: "white", // Tailwind: border-white
-                transition: "all 0.3s ease-in-out", // Tailwind: transition-all, duration-300, ease-in-out
+                marginBottom: { xs: "1rem", md: "2rem" },
+                padding: { xs: "1.25rem", md: "1.5rem" },
+                borderColor: "white",
+                transition: "all 0.3s ease-in-out",
                 "&:hover": {
-                  borderWidth: "2px", // Tailwind: border-2
+                  borderWidth: "2px",
                   borderInlineStartWidth: "6px",
-                  boxShadow: "0 10px 15px rgba(0, 0, 0, 0.1)", // Tailwind: hover:shadow-lg
-                  borderColor: (theme) => theme.palette.primary.dark, // Tailwind: hover:border-gray-400
+                  boxShadow: "0 10px 15px rgba(0, 0, 0, 0.1)",
+                  borderColor: (theme) => theme.palette.primary.dark,
                   transform: "translateY(5px)",
-                  borderRadius: "1.2rem", // Tailwind: rounded-xl
+                  borderRadius: "1.2rem",
                   mr: "4%",
                 },
               }}
@@ -192,13 +222,13 @@ const CollectionReport = () => {
                       paddingX: "16px",
                       borderRadius: "9px",
                       "&:hover": {
-                        backgroundColor: "primary.dark", // Change color on hover
+                        backgroundColor: "primary.dark",
                       },
                       "&:focus": {
                         outline: "none",
-                        boxShadow: "0 0 0 2px rgba(0, 0, 0, 0.3)", // Custom focus ring
+                        boxShadow: "0 0 0 2px rgba(0, 0, 0, 0.3)",
                       },
-                      fontSize: { xs: "0.695rem", md: "0.8rem" }, // Responsive font sizes
+                      fontSize: { xs: "0.695rem", md: "0.8rem" },
                     }}
                     variant="contained"
                     onClick={() => handleAction(entry, index)}
@@ -207,8 +237,6 @@ const CollectionReport = () => {
                   </Button>
                 </Grid>
               </Grid>
-
-              {/* {index < prompts.length - 1 && <Divider className="mt-4" />} */}
             </Box>
           ))}
         </div>

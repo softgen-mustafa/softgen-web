@@ -13,36 +13,55 @@ import {
   IconButton,
   Typography,
   useTheme,
-  Switch,
-  FormControlLabel,
+  Grid,
 } from "@mui/material";
 import { GridExpandMoreIcon } from "@mui/x-data-grid";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import dayjs, { Dayjs } from "dayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DropDown } from "@/app/ui/drop_down";
+
+const partyWiseOptions = [
+  {
+    name: "Bill Wise",
+    value: false,
+  },
+  {
+    name: "Party Wise",
+    value: true,
+  },
+];
 
 const CollectionPrompts = () => {
   const snackbar = useSnackbar();
   const theme = useTheme();
   const [prompts, setPrompts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const partyWiseRef = useRef(false);
-  const dateRange = useRef({
-    startDate: "01-01-2024",
-    endDate: "01-01-2025",
-  });
+  const [partyWise, setPartyWise] = useState(true); // Now using useState
+
+  // Default date range for current year start to next year start
+  const defaultStartDate = dayjs().startOf("year");
+  const defaultEndDate = dayjs().add(1, "year").startOf("year");
+
+  const [startDate, setStartDate] = useState<Dayjs | null>(defaultStartDate);
+  const [endDate, setEndDate] = useState<Dayjs | null>(defaultEndDate);
 
   useEffect(() => {
     loadPrompts();
-  }, []);
+  }, [startDate, endDate, partyWise]);
 
   const loadPrompts = async () => {
     try {
       setLoading(true);
-      let url = `${getSgBizBaseUrl()}/prompts/get/collection?partyWise=${
-        partyWiseRef.current
-      }`;
+      let url = `${getSgBizBaseUrl()}/prompts/get/collection?partyWise=${partyWise}`;
       let requestBody = {
-        StartDateStr: dateRange.current.startDate,
-        EndDateStr: dateRange.current.endDate,
+        StartDateStr: startDate
+          ? startDate.format("DD-MM-YYYY")
+          : defaultStartDate.format("DD-MM-YYYY"),
+        EndDateStr: endDate
+          ? endDate.format("DD-MM-YYYY")
+          : defaultEndDate.format("DD-MM-YYYY"),
         Filter: {
           Batch: {
             Apply: true,
@@ -51,13 +70,15 @@ const CollectionPrompts = () => {
           },
         },
       };
+
+      console.log("Request body", requestBody);
       let response = await postAsync(url, requestBody);
       if (response && response.Data && response.Data.length > 0) {
         setPrompts(response.Data);
         return;
       }
       setPrompts([]);
-    } catch {
+    } catch (error) {
       snackbar.showSnackbar("Could not load collection prompts", "error");
     } finally {
       setLoading(false);
@@ -72,9 +93,7 @@ const CollectionPrompts = () => {
   ) => {
     try {
       setLoading(true);
-      const url = `${getSgBizBaseUrl()}/prompts/set-decision/collection?partyWise=${
-        partyWiseRef.current
-      }`;
+      const url = `${getSgBizBaseUrl()}/prompts/set-decision/collection?partyWise=${partyWise}`;
 
       const requestBody = {
         ActionCode: action,
@@ -86,7 +105,7 @@ const CollectionPrompts = () => {
 
       if (response === null || response === "") {
         snackbar.showSnackbar("Action completed successfully", "success");
-        loadPrompts();
+        loadPrompts(); // Reload prompts after successful action
       }
     } catch (error) {
       snackbar.showSnackbar("Error performing action", "error");
@@ -95,10 +114,6 @@ const CollectionPrompts = () => {
     }
   };
 
-  const handlePartyWiseToggle = () => {
-    partyWiseRef.current = !partyWiseRef.current;
-    loadPrompts();
-  };
   return (
     <div className="flex flex-col w-auto max-h-[500px] overflow-y-auto">
       {loading && <CircularProgress />}
@@ -107,18 +122,41 @@ const CollectionPrompts = () => {
         <IconButton onClick={loadPrompts}>
           <Sync />
         </IconButton>
-        {/* <Typography variant="h5">Collection Summary</Typography> */}
-        <FormControlLabel
-          control={
-            <Switch
-              checked={partyWiseRef.current}
-              onChange={handlePartyWiseToggle}
-              color="primary"
+
+        {/* Date Pickers */}
+        <div className="flex flex-row items-center space-x-4 mt-2">
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="Start Date"
+              value={startDate}
+              onChange={(newValue) => setStartDate(newValue)}
+              slotProps={{ textField: { fullWidth: true } }}
             />
-          }
-          label="Party Wise"
-        />
+            <DatePicker
+              label="End Date"
+              value={endDate}
+              onChange={(newValue) => setEndDate(newValue)}
+              slotProps={{ textField: { fullWidth: true } }}
+            />
+          </LocalizationProvider>
+
+          <Grid item xs>
+            <DropDown
+              label="View Type"
+              displayFieldKey={"name"}
+              valueFieldKey={null}
+              selectionValues={partyWiseOptions}
+              helperText={""}
+              onSelection={(selection) => {
+                setPartyWise(selection.value);
+                loadPrompts();
+              }}
+            />
+          </Grid>
+        </div>
       </div>
+
+      {/* Collection Prompts Display */}
       {prompts.map((entry: any, index: number) => {
         return (
           <div key={index} className="flex flex-col p-1">
@@ -127,12 +165,12 @@ const CollectionPrompts = () => {
                 expandIcon={
                   <GridExpandMoreIcon
                     sx={{
-                      color: theme.palette.primary.main, // Change icon color
-                      fontSize: "2rem", // Adjust the icon size
+                      color: theme.palette.primary.main,
+                      fontSize: "2rem",
                       "&:hover": {
-                        color: theme.palette.primary.dark, // Change color on hover
+                        color: theme.palette.primary.dark,
                       },
-                      transition: "color 0.3s", // Smooth transition effect for hover
+                      transition: "color 0.3s",
                     }}
                   />
                 }
@@ -163,14 +201,14 @@ const CollectionPrompts = () => {
                             key={actionIndex}
                             size="medium"
                             sx={{
-                              backgroundColor: "transparent", // Default background
-                              boxShadow: 2, // Subtle shadow for depth
+                              backgroundColor: "transparent",
+                              boxShadow: 2,
                               "&:focus": {
                                 outline: "none",
-                                boxShadow: `0 0 0 2px ${theme.palette.primary.main}`, // Focus ring with main error color
+                                boxShadow: `0 0 0 2px ${theme.palette.primary.main}`,
                               },
                               transition:
-                                "background-color 0.3s ease, box-shadow 0.3s ease", // Smooth transitions
+                                "background-color 0.3s ease, box-shadow 0.3s ease",
                               mb: { xs: 1, md: 2 },
                             }}
                           >
@@ -188,22 +226,22 @@ const CollectionPrompts = () => {
                           background: theme.palette.primary.dark,
                           margin: 0.5,
                           flexGrow: 1,
-                          borderRadius: "15px", // Rounded corners
-                          boxShadow: 2, // Medium shadow
+                          borderRadius: "15px",
+                          boxShadow: 2,
                           width: "90%",
-                          color: "white", // Text color
+                          color: "white",
                           fontWeight: { xs: 200, md: 400 },
                           fontSize: { xs: "0.825rem", md: "1rem" },
                           "&:hover": {
-                            background: theme.palette.primary.dark, // Use dark color on hover
-                            boxShadow: 10, // Optional: elevate shadow on hover
+                            background: theme.palette.primary.dark,
+                            boxShadow: 10,
                           },
                           "&:focus": {
                             outline: "none",
-                            boxShadow: `0 0 0 2px ${theme.palette.primary.light}`, // Focus ring
+                            boxShadow: `0 0 0 2px ${theme.palette.primary.light}`,
                           },
                           transition:
-                            "background-color 0.3s ease, box-shadow 0.3s ease", // Smooth transitions
+                            "background-color 0.3s ease, box-shadow 0.3s ease",
                           textTransform: "capitalize",
                           mb: { xs: 0.7, md: 2 },
                         }}
