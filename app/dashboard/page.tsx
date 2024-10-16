@@ -86,6 +86,7 @@ const DashboardPage = () => {
           permissionCode="TodaysOutstanding"
           title="Today's Outstanding"
         >
+          
           <OutstandingTask companyId={Cookies.get("companyId") ?? ""} />
         </GridCardView>
       ),
@@ -124,15 +125,44 @@ const DashboardPage = () => {
 
   const renderCard = (card: any) => (
     <div>
-      <Accordion key={card.id} sx={{ mb: 2, borderRadius: 4, boxShadow: 3 }}>
-        <AccordionSummary
+      <Accordion key={card.id}   
+     sx={{
+      mb: { xs: 2, sm: 3 }, // Margin bottom adjusted for both mobile and desktop
+      borderRadius: "24px !important",
+      marginBottom: "12px !important",
+      backgroundColor: "transparent",
+      boxShadow: 3,
+      transition: "transform 0.2s ease",
+      "&:hover": {
+        transform: "scale(1.01)", // Slightly larger on hover
+        boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.2)", // Increased shadow on hover
+      },
+      flexDirection: 'column', // Column layout for both views
+      alignItems: 'flex-start', // Align to start for both views
+    }}
+>
+        <AccordionSummary       
           expandIcon={<ExpandMoreIcon className="text-white" />}
           sx={{
             backgroundColor: "primary.light",
-            "&:hover": { backgroundColor: "primary.dark" },
-            padding: "0 16px",
-            borderRadius: 4,
-            transition: "background-color 0.3s",
+            "&:hover": { backgroundColor: "primary.dark" }, // Background color on hover
+            padding: { xs: "8px 12px", sm: "12px 24px" }, // Increased padding for desktop
+            transition: "background-color 0.3s, transform 0.2s",
+            minHeight: { xs: 40, sm: 56 }, // Adjust height for mobile and desktop
+            display: 'flex',
+            alignItems: 'center',
+            borderRadius: 6,
+            outline: 'none', // Remove outline
+            boxShadow: 'none',
+            border: 'none',
+            margin: 0,
+            "&.Mui-expanded": {
+              borderRadius: 5,
+              padding: { xs: "6px 10px", sm: "8px 18px" }, // Adjust padding when expanded for both views
+            },
+            "& .MuiCollapse-root":{
+              gap: { xs: "5px", sm: "16px" },
+            }
           }}
         >
           <Typography variant="h6" sx={{ fontWeight: 600, color: "white" }}>
@@ -140,12 +170,15 @@ const DashboardPage = () => {
           </Typography>
         </AccordionSummary>
         <AccordionDetails
-          sx={{
-            backgroundColor: "background.dark",
-            padding: "16px",
-            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-            borderRadius: 4,
-          }}
+            sx={{
+              backgroundColor: "background.dark",
+              padding: { xs: "4px 8px", sm: "16px 24px" }, // Increased padding for desktop
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+              borderRadius: "0 0 4px 4px", // Border radius for the bottom corners
+              transition: "background-color 0.3s, box-shadow 0.3s",
+              overflow: "hidden",
+              overflowY: "auto",
+            }}
         >
           {card.content}
         </AccordionDetails>
@@ -157,13 +190,12 @@ const DashboardPage = () => {
     <Box
       className="content"
       sx={{
-        padding: "20px",
-        paddingTop: "80px",
+        padding: { xs: "10px", sm: "20px" }, // Increased padding for mobile
         backgroundColor: "background.default",
         display: "flex",
         flexDirection: "column",
-        gap: "16px",
-        marginBottom: "10%",
+        gap: { xs: "0.5px", sm: "16px" }, // Adjust gap for mobile
+        marginBottom: "2%"  // Added margin-bottom for the Box in mobile view
       }}
     >
       <Autocomplete
@@ -180,6 +212,11 @@ const DashboardPage = () => {
             variant="outlined"
             label="Select Components"
             placeholder="Choose Components"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "18px",
+              },
+            }}
           />
         )}
         sx={{ mb: 3 }}
