@@ -144,7 +144,6 @@ const DashboardPage = () => {
             backgroundColor: "background.dark",
             padding: "16px",
             boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-
             borderRadius: 4,
           }}
         >
@@ -156,14 +155,14 @@ const DashboardPage = () => {
 
   return (
     <Box
-      className="w-full h-full"
+      className="content"
       sx={{
         padding: "20px",
+        paddingTop: "80px",
         backgroundColor: "background.default",
         display: "flex",
         flexDirection: "column",
         gap: "16px",
-        // borderRadius: "10%",
         marginBottom: "10%",
       }}
     >
@@ -186,7 +185,6 @@ const DashboardPage = () => {
         sx={{ mb: 3 }}
       />
 
-      {/* Render visible cards */}
       {initialCards
         .filter((card) => visibleCards.includes(card.label))
         .map(renderCard)}
