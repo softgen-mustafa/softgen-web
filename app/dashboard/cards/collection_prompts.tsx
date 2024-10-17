@@ -25,11 +25,11 @@ import { DropDown } from "@/app/ui/drop_down";
 const partyWiseOptions = [
   {
     name: "Bill Wise",
-    value: false,
+    value: true,
   },
   {
     name: "Party Wise",
-    value: true,
+    value: false,
   },
 ];
 
@@ -38,7 +38,7 @@ const CollectionPrompts = () => {
   const theme = useTheme();
   const [prompts, setPrompts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [partyWise, setPartyWise] = useState(true); // Now using useState
+  const [partyWise, setPartyWise] = useState(false); // Now using useState
 
   // Default date range for current year start to next year start
   const defaultStartDate = dayjs().startOf("year");
