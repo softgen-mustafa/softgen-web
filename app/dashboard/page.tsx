@@ -284,6 +284,18 @@ const DashboardPage = () => {
             }}
           />
         )}
+        renderOption={(props, option, { selected }) => (
+          <li {...props}>
+            <Icon
+              sx={{
+                visibility: selected ? "visible" : "hidden",
+              }}
+            >
+              ✔️
+            </Icon>
+            {option}
+          </li>
+        )}
         sx={{ mb: 2 }}
       />
 
