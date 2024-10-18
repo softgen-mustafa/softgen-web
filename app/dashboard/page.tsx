@@ -40,11 +40,13 @@ const DashboardPage = () => {
       label: "Collection Summary",
       icon: (
         <InventoryIcon
-          sx={{ fontWeight: 600, color: "primary.light", borderRadius: 10 }}
+          sx={{ fontWeight: {xs:50, md:500}, color: "primary.light", borderRadius: 10 }}
         />
       ),
       content: (
-        <GridCardView title="Collection Summary">
+        <GridCardView
+        // title="Collection Summary"
+        >
           <CollectionPrompts />
         </GridCardView>
       ),
@@ -53,9 +55,11 @@ const DashboardPage = () => {
       id: 8,
       weight: Weight.Low,
       label: "Collection Task",
-      icon: <PendingActions sx={{ fontWeight: 600, color: "primary.light" }} />,
+      icon: <PendingActions sx={{ fontWeight: {xs:50, md:500}, color: "primary.light" }} />,
       content: (
-        <GridCardView title="Collection Task">
+        <GridCardView
+        // title="Collection Task"
+        >
           <CollectionReport />
         </GridCardView>
       ),
@@ -64,11 +68,11 @@ const DashboardPage = () => {
       id: 1,
       weight: Weight.Medium,
       label: "Aging Overview",
-      icon: <InventoryIcon sx={{ fontWeight: 600, color: "primary.light" }} />,
+      icon: <InventoryIcon sx={{ fontWeight: {xs:50, md:500}, color: "primary.light" }} />,
       content: (
         <GridCardView
           permissionCode="OutstandingAgingOverview"
-          title="Aging Overview"
+          // title="Aging Overview"
         >
           <AgingReportGraph />
         </GridCardView>
@@ -78,10 +82,10 @@ const DashboardPage = () => {
       id: 3,
       weight: Weight.High,
       label: "Party Overview",
-      icon: <InventoryIcon sx={{ fontWeight: 600, color: "primary.light" }} />,
+      icon: <InventoryIcon sx={{ fontWeight: {xs:50, md:500}, color: "primary.light" }} />,
       content: (
         <GridCardView
-          title="Party Overview"
+          // title="Party Overview"
           permissionCode="PartyWiseOutstanding"
         >
           <PartyReportGraph companyId={Cookies.get("companyId") ?? ""} />
@@ -92,11 +96,11 @@ const DashboardPage = () => {
       id: 4,
       weight: Weight.High,
       label: "Today's Outstanding",
-      icon: <InventoryIcon sx={{ fontWeight: 600, color: "primary.light" }} />,
+      icon: <InventoryIcon sx={{ fontWeight: {xs:50, md:500}, color: "primary.light" }} />,
       content: (
         <GridCardView
           permissionCode="TodaysOutstanding"
-          title="Today's Outstanding"
+          // title="Today's Outstanding"
         >
           <OutstandingTask companyId={Cookies.get("companyId") ?? ""} />
         </GridCardView>
@@ -106,9 +110,12 @@ const DashboardPage = () => {
       id: 5,
       weight: Weight.High,
       label: "Ranked Parties",
-      icon: <InventoryIcon sx={{ fontWeight: 600, color: "primary.light" }} />,
+      icon: <InventoryIcon sx={{ fontWeight: {xs:50, md:500}, color: "primary.light" }} />,
       content: (
-        <GridCardView permissionCode="TopRankedParties" title="Ranked Parties">
+        <GridCardView
+          permissionCode="TopRankedParties"
+          // title="Ranked Parties"
+        >
           <RankedPartyOutstandingCard
             companyId={Cookies.get("companyId") ?? ""}
             billType={selectedType.current.code}
@@ -120,11 +127,11 @@ const DashboardPage = () => {
       id: 6,
       weight: Weight.High,
       label: "Upcoming Collections",
-      icon: <Receipt sx={{ fontWeight: 600, color: "primary.light" }} />,
+      icon: <Receipt sx={{ fontWeight: {xs:50, md:500}, color: "primary.light" }} />,
       content: (
         <GridCardView
           permissionCode="UpcomingCollections"
-          title="Upcoming Collections"
+          // title="Upcoming Collections"
         >
           <UpcomingGraphOverview />
         </GridCardView>
@@ -150,29 +157,27 @@ const DashboardPage = () => {
           transform: "scale(1.01)", // Slightly larger on hover
           boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.2)", // Increased shadow on hover
         },
-        flexDirection: "column", // Column layout for both views
-        alignItems: "flex-start", // Align to start for both views
+        flexDirection: "column",
+        alignItems: "flex-start",
         position: "relative",
+        minHeight: { xs: 32, sm: 55 }, // Further reduced height for desktop
       }}
     >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon className="text-white" />}
         sx={{
           backgroundColor: "primary.light",
-          "&:hover": { backgroundColor: "primary.dark" }, // Background color on hover
-          padding: { xs: "1px 12px", sm: "1px 20px" }, // Increased padding for desktop
+          "&:hover": { backgroundColor: "primary.dark" },
+          padding: { xs: "0px 10px", sm: "0px 18px" }, // Adjusted padding to reduce size
           transition: "background-color 0.3s, transform 0.2s",
-          // minHeight: { xs: 40, sm: 16 }, // Adjust height for mobile and desktop
+          minHeight: { xs: 32, sm: 45 }, // Reduced height for both mobile and desktop
           display: "flex",
           alignItems: "center",
-          borderRadius: 6,
-          outline: "none", // Remove outline
+          borderRadius: 4.5,
+          outline: "none",
           boxShadow: "none",
           border: "none",
           margin: 0,
-          "&.Mui-expanded": {
-            // padding: { xs: "-1px -12px !important", sm: "-1px -20px !important" },
-          },
         }}
       >
         {card.icon && (
@@ -182,29 +187,32 @@ const DashboardPage = () => {
               alignItems: "center",
               mr: 1,
               backgroundColor: "white",
-              padding: "9px 9px",
-              borderRadius: 15,
-              fontWeight: 800,
+              padding: { xs: "4px 4px", md: "6px 6px" }, // Reduced padding around the icon
+              borderRadius: 100,
             }}
           >
-            {card.icon} {/* Display the icon */}
+            {card.icon}
           </Box>
         )}
         <Typography
           variant="h6"
-          sx={{ fontWeight: 600, color: "white", mt: 0.5 }}
+          sx={{
+            fontWeight: { xs: 450, md: 570 },
+            color: "white",
+            fontSize: { xs: 17.5, md: 22 }, // Reduced font size
+          }}
         >
-          {card.content.props.title}
+          {card.label}
         </Typography>
       </AccordionSummary>
       <AccordionDetails
         sx={{
           backgroundColor: "background.dark",
-          padding: { xs: "2px 6px", sm: "4px 8px" }, // Further reduced padding
+          padding: { xs: "2px 6px", sm: "4px 8px" },
           boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
           borderRadius: "0 0 4px 4px",
           transition: "background-color 0.3s, box-shadow 0.3s",
-          maxHeight: "500px", // Set a max height to limit the expansion size
+          maxHeight: "400px",
           overflowY: "auto",
         }}
       >
@@ -212,27 +220,29 @@ const DashboardPage = () => {
       </AccordionDetails>
     </Accordion>
   );
-
+  
   return (
     <Box
       className="content"
       sx={{
-        padding: { xs: "10px", sm: "20px" }, // Padding for both mobile and desktop
+        padding: { xs: "10px", sm: "20px" },
         backgroundColor: "background.default",
         display: "flex",
         flexDirection: "column",
-        gap: { xs: "0.5px", sm: "16px" }, // Adjust gap for mobile
-        marginBottom: "10%", // Margin-bottom for mobile view
-        boxSizing: "border-box", // Ensure no overflow due to padding
+        gap: { xs: "0.5px", sm: "15px" },
+        marginBottom: "-1%",
+        boxSizing: "border-box",
       }}
     >
       <Autocomplete
         multiple
+        limitTags={2}
         disableCloseOnSelect
         options={initialCards.map((card) => card.label)}
         value={visibleCards}
         onChange={(event, newValue: any) => {
           setVisibleCards(newValue);
+          
         }}
         renderInput={(params) => (
           <TextField
@@ -243,30 +253,25 @@ const DashboardPage = () => {
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "18px",
-                // height: "10px", // Ensure the root has the same height as the input area
-                overflow: "hidden", // Prevent the outline from overflowing     
               },
-              '& .MuiInputBase-input': {
-          maxHeight: '40px',  // Set the max height for the input field
-          overflowY: 'auto',   // Make the input scrollable
-        },
-              
             }}
           />
         )}
-        sx={{ mb: 3 }}
-      />
+        sx={{ mb: 2 }}
+        
 
+      />
+  
       {/* Flexbox layout for cards */}
       <Box
         sx={{
           display: "flex",
           flexWrap: "wrap",
-          flexDirection: { xs: "column", sm: "row" }, // Column for mobile, row for desktop
-          justifyContent: { xs: "center", sm: "flex-start" }, // Center items on mobile, align left on desktop
-          gap: { xs: "8px", sm: "9px" }, // Maintain gap between cards
-          width: "100%", // Ensure container takes full width
-          boxSizing: "border-box", // Ensure padding is considered in width
+          flexDirection: { xs: "column", sm: "row" },
+          justifyContent: { xs: "center", sm: "flex-start" },
+          gap: { xs: "8px", sm: "11px" },
+          width: "100%",
+          boxSizing: "border-box",
           position: "relative",
         }}
       >
@@ -277,13 +282,12 @@ const DashboardPage = () => {
               key={index}
               sx={{
                 flex: {
-                  xs: "1 0 100%", // Full width for mobile view
-                  sm: "1 1 calc(50% - 16px)", // Half width for desktop view
+                  xs: "1 0 100%",
+                  sm: "1 1 calc(50% - 16px)",
                 },
-                width: { xs: "100%", sm: "calc(50% - 16px)" }, // Ensure full width for mobile, half width for desktop
-                mb: { xs: "1px", sm: "0px" }, // Add margin bottom for mobile spacing
+                width: { xs: "100%", sm: "calc(50% - 16px)" },
+                mb: { xs: "1px", sm: "1px" },
                 boxSizing: "border-box",
-                overflow: "revert", // Let content naturally overflow (for transitions)
               }}
             >
               {renderCard(card)}
@@ -292,6 +296,7 @@ const DashboardPage = () => {
       </Box>
     </Box>
   );
+  
 };
 
 export default DashboardPage;

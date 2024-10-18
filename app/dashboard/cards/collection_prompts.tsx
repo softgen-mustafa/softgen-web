@@ -116,16 +116,16 @@ const CollectionPrompts = () => {
   };
 
   return (
-    <div className="flex flex-col w-auto max-h-[500px] overflow-y-auto">
+    <div className="flex flex-col w-auto max-h-[500px]   overflow-y-auto">
       {loading && <CircularProgress />}
 
-      <div className="flex flex-row justify-stretch items-center mb-4">
+      <div className="flex flex-row justify-stretch  items-center mb-4">
         <IconButton onClick={loadPrompts}>
-          <Sync />
+          <Sync className="mt-4"/>
         </IconButton>
 
         {/* Date Pickers */}
-        <div className="flex flex-row items-center w-full space-x-4 mt-2 mr-2">
+        <div className="flex flex-row items-center w-full overflow-visible space-x-4 mt-4 mr-2">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               label="Start Date"

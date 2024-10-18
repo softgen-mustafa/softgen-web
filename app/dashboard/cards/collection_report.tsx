@@ -121,10 +121,10 @@ const CollectionReport = () => {
 
   return (
     <CardContent>
-<Grid container alignItems="center" spacing={2} className="flex w-full flex-wrap -mt-10 mb-3">
+<Grid container alignItems="center" spacing={2} className="flex w-full flex-wrap  mb-3">
   <Grid item>
     <IconButton onClick={loadPrompts}>
-      <Sync />
+      <Sync  />
     </IconButton>
   </Grid>
   <Grid item xs className="w-full sm:w-auto">
