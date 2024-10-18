@@ -152,29 +152,33 @@ const appThemes: any = [
   //   }),
   // },
   {
-    name: "Purple",
-    code: "purple",
+    name: "Light Blue",
+    code: "light-blue",
     colors: [
-      "#ff57a8", // Complementary Color
-      "#c1a3ff", // Lighter Tint 3
-      "#b457ff", // Analogous Color 3
-      "#6d3fdb", // Darker Shade 1
-      "#57ff8c", // Split Complementary 1
-      "#d754ff", // Monochromatic 1
-      "#57aaff", // Split Complementary 2
-      "#8c57ff", // Primary Color
-      "#b4b4b4", // Neutral Gray
-      "#c248ff", // Monochromatic 2
-      "#a957ff", // Analogous Color 2
-      "#3b1e80", // Darker Shade 4
-      "#ff57d4", // Triadic Color 2
-      "#a577ff", // Lighter Tint 1
-      "#9c57ff", // Analogous Color 1
-      "#5a34b3", // Darker Shade 2
-      "#b48aff", // Lighter Tint 2
-      "#7d57ff", // Triadic Color 1
-      "#d0bfff", // Lighter Tint 4
-      "#4a2b9c", // Darker Shade 3
+      "#ffab91", // Complementary Color 1 (Soft Coral)
+      "#4fc3f7", // Lighter Tint 3 (Bright Light Blue)
+      "#80deea", // Triadic Color 2 (Bright Cyan)
+      "#b3e5fc", // Lighter Tint 1 (Soft Light Blue)
+      "#ff7043", // Complementary Color 3 (Warm Orange)
+      "#4dd0e1", // Analogous Color 1 (Cyan Tint)
+      "#ffca28", // Triadic Color 1 (Vibrant Yellow)
+      "#81d4fa", // Lighter Tint 2 (Sky Blue)
+      "#ff5252", // Complementary Color 2 (Bright Coral Red)
+      "#29b6cc", // Analogous Color 2 (Sky Blue)
+      "#b0bec5", // Neutral Gray
+      "#0288d1", // Darker Shade 1 (Deeper Blue)
+      "#e6f7ff", // Lighter Tint 8 (Pale Blue)
+      "#ffeb3b", // Triadic Color 3 (Bright Yellow)
+      "#e1f5fe", // Lighter Tint 5 (Pale Blue)
+      "#1e88e5", // Split Complementary 2 (Intense Blue)
+      "#01579b", // Darker Shade 3 (Deep Navy Blue)
+      "#84ffff", // Split Complementary 1 (Light Aqua)
+      "#4fc4ff", // Lighter Tint 7 (Soft Light Blue)
+      "#03a9f4", // Primary Color (Vivid Blue)
+      "#0277bd", // Darker Shade 2 (Bold Blue)
+      "#0286cc", // Monochromatic 1 (Deep Blue)
+      "#e0f7fa", // Lighter Tint 6 (Pale Aqua)
+      "#29b6f6", // Lighter Tint 4 (Moderate Blue)
     ],
     theme: createTheme({
       typography: {
@@ -182,8 +186,7 @@ const appThemes: any = [
       },
       palette: {
         primary: {
-          main: "#8c57ff",
-          // light: "#7841ef",
+          main: "#03a9f4", // Main light blue color
           contrastText: "#ffffff",
         },
         secondary: {
@@ -193,6 +196,48 @@ const appThemes: any = [
       },
     }),
   },
+  // {
+  //   name: "Purple",
+  //   code: "purple",
+  //   colors: [
+  //     "#ff57a8", // Complementary Color
+  //     "#c1a3ff", // Lighter Tint 3
+  //     "#b457ff", // Analogous Color 3
+  //     "#6d3fdb", // Darker Shade 1
+  //     "#57ff8c", // Split Complementary 1
+  //     "#d754ff", // Monochromatic 1
+  //     "#57aaff", // Split Complementary 2
+  //     "#8c57ff", // Primary Color
+  //     "#b4b4b4", // Neutral Gray
+  //     "#c248ff", // Monochromatic 2
+  //     "#a957ff", // Analogous Color 2
+  //     "#3b1e80", // Darker Shade 4
+  //     "#ff57d4", // Triadic Color 2
+  //     "#a577ff", // Lighter Tint 1
+  //     "#9c57ff", // Analogous Color 1
+  //     "#5a34b3", // Darker Shade 2
+  //     "#b48aff", // Lighter Tint 2
+  //     "#7d57ff", // Triadic Color 1
+  //     "#d0bfff", // Lighter Tint 4
+  //     "#4a2b9c", // Darker Shade 3
+  //   ],
+  //   theme: createTheme({
+  //     typography: {
+  //       fontFamily: "Poppins, sans-serif",
+  //     },
+  //     palette: {
+  //       primary: {
+  //         main: "#8c57ff",
+  //         // light: "#7841ef",
+  //         contrastText: "#ffffff",
+  //       },
+  //       secondary: {
+  //         main: "#FFFFFF",
+  //         contrastText: "#1EAFE5",
+  //       },
+  //     },
+  //   }),
+  // },
   {
     name: "Green",
     code: "green",
@@ -316,51 +361,7 @@ const appThemes: any = [
       },
     }),
   },
-  {
-    name: "Light Blue",
-    code: "light-blue",
-    colors: [
-      "#ffab91", // Complementary Color 1 (Soft Coral)
-      "#4fc3f7", // Lighter Tint 3 (Bright Light Blue)
-      "#80deea", // Triadic Color 2 (Bright Cyan)
-      "#b3e5fc", // Lighter Tint 1 (Soft Light Blue)
-      "#ff7043", // Complementary Color 3 (Warm Orange)
-      "#4dd0e1", // Analogous Color 1 (Cyan Tint)
-      "#ffca28", // Triadic Color 1 (Vibrant Yellow)
-      "#81d4fa", // Lighter Tint 2 (Sky Blue)
-      "#ff5252", // Complementary Color 2 (Bright Coral Red)
-      "#29b6cc", // Analogous Color 2 (Sky Blue)
-      "#b0bec5", // Neutral Gray
-      "#0288d1", // Darker Shade 1 (Deeper Blue)
-      "#e6f7ff", // Lighter Tint 8 (Pale Blue)
-      "#ffeb3b", // Triadic Color 3 (Bright Yellow)
-      "#e1f5fe", // Lighter Tint 5 (Pale Blue)
-      "#1e88e5", // Split Complementary 2 (Intense Blue)
-      "#01579b", // Darker Shade 3 (Deep Navy Blue)
-      "#84ffff", // Split Complementary 1 (Light Aqua)
-      "#4fc4ff", // Lighter Tint 7 (Soft Light Blue)
-      "#03a9f4", // Primary Color (Vivid Blue)
-      "#0277bd", // Darker Shade 2 (Bold Blue)
-      "#0286cc", // Monochromatic 1 (Deep Blue)
-      "#e0f7fa", // Lighter Tint 6 (Pale Aqua)
-      "#29b6f6", // Lighter Tint 4 (Moderate Blue)
-    ],
-    theme: createTheme({
-      typography: {
-        fontFamily: "Poppins, sans-serif",
-      },
-      palette: {
-        primary: {
-          main: "#03a9f4", // Main light blue color
-          contrastText: "#ffffff",
-        },
-        secondary: {
-          main: "#FFFFFF",
-          contrastText: "#1EAFE5",
-        },
-      },
-    }),
-  },
+  
 ];
 
 const getTheme = (type: Theme) => {
