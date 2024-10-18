@@ -244,13 +244,12 @@ const DashboardPage = () => {
               "& .MuiOutlinedInput-root": {
                 borderRadius: "18px",
                 // height: "10px", // Ensure the root has the same height as the input area
-                overflow: "hidden", // Prevent the outline from overflowing     
+                overflow: "hidden", // Prevent the outline from overflowing
               },
-              '& .MuiInputBase-input': {
-          maxHeight: '40px',  // Set the max height for the input field
-          overflowY: 'auto',   // Make the input scrollable
-        },
-              
+              "& .MuiInputBase-input": {
+                maxHeight: "40px", // Set the max height for the input field
+                overflowY: "auto", // Make the input scrollable
+              },
             }}
           />
         )}
