@@ -14,6 +14,7 @@ import {
   Typography,
   useTheme,
   Grid,
+  Box,
 } from "@mui/material";
 import { GridExpandMoreIcon } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
@@ -118,13 +119,13 @@ const CollectionPrompts = () => {
     <div className="flex flex-col w-auto max-h-[500px] overflow-y-auto">
       {loading && <CircularProgress />}
 
-      <div className="flex flex-row justify-between items-center mb-4">
+      <div className="flex flex-row justify-stretch items-center mb-4">
         <IconButton onClick={loadPrompts}>
           <Sync />
         </IconButton>
 
         {/* Date Pickers */}
-        <div className="flex flex-row items-center space-x-4 mt-2">
+        <div className="flex flex-row items-center w-full space-x-4 mt-2 mr-2">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               label="Start Date"
@@ -141,6 +142,7 @@ const CollectionPrompts = () => {
           </LocalizationProvider>
 
           <Grid item xs>
+            <Box sx={{mb:{xs:2,md:0}}}>
             <DropDown
               label="View Type"
               displayFieldKey={"name"}
@@ -152,6 +154,7 @@ const CollectionPrompts = () => {
                 loadPrompts();
               }}
             />
+            </Box>
           </Grid>
         </div>
       </div>

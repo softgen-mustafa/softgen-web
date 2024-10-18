@@ -121,35 +121,36 @@ const CollectionReport = () => {
 
   return (
     <CardContent>
-      <Grid container justifyContent="space-between" alignItems="center">
-        <IconButton onClick={loadPrompts}>
-          <Sync />
-        </IconButton>
-      </Grid>
+<Grid container alignItems="center" spacing={2} className="flex w-full flex-wrap -mt-10 mb-3">
+  <Grid item>
+    <IconButton onClick={loadPrompts}>
+      <Sync />
+    </IconButton>
+  </Grid>
+  <Grid item xs className="w-full sm:w-auto">
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DatePicker
+        label="Start Date"
+        value={startDate}
+        onChange={(newValue) => setStartDate(newValue)}
+        slotProps={{ textField: { fullWidth: true } }}
+        className="w-full"
+      />
+    </LocalizationProvider>
+  </Grid>
+  <Grid item xs className="w-full sm:w-auto mr-2">
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DatePicker
+        label="End Date"
+        value={endDate}
+        onChange={(newValue) => setEndDate(newValue)}
+        slotProps={{ textField: { fullWidth: true } }}
+        className="w-full"
+      />
+    </LocalizationProvider>
+  </Grid>
+</Grid>
 
-      {/* Date Pickers for selecting the date range */}
-      <Grid container spacing={2} mt={2}>
-        <Grid item xs={12} md={6}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="Start Date"
-              value={startDate}
-              onChange={(newValue) => setStartDate(newValue)}
-              slotProps={{ textField: { fullWidth: true } }}
-            />
-          </LocalizationProvider>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="End Date"
-              value={endDate}
-              onChange={(newValue) => setEndDate(newValue)}
-              slotProps={{ textField: { fullWidth: true } }}
-            />
-          </LocalizationProvider>
-        </Grid>
-      </Grid>
 
       {loading ? (
         <CircularProgress />
