@@ -85,6 +85,17 @@ body {
   background-color: #f8f8f8;
 }
 
+/* styles/globals.css */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}
+
+
 .MuiDataGrid-row:nth-child(even) {
   background-color: #ffffff;
 }
