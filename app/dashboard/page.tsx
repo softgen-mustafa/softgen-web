@@ -23,6 +23,7 @@ import RankedPartyOutstandingCard from "./cards/ranked_party";
 import { Weight } from "../ui/responsive_grid";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import { PendingActions, Receipt } from "@mui/icons-material";
+import CheckIcon from '@mui/icons-material/Check';
 
 const DashboardPage = () => {
   let incomingBillType = "Receivable"; // populate later
@@ -32,6 +33,8 @@ const DashboardPage = () => {
   ]);
 
   let selectedType = useRef(types[incomingBillType === "Payable" ? 1 : 0]);
+
+  
 
   const initialCards = [
     {
@@ -254,7 +257,7 @@ const DashboardPage = () => {
       className="content"
       sx={{
         padding: { xs: "10px", sm: "20px" },
-        backgroundColor: "background.default",
+        // backgroundColor: "background.default",
         display: "flex",
         flexDirection: "column",
         gap: { xs: "0.5px", sm: "15px" },
@@ -264,7 +267,7 @@ const DashboardPage = () => {
     >
       <Autocomplete
         multiple
-        limitTags={2}
+        limitTags={1}
         disableCloseOnSelect
         options={initialCards.map((card) => card.label)}
         value={visibleCards}
@@ -285,13 +288,22 @@ const DashboardPage = () => {
           />
         )}
         renderOption={(props, option, { selected }) => (
-          <li {...props}>
+          <li {...props} style={{ display: 'flex', alignItems: 'center' }}>
             <Icon
               sx={{
                 visibility: selected ? "visible" : "hidden",
+                marginRight: 1,
+                fontSize: 20,
+                overflow: "visible",
+                marginTop: "-15px"
+                
               }}
             >
-              ✔️
+              <CheckIcon sx={{ fontSize: 22, // Larger icon size for visibility
+            stroke: "#1CBC00", // Add stroke color
+            strokeWidth: 1, // Increase stroke width for heavier appearance
+            fill: "#1CBC00", // Ensure the icon is filled with color
+            }}/>
             </Icon>
             {option}
           </li>
