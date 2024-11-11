@@ -36,6 +36,7 @@ import { DropDown } from "../drop_down";
 import { SingleChartView } from "@/app/ui/graph_util";
 import { numericToString } from "@/app/services/Local/helper";
 import { PivotRow } from "./pivot_row";
+import { Add, Remove } from "@mui/icons-material";
 
 interface ApiProps {
   offset: number;
@@ -411,7 +412,7 @@ const Table = ({
     let keys = Object.keys(firstRow);
 
     return (
-        <PivotRow data={pivotColumn.value} keys={keys} pivotKey={pivotKey2} />
+      <PivotRow data={pivotColumn.value} keys={keys} pivotKey={pivotKey2} />
     );
   };
 
@@ -472,11 +473,7 @@ const Table = ({
                   triggerRefresh(refresh == 1 ? 0 : 1);
                 }}
               >
-                {shownRowIndexes.current.length > 0 ? (
-                  <ArrowUpward />
-                ) : (
-                  <ArrowDownward />
-                )}
+                {shownRowIndexes.current.length > 0 ? <Remove /> : <Add />}
               </IconButton>
             </Box>
           )}
@@ -499,11 +496,19 @@ const Table = ({
                     borderBottomWidth: 2,
 
                     flex: `1 0 ${cellWidth}px`, // Allow flexing with minimum width
-
+                    backgroundColor: theme.palette.primary.light,
                     borderRightWidth: colIndex === columns.length - 1 ? 0 : 2,
                   }}
                 >
-                  <Typography>{column.header}</Typography>
+                  {/* <Typography>{column.header}</Typography> */}
+                  <Typography
+                    sx={{
+                      fontWeight: "600", // Make the header bold
+                      color: "white", // Change the header color to red
+                    }}
+                  >
+                    {column.header}
+                  </Typography>
                 </Box>
               );
             })}
@@ -608,9 +613,9 @@ const Table = ({
                       }}
                     >
                       {shownRowIndexes.current.includes(rowIndex) ? (
-                        <ArrowUpward />
+                        <Remove />
                       ) : (
-                        <ArrowDownward />
+                        <Add />
                       )}
                     </IconButton>
                   </Box>
@@ -639,20 +644,36 @@ const Table = ({
                           minWidth: 150,
                           maxWidth: cellWidth,
                           // flex: `1 0 ${cellWidth}px`, // Allow flexing
+                          // backgroundColor: "", // Apply pink background to data cells as well
 
                           borderRightWidth:
                             cellIndex === row.length - 1 ? 0 : 2,
                           overflowX: "auto", // Ensure the row can scroll horizontally
                         }}
                       >
-                        <Typography className="overflow-x-auto">
-                          {cell.type == "number"
+                        <Typography
+                          className="overflow-x-auto"
+                          sx={{
+                            textAlign:
+                              cell.type === "number" ? "right" : "left", // Align right for numbers
+                            width: "100%", // Ensure text takes full width for proper alignment
+                          }}
+                        >
+                          {cell.type === "number"
                             ? numericToString(parseFloat(cell.value).toFixed(2))
                             : cell.value}
                         </Typography>
                       </Box>
                     );
                   })}
+                {/* <Typography className="overflow-x-auto">
+                          {cell.type == "number"
+                            ? numericToString(parseFloat(cell.value).toFixed(2))
+                            : cell.value}
+                        </Typography>
+                      </Box>
+                    );
+                  })} */}
                 {iconActions &&
                   iconActions.length > 0 &&
                   iconActions.map((entry: any, index: number) => {
@@ -746,11 +767,7 @@ const Table = ({
                     triggerRefresh(refresh == 1 ? 0 : 1);
                   }}
                 >
-                  {shownRowIndexes.current.length > 0 ? (
-                    <ArrowUpward />
-                  ) : (
-                    <ArrowDownward />
-                  )}
+                  {shownRowIndexes.current.length > 0 ? <Remove /> : <Add />}
                 </IconButton>
               </Box>
             )}
@@ -903,24 +920,6 @@ const TablePagination = ({ refresh, onChange }: TablePaginationProps) => {
             );
           })}
         </Select>
-
-        {/* <Select
-          className="w-full"
-          value={limit}
-          onChange={(event) => {
-            let selectedValue = event.target.value ?? "";
-            onChange(offSet, parseInt(selectedValue));
-            setLimit(selectedValue);
-          }}
-        >
-          {limits.map((entry: number, index: number) => {
-            return (
-              <MenuItem key={index} value={entry}>
-                {entry}
-              </MenuItem>
-            );
-          })}
-        </Select> */}
       </FormControl>
 
       <IconButton
@@ -1091,19 +1090,6 @@ const TableFilterView = ({
           </FormControl>
         </Box>
       )}
-
-      {/*<FormLabel className="mt-4">Filter Columns</FormLabel>
-      {columns.map((col, index) => {
-        return (
-          <Box key={index} className="flex flex-row items-center">
-            <Checkbox
-              defaultChecked={!col.hideable}
-              onChange={() => handleFilterColumns(index)}
-            />
-            <Typography>{col.header}</Typography>
-          </Box>
-        );
-      })} */}
     </Box>
   );
 };

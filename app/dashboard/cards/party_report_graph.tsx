@@ -82,69 +82,67 @@ const PartyReportGraph: React.FC<OutstandingCardProps> = ({ companyId }) => {
   };
 
   return (
-    <div className=" md:mx-auto ">
-      <div className="max-w-lg ">
-        <div className="flex items-center ">
-          <TextField
-            label="Limit"
-            type="number"
-            value={limit}
-            onChange={handleLimitChange}
-            className="mr-4"
-          />
-          <IconButton onClick={handleRefresh} aria-label="refresh">
-            <Sync />
-          </IconButton>
-        </div>
-
-        {isLoading ? (
-          <CardContent className="flex justify-center items-center h-40">
-            <CircularProgress />
-          </CardContent>
-        ) : (
-          <Box className="p-4 ">
-            <Grid container spacing={2} alignItems="center" mr={10}>
-              <Grid item xs>
-                <DropDown
-                  label="Select Field"
-                  displayFieldKey={"name"}
-                  valueFieldKey={null}
-                  selectionValues={fieldOptions}
-                  helperText="Choose a field to display"
-                  onSelection={(selection) => {
-                    setSelectedField(selection.value);
-                  }}
-                  defaultSelectionIndex={fieldOptions.findIndex(
-                    (item) => item.value === selectedField
-                  )}
-                  useSearch={false}
-                />
-              </Grid>
-            </Grid>
-            {data && data.length > 0 ? (
-              <SingleChartView
-                values={data.map((item) => ({
-                  label: item.PartyName,
-                  value: item[selectedField as keyof PartyReportOverview],
-                }))}
-                defaultChart="pie"
-                title={""}
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center h-full">
-                <Image
-                  src={noDataFound} // Adjust the path to your SVG file
-                  alt="No Video Data"
-                  width={300} // Specify the width
-                  height={300} // Specify the height
-                  className="mb-4" // Optional: Use Tailwind for styling
-                />
-                <p className="text-gray-600 text-2xl">No data available</p>
-              </div>
-            )}
-          </Box>
-        )}
+    <div>
+      <div className="flex items-center p-4">
+        <TextField
+          label="Limit"
+          type="number"
+          value={limit}
+          onChange={handleLimitChange}
+          className="mr-4"
+        />
+        <IconButton onClick={handleRefresh} aria-label="refresh">
+          <Sync />
+        </IconButton>
       </div>
+
+      {isLoading ? (
+        <CardContent className="flex justify-center items-center h-40">
+          <CircularProgress />
+        </CardContent>
+      ) : (
+        <Box className="p-4 ">
+          <Grid container spacing={2} alignItems="center" mr={10}>
+            <Grid item xs>
+              <DropDown
+                label="Select Field"
+                displayFieldKey={"name"}
+                valueFieldKey={null}
+                selectionValues={fieldOptions}
+                helperText="Choose a field to display"
+                onSelection={(selection) => {
+                  setSelectedField(selection.value);
+                }}
+                defaultSelectionIndex={fieldOptions.findIndex(
+                  (item) => item.value === selectedField
+                )}
+                useSearch={false}
+              />
+            </Grid>
+          </Grid>
+          {data && data.length > 0 ? (
+            <SingleChartView
+              values={data.map((item) => ({
+                label: item.PartyName,
+                value: item[selectedField as keyof PartyReportOverview],
+              }))}
+              defaultChart="pie"
+              title={""}
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full">
+              <Image
+                src={noDataFound} // Adjust the path to your SVG file
+                alt="No Video Data"
+                width={300} // Specify the width
+                height={300} // Specify the height
+                className="mb-4" // Optional: Use Tailwind for styling
+              />
+              <p className="text-gray-600 text-2xl">No data available</p>
+            </div>
+          )}
+        </Box>
+      )}
     </div>
   );
 };

@@ -176,7 +176,7 @@ const getBaseUrl = () => {
   // return "https://softgensolutions.com/gateway";
 
   //GoDadddddddy
-  //return "http://118.139.167.125:45400";
+  return "http://118.139.167.125:45400";
 };
 
 export {

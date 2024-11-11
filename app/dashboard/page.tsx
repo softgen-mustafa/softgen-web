@@ -10,7 +10,7 @@ import {
   Icon,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
 import GridCardView from "../ui/grid_card";
 import { CollectionPrompts } from "./cards/collection_prompts";
@@ -28,7 +28,7 @@ import { MultiReport } from "./cards/multireport";
 
 const DashboardPage = () => {
   let incomingBillType = "Receivable"; // populate later
-  const [types, updateTypes] = useState([
+  const [types] = useState([
     { id: 1, label: "Receivable", code: "receivable" },
     { id: 2, label: "Payable", code: "payable" },
   ]);
@@ -169,38 +169,110 @@ const DashboardPage = () => {
     },
   ];
 
+  const [cards, setCards] = useState(initialCards);
   const [visibleCards, setVisibleCards] = useState(
-    initialCards.map((card: any) => card.label)
+    initialCards.map((card) => card.label)
   );
 
-  const renderCard = (card: any) => (
+  // Load cards from localStorage and update state
+  useEffect(() => {
+    const savedSequence = localStorage.getItem("dashboard_cards_order");
+    if (savedSequence) {
+      const sequence = JSON.parse(savedSequence);
+      const orderedCards = sequence
+        .map((id: number) => initialCards.find((card) => card.id === id))
+        .filter((card: any) => card !== undefined); // Filter undefined to handle missing cards
+      setCards(orderedCards);
+    }
+  }, []);
+
+  // Save card order to localStorage
+  useEffect(() => {
+    const cardIds = cards.map((card) => card.id);
+    localStorage.setItem("dashboard_cards_order", JSON.stringify(cardIds));
+  }, [cards]);
+
+  // Drag and Drop Handlers
+  const handleDragStart = (
+    e: React.DragEvent<HTMLDivElement>,
+    index: number
+  ) => {
+    e.dataTransfer.setData("text/plain", index.toString());
+    e.currentTarget.classList.add("opacity-50");
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault(); // Necessary to allow a drop
+    e.currentTarget.classList.add("border-2", "border-dashed", "border-black");
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.currentTarget.classList.remove(
+      "border-2",
+      "border-dashed",
+      "border-black"
+    );
+  };
+
+  const handleDrop = (
+    e: React.DragEvent<HTMLDivElement>,
+    dropIndex: number
+  ) => {
+    e.preventDefault();
+    e.currentTarget.classList.remove(
+      "border-2",
+      "border-dashed",
+      "border-black"
+    );
+    const dragIndex = parseInt(e.dataTransfer.getData("text/plain"), 10);
+
+    if (dragIndex === dropIndex) return;
+
+    const newCards = [...cards];
+    const [draggedCard] = newCards.splice(dragIndex, 1);
+    newCards.splice(dropIndex, 0, draggedCard);
+
+    setCards(newCards);
+  };
+
+  const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+    e.currentTarget.classList.remove("opacity-50");
+  };
+
+  const renderCard = (card: any, index: number) => (
     <Accordion
       key={card.id}
       sx={{
-        mb: { xs: 0.1, sm: 1 }, // Margin bottom adjusted for both mobile and desktop
+        mb: { xs: 0.1, sm: 1 },
         borderRadius: "24px !important",
         marginBottom: "12px !important",
         backgroundColor: "transparent",
         boxShadow: 3,
         transition: "transform 0.2s ease",
         "&:hover": {
-          transform: "scale(1.01)", // Slightly larger on hover
-          boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.2)", // Increased shadow on hover
+          transform: "scale(1.01)",
+          boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.2)",
         },
         flexDirection: "column",
         alignItems: "flex-start",
         position: "relative",
-        minHeight: { xs: 32, sm: 55 }, // Further reduced height for desktop
+        minHeight: { xs: 32, sm: 55 },
       }}
+      draggable
+      onDragStart={(e) => handleDragStart(e, index)}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={(e) => handleDrop(e, index)}
+      onDragEnd={handleDragEnd}
     >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon className="text-white" />}
         sx={{
           backgroundColor: "primary.light",
           "&:hover": { backgroundColor: "primary.dark" },
-          padding: { xs: "0px 10px", sm: "0px 18px" }, // Adjusted padding to reduce size
+          padding: { xs: "0px 10px", sm: "0px 18px" },
           transition: "background-color 0.3s, transform 0.2s",
-          minHeight: { xs: 32, sm: 45 }, // Reduced height for both mobile and desktop
+          minHeight: { xs: 32, sm: 45 },
           display: "flex",
           alignItems: "center",
           borderRadius: 4.5,
@@ -217,7 +289,7 @@ const DashboardPage = () => {
               alignItems: "center",
               mr: 1,
               backgroundColor: "white",
-              padding: { xs: "4px 4px", md: "6px 6px" }, // Reduced padding around the icon
+              padding: { xs: "4px 4px", md: "6px 6px" },
               borderRadius: 100,
             }}
           >
@@ -229,7 +301,7 @@ const DashboardPage = () => {
           sx={{
             fontWeight: { xs: 450, md: 570 },
             color: "white",
-            fontSize: { xs: 17.5, md: 22 }, // Reduced font size
+            fontSize: { xs: 17.5, md: 22 },
           }}
         >
           {card.label}
@@ -242,7 +314,7 @@ const DashboardPage = () => {
           boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
           borderRadius: "0 0 4px 4px",
           transition: "background-color 0.3s, box-shadow 0.3s",
-          maxHeight: "400px",
+          // maxHeight: "400px",
           overflowY: "auto",
         }}
       >
@@ -299,10 +371,10 @@ const DashboardPage = () => {
             >
               <CheckIcon
                 sx={{
-                  fontSize: 22, // Larger icon size for visibility
-                  stroke: "#1CBC00", // Add stroke color
-                  strokeWidth: 1, // Increase stroke width for heavier appearance
-                  fill: "#1CBC00", // Ensure the icon is filled with color
+                  fontSize: 22,
+                  stroke: "#1CBC00",
+                  strokeWidth: 1,
+                  fill: "#1CBC00",
                 }}
               />
             </Icon>
@@ -311,13 +383,11 @@ const DashboardPage = () => {
         )}
         sx={{ mb: 2 }}
       />
-      <GridCardView
-      // title="Today's Outstanding"
-      >
-        <MultiReport></MultiReport>
-      </GridCardView>
 
-      {/* Flexbox layout for cards */}
+      {/* <GridCardView>
+        <MultiReport></MultiReport>
+      </GridCardView> */}
+
       <Box
         sx={{
           display: "flex",
@@ -330,7 +400,7 @@ const DashboardPage = () => {
           position: "relative",
         }}
       >
-        {initialCards
+        {cards
           .filter((card) => visibleCards.includes(card.label))
           .map((card, index) => (
             <Box
@@ -345,7 +415,7 @@ const DashboardPage = () => {
                 boxSizing: "border-box",
               }}
             >
-              {renderCard(card)}
+              {renderCard(card, index)}
             </Box>
           ))}
       </Box>

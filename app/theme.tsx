@@ -361,7 +361,6 @@ const appThemes: any = [
       },
     }),
   },
-  
 ];
 
 const getTheme = (type: Theme) => {
