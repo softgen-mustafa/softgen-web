@@ -22,7 +22,8 @@ import replay from "../../public/assets/images/replay.png";
 import play from "../../public/assets/images/play.png";
 import pause from "../../public/assets/images/pause.png";
 
-import apple from "../../public/assets/images/fevicon.png";
+import apple from "../../public/assets/images/Untitled_design-removebg-preview.png";
+import fevicon from "../../public/assets/images/fevicon.png" 
 import explore1 from "../../public/assets/images/explore.png";
 import explore2 from "../../public/assets/images/explore10.png";
 import chip from "../../public/assets/images/fevicon.png";
@@ -38,6 +39,7 @@ export const exploreVideo = exploremv;
 export const frameVideo = framemv;
 
 export const appleImg = apple;
+export const feviconImg = fevicon;
 export const searchImg = search;
 export const watchImg = watch;
 export const rightImg = right;

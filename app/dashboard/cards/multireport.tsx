@@ -1,93 +1,98 @@
 "use client";
 import { Box, Card, CardContent, Typography } from "@mui/material";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Icon } from '@mui/material'; // Assuming you're using MUI icons
 
 const MultiReport = () => {
-  const router = useRouter();
-  const [data, setData] = useState<[]>([]);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
+  // Check if in mobile view
   useEffect(() => {
-    const scrollContainer = containerRef.current;
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768); // Detect mobile view
+    };
 
-    if (scrollContainer) {
-      const scrollStep = 1;
-      const intervalId = setInterval(() => {
-        scrollContainer.scrollLeft += scrollStep;
+    // Initialize mobile check
+    handleResize();
+    window.addEventListener("resize", handleResize);
 
-        if (
-          scrollContainer.scrollLeft >=
-          scrollContainer.scrollWidth - scrollContainer.clientWidth
-        ) {
-          scrollContainer.scrollLeft = 0;
-        }
-      }, 15);
-
-      return () => clearInterval(intervalId);
-    }
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
+
   return (
-    <Box className="p-4 overflow-visible bg-gradient-to-r bg-transparent">
+    <Box className="bg-gradient-to-r from-transparent min-h- to-transparent">
       <Box
         ref={containerRef}
-        className="flex flex-row gap-4 overflow-x-auto hide-scrollbar md:grid md:grid-cols-2 lg:grid-cols-4"
+        className={`grid grid-cols-2 gap-4 overflow-hidden  md:grid-cols-2 lg:grid-cols-4`}
       >
         {/* Card 1 - Total Value */}
-        <Card className="bg-white text-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg min-w-[250px] flex-shrink-0">
+        <Card className="bg-white text-black shadow-2xl border border-gray-300 rounded-2xl transition-transform duration-300 transform hover:scale-105">
           <CardContent>
-            <Typography variant="h6" className="mb-2 font-semibold">
-              Total Value
-            </Typography>
-            <Typography variant="body1" className="text-gray-600">
+            <div className="flex items-center">
+              <Icon className="mr-2">attach_money</Icon>
+              <Typography variant="h6" className="font-semibold">
+                Total Value
+              </Typography>
+            </div>
+            <Typography variant="h4" className="font-bold">
               $50,000
             </Typography>
-            <Typography variant="body2" className="text-gray-500 mt-1">
+            <Typography variant="body2" className="text-gray-700 mt-1">
               Increased by 10% from last month
             </Typography>
           </CardContent>
         </Card>
 
         {/* Card 2 - Stock Market */}
-        <Card className="bg-white text-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg min-w-[250px] flex-shrink-0">
+        <Card className="bg-white text-black shadow-2xl border border-gray-300 rounded-2xl transition-transform duration-300 transform hover:scale-105">
           <CardContent>
-            <Typography variant="h6" className="mb-2 font-semibold">
-              Stock Market
+            <div className="flex items-center">
+              <Icon className="mr-2">trending_up</Icon>
+              <Typography variant="h6" className="font-semibold">
+                Stock Market
+              </Typography>
+            </div>
+            <Typography variant="h4" className="font-bold">
+              +5.7%
             </Typography>
-            <Typography variant="body1" className="text-gray-600">
-              +5.7% Today
-            </Typography>
-            <Typography variant="body2" className="text-gray-500 mt-1">
+            <Typography variant="body2" className="text-gray-700 mt-1">
               Market trending upward
             </Typography>
           </CardContent>
         </Card>
 
         {/* Card 3 - Revenue */}
-        <Card className="bg-white text-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg min-w-[250px] flex-shrink-0">
+        <Card className="bg-white text-black shadow-2xl border border-gray-300 rounded-2xl transition-transform duration-300 transform hover:scale-105">
           <CardContent>
-            <Typography variant="h6" className="mb-2 font-semibold">
-              Revenue
-            </Typography>
-            <Typography variant="body1" className="text-gray-600">
+            <div className="flex items-center">
+              <Icon className="mr-2">monetization_on</Icon>
+              <Typography variant="h6" className="font-semibold">
+                Revenue
+              </Typography>
+            </div>
+            <Typography variant="h4" className="font-bold">
               $120,000
             </Typography>
-            <Typography variant="body2" className="text-gray-500 mt-1">
+            <Typography variant="body2" className="text-gray-700 mt-1">
               Increased by 15% year-over-year
             </Typography>
           </CardContent>
         </Card>
 
         {/* Card 4 - Expenses */}
-        <Card className="bg-white text-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg min-w-[250px] flex-shrink-0">
+        <Card className="bg-white text-black shadow-2xl border border-gray-300 rounded-2xl transition-transform duration-300 transform hover:scale-105">
           <CardContent>
-            <Typography variant="h6" className="mb-2 font-semibold">
-              Expenses
-            </Typography>
-            <Typography variant="body1" className="text-gray-600">
+            <div className="flex items-center">
+              <Icon className="mr-2">shopping_cart</Icon>
+              <Typography variant="h6" className="font-semibold">
+                Expenses
+              </Typography>
+            </div>
+            <Typography variant="h4" className="font-bold">
               $45,000
             </Typography>
-            <Typography variant="body2" className="text-gray-500 mt-1">
+            <Typography variant="body2" className="text-gray-700 mt-1">
               Maintaining steady expenses
             </Typography>
           </CardContent>
