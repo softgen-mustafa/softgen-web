@@ -5,7 +5,54 @@ import {
   highlightThirdVideo,
 } from "../utils";
 
-export const navLists = ["", "", "", ""];
+import HomeIcon from "@mui/icons-material/Home"; // Example icons
+// import CampaignIcon from "@mui/icons-material/Campaign";
+import InfoIcon from "@mui/icons-material/Info";
+import ContactMailIcon from "@mui/icons-material/ContactMail";
+
+import CodeIcon from '@mui/icons-material/Code';
+import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
+import SearchIcon from '@mui/icons-material/Search';
+import CampaignIcon from '@mui/icons-material/Campaign';
+
+
+// export const navLists = ["Home", "Services", "About", "Contact"];
+
+export const navLists = [
+  { label: "Home", icon: <HomeIcon /> },
+  { label: "Services", icon: <CampaignIcon /> },
+  { label: "About", icon: <InfoIcon /> },
+  { label: "Contact", icon: <ContactMailIcon /> },
+];
+
+
+export const servicesDropdown = [
+  {
+    title: "Web Development",
+    description: "Building responsive and high-quality websites.",
+    icon: <CodeIcon />,  // Add icon here
+    link: "/services/web-development",  // Add link here
+
+  },
+  {
+    title: "Mobile Development",
+    description: "Creating user-friendly mobile applications.",
+    icon: <PhoneAndroidIcon />,  // Add icon here
+    link: "/services/web-development",
+  },
+  {
+    title: "SEO",
+    description: "Improving website visibility and organic traffic.",
+    icon: <SearchIcon />,  // Add icon here
+    link: "/services/web-development",
+  },
+  {
+    title: "Marketing",
+    description: "Developing strategies to promote your business.",
+    icon: <CampaignIcon />,  // Add icon here
+    link: "/services/web-development",
+  },
+];
 
 export const hightlightsSlides = [
   {

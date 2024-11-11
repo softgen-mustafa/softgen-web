@@ -256,7 +256,7 @@ const DashboardPage = () => {
       className="content"
       sx={{
         padding: { xs: "10px", sm: "20px" },
-        backgroundColor: "background.default",
+        backgroundColor: "transparent",
         display: "flex",
         flexDirection: "column",
         gap: { xs: "0.5px", sm: "15px" },
